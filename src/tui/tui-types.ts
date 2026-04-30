@@ -9,6 +9,13 @@ export type TuiOptions = {
   timeoutMs?: number;
   historyLimit?: number;
   message?: string;
+  /**
+   * When true, capture the first finalized assistant reply and exit. The
+   * captured text is returned on `TuiResult.firstReply`. The interactive
+   * screen is still mounted briefly; callers that want clean stdout should
+   * print `result.firstReply.text` after `runTui` returns.
+   */
+  once?: boolean;
 };
 
 export type TuiExitReason = "exit" | "return-to-crestodian";
@@ -16,6 +23,14 @@ export type TuiExitReason = "exit" | "return-to-crestodian";
 export type TuiResult = {
   exitReason: TuiExitReason;
   crestodianMessage?: string;
+  /** Populated when `TuiOptions.once` was set and a reply was captured. */
+  firstReply?: { text: string; runId: string };
+  /**
+   * Populated when `TuiOptions.once` was set and the run terminated without
+   * a displayable reply (error/aborted/final-empty). Mutually exclusive with
+   * `firstReply`. Callers should print this to stderr and exit non-zero.
+   */
+  onceError?: string;
 };
 
 export type ChatEvent = {

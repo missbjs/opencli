@@ -18,6 +18,11 @@ export function registerTuiCli(program: Command) {
     .option("--deliver", "Deliver assistant replies", false)
     .option("--thinking <level>", "Thinking level override")
     .option("--message <text>", "Send an initial message after connecting")
+    .option(
+      "--once",
+      "Non-interactive: send --message, capture the first assistant reply, print it to stdout, and exit",
+      false,
+    )
     .option("--timeout-ms <ms>", "Agent timeout in ms (defaults to agents.defaults.timeoutSeconds)")
     .option("--history-limit <n>", "History entries to load", "200")
     .addHelpText(
@@ -42,8 +47,18 @@ export function registerTuiCli(program: Command) {
           );
         }
         const historyLimit = Number.parseInt(String(opts.historyLimit ?? "200"), 10);
+        // Auto-enable once-mode when --message is set and stdin is piped (non-TTY).
+        // Explicit --once always wins. --once requires --message; reject otherwise.
+        const onceFlag = Boolean(opts.once);
+        const messageProvided = typeof opts.message === "string" && opts.message.length > 0;
+        const stdinIsTty = Boolean(process.stdin.isTTY);
+        const onceAuto = !onceFlag && messageProvided && !stdinIsTty;
+        const once = onceFlag || onceAuto;
+        if (onceFlag && !messageProvided) {
+          throw new Error("--once requires --message <text>");
+        }
         const { runTui } = await import("../tui/tui.js");
-        await runTui({
+        const result = await runTui({
           local: isLocal,
           url: opts.url as string | undefined,
           token: opts.token as string | undefined,
@@ -52,9 +67,21 @@ export function registerTuiCli(program: Command) {
           deliver: Boolean(opts.deliver),
           thinking: opts.thinking as string | undefined,
           message: opts.message as string | undefined,
+          once,
           timeoutMs,
           historyLimit: Number.isNaN(historyLimit) ? undefined : historyLimit,
         });
+        if (once) {
+          if (result.firstReply) {
+            process.stdout.write(`${result.firstReply.text}\n`);
+          } else if (result.onceError) {
+            defaultRuntime.error(`once: ${result.onceError}`);
+            defaultRuntime.exit(1);
+          } else {
+            defaultRuntime.error("once: no reply received before exit");
+            defaultRuntime.exit(1);
+          }
+        }
       } catch (err) {
         defaultRuntime.error(String(err));
         defaultRuntime.exit(1);

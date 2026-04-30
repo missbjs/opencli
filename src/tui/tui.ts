@@ -76,6 +76,39 @@ type RunTuiOptions = TuiOptions & {
   title?: string;
 };
 
+type OnceWrapTarget = {
+  finalizeAssistant: (text: string, runId: string) => void;
+};
+
+/**
+ * Wrap a `chatLog`-shaped object so the first `finalizeAssistant(text, runId)`
+ * call also fires `onFirstFinal({text, runId})`. Subsequent calls forward to
+ * the underlying object but do not fire the callback again. All other
+ * properties pass through unchanged.
+ *
+ * Exported for unit tests.
+ */
+export function wrapChatLogForOnceCapture<T extends OnceWrapTarget>(
+  target: T,
+  onFirstFinal: (capture: { text: string; runId: string }) => void,
+): T {
+  let fired = false;
+  return new Proxy(target, {
+    get(t, prop, receiver) {
+      if (prop === "finalizeAssistant") {
+        return (text: string, runId: string) => {
+          t.finalizeAssistant(text, runId);
+          if (!fired) {
+            fired = true;
+            onFirstFinal({ text, runId });
+          }
+        };
+      }
+      return Reflect.get(t, prop, receiver);
+    },
+  }) as T;
+}
+
 /** Resolve the absolute path to the `codex` CLI binary, or `null` if not installed. */
 export function resolveCodexCliBin(): string | null {
   try {
@@ -900,30 +933,6 @@ export async function runTui(opts: RunTuiOptions): Promise<TuiResult> {
     abortActive,
   } = sessionActions;
 
-  const {
-    handleChatEvent,
-    handleAgentEvent,
-    handleBtwEvent,
-    pauseStreamingWatchdog,
-    reconnectStreamingWatchdog,
-  } = createEventHandlers({
-    chatLog,
-    btw,
-    tui,
-    state,
-    localMode: isLocalMode,
-    setActivityStatus,
-    refreshSessionInfo,
-    loadHistory,
-    noteLocalRunId,
-    isLocalRunId,
-    forgetLocalRunId,
-    clearLocalRunIds,
-    isLocalBtwRunId,
-    forgetLocalBtwRunId,
-    clearLocalBtwRunIds,
-  });
-
   let finishTui: (() => void) | null = null;
   const requestExit = (result?: Partial<TuiResult>) => {
     if (exitRequested) {
@@ -939,6 +948,69 @@ export async function runTui(opts: RunTuiOptions): Promise<TuiResult> {
       finishTui?.();
     });
   };
+
+  // once-mode capture: when opts.once is set, intercept the first finalized
+  // assistant reply, store it for the caller, then request exit. The wrapper
+  // forwards every other call to the real chatLog so rendering stays correct
+  // until tui.stop() runs. We also hook `onRunTerminated` so error/aborted/
+  // empty-final paths exit instead of hanging.
+  let capturedFirstReply: { text: string; runId: string } | undefined;
+  let capturedTerminationError: string | undefined;
+  const eventChatLog: typeof chatLog = opts.once
+    ? wrapChatLogForOnceCapture(chatLog, (capture) => {
+        capturedFirstReply = capture;
+        requestExit();
+      })
+    : chatLog;
+
+  const onRunTerminated = opts.once
+    ? (info: { runId: string; reason: string; errorMessage?: string }) => {
+        // The chatLog Proxy already handles the "final" reason (it captures
+        // text and calls requestExit). For every other terminal state, we
+        // need to exit ourselves — otherwise once-mode hangs forever.
+        if (capturedFirstReply) {
+          return;
+        }
+        if (info.reason === "final") {
+          // The Proxy will fire requestExit; nothing else to do.
+          return;
+        }
+        capturedTerminationError =
+          info.reason === "error"
+            ? `run error: ${info.errorMessage ?? "unknown"}`
+            : info.reason === "aborted"
+              ? "run aborted"
+              : info.reason === "final-empty"
+                ? "no displayable reply"
+                : `run terminated (${info.reason})`;
+        requestExit();
+      }
+    : undefined;
+
+  const {
+    handleChatEvent,
+    handleAgentEvent,
+    handleBtwEvent,
+    pauseStreamingWatchdog,
+    reconnectStreamingWatchdog,
+  } = createEventHandlers({
+    chatLog: eventChatLog,
+    btw,
+    tui,
+    state,
+    localMode: isLocalMode,
+    setActivityStatus,
+    refreshSessionInfo,
+    loadHistory,
+    noteLocalRunId,
+    isLocalRunId,
+    forgetLocalRunId,
+    clearLocalRunIds,
+    isLocalBtwRunId,
+    forgetLocalBtwRunId,
+    clearLocalBtwRunIds,
+    onRunTerminated,
+  });
   const exitAwareClient = client as TuiBackend & {
     setRequestExitHandler?: (handler: () => void) => void;
   };
@@ -1151,5 +1223,10 @@ export async function runTui(opts: RunTuiOptions): Promise<TuiResult> {
     finishTui = finish;
     process.once("exit", finish);
   });
+  if (capturedFirstReply) {
+    exitResult.firstReply = capturedFirstReply;
+  } else if (capturedTerminationError) {
+    exitResult.onceError = capturedTerminationError;
+  }
   return exitResult;
 }

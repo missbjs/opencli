@@ -28,6 +28,14 @@ type EventHandlerBtwPresenter = {
   clear: () => void;
 };
 
+/**
+ * Why a run terminated. `final` = normal assistant reply rendered;
+ * `final-empty` = final event but no displayable message; `final-command` =
+ * command-shaped final (rendered via addSystem, not finalizeAssistant);
+ * `aborted` = user/abort; `error` = run error.
+ */
+export type RunTerminationReason = "final" | "final-empty" | "final-command" | "aborted" | "error";
+
 type EventHandlerContext = {
   chatLog: EventHandlerChatLog;
   btw: EventHandlerBtwPresenter;
@@ -46,6 +54,15 @@ type EventHandlerContext = {
   /** Reset `streaming` after this much delta silence. Set to 0 to disable. */
   streamingWatchdogMs?: number;
   localMode?: boolean;
+  /**
+   * Fired when a chat run reaches a terminal state. Used by once-mode to
+   * exit on error/abort/empty paths that never call finalizeAssistant.
+   */
+  onRunTerminated?: (info: {
+    runId: string;
+    reason: RunTerminationReason;
+    errorMessage?: string;
+  }) => void;
 };
 
 const DEFAULT_STREAMING_WATCHDOG_MS = 30_000;
@@ -63,6 +80,7 @@ export function createEventHandlers(context: EventHandlerContext) {
     isLocalRunId,
     forgetLocalRunId,
     clearLocalRunIds,
+    onRunTerminated,
     isLocalBtwRunId,
     forgetLocalBtwRunId,
     clearLocalBtwRunIds,
@@ -400,6 +418,7 @@ export function createEventHandlers(context: EventHandlerContext) {
         });
         chatLog.dropAssistant(evt.runId);
         finalizeRun({ runId: evt.runId, wasActiveRun, status: "idle" });
+        onRunTerminated?.({ runId: evt.runId, reason: "final-empty" });
         tui.requestRender();
         return;
       }
@@ -410,6 +429,7 @@ export function createEventHandlers(context: EventHandlerContext) {
           chatLog.addSystem(text);
         }
         finalizeRun({ runId: evt.runId, wasActiveRun, status: "idle" });
+        onRunTerminated?.({ runId: evt.runId, reason: "final-command" });
         tui.requestRender();
         return;
       }
@@ -431,8 +451,10 @@ export function createEventHandlers(context: EventHandlerContext) {
         finalText === "(no output)" && !isLocalRunId?.(evt.runId);
       if (suppressEmptyExternalPlaceholder) {
         chatLog.dropAssistant(evt.runId);
+        onRunTerminated?.({ runId: evt.runId, reason: "final-empty" });
       } else {
         chatLog.finalizeAssistant(finalText, evt.runId);
+        onRunTerminated?.({ runId: evt.runId, reason: "final" });
       }
       finalizeRun({
         runId: evt.runId,
@@ -446,6 +468,7 @@ export function createEventHandlers(context: EventHandlerContext) {
       chatLog.addSystem("run aborted");
       terminateRun({ runId: evt.runId, wasActiveRun, status: "aborted" });
       maybeRefreshHistoryForRun(evt.runId);
+      onRunTerminated?.({ runId: evt.runId, reason: "aborted" });
     }
     if (evt.state === "error") {
       forgetLocalBtwRunId?.(evt.runId);
@@ -455,6 +478,7 @@ export function createEventHandlers(context: EventHandlerContext) {
       chatLog.addSystem(resolveAuthErrorHint(errorMessage) ?? `run error: ${renderedError}`);
       terminateRun({ runId: evt.runId, wasActiveRun, status: "error" });
       maybeRefreshHistoryForRun(evt.runId);
+      onRunTerminated?.({ runId: evt.runId, reason: "error", errorMessage });
     }
     tui.requestRender();
   };
