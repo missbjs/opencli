@@ -67,7 +67,7 @@ if (!command || !root) {
 }
 
 if (command === "load-failure") {
-  process.env.OPENCLAW_BUNDLED_PLUGINS_DIR = path.join(root, "dist/extensions");
+  process.env.OPENCLI_BUNDLED_PLUGINS_DIR = path.join(root, "dist/extensions");
 }
 
 const bundled = await importBundled(root);

@@ -8,16 +8,16 @@ import {
 
 describe("gh-read helpers", () => {
   it("finds repo from gh args", () => {
-    expect(parseRepoArg(["pr", "view", "42", "-R", "openclaw/openclaw"])).toBe("openclaw/openclaw");
-    expect(parseRepoArg(["run", "list", "--repo=openclaw/docs"])).toBe("openclaw/docs");
+    expect(parseRepoArg(["pr", "view", "42", "-R", "opencli/opencli"])).toBe("opencli/opencli");
+    expect(parseRepoArg(["run", "list", "--repo=opencli/docs"])).toBe("opencli/docs");
     expect(parseRepoArg(["pr", "view", "42"])).toBeNull();
   });
 
   it("normalizes repo strings from common git formats", () => {
-    expect(normalizeRepo("openclaw/openclaw")).toBe("openclaw/openclaw");
-    expect(normalizeRepo("github.com/openclaw/openclaw")).toBe("openclaw/openclaw");
-    expect(normalizeRepo("https://github.com/openclaw/openclaw.git")).toBe("openclaw/openclaw");
-    expect(normalizeRepo("git@github.com:openclaw/openclaw.git")).toBe("openclaw/openclaw");
+    expect(normalizeRepo("opencli/opencli")).toBe("opencli/opencli");
+    expect(normalizeRepo("github.com/opencli/opencli")).toBe("opencli/opencli");
+    expect(normalizeRepo("https://github.com/opencli/opencli.git")).toBe("opencli/opencli");
+    expect(normalizeRepo("git@github.com:opencli/opencli.git")).toBe("opencli/opencli");
     expect(normalizeRepo("invalid")).toBeNull();
   });
 

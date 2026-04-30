@@ -1,9 +1,9 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { resolveMemoryHostEventLogPath } from "openclaw/plugin-sdk/memory-core-host-events";
-import { resolveMemoryDreamingWorkspaces } from "openclaw/plugin-sdk/memory-core-host-status";
-import type { MemoryPluginPublicArtifact } from "openclaw/plugin-sdk/memory-host-core";
-import type { OpenClawConfig } from "../api.js";
+import { resolveMemoryHostEventLogPath } from "opencli/plugin-sdk/memory-core-host-events";
+import { resolveMemoryDreamingWorkspaces } from "opencli/plugin-sdk/memory-core-host-status";
+import type { MemoryPluginPublicArtifact } from "opencli/plugin-sdk/memory-host-core";
+import type { OpenCLIConfig } from "../api.js";
 
 async function pathExists(inputPath: string): Promise<boolean> {
   try {
@@ -88,7 +88,7 @@ async function collectWorkspaceArtifacts(params: {
 }
 
 export async function listMemoryCorePublicArtifacts(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
 }): Promise<MemoryPluginPublicArtifact[]> {
   const workspaces = resolveMemoryDreamingWorkspaces(params.cfg);
   const artifacts: MemoryPluginPublicArtifact[] = [];

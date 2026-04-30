@@ -1,5 +1,5 @@
-import { installChannelOutboundPayloadContractSuite } from "openclaw/plugin-sdk/channel-contract-testing";
-import type { ReplyPayload } from "openclaw/plugin-sdk/reply-runtime";
+import { installChannelOutboundPayloadContractSuite } from "opencli/plugin-sdk/channel-contract-testing";
+import type { ReplyPayload } from "opencli/plugin-sdk/reply-runtime";
 import { describe, expect, it } from "vitest";
 import { createSlackOutboundPayloadHarness } from "../test-api.js";
 

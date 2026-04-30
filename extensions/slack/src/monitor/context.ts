@@ -1,23 +1,20 @@
 import type { App } from "@slack/bolt";
-import { formatAllowlistMatchMeta } from "openclaw/plugin-sdk/allow-from";
-import type {
-  OpenClawConfig,
-  SlackReactionNotificationMode,
-} from "openclaw/plugin-sdk/config-types";
-import type { SessionScope } from "openclaw/plugin-sdk/config-types";
-import type { DmPolicy, GroupPolicy } from "openclaw/plugin-sdk/config-types";
-import { createDedupeCache } from "openclaw/plugin-sdk/dedupe-runtime";
-import { resolveDefaultAgentId } from "openclaw/plugin-sdk/agent-runtime";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import type { HistoryEntry } from "openclaw/plugin-sdk/reply-history";
-import { resolveAgentRoute } from "openclaw/plugin-sdk/routing";
-import { logVerbose } from "openclaw/plugin-sdk/runtime-env";
-import { getChildLogger } from "openclaw/plugin-sdk/runtime-env";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
+import { resolveDefaultAgentId } from "opencli/plugin-sdk/agent-runtime";
+import { formatAllowlistMatchMeta } from "opencli/plugin-sdk/allow-from";
+import type { OpenCLIConfig, SlackReactionNotificationMode } from "opencli/plugin-sdk/config-types";
+import type { SessionScope } from "opencli/plugin-sdk/config-types";
+import type { DmPolicy, GroupPolicy } from "opencli/plugin-sdk/config-types";
+import { createDedupeCache } from "opencli/plugin-sdk/dedupe-runtime";
+import { formatErrorMessage } from "opencli/plugin-sdk/error-runtime";
+import type { HistoryEntry } from "opencli/plugin-sdk/reply-history";
+import { resolveAgentRoute } from "opencli/plugin-sdk/routing";
+import { logVerbose } from "opencli/plugin-sdk/runtime-env";
+import { getChildLogger } from "opencli/plugin-sdk/runtime-env";
+import type { RuntimeEnv } from "opencli/plugin-sdk/runtime-env";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "openclaw/plugin-sdk/text-runtime";
+} from "opencli/plugin-sdk/text-runtime";
 import type { SlackMessageEvent } from "../types.js";
 import { normalizeAllowList, normalizeAllowListLower, normalizeSlackSlug } from "./allow-list.js";
 import type { SlackChannelConfigEntries } from "./channel-config.js";
@@ -33,7 +30,7 @@ export {
 } from "./channel-type.js";
 
 export type SlackMonitorContext = {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   accountId: string;
   botToken: string;
   app: App;
@@ -66,7 +63,7 @@ export type SlackMonitorContext = {
   threadHistoryScope: "thread" | "channel";
   threadInheritParent: boolean;
   threadRequireExplicitMention: boolean;
-  slashCommand: Required<import("openclaw/plugin-sdk/config-types").SlackSlashCommandConfig>;
+  slashCommand: Required<import("opencli/plugin-sdk/config-types").SlackSlashCommandConfig>;
   textLimit: number;
   ackReactionScope: string;
   typingReaction: string;
@@ -102,7 +99,7 @@ export type SlackMonitorContext = {
 };
 
 export function createSlackMonitorContext(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   accountId: string;
   botToken: string;
   app: App;

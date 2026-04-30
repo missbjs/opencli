@@ -3,42 +3,42 @@ set -euo pipefail
 
 cd /repo
 
-export OPENCLAW_STATE_DIR="/tmp/openclaw-test"
-export OPENCLAW_CONFIG_PATH="${OPENCLAW_STATE_DIR}/openclaw.json"
+export OPENCLI_STATE_DIR="/tmp/opencli-test"
+export OPENCLI_CONFIG_PATH="${OPENCLI_STATE_DIR}/opencli.json"
 
 echo "==> Build"
-if ! pnpm build >/tmp/openclaw-cleanup-build.log 2>&1; then
-  cat /tmp/openclaw-cleanup-build.log
+if ! pnpm build >/tmp/opencli-cleanup-build.log 2>&1; then
+  cat /tmp/opencli-cleanup-build.log
   exit 1
 fi
 
 echo "==> Seed state"
-mkdir -p "${OPENCLAW_STATE_DIR}/credentials"
-mkdir -p "${OPENCLAW_STATE_DIR}/agents/main/sessions"
-echo '{}' >"${OPENCLAW_CONFIG_PATH}"
-echo 'creds' >"${OPENCLAW_STATE_DIR}/credentials/marker.txt"
-echo 'session' >"${OPENCLAW_STATE_DIR}/agents/main/sessions/sessions.json"
+mkdir -p "${OPENCLI_STATE_DIR}/credentials"
+mkdir -p "${OPENCLI_STATE_DIR}/agents/main/sessions"
+echo '{}' >"${OPENCLI_CONFIG_PATH}"
+echo 'creds' >"${OPENCLI_STATE_DIR}/credentials/marker.txt"
+echo 'session' >"${OPENCLI_STATE_DIR}/agents/main/sessions/sessions.json"
 
 echo "==> Reset (config+creds+sessions)"
-if ! pnpm openclaw reset --scope config+creds+sessions --yes --non-interactive >/tmp/openclaw-cleanup-reset.log 2>&1; then
-  cat /tmp/openclaw-cleanup-reset.log
+if ! pnpm opencli reset --scope config+creds+sessions --yes --non-interactive >/tmp/opencli-cleanup-reset.log 2>&1; then
+  cat /tmp/opencli-cleanup-reset.log
   exit 1
 fi
 
-test ! -f "${OPENCLAW_CONFIG_PATH}"
-test ! -d "${OPENCLAW_STATE_DIR}/credentials"
-test ! -d "${OPENCLAW_STATE_DIR}/agents/main/sessions"
+test ! -f "${OPENCLI_CONFIG_PATH}"
+test ! -d "${OPENCLI_STATE_DIR}/credentials"
+test ! -d "${OPENCLI_STATE_DIR}/agents/main/sessions"
 
 echo "==> Recreate minimal config"
-mkdir -p "${OPENCLAW_STATE_DIR}/credentials"
-echo '{}' >"${OPENCLAW_CONFIG_PATH}"
+mkdir -p "${OPENCLI_STATE_DIR}/credentials"
+echo '{}' >"${OPENCLI_CONFIG_PATH}"
 
 echo "==> Uninstall (state only)"
-if ! pnpm openclaw uninstall --state --yes --non-interactive >/tmp/openclaw-cleanup-uninstall.log 2>&1; then
-  cat /tmp/openclaw-cleanup-uninstall.log
+if ! pnpm opencli uninstall --state --yes --non-interactive >/tmp/opencli-cleanup-uninstall.log 2>&1; then
+  cat /tmp/opencli-cleanup-uninstall.log
   exit 1
 fi
 
-test ! -d "${OPENCLAW_STATE_DIR}"
+test ! -d "${OPENCLI_STATE_DIR}"
 
 echo "OK"

@@ -1,13 +1,13 @@
 {
-  "name": "@openclaw/inworld-speech",
+  "name": "@opencli/inworld-speech",
   "version": "2026.4.16",
   "private": true,
-  "description": "OpenClaw Inworld speech plugin",
+  "description": "OpenCLI Inworld speech plugin",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@opencli/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "opencli": {
     "extensions": [
       "./index.ts"
     ]

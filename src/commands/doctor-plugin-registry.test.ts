@@ -24,13 +24,13 @@ afterEach(() => {
 });
 
 function makeTempDir() {
-  return makeTrackedTempDir("openclaw-doctor-plugin-registry", tempDirs);
+  return makeTrackedTempDir("opencli-doctor-plugin-registry", tempDirs);
 }
 
 function hermeticEnv(overrides: NodeJS.ProcessEnv = {}): NodeJS.ProcessEnv {
   return {
-    OPENCLAW_BUNDLED_PLUGINS_DIR: undefined,
-    OPENCLAW_VERSION: "2026.4.25",
+    OPENCLI_BUNDLED_PLUGINS_DIR: undefined,
+    OPENCLI_VERSION: "2026.4.25",
     VITEST: "true",
     ...overrides,
   };
@@ -43,7 +43,7 @@ function createCandidate(rootDir: string, id = "demo"): PluginCandidate {
     "utf8",
   );
   fs.writeFileSync(
-    path.join(rootDir, "openclaw.plugin.json"),
+    path.join(rootDir, "opencli.plugin.json"),
     JSON.stringify({
       id,
       name: id,

@@ -1,5 +1,5 @@
 import { replaceConfigFile } from "../config/config.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { type HookInstallUpdate, recordHookInstall } from "../hooks/installs.js";
 import { enablePluginInConfig } from "../plugins/enable.js";
 import {
@@ -20,7 +20,7 @@ import {
 import { commitPluginInstallRecordsWithConfig } from "./plugins-install-record-commit.js";
 import { refreshPluginRegistryAfterConfigMutation } from "./plugins-registry-refresh.js";
 
-function addInstalledPluginToAllowlist(cfg: OpenClawConfig, pluginId: string): OpenClawConfig {
+function addInstalledPluginToAllowlist(cfg: OpenCLIConfig, pluginId: string): OpenCLIConfig {
   const allow = cfg.plugins?.allow;
   if (!Array.isArray(allow) || allow.length === 0 || allow.includes(pluginId)) {
     return cfg;
@@ -34,7 +34,7 @@ function addInstalledPluginToAllowlist(cfg: OpenClawConfig, pluginId: string): O
   };
 }
 
-function removeInstalledPluginFromDenylist(cfg: OpenClawConfig, pluginId: string): OpenClawConfig {
+function removeInstalledPluginFromDenylist(cfg: OpenCLIConfig, pluginId: string): OpenCLIConfig {
   const deny = cfg.plugins?.deny;
   if (!Array.isArray(deny) || !deny.includes(pluginId)) {
     return cfg;
@@ -54,7 +54,7 @@ function removeInstalledPluginFromDenylist(cfg: OpenClawConfig, pluginId: string
 }
 
 export type ConfigSnapshotForInstallPersist = {
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   baseHash: string | undefined;
 };
 
@@ -65,7 +65,7 @@ export async function persistPluginInstall(params: {
   enable?: boolean;
   successMessage?: string;
   warningMessage?: string;
-}): Promise<OpenClawConfig> {
+}): Promise<OpenCLIConfig> {
   const installConfig =
     params.enable === false
       ? params.snapshot.config
@@ -132,7 +132,7 @@ export async function persistHookPackInstall(params: {
   hooks: string[];
   install: Omit<HookInstallUpdate, "hookId" | "hooks">;
   successMessage?: string;
-}): Promise<OpenClawConfig> {
+}): Promise<OpenCLIConfig> {
   let next = enableInternalHookEntries(params.snapshot.config, params.hooks);
   next = recordHookInstall(next, {
     hookId: params.hookPackId,

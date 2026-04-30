@@ -1,6 +1,6 @@
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { isRecord } from "openclaw/plugin-sdk/text-runtime";
-import { fetchWithTimeout } from "openclaw/plugin-sdk/text-runtime";
+import { formatErrorMessage } from "opencli/plugin-sdk/error-runtime";
+import { isRecord } from "opencli/plugin-sdk/text-runtime";
+import { fetchWithTimeout } from "opencli/plugin-sdk/text-runtime";
 import type {
   AuditTelegramGroupMembershipParams,
   TelegramGroupMembershipAudit,

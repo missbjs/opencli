@@ -5,8 +5,8 @@ const mode = process.argv[2];
 const token = process.argv[3];
 const port = Number(process.argv[4]);
 const configPath =
-  process.env.OPENCLAW_BUNDLED_CHANNEL_CONFIG_PATH ||
-  path.join(process.env.HOME, ".openclaw", "openclaw.json");
+  process.env.OPENCLI_BUNDLED_CHANNEL_CONFIG_PATH ||
+  path.join(process.env.HOME, ".opencli", "opencli.json");
 const config = fs.existsSync(configPath) ? JSON.parse(fs.readFileSync(configPath, "utf8")) : {};
 
 if (mode === "disabled-config") {
@@ -87,7 +87,7 @@ config.channels = {
     ...config.channels?.telegram,
     enabled: mode === "telegram",
     botToken:
-      process.env.OPENCLAW_BUNDLED_CHANNEL_TELEGRAM_TOKEN || "123456:bundled-channel-update-token",
+      process.env.OPENCLI_BUNDLED_CHANNEL_TELEGRAM_TOKEN || "123456:bundled-channel-update-token",
     dmPolicy: "disabled",
     groupPolicy: "disabled",
   },
@@ -101,9 +101,9 @@ config.channels = {
     ...config.channels?.slack,
     enabled: mode === "slack",
     botToken:
-      process.env.OPENCLAW_BUNDLED_CHANNEL_SLACK_BOT_TOKEN || "xoxb-bundled-channel-update-token",
+      process.env.OPENCLI_BUNDLED_CHANNEL_SLACK_BOT_TOKEN || "xoxb-bundled-channel-update-token",
     appToken:
-      process.env.OPENCLAW_BUNDLED_CHANNEL_SLACK_APP_TOKEN || "xapp-bundled-channel-update-token",
+      process.env.OPENCLI_BUNDLED_CHANNEL_SLACK_APP_TOKEN || "xapp-bundled-channel-update-token",
   },
   feishu: {
     ...config.channels?.feishu,
@@ -132,7 +132,7 @@ if (mode === "memory-lancedb") {
             model: "text-embedding-3-small",
           },
           dbPath:
-            process.env.OPENCLAW_BUNDLED_CHANNEL_MEMORY_DB_PATH || "~/.openclaw/memory/lancedb-e2e",
+            process.env.OPENCLI_BUNDLED_CHANNEL_MEMORY_DB_PATH || "~/.opencli/memory/lancedb-e2e",
           autoCapture: false,
           autoRecall: false,
         },

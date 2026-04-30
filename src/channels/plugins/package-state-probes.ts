@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../../config/types.opencli.js";
 import { formatErrorMessage } from "../../infra/errors.js";
 import { createSubsystemLogger } from "../../logging/subsystem.js";
 import {
@@ -13,7 +13,7 @@ import {
 } from "./module-loader.js";
 
 type ChannelPackageStateChecker = (params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   env?: NodeJS.ProcessEnv;
 }) => boolean;
 
@@ -88,7 +88,7 @@ export function listBundledChannelIdsForPackageState(
 export function hasBundledChannelPackageState(params: {
   metadataKey: ChannelPackageStateMetadataKey;
   channelId: string;
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   env?: NodeJS.ProcessEnv;
 }): boolean {
   const entry = listChannelPackageStateCatalog(params.metadataKey).find(

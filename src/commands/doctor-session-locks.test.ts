@@ -1,10 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  createOpenClawTestState,
-  type OpenClawTestState,
-} from "../test-utils/openclaw-test-state.js";
+import { createOpenCLITestState, type OpenCLITestState } from "../test-utils/opencli-test-state.js";
 
 const note = vi.hoisted(() => vi.fn());
 
@@ -15,13 +12,13 @@ vi.mock("../terminal/note.js", () => ({
 import { noteSessionLockHealth } from "./doctor-session-locks.js";
 
 describe("noteSessionLockHealth", () => {
-  let state: OpenClawTestState;
+  let state: OpenCLITestState;
 
   beforeEach(async () => {
     note.mockClear();
-    state = await createOpenClawTestState({
+    state = await createOpenCLITestState({
       layout: "state-only",
-      prefix: "openclaw-doctor-locks-",
+      prefix: "opencli-doctor-locks-",
     });
   });
 

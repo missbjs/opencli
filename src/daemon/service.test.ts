@@ -54,11 +54,11 @@ describe("resolveGatewayService", () => {
     expect(() => resolveGatewayService()).toThrow("Gateway service install not supported on aix");
   });
 
-  it("guards mutating service adapters when config was written by a newer OpenClaw", async () => {
-    const tempHome = await makeTempWorkspace("openclaw-service-future-config-");
-    const stateDir = path.join(tempHome, ".openclaw");
-    const configPath = path.join(stateDir, "openclaw.json");
-    const envSnapshot = captureEnv(["HOME", "OPENCLAW_STATE_DIR", "OPENCLAW_CONFIG_PATH"]);
+  it("guards mutating service adapters when config was written by a newer OpenCLI", async () => {
+    const tempHome = await makeTempWorkspace("opencli-service-future-config-");
+    const stateDir = path.join(tempHome, ".opencli");
+    const configPath = path.join(stateDir, "opencli.json");
+    const envSnapshot = captureEnv(["HOME", "OPENCLI_STATE_DIR", "OPENCLI_CONFIG_PATH"]);
     try {
       await fs.mkdir(stateDir, { recursive: true });
       await fs.writeFile(
@@ -74,8 +74,8 @@ describe("resolveGatewayService", () => {
         ),
       );
       process.env.HOME = tempHome;
-      process.env.OPENCLAW_STATE_DIR = stateDir;
-      process.env.OPENCLAW_CONFIG_PATH = configPath;
+      process.env.OPENCLI_STATE_DIR = stateDir;
+      process.env.OPENCLI_CONFIG_PATH = configPath;
       clearConfigCache();
       clearRuntimeConfigSnapshot();
 
@@ -107,20 +107,20 @@ describe("readGatewayServiceState", () => {
     const service = createService({
       isLoaded: vi.fn(async () => true),
       readCommand: vi.fn(async () => ({
-        programArguments: ["openclaw", "gateway", "run"],
-        environment: { OPENCLAW_GATEWAY_PORT: "18789" },
+        programArguments: ["opencli", "gateway", "run"],
+        environment: { OPENCLI_GATEWAY_PORT: "18789" },
       })),
       readRuntime: vi.fn(async () => ({ status: "running" })),
     });
 
     const state = await readGatewayServiceState(service, {
-      env: { OPENCLAW_GATEWAY_PORT: "1" },
+      env: { OPENCLI_GATEWAY_PORT: "1" },
     });
 
     expect(state.installed).toBe(true);
     expect(state.loaded).toBe(true);
     expect(state.running).toBe(true);
-    expect(state.env.OPENCLAW_GATEWAY_PORT).toBe("18789");
+    expect(state.env.OPENCLI_GATEWAY_PORT).toBe("18789");
   });
 });
 
@@ -139,8 +139,8 @@ describe("startGatewayService", () => {
 
   it("restarts stopped installed services and returns post-start state", async () => {
     const readCommand = vi.fn(async () => ({
-      programArguments: ["openclaw", "gateway", "run"],
-      environment: { OPENCLAW_GATEWAY_PORT: "18789" },
+      programArguments: ["opencli", "gateway", "run"],
+      environment: { OPENCLI_GATEWAY_PORT: "18789" },
     }));
     const isLoaded = vi
       .fn<GatewayService["isLoaded"]>()
@@ -172,7 +172,7 @@ describe("startGatewayService", () => {
     const readCommand = vi
       .fn<GatewayService["readCommand"]>()
       .mockResolvedValueOnce({
-        programArguments: ["openclaw", "gateway", "run"],
+        programArguments: ["opencli", "gateway", "run"],
       })
       .mockResolvedValueOnce(null);
     const service = createService({

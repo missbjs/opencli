@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct OpenClawWatchApp: App {
+struct OpenCLIWatchApp: App {
     @Environment(\.scenePhase) private var scenePhase
     @State private var inboxStore = WatchInboxStore()
     @State private var receiver: WatchConnectivityReceiver?

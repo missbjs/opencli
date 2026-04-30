@@ -5,14 +5,14 @@ owns one PTY-spawned binary; user messages are written to its stdin, screen
 output is streamed back as chat replies.
 
 ```
-human → messager (Telegram/Discord/…) → openclaw gateway → tui-bridge → PTY → claude/codex/aider/…
+human → messager (Telegram/Discord/…) → opencli gateway → tui-bridge → PTY → claude/codex/aider/…
                                             ↑__________________________________|
                                                  (output streams back)
 ```
 
 The LLM agent loop is bypassed entirely — tui-bridge claims inbound messages
-before openclaw's agent runs, so no provider API key is consumed on the
-openclaw side. Whatever auth the spawned binary needs (Anthropic session for
+before opencli's agent runs, so no provider API key is consumed on the
+opencli side. Whatever auth the spawned binary needs (Anthropic session for
 `claude`, `OPENAI_API_KEY` for `codex`, etc.) is its own concern.
 
 ## Quick start
@@ -34,8 +34,8 @@ pnpm dev plugins enable tui-bridge
 
 The plugin ships disabled by default (`activation.onStartup: false` in the
 manifest). On hosts where `plugins enable` hangs (some PRoot/Termux setups),
-edit the openclaw config directly and flip `tui-bridge` to enabled. State
-lives under `~/.openclaw/` (or `~/.openclaw-dev/` if you launch with `--dev`).
+edit the opencli config directly and flip `tui-bridge` to enabled. State
+lives under `~/.opencli/` (or `~/.opencli-dev/` if you launch with `--dev`).
 
 ### 3. Add at least one channel
 
@@ -107,19 +107,19 @@ Switch with `/tui mode txt|tui` after starting; pick the default with the
 
 ## Configuration
 
-Set per-plugin config via openclaw's standard plugin config surface
+Set per-plugin config via opencli's standard plugin config surface
 (`pnpm dev configure --section plugins`, or edit the plugin's entry in the
 config file). Schema:
 
-| Key               | Default                   | Description                                                      |
-| ----------------- | ------------------------- | ---------------------------------------------------------------- |
-| `defaultMode`     | `txt`                     | Mode for new sessions (`txt` or `tui`)                           |
-| `settleIdleMs`    | `600`                     | Idle gap before output is considered "settled" and sent          |
-| `settleMaxMs`     | `30000`                   | Hard cap before forcing a flush even if output is still arriving |
-| `cols`            | `100`                     | Terminal columns for spawned PTYs                                |
-| `rows`            | `30`                      | Terminal rows for spawned PTYs                                   |
-| `logDir`          | `~/.openclaw/tui-bridge/` | Where per-session logs go                                        |
-| `allowedCommands` | _(unset)_                 | If set, only these binary names may be `start`-ed                |
+| Key               | Default                  | Description                                                      |
+| ----------------- | ------------------------ | ---------------------------------------------------------------- |
+| `defaultMode`     | `txt`                    | Mode for new sessions (`txt` or `tui`)                           |
+| `settleIdleMs`    | `600`                    | Idle gap before output is considered "settled" and sent          |
+| `settleMaxMs`     | `30000`                  | Hard cap before forcing a flush even if output is still arriving |
+| `cols`            | `100`                    | Terminal columns for spawned PTYs                                |
+| `rows`            | `30`                     | Terminal rows for spawned PTYs                                   |
+| `logDir`          | `~/.opencli/tui-bridge/` | Where per-session logs go                                        |
+| `allowedCommands` | _(unset)_                | If set, only these binary names may be `start`-ed                |
 
 `allowedCommands` is the security knob — set it to `["claude", "codex",
 "aider"]` (for example) to prevent arbitrary binaries from being spawned by
@@ -130,15 +130,15 @@ chat slash commands.
 Each session writes a raw byte log to:
 
 ```
-~/.openclaw/tui-bridge/<safe-session-key>/session.log
+~/.opencli/tui-bridge/<safe-session-key>/session.log
 ```
 
-`<safe-session-key>` is the openclaw `sessionKey` (`channel:thread`)
+`<safe-session-key>` is the opencli `sessionKey` (`channel:thread`)
 slugified plus a 12-char SHA1 suffix to keep paths unique and filesystem-safe.
 The log captures everything the PTY emitted, useful for postmortem when the
 bridge replied with a snapshot but you want the full sequence.
 
-If openclaw is restarted while a binding is still on disk, the next inbound
+If opencli is restarted while a binding is still on disk, the next inbound
 message on that conversation respawns the process with the original
 command/args/cwd/mode (stored in the binding's `data` payload).
 
@@ -175,7 +175,7 @@ Expected: `{ id: 'tui-bridge', name: 'TUI Bridge', hasRegister: 'function' }`.
 
 ### End-to-end without a real messager
 
-openclaw ships a local-channel mode for exactly this — a terminal client that
+opencli ships a local-channel mode for exactly this — a terminal client that
 talks to the gateway as if it were a chat surface:
 
 ```
@@ -198,14 +198,14 @@ For tighter integration tests, import the handler functions directly from
 `extensions/tui-bridge/src/inbound-claim.ts` and call them with synthetic
 `PluginHookInboundClaimEvent` / `PluginHookInboundClaimContext` shapes. The
 SDK types for those events are exported from
-`openclaw/plugin-sdk/plugin-entry`. This bypasses the gateway and channel
+`opencli/plugin-sdk/plugin-entry`. This bypasses the gateway and channel
 layers entirely; use it to stress edge cases (no-binding, unauthorized,
 empty-body, exited-process) without a running daemon.
 
 ## Internals (one paragraph)
 
 `process-pool.ts` owns a global `Map<sessionKey, Session>` keyed via
-`Symbol.for("openclaw.tui-bridge.sessions")`, so the registry survives module
+`Symbol.for("opencli.tui-bridge.sessions")`, so the registry survives module
 re-imports inside a single Node process. Each `Session` carries the live
 `@lydell/node-pty` handle, a raw byte `buffer`, an ANSI-stripped `txtBuffer`,
 and (in `tui` mode) an `@xterm/headless` Terminal that scrubs into a
@@ -220,15 +220,15 @@ plugin-owned, and `ctx.detachConversationBinding()` on `stop`.
 
 ## Troubleshooting
 
-| Symptom                                                        | Likely cause                                                            | Fix                                                                              |
-| -------------------------------------------------------------- | ----------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| `pnpm dev plugins inspect tui-bridge` shows `Status: disabled` | Default activation is `onStartup: false`                                | `pnpm dev plugins enable tui-bridge`                                             |
-| `Failed to start TUI: spawn <cmd> ENOENT`                      | Binary not on `PATH` for the gateway process                            | Use a full path, or ensure the binary is installed where the gateway runs        |
-| Replies arrive but look mangled                                | App expects a real terminal (cursor moves, clears) but is in `txt` mode | `/tui mode tui`                                                                  |
-| `tui` mode replies are huge / scroll back lost                 | Snapshot is full screen each time                                       | Increase `cols`/`rows`, or stick with `txt` mode                                 |
-| Bot goes silent after first message                            | App is waiting for input but stdin echo wasn't sent with newline        | Use `/tui sendln` or send a plain message (always appends `\n`)                  |
-| `Could not bind conversation: …`                               | Some channel/account combos require approval — message body explains    | Approve via openclaw's binding-approval flow, then retry                         |
-| PTY logs not appearing                                         | `logDir` not writable                                                   | Override via plugin config `logDir`, or check perms on `~/.openclaw/tui-bridge/` |
+| Symptom                                                        | Likely cause                                                            | Fix                                                                             |
+| -------------------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `pnpm dev plugins inspect tui-bridge` shows `Status: disabled` | Default activation is `onStartup: false`                                | `pnpm dev plugins enable tui-bridge`                                            |
+| `Failed to start TUI: spawn <cmd> ENOENT`                      | Binary not on `PATH` for the gateway process                            | Use a full path, or ensure the binary is installed where the gateway runs       |
+| Replies arrive but look mangled                                | App expects a real terminal (cursor moves, clears) but is in `txt` mode | `/tui mode tui`                                                                 |
+| `tui` mode replies are huge / scroll back lost                 | Snapshot is full screen each time                                       | Increase `cols`/`rows`, or stick with `txt` mode                                |
+| Bot goes silent after first message                            | App is waiting for input but stdin echo wasn't sent with newline        | Use `/tui sendln` or send a plain message (always appends `\n`)                 |
+| `Could not bind conversation: …`                               | Some channel/account combos require approval — message body explains    | Approve via opencli's binding-approval flow, then retry                         |
+| PTY logs not appearing                                         | `logDir` not writable                                                   | Override via plugin config `logDir`, or check perms on `~/.opencli/tui-bridge/` |
 
 ## Reference
 

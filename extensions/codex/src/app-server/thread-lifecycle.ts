@@ -1,7 +1,7 @@
 import {
   embeddedAgentLog,
   type EmbeddedRunAttemptParams,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "opencli/plugin-sdk/agent-harness-runtime";
 import { renderCodexPromptOverlay } from "../../prompt-overlay.js";
 import { isModernCodexModel } from "../../provider.js";
 import type { CodexAppServerClient } from "./client.js";
@@ -104,7 +104,7 @@ export async function startOrResumeThread(params: {
       approvalsReviewer: params.appServer.approvalsReviewer,
       sandbox: params.appServer.sandbox,
       ...(params.appServer.serviceTier ? { serviceTier: params.appServer.serviceTier } : {}),
-      serviceName: "OpenClaw",
+      serviceName: "OpenCLI",
       ...(params.config ? { config: params.config } : {}),
       developerInstructions:
         params.developerInstructions ?? buildDeveloperInstructions(params.params),
@@ -222,8 +222,8 @@ function stabilizeJsonValue(value: JsonValue): JsonValue {
 export function buildDeveloperInstructions(params: EmbeddedRunAttemptParams): string {
   const promptOverlay = renderCodexRuntimePromptOverlay(params);
   const sections = [
-    "You are running inside OpenClaw. Use OpenClaw dynamic tools for messaging, cron, sessions, and host actions when available.",
-    "Preserve the user's existing channel/session context. If sending a channel reply, use the OpenClaw messaging tool instead of describing that you would reply.",
+    "You are running inside OpenCLI. Use OpenCLI dynamic tools for messaging, cron, sessions, and host actions when available.",
+    "Preserve the user's existing channel/session context. If sending a channel reply, use the OpenCLI messaging tool instead of describing that you would reply.",
     promptOverlay,
     params.extraSystemPrompt,
     params.skillsSnapshot?.prompt,
@@ -277,7 +277,7 @@ function buildUserInput(
 function resolveCodexAppServerModelProvider(provider: string): string | undefined {
   const normalized = provider.trim();
   if (!normalized || normalized === "codex") {
-    // `codex` is OpenClaw's virtual provider; let Codex app-server keep its
+    // `codex` is OpenCLI's virtual provider; let Codex app-server keep its
     // native provider/auth selection instead of forcing the legacy OpenAI path.
     return undefined;
   }

@@ -1,10 +1,10 @@
-import { parseFiniteNumber } from "openclaw/plugin-sdk/number-runtime";
+import { parseFiniteNumber } from "opencli/plugin-sdk/number-runtime";
 import {
   asNullableRecord,
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
   readStringField,
-} from "openclaw/plugin-sdk/text-runtime";
+} from "opencli/plugin-sdk/text-runtime";
 import { extractHandleFromChatGuid, normalizeBlueBubblesHandle } from "./targets.js";
 import type { BlueBubblesAttachment } from "./types.js";
 

@@ -12,28 +12,28 @@ run_channel_scenario() {
     "bundled-channel-deps-$channel" \
     "$DOCKER_RUN_TIMEOUT" \
     "bundled-channel-deps-$channel" \
-    -e OPENCLAW_CHANNEL_UNDER_TEST="$channel" \
-    -e OPENCLAW_DEP_SENTINEL="$dep_sentinel" \
+    -e OPENCLI_CHANNEL_UNDER_TEST="$channel" \
+    -e OPENCLI_DEP_SENTINEL="$dep_sentinel" \
     "${DOCKER_E2E_PACKAGE_ARGS[@]}" \
     -i "$IMAGE_NAME" bash -s <<'EOF'
 set -euo pipefail
 
-source scripts/lib/openclaw-e2e-instance.sh
+source scripts/lib/opencli-e2e-instance.sh
 source scripts/e2e/lib/bundled-channel/common.sh
-openclaw_e2e_eval_test_state_from_b64 "${OPENCLAW_TEST_STATE_SCRIPT_B64:?missing OPENCLAW_TEST_STATE_SCRIPT_B64}"
+opencli_e2e_eval_test_state_from_b64 "${OPENCLI_TEST_STATE_SCRIPT_B64:?missing OPENCLI_TEST_STATE_SCRIPT_B64}"
 export NPM_CONFIG_PREFIX="$HOME/.npm-global"
 export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
-export OPENAI_API_KEY="sk-openclaw-bundled-channel-deps-e2e"
-export OPENCLAW_NO_ONBOARD=1
+export OPENAI_API_KEY="sk-opencli-bundled-channel-deps-e2e"
+export OPENCLI_NO_ONBOARD=1
 
 TOKEN="bundled-channel-deps-token"
 PORT="18789"
-CHANNEL="${OPENCLAW_CHANNEL_UNDER_TEST:?missing OPENCLAW_CHANNEL_UNDER_TEST}"
-DEP_SENTINEL="${OPENCLAW_DEP_SENTINEL:?missing OPENCLAW_DEP_SENTINEL}"
+CHANNEL="${OPENCLI_CHANNEL_UNDER_TEST:?missing OPENCLI_CHANNEL_UNDER_TEST}"
+DEP_SENTINEL="${OPENCLI_DEP_SENTINEL:?missing OPENCLI_DEP_SENTINEL}"
 gateway_pid=""
 
 terminate_gateways() {
-  openclaw_e2e_terminate_gateways "${gateway_pid:-}"
+  opencli_e2e_terminate_gateways "${gateway_pid:-}"
 }
 
 cleanup() {
@@ -41,11 +41,11 @@ cleanup() {
 }
 trap cleanup EXIT
 
-bundled_channel_install_package /tmp/openclaw-install.log
+bundled_channel_install_package /tmp/opencli-install.log
 
-command -v openclaw >/dev/null
-package_root="$(openclaw_e2e_package_root)"
-openclaw_e2e_assert_package_extensions "$package_root" telegram discord slack feishu memory-lancedb
+command -v opencli >/dev/null
+package_root="$(opencli_e2e_package_root)"
+opencli_e2e_assert_package_extensions "$package_root" telegram discord slack feishu memory-lancedb
 
 if [ -d "$package_root/dist/extensions/$CHANNEL/node_modules" ]; then
   echo "$CHANNEL runtime deps should not be preinstalled in package" >&2
@@ -58,10 +58,10 @@ start_gateway() {
   local skip_sidecars="${2:-0}"
   : >"$log_file"
   if [ "$skip_sidecars" = "1" ]; then
-    OPENCLAW_SKIP_CHANNELS=1 OPENCLAW_SKIP_PROVIDERS=1 \
-      openclaw gateway --port "$PORT" --bind loopback --allow-unconfigured >"$log_file" 2>&1 &
+    OPENCLI_SKIP_CHANNELS=1 OPENCLI_SKIP_PROVIDERS=1 \
+      opencli gateway --port "$PORT" --bind loopback --allow-unconfigured >"$log_file" 2>&1 &
   else
-    openclaw gateway --port "$PORT" --bind loopback --allow-unconfigured >"$log_file" 2>&1 &
+    opencli gateway --port "$PORT" --bind loopback --allow-unconfigured >"$log_file" 2>&1 &
   fi
   gateway_pid="$!"
 
@@ -112,12 +112,12 @@ assert_channel_status() {
     echo "memory-lancedb plugin activation verified by dependency sentinel"
     return 0
   fi
-  local out="/tmp/openclaw-channel-status-$channel.json"
-  local err="/tmp/openclaw-channel-status-$channel.err"
-  local parse_err="/tmp/openclaw-channel-status-$channel.parse.err"
-  local parse_out="/tmp/openclaw-channel-status-$channel.parse.out"
+  local out="/tmp/opencli-channel-status-$channel.json"
+  local err="/tmp/opencli-channel-status-$channel.err"
+  local parse_err="/tmp/opencli-channel-status-$channel.parse.err"
+  local parse_out="/tmp/opencli-channel-status-$channel.parse.out"
   for _ in $(seq 1 30); do
-    if openclaw gateway call channels.status \
+    if opencli gateway call channels.status \
       --url "ws://127.0.0.1:$PORT" \
       --token "$TOKEN" \
       --timeout 10000 \
@@ -128,7 +128,7 @@ assert_channel_status() {
         return 0
       fi
     fi
-    if grep -Eq "\\[gateway\\] ready \\(.*\\b$channel\\b" /tmp/openclaw-"$channel"-*.log 2>/dev/null; then
+    if grep -Eq "\\[gateway\\] ready \\(.*\\b$channel\\b" /tmp/opencli-"$channel"-*.log 2>/dev/null; then
       echo "$channel channel plugin visible in gateway ready log"
       return 0
     fi
@@ -140,7 +140,7 @@ assert_channel_status() {
     cat "$parse_err" >&2 || true
     cat "$out" >&2 || true
   fi
-  cat /tmp/openclaw-"$channel"-*.log >&2 2>/dev/null || true
+  cat /tmp/opencli-"$channel"-*.log >&2 2>/dev/null || true
   return 1
 }
 
@@ -186,7 +186,7 @@ assert_no_dep_sentinel() {
 
 assert_no_install_stage() {
   local channel="$1"
-  local stage="$package_root/dist/extensions/$channel/.openclaw-install-stage"
+  local stage="$package_root/dist/extensions/$channel/.opencli-install-stage"
   if [ -e "$stage" ]; then
     echo "install stage should be cleaned after activation for $channel" >&2
     find "$stage" -maxdepth 4 -type f | sort | head -80 >&2 || true
@@ -196,25 +196,25 @@ assert_no_install_stage() {
 
 echo "Starting baseline gateway with OpenAI configured..."
 bundled_channel_write_config baseline
-start_gateway "/tmp/openclaw-$CHANNEL-baseline.log" 1
-wait_for_gateway_health "/tmp/openclaw-$CHANNEL-baseline.log"
+start_gateway "/tmp/opencli-$CHANNEL-baseline.log" 1
+wait_for_gateway_health "/tmp/opencli-$CHANNEL-baseline.log"
 stop_gateway
 assert_no_dep_sentinel "$CHANNEL" "$DEP_SENTINEL"
 
 echo "Enabling $CHANNEL by config edit, then restarting gateway..."
 bundled_channel_write_config "$CHANNEL"
-start_gateway "/tmp/openclaw-$CHANNEL-first.log"
-wait_for_gateway_health "/tmp/openclaw-$CHANNEL-first.log"
-assert_installed_once "/tmp/openclaw-$CHANNEL-first.log" "$CHANNEL" "$DEP_SENTINEL"
+start_gateway "/tmp/opencli-$CHANNEL-first.log"
+wait_for_gateway_health "/tmp/opencli-$CHANNEL-first.log"
+assert_installed_once "/tmp/opencli-$CHANNEL-first.log" "$CHANNEL" "$DEP_SENTINEL"
 assert_dep_sentinel "$CHANNEL" "$DEP_SENTINEL"
 assert_no_install_stage "$CHANNEL"
 assert_channel_status "$CHANNEL"
 stop_gateway
 
 echo "Restarting gateway again; $CHANNEL deps must stay installed..."
-start_gateway "/tmp/openclaw-$CHANNEL-second.log"
-wait_for_gateway_health "/tmp/openclaw-$CHANNEL-second.log"
-assert_not_installed "/tmp/openclaw-$CHANNEL-second.log" "$CHANNEL"
+start_gateway "/tmp/opencli-$CHANNEL-second.log"
+wait_for_gateway_health "/tmp/opencli-$CHANNEL-second.log"
+assert_not_installed "/tmp/opencli-$CHANNEL-second.log" "$CHANNEL"
 assert_no_install_stage "$CHANNEL"
 assert_channel_status "$CHANNEL"
 stop_gateway

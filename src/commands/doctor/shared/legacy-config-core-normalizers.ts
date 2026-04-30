@@ -3,7 +3,7 @@ import { isLegacyModelsAddCodexMetadataModel } from "../../../agents/openai-code
 import { normalizeProviderId } from "../../../agents/provider-id.js";
 import { resolveSingleAccountKeysToMove } from "../../../channels/plugins/setup-promotion-helpers.js";
 import { resolveNormalizedProviderModelMaxTokens } from "../../../config/defaults.js";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../../../config/types.opencli.js";
 import { DEFAULT_GOOGLE_API_BASE_URL } from "../../../infra/google-api-base-url.js";
 import { DEFAULT_ACCOUNT_ID } from "../../../routing/session-key.js";
 import {
@@ -15,9 +15,9 @@ import { isRecord } from "./legacy-config-record-shared.js";
 export { normalizeLegacyTalkConfig } from "./legacy-talk-config-normalizer.js";
 
 export function normalizeLegacyCommandsConfig(
-  cfg: OpenClawConfig,
+  cfg: OpenCLIConfig,
   changes: string[],
-): OpenClawConfig {
+): OpenCLIConfig {
   const rawCommands = cfg.commands;
   if (!isRecord(rawCommands) || !("modelsWrite" in rawCommands)) {
     return cfg;
@@ -29,14 +29,11 @@ export function normalizeLegacyCommandsConfig(
 
   return {
     ...cfg,
-    commands: commands as OpenClawConfig["commands"],
+    commands: commands as OpenCLIConfig["commands"],
   };
 }
 
-export function normalizeLegacyBrowserConfig(
-  cfg: OpenClawConfig,
-  changes: string[],
-): OpenClawConfig {
+export function normalizeLegacyBrowserConfig(cfg: OpenCLIConfig, changes: string[]): OpenCLIConfig {
   const rawBrowser = cfg.browser;
   if (!isRecord(rawBrowser)) {
     return cfg;
@@ -114,14 +111,14 @@ export function normalizeLegacyBrowserConfig(
 
   return {
     ...cfg,
-    browser: browser as OpenClawConfig["browser"],
+    browser: browser as OpenCLIConfig["browser"],
   };
 }
 
 export function seedMissingDefaultAccountsFromSingleAccountBase(
-  cfg: OpenClawConfig,
+  cfg: OpenCLIConfig,
   changes: string[],
-): OpenClawConfig {
+): OpenCLIConfig {
   const channels = cfg.channels as Record<string, unknown> | undefined;
   if (!channels) {
     return cfg;
@@ -184,17 +181,17 @@ export function seedMissingDefaultAccountsFromSingleAccountBase(
 
   return {
     ...cfg,
-    channels: nextChannels as OpenClawConfig["channels"],
+    channels: nextChannels as OpenCLIConfig["channels"],
   };
 }
 
 type ModelProviderEntry = Partial<
-  NonNullable<NonNullable<OpenClawConfig["models"]>["providers"]>[string]
+  NonNullable<NonNullable<OpenCLIConfig["models"]>["providers"]>[string]
 >;
-type ModelsConfigPatch = Partial<NonNullable<OpenClawConfig["models"]>>;
+type ModelsConfigPatch = Partial<NonNullable<OpenCLIConfig["models"]>>;
 type ModelDefinitionEntry = NonNullable<ModelProviderEntry["models"]>[number];
 type AgentRuntimePolicyPatch = NonNullable<
-  NonNullable<NonNullable<OpenClawConfig["agents"]>["defaults"]>["agentRuntime"]
+  NonNullable<NonNullable<OpenCLIConfig["agents"]>["defaults"]>["agentRuntime"]
 >;
 
 function mergeModelEntry(legacyEntry: unknown, currentEntry: unknown): unknown {
@@ -332,9 +329,9 @@ function normalizeLegacyRuntimeAgentContainer(
 }
 
 export function normalizeLegacyRuntimeModelRefs(
-  cfg: OpenClawConfig,
+  cfg: OpenCLIConfig,
   changes: string[],
-): OpenClawConfig {
+): OpenCLIConfig {
   const rawAgents = cfg.agents;
   if (!isRecord(rawAgents)) {
     return cfg;
@@ -376,15 +373,15 @@ export function normalizeLegacyRuntimeModelRefs(
   return changed
     ? {
         ...cfg,
-        agents: nextAgents as OpenClawConfig["agents"],
+        agents: nextAgents as OpenCLIConfig["agents"],
       }
     : cfg;
 }
 
 export function normalizeLegacyOpenAICodexModelsAddMetadata(
-  cfg: OpenClawConfig,
+  cfg: OpenCLIConfig,
   changes: string[],
-): OpenClawConfig {
+): OpenCLIConfig {
   const rawModels = cfg.models;
   if (!isRecord(rawModels) || !isRecord(rawModels.providers)) {
     return cfg;
@@ -442,15 +439,15 @@ export function normalizeLegacyOpenAICodexModelsAddMetadata(
     ...cfg,
     models: {
       ...rawModels,
-      providers: nextProviders as NonNullable<OpenClawConfig["models"]>["providers"],
+      providers: nextProviders as NonNullable<OpenCLIConfig["models"]>["providers"],
     },
   };
 }
 
 export function normalizeLegacyOpenAIModelProviderApi(
-  cfg: OpenClawConfig,
+  cfg: OpenCLIConfig,
   changes: string[],
-): OpenClawConfig {
+): OpenCLIConfig {
   const rawModels = cfg.models;
   if (!isRecord(rawModels) || !isRecord(rawModels.providers)) {
     return cfg;
@@ -513,15 +510,15 @@ export function normalizeLegacyOpenAIModelProviderApi(
     ...cfg,
     models: {
       ...rawModels,
-      providers: nextProviders as NonNullable<OpenClawConfig["models"]>["providers"],
+      providers: nextProviders as NonNullable<OpenCLIConfig["models"]>["providers"],
     },
   };
 }
 
 export function normalizeLegacyNanoBananaSkill(
-  cfg: OpenClawConfig,
+  cfg: OpenCLIConfig,
   changes: string[],
-): OpenClawConfig {
+): OpenCLIConfig {
   const NANO_BANANA_SKILL_KEY = "nano-banana-pro";
   const NANO_BANANA_MODEL = "google/gemini-3-pro-image-preview";
   const rawSkills = cfg.skills;
@@ -620,10 +617,10 @@ export function normalizeLegacyNanoBananaSkill(
       rawGoogle.models = [];
     }
     rawProviders.google = rawGoogle;
-    rawModels.providers = rawProviders as NonNullable<OpenClawConfig["models"]>["providers"];
+    rawModels.providers = rawProviders as NonNullable<OpenCLIConfig["models"]>["providers"];
     next = {
       ...next,
-      models: rawModels as OpenClawConfig["models"],
+      models: rawModels as OpenCLIConfig["models"],
     };
     changes.push(
       `Moved skills.entries.${NANO_BANANA_SKILL_KEY}.${legacyEnvApiKey ? "env.GEMINI_API_KEY" : "apiKey"} → models.providers.google.apiKey.`,
@@ -655,9 +652,9 @@ export function normalizeLegacyNanoBananaSkill(
 }
 
 export function normalizeLegacyCrossContextMessageConfig(
-  cfg: OpenClawConfig,
+  cfg: OpenCLIConfig,
   changes: string[],
-): OpenClawConfig {
+): OpenCLIConfig {
   const rawTools = cfg.tools;
   if (!isRecord(rawTools)) {
     return cfg;
@@ -749,9 +746,9 @@ function migrateLegacyDeepgramCompat(params: {
 }
 
 export function normalizeLegacyMediaProviderOptions(
-  cfg: OpenClawConfig,
+  cfg: OpenCLIConfig,
   changes: string[],
-): OpenClawConfig {
+): OpenCLIConfig {
   const rawTools = cfg.tools;
   if (!isRecord(rawTools)) {
     return cfg;
@@ -821,15 +818,15 @@ export function normalizeLegacyMediaProviderOptions(
     ...cfg,
     tools: {
       ...cfg.tools,
-      media: nextMedia as NonNullable<OpenClawConfig["tools"]>["media"],
+      media: nextMedia as NonNullable<OpenCLIConfig["tools"]>["media"],
     },
   };
 }
 
 export function normalizeLegacyMistralModelMaxTokens(
-  cfg: OpenClawConfig,
+  cfg: OpenCLIConfig,
   changes: string[],
-): OpenClawConfig {
+): OpenCLIConfig {
   const rawProviders = cfg.models?.providers;
   if (!isRecord(rawProviders)) {
     return cfg;
@@ -900,7 +897,7 @@ export function normalizeLegacyMistralModelMaxTokens(
     ...cfg,
     models: {
       ...cfg.models,
-      providers: nextProviders as NonNullable<OpenClawConfig["models"]>["providers"],
+      providers: nextProviders as NonNullable<OpenCLIConfig["models"]>["providers"],
     },
   };
 }

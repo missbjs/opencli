@@ -1,5 +1,5 @@
 ---
-summary: "CLI reference for `openclaw skills` (search/install/update/list/info/check)"
+summary: "CLI reference for `opencli skills` (search/install/update/list/info/check)"
 read_when:
   - You want to see which skills are available and ready to run
   - You want to search, install, or update skills from ClawHub
@@ -7,7 +7,7 @@ read_when:
 title: "Skills"
 ---
 
-# `openclaw skills`
+# `opencli skills`
 
 Inspect local skills and install/update skills from ClawHub.
 
@@ -20,26 +20,26 @@ Related:
 ## Commands
 
 ```bash
-openclaw skills search "calendar"
-openclaw skills search --limit 20 --json
-openclaw skills install <slug>
-openclaw skills install <slug> --version <version>
-openclaw skills install <slug> --force
-openclaw skills install <slug> --agent <id>
-openclaw skills update <slug>
-openclaw skills update --all
-openclaw skills update --all --agent <id>
-openclaw skills list
-openclaw skills list --eligible
-openclaw skills list --json
-openclaw skills list --verbose
-openclaw skills list --agent <id>
-openclaw skills info <name>
-openclaw skills info <name> --json
-openclaw skills info <name> --agent <id>
-openclaw skills check
-openclaw skills check --json
-openclaw skills check --agent <id>
+opencli skills search "calendar"
+opencli skills search --limit 20 --json
+opencli skills install <slug>
+opencli skills install <slug> --version <version>
+opencli skills install <slug> --force
+opencli skills install <slug> --agent <id>
+opencli skills update <slug>
+opencli skills update --all
+opencli skills update --all --agent <id>
+opencli skills list
+opencli skills list --eligible
+opencli skills list --json
+opencli skills list --verbose
+opencli skills list --agent <id>
+opencli skills info <name>
+opencli skills info <name> --json
+opencli skills info <name> --agent <id>
+opencli skills check
+opencli skills check --json
+opencli skills check --agent <id>
 ```
 
 `search`/`install`/`update` use ClawHub directly and install into the active

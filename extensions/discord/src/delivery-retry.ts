@@ -1,9 +1,5 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
-import {
-  resolveRetryConfig,
-  retryAsync,
-  type RetryConfig,
-} from "openclaw/plugin-sdk/retry-runtime";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
+import { resolveRetryConfig, retryAsync, type RetryConfig } from "opencli/plugin-sdk/retry-runtime";
 import { resolveDiscordAccount } from "./accounts.js";
 
 const DISCORD_DELIVERY_RETRY_DEFAULTS = {
@@ -38,7 +34,7 @@ function getDiscordDeliveryRetryAfterMs(err: unknown): number | undefined {
 }
 
 export async function withDiscordDeliveryRetry<T>(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   accountId?: string | null;
   fn: () => Promise<T>;
 }): Promise<T> {

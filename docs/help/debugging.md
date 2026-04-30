@@ -13,13 +13,13 @@ Debugging helpers for streaming output, especially when a provider mixes reasoni
 
 Use `/debug` in chat to set **runtime-only** config overrides (memory, not disk).
 `/debug` is disabled by default; enable with `commands.debug: true`.
-This is handy when you need to toggle obscure settings without editing `openclaw.json`.
+This is handy when you need to toggle obscure settings without editing `opencli.json`.
 
 Examples:
 
 ```
 /debug show
-/debug set messages.responsePrefix="[openclaw]"
+/debug set messages.responsePrefix="[opencli]"
 /debug unset messages.responsePrefix
 /debug reset
 ```
@@ -45,7 +45,7 @@ Keep using `/verbose` for normal verbose status/tool output, and keep using
 
 ## Plugin lifecycle trace
 
-Use `OPENCLAW_PLUGIN_LIFECYCLE_TRACE=1` when plugin lifecycle commands feel slow
+Use `OPENCLI_PLUGIN_LIFECYCLE_TRACE=1` when plugin lifecycle commands feel slow
 and you need a built-in phase breakdown for plugin metadata, discovery, registry,
 runtime mirror, config mutation, and refresh work. The trace is opt-in and writes
 to stderr, so JSON command output remains parseable.
@@ -53,7 +53,7 @@ to stderr, so JSON command output remains parseable.
 Example:
 
 ```bash
-OPENCLAW_PLUGIN_LIFECYCLE_TRACE=1 openclaw plugins install tokenjuice --force
+OPENCLI_PLUGIN_LIFECYCLE_TRACE=1 opencli plugins install tokenjuice --force
 ```
 
 Example output:
@@ -66,12 +66,12 @@ Example output:
 
 Use this for plugin lifecycle investigation before reaching for a CPU profiler.
 If the command is running from a source checkout, prefer measuring the built
-runtime with `node dist/entry.js ...` after `pnpm build`; `pnpm openclaw ...`
+runtime with `node dist/entry.js ...` after `pnpm build`; `pnpm opencli ...`
 also measures source-runner overhead.
 
 ## Temporary CLI debug timing
 
-OpenClaw keeps `src/cli/debug-timing.ts` as a small helper for local
+OpenCLI keeps `src/cli/debug-timing.ts` as a small helper for local
 investigation. It is intentionally not wired into CLI startup, command routing,
 or any command by default. Use it only while debugging a slow command, then
 remove the import and spans before landing the behavior change.
@@ -82,7 +82,7 @@ deciding whether to use a CPU profiler or fix a specific subsystem.
 ### Add temporary spans
 
 Add the helper near the code you are investigating. For example, while debugging
-`openclaw models list`, a temporary patch in
+`opencli models list`, a temporary patch in
 `src/commands/models/list.list-command.ts` might look like this:
 
 ```ts
@@ -121,13 +121,13 @@ Guidelines:
 Readable mode is best for live debugging:
 
 ```bash
-OPENCLAW_DEBUG_TIMING=1 pnpm openclaw models list --all --provider moonshot
+OPENCLI_DEBUG_TIMING=1 pnpm opencli models list --all --provider moonshot
 ```
 
 Example output from a temporary `models list` investigation:
 
 ```text
-OpenClaw CLI debug timing: models list
+OpenCLI CLI debug timing: models list
      0ms     +0ms start all=true json=false local=false plain=false provider="moonshot"
      2ms     +2ms debug:models:list:import_runtime duration=2ms
     17ms    +14ms debug:models:list:load_config duration=14ms sourceConfig=true
@@ -172,7 +172,7 @@ production paths.
 Use JSON mode when you want to save or compare timing data:
 
 ```bash
-OPENCLAW_DEBUG_TIMING=json pnpm openclaw models list --all --provider moonshot \
+OPENCLI_DEBUG_TIMING=json pnpm opencli models list --all --provider moonshot \
   2> .artifacts/models-list-timing.jsonl
 ```
 
@@ -217,13 +217,13 @@ pnpm gateway:watch
 ```
 
 By default, this starts or restarts a tmux session named
-`openclaw-gateway-watch-main` (or a profile/port-specific variant such as
-`openclaw-gateway-watch-dev-19001`) and auto-attaches from interactive terminals.
+`opencli-gateway-watch-main` (or a profile/port-specific variant such as
+`opencli-gateway-watch-dev-19001`) and auto-attaches from interactive terminals.
 Non-interactive shells, CI, and agent exec calls stay detached and print attach
 instructions instead. Attach manually when needed:
 
 ```bash
-tmux attach -t openclaw-gateway-watch-main
+tmux attach -t opencli-gateway-watch-main
 ```
 
 The tmux pane runs the raw watcher:
@@ -237,23 +237,23 @@ Use foreground mode when tmux is not wanted:
 ```bash
 pnpm gateway:watch:raw
 # or
-OPENCLAW_GATEWAY_WATCH_TMUX=0 pnpm gateway:watch
+OPENCLI_GATEWAY_WATCH_TMUX=0 pnpm gateway:watch
 ```
 
 Disable auto-attach while keeping tmux management:
 
 ```bash
-OPENCLAW_GATEWAY_WATCH_ATTACH=0 pnpm gateway:watch
+OPENCLI_GATEWAY_WATCH_ATTACH=0 pnpm gateway:watch
 ```
 
 The tmux wrapper carries common non-secret runtime selectors such as
-`OPENCLAW_PROFILE`, `OPENCLAW_CONFIG_PATH`, `OPENCLAW_STATE_DIR`,
-`OPENCLAW_GATEWAY_PORT`, and `OPENCLAW_SKIP_CHANNELS` into the pane. Put
+`OPENCLI_PROFILE`, `OPENCLI_CONFIG_PATH`, `OPENCLI_STATE_DIR`,
+`OPENCLI_GATEWAY_PORT`, and `OPENCLI_SKIP_CHANNELS` into the pane. Put
 provider credentials in your normal profile/config, or use raw foreground mode
 for one-off ephemeral secrets.
 
 The watcher restarts on build-relevant files under `src/`, extension source files,
-extension `package.json` and `openclaw.plugin.json` metadata, `tsconfig.json`,
+extension `package.json` and `opencli.plugin.json` metadata, `tsconfig.json`,
 `package.json`, and `tsdown.config.ts`. Extension metadata changes restart the
 gateway without forcing a `tsdown` rebuild; source and config changes still
 rebuild `dist` first.
@@ -268,7 +268,7 @@ are replaced instead of piling up.
 Use the dev profile to isolate state and spin up a safe, disposable setup for
 debugging. There are **two** `--dev` flags:
 
-- **Global `--dev` (profile):** isolates state under `~/.openclaw-dev` and
+- **Global `--dev` (profile):** isolates state under `~/.opencli-dev` and
   defaults the gateway port to `19001` (derived ports shift with it).
 - **`gateway --dev`: tells the Gateway to auto-create a default config +
   workspace** when missing (and skip BOOTSTRAP.md).
@@ -277,18 +277,18 @@ Recommended flow (dev profile + dev bootstrap):
 
 ```bash
 pnpm gateway:dev
-OPENCLAW_PROFILE=dev openclaw tui
+OPENCLI_PROFILE=dev opencli tui
 ```
 
-If you don’t have a global install yet, run the CLI via `pnpm openclaw ...`.
+If you don’t have a global install yet, run the CLI via `pnpm opencli ...`.
 
 What this does:
 
 1. **Profile isolation** (global `--dev`)
-   - `OPENCLAW_PROFILE=dev`
-   - `OPENCLAW_STATE_DIR=~/.openclaw-dev`
-   - `OPENCLAW_CONFIG_PATH=~/.openclaw-dev/openclaw.json`
-   - `OPENCLAW_GATEWAY_PORT=19001` (browser/canvas shift accordingly)
+   - `OPENCLI_PROFILE=dev`
+   - `OPENCLI_STATE_DIR=~/.opencli-dev`
+   - `OPENCLI_CONFIG_PATH=~/.opencli-dev/opencli.json`
+   - `OPENCLI_GATEWAY_PORT=19001` (browser/canvas shift accordingly)
 
 2. **Dev bootstrap** (`gateway --dev`)
    - Writes a minimal config if missing (`gateway.mode=local`, bind loopback).
@@ -297,7 +297,7 @@ What this does:
    - Seeds the workspace files if missing:
      `AGENTS.md`, `SOUL.md`, `TOOLS.md`, `IDENTITY.md`, `USER.md`, `HEARTBEAT.md`.
    - Default identity: **C3‑PO** (protocol droid).
-   - Skips channel providers in dev mode (`OPENCLAW_SKIP_CHANNELS=1`).
+   - Skips channel providers in dev mode (`OPENCLI_SKIP_CHANNELS=1`).
 
 Reset flow (fresh start):
 
@@ -309,7 +309,7 @@ pnpm gateway:dev:reset
 `--dev` is a **global** profile flag and gets eaten by some runners. If you need to spell it out, use the env var form:
 
 ```bash
-OPENCLAW_PROFILE=dev openclaw gateway --dev --reset
+OPENCLI_PROFILE=dev opencli gateway --dev --reset
 ```
 
 </Note>
@@ -321,14 +321,14 @@ OPENCLAW_PROFILE=dev openclaw gateway --dev --reset
 If a non-dev gateway is already running (launchd or systemd), stop it first:
 
 ```bash
-openclaw gateway stop
+opencli gateway stop
 ```
 
 </Tip>
 
-## Raw stream logging (OpenClaw)
+## Raw stream logging (OpenCLI)
 
-OpenClaw can log the **raw assistant stream** before any filtering/formatting.
+OpenCLI can log the **raw assistant stream** before any filtering/formatting.
 This is the best way to see whether reasoning is arriving as plain text deltas
 (or as separate thinking blocks).
 
@@ -341,19 +341,19 @@ pnpm gateway:watch --raw-stream
 Optional path override:
 
 ```bash
-pnpm gateway:watch --raw-stream --raw-stream-path ~/.openclaw/logs/raw-stream.jsonl
+pnpm gateway:watch --raw-stream --raw-stream-path ~/.opencli/logs/raw-stream.jsonl
 ```
 
 Equivalent env vars:
 
 ```bash
-OPENCLAW_RAW_STREAM=1
-OPENCLAW_RAW_STREAM_PATH=~/.openclaw/logs/raw-stream.jsonl
+OPENCLI_RAW_STREAM=1
+OPENCLI_RAW_STREAM_PATH=~/.opencli/logs/raw-stream.jsonl
 ```
 
 Default file:
 
-`~/.openclaw/logs/raw-stream.jsonl`
+`~/.opencli/logs/raw-stream.jsonl`
 
 ## Raw chunk logging (pi-mono)
 

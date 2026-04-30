@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { bundledDistPluginFile } from "openclaw/plugin-sdk/test-fixtures";
+import { bundledDistPluginFile } from "opencli/plugin-sdk/test-fixtures";
 import { afterEach, describe, expect, it } from "vitest";
 import { stageBundledPluginRuntime } from "../../scripts/stage-bundled-plugin-runtime.mjs";
 import type { PluginJitiLoaderCache } from "./jiti-loader-cache.js";
@@ -26,14 +26,14 @@ function writeRuntimeFixtureText(rootDir: string, relativePath: string, value: s
 }
 
 function createBundledWhatsAppRuntimeFixture() {
-  const rootDir = makeTrackedTempDir("openclaw-whatsapp-boundary", tempDirs);
+  const rootDir = makeTrackedTempDir("opencli-whatsapp-boundary", tempDirs);
   for (const [relativePath, value] of Object.entries({
     "package.json": JSON.stringify(
       {
-        name: "openclaw",
+        name: "opencli",
         type: "module",
         bin: {
-          openclaw: "openclaw.mjs",
+          opencli: "opencli.mjs",
         },
         exports: {
           "./plugin-sdk": {
@@ -44,14 +44,14 @@ function createBundledWhatsAppRuntimeFixture() {
       null,
       2,
     ),
-    "openclaw.mjs": "export {};\n",
+    "opencli.mjs": "export {};\n",
     [bundledDistPluginFile("whatsapp", "index.js")]: "export default {};\n",
     [bundledDistPluginFile("whatsapp", "light-runtime-api.js")]:
       'export { getActiveWebListener } from "../../active-listener.js";\n',
     [bundledDistPluginFile("whatsapp", "runtime-api.js")]:
       'export { registerControllerForTest } from "../../connection-controller-registry.js";\n',
     "dist/connection-controller-registry.js": [
-      'const key = Symbol.for("openclaw.whatsapp.connectionControllerRegistry");',
+      'const key = Symbol.for("opencli.whatsapp.connectionControllerRegistry");',
       "const g = globalThis;",
       "if (!g[key]) {",
       "  g[key] = { controllers: new Map() };",

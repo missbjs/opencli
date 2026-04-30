@@ -1,6 +1,6 @@
-export { getChatChannelMeta, type ChannelPlugin } from "openclaw/plugin-sdk/core";
+export { getChatChannelMeta, type ChannelPlugin } from "opencli/plugin-sdk/core";
 export { buildChannelConfigSchema, WhatsAppConfigSchema } from "../config-api.js";
-export { DEFAULT_ACCOUNT_ID } from "openclaw/plugin-sdk/account-id";
+export { DEFAULT_ACCOUNT_ID } from "opencli/plugin-sdk/account-id";
 export {
   formatWhatsAppConfigAllowFromEntries,
   resolveWhatsAppConfigAllowFrom,
@@ -12,12 +12,12 @@ export {
   readReactionParams,
   readStringParam,
   ToolAuthorizationError,
-} from "openclaw/plugin-sdk/channel-actions";
-export { normalizeE164 } from "openclaw/plugin-sdk/account-resolution";
-export type { DmPolicy, GroupPolicy } from "openclaw/plugin-sdk/config-types";
-import type { OpenClawConfig as RuntimeOpenClawConfig } from "openclaw/plugin-sdk/config-types";
+} from "opencli/plugin-sdk/channel-actions";
+export { normalizeE164 } from "opencli/plugin-sdk/account-resolution";
+export type { DmPolicy, GroupPolicy } from "opencli/plugin-sdk/config-types";
+import type { OpenCLIConfig as RuntimeOpenCLIConfig } from "opencli/plugin-sdk/config-types";
 
-export { type ChannelMessageActionName } from "openclaw/plugin-sdk/channel-contract";
+export { type ChannelMessageActionName } from "opencli/plugin-sdk/channel-contract";
 export { loadOutboundMediaFromUrl } from "./outbound-media.runtime.js";
 export {
   resolveWhatsAppGroupRequireMention,
@@ -40,7 +40,7 @@ export {
 export { resolveWhatsAppOutboundTarget } from "./resolve-outbound-target.js";
 export { resolveWhatsAppReactionLevel } from "./reaction-level.js";
 
-export type OpenClawConfig = RuntimeOpenClawConfig;
+export type OpenCLIConfig = RuntimeOpenCLIConfig;
 export type { WhatsAppAccountConfig } from "./account-types.js";
 
 type MonitorWebChannel = typeof import("./channel.runtime.js").monitorWebChannel;

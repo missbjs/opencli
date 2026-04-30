@@ -13,7 +13,7 @@ minimumReleaseAgeExclude:
   - "axios"
   - "basic-ftp"
   - "hono"
-  - "openclaw"
+  - "opencli"
   - "protobufjs"
   - "vite"
   - "@cloudflare/workers-types"

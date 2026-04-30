@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { withTempHome as withTempHomeBase } from "openclaw/plugin-sdk/test-env";
+import { withTempHome as withTempHomeBase } from "opencli/plugin-sdk/test-env";
 import { beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
 import "./agent-command.test-mocks.js";
 import { __testing as acpManagerTesting } from "../acp/control-plane/manager.js";
@@ -10,7 +10,7 @@ import * as modelSelectionModule from "../agents/model-selection.js";
 import { runEmbeddedPiAgent } from "../agents/pi-embedded.js";
 import * as runtimeSnapshotModule from "../config/runtime-snapshot.js";
 import { clearSessionStoreCacheForTest } from "../config/sessions/store.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import {
   emitAgentEvent,
   onAgentEvent,
@@ -134,7 +134,7 @@ vi.mock("../agents/command/delivery.runtime.js", () => {
   return {
     deliverAgentCommandResult: vi.fn(
       async (params: {
-        cfg: OpenClawConfig;
+        cfg: OpenCLIConfig;
         deps: {
           sendMessageTelegram?: (
             to: string,
@@ -192,7 +192,7 @@ vi.mock("../config/sessions/transcript-resolve.runtime.js", () => {
       .join(separator);
   };
   const resolveSessionFile = (sessionId: string, agentId: string, sessionsDir?: string): string =>
-    joinPath(sessionsDir ?? ".openclaw", "agents", agentId, "sessions", `${sessionId}.jsonl`);
+    joinPath(sessionsDir ?? ".opencli", "agents", agentId, "sessions", `${sessionId}.jsonl`);
 
   return {
     resolveSessionTranscriptFile: vi.fn(
@@ -232,14 +232,14 @@ vi.mock("../config/sessions/transcript-resolve.runtime.js", () => {
 const runtime = createThrowingTestRuntime();
 
 async function withTempHome<T>(fn: (home: string) => Promise<T>): Promise<T> {
-  return withTempHomeBase(fn, { prefix: "openclaw-agent-", skipSessionCleanup: true });
+  return withTempHomeBase(fn, { prefix: "opencli-agent-", skipSessionCleanup: true });
 }
 
 function mockConfig(
   home: string,
   storePath: string,
-  agentOverrides?: Partial<NonNullable<NonNullable<OpenClawConfig["agents"]>["defaults"]>>,
-  telegramOverrides?: Partial<NonNullable<NonNullable<OpenClawConfig["channels"]>["telegram"]>>,
+  agentOverrides?: Partial<NonNullable<NonNullable<OpenCLIConfig["agents"]>["defaults"]>>,
+  telegramOverrides?: Partial<NonNullable<NonNullable<OpenCLIConfig["channels"]>["telegram"]>>,
   agentsList?: Array<{ id: string; default?: boolean }>,
 ) {
   const cfg = {
@@ -247,7 +247,7 @@ function mockConfig(
       defaults: {
         model: { primary: "anthropic/claude-opus-4-6" },
         models: { "anthropic/claude-opus-4-6": {} },
-        workspace: path.join(home, "openclaw"),
+        workspace: path.join(home, "opencli"),
         ...agentOverrides,
       },
       list: agentsList,
@@ -256,7 +256,7 @@ function mockConfig(
     channels: {
       telegram: telegramOverrides ? { ...telegramOverrides } : undefined,
     },
-  } as OpenClawConfig;
+  } as OpenCLIConfig;
   configIoMocks.loadConfig.mockReturnValue(cfg);
   return cfg;
 }
@@ -311,7 +311,7 @@ beforeEach(() => {
   vi.mocked(loadModelCatalog).mockResolvedValue([]);
   vi.mocked(modelSelectionModule.isCliProvider).mockImplementation(() => false);
   configIoMocks.readConfigFileSnapshotForWrite.mockResolvedValue({
-    snapshot: { valid: false, resolved: {} as OpenClawConfig },
+    snapshot: { valid: false, resolved: {} as OpenCLIConfig },
     writeOptions: {},
   });
 });
@@ -418,7 +418,7 @@ describe("agentCommand", () => {
 
       await agentCommand(
         {
-          message: "Reply with exactly OPENCLAW-MODEL-OK",
+          message: "Reply with exactly OPENCLI-MODEL-OK",
           agentId: "main",
           model: "openrouter/auto",
           modelRun: true,
@@ -470,7 +470,7 @@ describe("agentCommand", () => {
 
       await agentCommand(
         {
-          message: "Reply with exactly OPENCLAW-MODEL-OK",
+          message: "Reply with exactly OPENCLI-MODEL-OK",
           sessionKey,
           model: "openrouter/auto",
           modelRun: true,
@@ -485,7 +485,7 @@ describe("agentCommand", () => {
         expect.objectContaining({
           provider: "openrouter",
           model: "openrouter/auto",
-          prompt: "Reply with exactly OPENCLAW-MODEL-OK",
+          prompt: "Reply with exactly OPENCLI-MODEL-OK",
           modelRun: true,
           promptMode: "none",
           disableTools: true,

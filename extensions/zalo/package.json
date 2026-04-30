@@ -1,24 +1,24 @@
 {
-  "name": "@openclaw/zalo",
+  "name": "@opencli/zalo",
   "version": "2026.4.25",
-  "description": "OpenClaw Zalo channel plugin",
+  "description": "OpenCLI Zalo channel plugin",
   "type": "module",
   "dependencies": {
     "undici": "8.1.0"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*",
-    "openclaw": "workspace:*"
+    "@opencli/plugin-sdk": "workspace:*",
+    "opencli": "workspace:*"
   },
   "peerDependencies": {
-    "openclaw": ">=2026.4.25"
+    "opencli": ">=2026.4.25"
   },
   "peerDependenciesMeta": {
-    "openclaw": {
+    "opencli": {
       "optional": true
     }
   },
-  "openclaw": {
+  "opencli": {
     "extensions": [
       "./index.ts"
     ],
@@ -37,7 +37,7 @@
       "quickstartAllowFrom": true
     },
     "install": {
-      "npmSpec": "@openclaw/zalo",
+      "npmSpec": "@opencli/zalo",
       "defaultChoice": "npm",
       "minHostVersion": ">=2026.4.10"
     },
@@ -45,7 +45,7 @@
       "pluginApi": ">=2026.4.25"
     },
     "build": {
-      "openclawVersion": "2026.4.25"
+      "opencliVersion": "2026.4.25"
     },
     "release": {
       "publishToClawHub": true,

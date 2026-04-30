@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
 import {
   DEFAULT_CACHE_TTL_MINUTES,
   DEFAULT_SEARCH_COUNT,
@@ -12,11 +12,8 @@ import {
   withTrustedWebSearchEndpoint,
   wrapWebContent,
   writeCache,
-} from "openclaw/plugin-sdk/provider-web-search";
-import {
-  assertHttpUrlTargetsPrivateNetwork,
-  type LookupFn,
-} from "openclaw/plugin-sdk/ssrf-runtime";
+} from "opencli/plugin-sdk/provider-web-search";
+import { assertHttpUrlTargetsPrivateNetwork, type LookupFn } from "opencli/plugin-sdk/ssrf-runtime";
 import {
   resolveSearxngBaseUrl,
   resolveSearxngCategories,
@@ -131,7 +128,7 @@ function parseSearxngResponseText(text: string, count: number): SearxngResult[] 
 }
 
 export async function runSearxngSearch(params: {
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   query: string;
   count?: number;
   categories?: string;

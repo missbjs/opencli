@@ -1,7 +1,7 @@
 {
-  "name": "@openclaw/msteams",
+  "name": "@opencli/msteams",
   "version": "2026.4.25",
-  "description": "OpenClaw Microsoft Teams channel plugin",
+  "description": "OpenCLI Microsoft Teams channel plugin",
   "type": "module",
   "dependencies": {
     "@azure/identity": "4.13.1",
@@ -13,19 +13,19 @@
     "typebox": "1.1.34"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*",
+    "@opencli/plugin-sdk": "workspace:*",
     "@types/jsonwebtoken": "^9.0.10",
-    "openclaw": "workspace:*"
+    "opencli": "workspace:*"
   },
   "peerDependencies": {
-    "openclaw": ">=2026.4.25"
+    "opencli": ">=2026.4.25"
   },
   "peerDependenciesMeta": {
-    "openclaw": {
+    "opencli": {
       "optional": true
     }
   },
-  "openclaw": {
+  "opencli": {
     "extensions": [
       "./index.ts"
     ],
@@ -49,7 +49,7 @@
       }
     },
     "install": {
-      "npmSpec": "@openclaw/msteams",
+      "npmSpec": "@opencli/msteams",
       "defaultChoice": "npm",
       "minHostVersion": ">=2026.4.10"
     },
@@ -57,7 +57,7 @@
       "pluginApi": ">=2026.4.25"
     },
     "build": {
-      "openclawVersion": "2026.4.25"
+      "opencliVersion": "2026.4.25"
     },
     "bundle": {
       "stageRuntimeDependencies": true

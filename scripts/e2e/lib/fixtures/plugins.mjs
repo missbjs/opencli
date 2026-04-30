@@ -10,7 +10,7 @@ function writePluginDemo([dir]) {
     path.join(requireArg(dir, "dir"), "index.js"),
     'module.exports = { id: "demo-plugin", name: "Demo Plugin", description: "Docker E2E demo plugin", register(api) { api.registerTool(() => null, { name: "demo_tool" }); api.registerGatewayMethod("demo.ping", async () => ({ ok: true })); api.registerCli(() => {}, { commands: ["demo"] }); api.registerService({ id: "demo-service", start: () => {} }); }, };\n',
   );
-  writePluginManifest(path.join(dir, "openclaw.plugin.json"), "demo-plugin");
+  writePluginManifest(path.join(dir, "opencli.plugin.json"), "demo-plugin");
 }
 
 function writePlugin([dir, id, version, method, name]) {
@@ -24,15 +24,15 @@ function writePlugin([dir, id, version, method, name]) {
     requireArg(value, label);
   }
   writeJson(path.join(dir, "package.json"), {
-    name: `@openclaw/${id}`,
+    name: `@opencli/${id}`,
     version,
-    openclaw: { extensions: ["./index.js"] },
+    opencli: { extensions: ["./index.js"] },
   });
   write(
     path.join(dir, "index.js"),
     `module.exports = { id: ${JSON.stringify(id)}, name: ${JSON.stringify(name)}, register(api) { api.registerGatewayMethod(${JSON.stringify(method)}, async () => ({ ok: true })); }, };\n`,
   );
-  writePluginManifest(path.join(dir, "openclaw.plugin.json"), id);
+  writePluginManifest(path.join(dir, "opencli.plugin.json"), id);
 }
 
 function writeClaudeBundle([root]) {
@@ -67,7 +67,7 @@ function writePluginMarketplace([root]) {
   writeJson(path.join(process.env.HOME, ".claude", "plugins", "known_marketplaces.json"), {
     "claude-fixtures": {
       installLocation: root,
-      source: { type: "github", repo: "openclaw/fixture-marketplace" },
+      source: { type: "github", repo: "opencli/fixture-marketplace" },
     },
   });
 }

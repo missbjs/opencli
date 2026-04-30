@@ -1,9 +1,9 @@
 import { expect } from "vitest";
 import type { ChannelDirectoryEntry } from "../channel-contract.js";
-import type { OpenClawConfig } from "../config-types.js";
+import type { OpenCLIConfig } from "../config-types.js";
 
 export type DirectoryListFn = (params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   accountId?: string;
   query?: string | null;
   limit?: number | null;
@@ -11,7 +11,7 @@ export type DirectoryListFn = (params: {
 
 export async function expectDirectoryIds(
   listFn: DirectoryListFn,
-  cfg: OpenClawConfig,
+  cfg: OpenCLIConfig,
   expected: string[],
   options?: { sorted?: boolean },
 ) {

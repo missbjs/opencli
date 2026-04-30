@@ -1,12 +1,12 @@
 ---
-summary: "CLI reference for `openclaw logs` (tail gateway logs via RPC)"
+summary: "CLI reference for `opencli logs` (tail gateway logs via RPC)"
 read_when:
   - You need to tail Gateway logs remotely (without SSH)
   - You want JSON log lines for tooling
 title: "Logs"
 ---
 
-# `openclaw logs`
+# `opencli logs`
 
 Tail Gateway file logs over RPC (works in remote mode).
 
@@ -28,7 +28,7 @@ Related:
 
 ## Shared Gateway RPC options
 
-`openclaw logs` also accepts the standard Gateway client flags:
+`opencli logs` also accepts the standard Gateway client flags:
 
 - `--url <url>`: Gateway WebSocket URL
 - `--token <token>`: Gateway token
@@ -40,23 +40,23 @@ When you pass `--url`, the CLI does not auto-apply config or environment credent
 ## Examples
 
 ```bash
-openclaw logs
-openclaw logs --follow
-openclaw logs --follow --interval 2000
-openclaw logs --limit 500 --max-bytes 500000
-openclaw logs --json
-openclaw logs --plain
-openclaw logs --no-color
-openclaw logs --limit 500
-openclaw logs --local-time
-openclaw logs --follow --local-time
-openclaw logs --url ws://127.0.0.1:18789 --token "$OPENCLAW_GATEWAY_TOKEN"
+opencli logs
+opencli logs --follow
+opencli logs --follow --interval 2000
+opencli logs --limit 500 --max-bytes 500000
+opencli logs --json
+opencli logs --plain
+opencli logs --no-color
+opencli logs --limit 500
+opencli logs --local-time
+opencli logs --follow --local-time
+opencli logs --url ws://127.0.0.1:18789 --token "$OPENCLI_GATEWAY_TOKEN"
 ```
 
 ## Notes
 
 - Use `--local-time` to render timestamps in your local timezone.
-- If the implicit local loopback Gateway asks for pairing, closes during connect, or times out before `logs.tail` answers, `openclaw logs` falls back to the configured Gateway file log automatically. Explicit `--url` targets do not use this fallback.
+- If the implicit local loopback Gateway asks for pairing, closes during connect, or times out before `logs.tail` answers, `opencli logs` falls back to the configured Gateway file log automatically. Explicit `--url` targets do not use this fallback.
 
 ## Related
 

@@ -68,7 +68,7 @@ describe("WebRtcSdpRealtimeTalkTransport", () => {
         clientSecret: "client-secret-123",
         offerUrl: "https://api.openai.com/v1/realtime/calls",
         offerHeaders: {
-          originator: "openclaw",
+          originator: "opencli",
           version: "2026.3.22",
         },
       },
@@ -85,7 +85,7 @@ describe("WebRtcSdpRealtimeTalkTransport", () => {
       method: "POST",
       body: "offer-sdp",
       headers: {
-        originator: "openclaw",
+        originator: "opencli",
         version: "2026.3.22",
         Authorization: "Bearer client-secret-123",
         "Content-Type": "application/sdp",

@@ -6,11 +6,11 @@ import {
   type AcpRuntimeCapabilities,
   type AcpRuntimeDoctorReport,
   type AcpRuntimeStatus,
-} from "openclaw/plugin-sdk/acp-runtime-backend";
-import type { OpenClawPluginService, OpenClawPluginServiceContext } from "openclaw/plugin-sdk/core";
+} from "opencli/plugin-sdk/acp-runtime-backend";
+import type { OpenCLIPluginService, OpenCLIPluginServiceContext } from "opencli/plugin-sdk/core";
 
 const ACPX_BACKEND_ID = "acpx";
-const ENABLE_STARTUP_PROBE_ENV = "OPENCLAW_ACPX_RUNTIME_STARTUP_PROBE";
+const ENABLE_STARTUP_PROBE_ENV = "OPENCLI_ACPX_RUNTIME_STARTUP_PROBE";
 
 type RealAcpxServiceModule = typeof import("./src/service.js");
 type CreateAcpxRuntimeServiceParams = NonNullable<
@@ -24,10 +24,10 @@ type AcpxRuntimeLike = AcpRuntime & {
 };
 
 type DeferredServiceState = {
-  ctx: OpenClawPluginServiceContext | null;
+  ctx: OpenCLIPluginServiceContext | null;
   params: CreateAcpxRuntimeServiceParams;
   realRuntime: AcpxRuntimeLike | null;
-  realService: OpenClawPluginService | null;
+  realService: OpenCLIPluginService | null;
   startPromise: Promise<AcpxRuntimeLike> | null;
 };
 
@@ -53,7 +53,7 @@ async function startRealService(state: DeferredServiceState): Promise<AcpxRuntim
     const { createAcpxRuntimeService } = await loadServiceModule();
     const service = createAcpxRuntimeService(state.params);
     state.realService = service;
-    await service.start(state.ctx as OpenClawPluginServiceContext);
+    await service.start(state.ctx as OpenCLIPluginServiceContext);
     const backend = getAcpRuntimeBackend(ACPX_BACKEND_ID);
     if (!backend?.runtime) {
       throw new Error("ACPX runtime service did not register an ACP backend");
@@ -110,7 +110,7 @@ function createDeferredRuntime(state: DeferredServiceState): AcpxRuntimeLike {
 
 export function createAcpxRuntimeService(
   params: CreateAcpxRuntimeServiceParams = {},
-): OpenClawPluginService {
+): OpenCLIPluginService {
   const state: DeferredServiceState = {
     ctx: null,
     params,
@@ -122,8 +122,8 @@ export function createAcpxRuntimeService(
   return {
     id: "acpx-runtime",
     async start(ctx) {
-      if (process.env.OPENCLAW_SKIP_ACPX_RUNTIME === "1") {
-        ctx.logger.info("skipping embedded acpx runtime backend (OPENCLAW_SKIP_ACPX_RUNTIME=1)");
+      if (process.env.OPENCLI_SKIP_ACPX_RUNTIME === "1") {
+        ctx.logger.info("skipping embedded acpx runtime backend (OPENCLI_SKIP_ACPX_RUNTIME=1)");
         return;
       }
 

@@ -1,10 +1,10 @@
-import type { OpenClawPluginCommandDefinition } from "openclaw/plugin-sdk/core";
+import type { OpenCLIPluginCommandDefinition } from "opencli/plugin-sdk/core";
 import { describe, expect, it, vi } from "vitest";
 import type { PluginRuntime } from "./api.js";
 import register from "./index.js";
 
 function createHarness(config: Record<string, unknown>) {
-  let command: OpenClawPluginCommandDefinition | undefined;
+  let command: OpenCLIPluginCommandDefinition | undefined;
   const runtime = {
     config: {
       current: vi.fn(() => config),
@@ -20,7 +20,7 @@ function createHarness(config: Record<string, unknown>) {
   } as unknown as PluginRuntime;
   const api = {
     runtime,
-    registerCommand: vi.fn((definition: OpenClawPluginCommandDefinition) => {
+    registerCommand: vi.fn((definition: OpenCLIPluginCommandDefinition) => {
       command = definition;
     }),
   };

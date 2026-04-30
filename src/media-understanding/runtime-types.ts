@@ -1,11 +1,11 @@
-import type { OpenClawConfig } from "../config/types.js";
+import type { OpenCLIConfig } from "../config/types.js";
 import type { ActiveMediaModel } from "./active-model.types.js";
 import type { MediaUnderstandingOutput, MediaUnderstandingProvider } from "./types.js";
 
 export type RunMediaUnderstandingFileParams = {
   capability: "image" | "audio" | "video";
   filePath: string;
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   agentDir?: string;
   mime?: string;
   activeModel?: ActiveMediaModel;
@@ -22,7 +22,7 @@ export type RunMediaUnderstandingFileResult = {
 
 export type DescribeImageFileParams = {
   filePath: string;
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   agentDir?: string;
   mime?: string;
   activeModel?: ActiveMediaModel;
@@ -32,7 +32,7 @@ export type DescribeImageFileParams = {
 
 export type DescribeImageFileWithModelParams = {
   filePath: string;
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   agentDir?: string;
   mime?: string;
   provider: string;
@@ -48,7 +48,7 @@ export type DescribeImageFileWithModelResult = Awaited<
 
 export type DescribeVideoFileParams = {
   filePath: string;
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   agentDir?: string;
   mime?: string;
   activeModel?: ActiveMediaModel;
@@ -56,7 +56,7 @@ export type DescribeVideoFileParams = {
 
 export type TranscribeAudioFileParams = {
   filePath: string;
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   agentDir?: string;
   mime?: string;
   activeModel?: ActiveMediaModel;

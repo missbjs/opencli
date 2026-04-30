@@ -5,7 +5,7 @@ read_when:
 title: "Tlon"
 ---
 
-Tlon is a decentralized messenger built on Urbit. OpenClaw connects to your Urbit ship and can
+Tlon is a decentralized messenger built on Urbit. OpenCLI connects to your Urbit ship and can
 respond to DMs and group chat messages. Group replies require an @ mention by default and can
 be further restricted via allowlists.
 
@@ -14,7 +14,7 @@ image uploads are supported. Reactions and polls are not yet supported.
 
 ## Bundled plugin
 
-Tlon ships as a bundled plugin in current OpenClaw releases, so normal packaged
+Tlon ships as a bundled plugin in current OpenCLI releases, so normal packaged
 builds do not need a separate install.
 
 If you are on an older build or a custom install that excludes Tlon, install a
@@ -23,17 +23,17 @@ current npm package when one is published:
 Install via CLI (npm registry, when a current package exists):
 
 ```bash
-openclaw plugins install @openclaw/tlon
+opencli plugins install @opencli/tlon
 ```
 
-If npm reports the OpenClaw-owned package as deprecated, use a current packaged
-OpenClaw build or the local checkout path until a newer npm package is
+If npm reports the OpenCLI-owned package as deprecated, use a current packaged
+OpenCLI build or the local checkout path until a newer npm package is
 published.
 
 Local checkout (when running from a git repo):
 
 ```bash
-openclaw plugins install ./path/to/local/tlon-plugin
+opencli plugins install ./path/to/local/tlon-plugin
 ```
 
 Details: [Plugins](/tools/plugin)
@@ -41,7 +41,7 @@ Details: [Plugins](/tools/plugin)
 ## Setup
 
 1. Ensure the Tlon plugin is available.
-   - Current packaged OpenClaw releases already bundle it.
+   - Current packaged OpenCLI releases already bundle it.
    - Older/custom installs can add it manually with the commands above.
 2. Gather your ship URL and login code.
 3. Configure `channels.tlon`.
@@ -66,7 +66,7 @@ Minimal config (single account):
 
 ## Private/LAN ships
 
-By default, OpenClaw blocks private/internal hostnames and IP ranges for SSRF protection.
+By default, OpenCLI blocks private/internal hostnames and IP ranges for SSRF protection.
 If your ship is running on a private network (localhost, LAN IP, or internal hostname),
 you must explicitly opt in:
 
@@ -205,7 +205,7 @@ Auto-accept group invites:
 
 ## Delivery targets (CLI/cron)
 
-Use these with `openclaw message send` or cron delivery:
+Use these with `opencli message send` or cron delivery:
 
 - DM: `~sampel-palnet` or `dm/~sampel-palnet`
 - Group: `chat/~host-ship/channel` or `group:~host-ship/channel`
@@ -242,10 +242,10 @@ The skill is automatically available when the plugin is installed.
 Run this ladder first:
 
 ```bash
-openclaw status
-openclaw gateway status
-openclaw logs --follow
-openclaw doctor
+opencli status
+opencli gateway status
+opencli logs --follow
+opencli doctor
 ```
 
 Common failures:
@@ -279,7 +279,7 @@ Provider options:
 ## Notes
 
 - Group replies require a mention (e.g. `~your-bot-ship`) to respond.
-- Thread replies: if the inbound message is in a thread, OpenClaw replies in-thread.
+- Thread replies: if the inbound message is in a thread, OpenCLI replies in-thread.
 - Rich text: Markdown formatting (bold, italic, code, headers, lists) is converted to Tlon's native format.
 - Images: URLs are uploaded to Tlon storage and embedded as image blocks.
 

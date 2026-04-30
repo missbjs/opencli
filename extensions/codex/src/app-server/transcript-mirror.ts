@@ -6,7 +6,7 @@ import {
   emitSessionTranscriptUpdate,
   runAgentHarnessBeforeMessageWriteHook,
   type AgentMessage,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "opencli/plugin-sdk/agent-harness-runtime";
 
 export async function mirrorCodexAppServerTranscript(params: {
   sessionFile: string;

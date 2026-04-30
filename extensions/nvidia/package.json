@@ -1,13 +1,13 @@
 {
-  "name": "@openclaw/nvidia-provider",
+  "name": "@opencli/nvidia-provider",
   "version": "2026.4.25",
   "private": true,
-  "description": "OpenClaw NVIDIA provider plugin",
+  "description": "OpenCLI NVIDIA provider plugin",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@opencli/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "opencli": {
     "extensions": [
       "./index.ts"
     ]

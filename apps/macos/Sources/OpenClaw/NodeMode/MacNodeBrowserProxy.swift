@@ -1,5 +1,5 @@
 import Foundation
-import OpenClawProtocol
+import OpenCLIProtocol
 import UniformTypeIdentifiers
 
 actor MacNodeBrowserProxy {
@@ -14,8 +14,8 @@ actor MacNodeBrowserProxy {
     private struct RequestParams: Decodable {
         let method: String?
         let path: String?
-        let query: [String: OpenClawProtocol.AnyCodable]?
-        let body: OpenClawProtocol.AnyCodable?
+        let query: [String: OpenCLIProtocol.AnyCodable]?
+        let body: OpenCLIProtocol.AnyCodable?
         let timeoutMs: Int?
         let profile: String?
     }
@@ -150,7 +150,7 @@ actor MacNodeBrowserProxy {
         } else if let password = endpoint.password?.trimmingCharacters(in: .whitespacesAndNewlines),
                   !password.isEmpty
         {
-            request.setValue(password, forHTTPHeaderField: "x-openclaw-password")
+            request.setValue(password, forHTTPHeaderField: "x-opencli-password")
         }
 
         if method != "GET", let body = params.body {
@@ -176,7 +176,7 @@ actor MacNodeBrowserProxy {
         let url = endpoint.baseURL.absoluteString
         let message = """
         UNAVAILABLE: macOS app node could not reach the local browser control service at \(url). \
-        In remote mode, browser control is owned by the CLI node-host; start `openclaw node start` \
+        In remote mode, browser control is owned by the CLI node-host; start `opencli node start` \
         on this Mac and target that browser node. Underlying error: \(cause.localizedDescription)
         """
         return NSError(domain: "MacNodeBrowserProxy", code: 9, userInfo: [

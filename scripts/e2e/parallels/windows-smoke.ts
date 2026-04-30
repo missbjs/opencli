@@ -8,7 +8,7 @@ import {
   makeTempDir,
   packageBuildCommitFromTgz,
   packageVersionFromTgz,
-  packOpenClaw,
+  packOpenCLI,
   parseMode,
   parseProvider,
   resolveHostIp,
@@ -32,7 +32,7 @@ import { WindowsGuest } from "./guest-transports.ts";
 import { runSmokeLane, type SmokeLane, type SmokeLaneStatus } from "./lane-runner.ts";
 import { waitForVmStatus } from "./parallels-vm.ts";
 import { PhaseRunner } from "./phase-runner.ts";
-import { encodePowerShell, psArray, psSingleQuote, windowsOpenClawResolver } from "./powershell.ts";
+import { encodePowerShell, psArray, psSingleQuote, windowsOpenCLIResolver } from "./powershell.ts";
 import { ensureGuestGit, prepareMinGitZip } from "./windows-git.ts";
 
 interface WindowsOptions {
@@ -86,7 +86,7 @@ const defaultOptions = (): WindowsOptions => ({
   hostIp: undefined,
   hostPort: 18426,
   hostPortExplicit: false,
-  installUrl: "https://openclaw.ai/install.ps1",
+  installUrl: "https://opencli.ai/install.ps1",
   installVersion: "",
   json: false,
   keepServer: false,
@@ -95,7 +95,7 @@ const defaultOptions = (): WindowsOptions => ({
   modelId: undefined,
   provider: "openai",
   skipLatestRefCheck: false,
-  snapshotHint: "pre-openclaw-native-e2e-2026-03-12",
+  snapshotHint: "pre-opencli-native-e2e-2026-03-12",
   targetPackageSpec: "",
   upgradeFromPackedMain: false,
   vmName: "Windows 11",
@@ -107,20 +107,20 @@ function usage(): string {
 Options:
   --vm <name>                Parallels VM name. Default: "Windows 11"
   --snapshot-hint <name>     Snapshot name substring/fuzzy match.
-                             Default: "pre-openclaw-native-e2e-2026-03-12"
+                             Default: "pre-opencli-native-e2e-2026-03-12"
   --mode <fresh|upgrade|both>
   --provider <openai|anthropic|minimax>
   --model <provider/model>    Override the model used for the agent-turn smoke.
   --api-key-env <var>        Host env var name for provider API key.
   --openai-api-key-env <var> Alias for --api-key-env (backward compatible)
-  --install-url <url>        Installer URL for latest release. Default: https://openclaw.ai/install.ps1
+  --install-url <url>        Installer URL for latest release. Default: https://opencli.ai/install.ps1
   --host-port <port>         Host HTTP port for current-main tgz. Default: 18426
   --host-ip <ip>             Override Parallels host IP.
   --latest-version <ver>     Override npm latest version lookup.
   --install-version <ver>    Pin site-installer version/dist-tag for the baseline lane.
   --upgrade-from-packed-main
                              Upgrade lane: install packed current-main npm tgz as baseline,
-                             then run openclaw update --channel dev.
+                             then run opencli update --channel dev.
   --target-package-spec <npm-spec>
                              Install this npm package tarball instead of packing current main.
   --skip-latest-ref-check    Skip latest-release ref-mode precheck.
@@ -248,10 +248,10 @@ class WindowsSmoke {
   }
 
   async run(): Promise<void> {
-    this.runDir = await makeTempDir("openclaw-parallels-windows.");
+    this.runDir = await makeTempDir("opencli-parallels-windows.");
     this.phases = new PhaseRunner(this.runDir);
     this.guest = new WindowsGuest(this.options.vmName, this.phases);
-    this.tgzDir = await makeTempDir("openclaw-parallels-windows-tgz.");
+    this.tgzDir = await makeTempDir("opencli-parallels-windows-tgz.");
     try {
       this.snapshot = resolveSnapshot(this.options.vmName, this.options.snapshotHint);
       this.latestVersion = resolveLatestVersion(this.options.latestVersion);
@@ -274,7 +274,7 @@ class WindowsSmoke {
 
       this.minGitZipPath = await prepareMinGitZip(this.tgzDir);
       if (this.needsHostTgz()) {
-        this.artifact = await packOpenClaw({
+        this.artifact = await packOpenCLI({
           destination: this.tgzDir,
           packageSpec: this.options.targetPackageSpec,
           requireControlUi: false,
@@ -378,7 +378,7 @@ class WindowsSmoke {
     await this.phase("fresh.ensure-git", 1200, () =>
       ensureGuestGit({ guest: this.guest, minGitZipPath: this.minGitZipPath, server: this.server }),
     );
-    await this.phase("fresh.install-main", 420, () => this.installMain("openclaw-main-fresh.tgz"));
+    await this.phase("fresh.install-main", 420, () => this.installMain("opencli-main-fresh.tgz"));
     this.status.freshVersion = await this.extractLastVersion("fresh.install-main");
     await this.phase("fresh.verify-main-version", 120, () => this.verifyTargetVersion());
     await this.phase("fresh.onboard-ref", 720, () => this.runRefOnboard());
@@ -387,7 +387,7 @@ class WindowsSmoke {
     this.status.freshGateway = "pass";
     await this.phase(
       "fresh.first-agent-turn",
-      Number(process.env.OPENCLAW_PARALLELS_WINDOWS_AGENT_TIMEOUT_S || 900),
+      Number(process.env.OPENCLI_PARALLELS_WINDOWS_AGENT_TIMEOUT_S || 900),
       () => this.verifyTurn(),
     );
     this.status.freshAgent = "pass";
@@ -401,7 +401,7 @@ class WindowsSmoke {
     );
     if (this.options.targetPackageSpec || this.options.upgradeFromPackedMain) {
       await this.phase("upgrade.install-baseline-package", 420, () =>
-        this.installMain("openclaw-main-upgrade.tgz"),
+        this.installMain("opencli-main-upgrade.tgz"),
       );
       this.status.latestInstalledVersion = await this.extractLastVersion(
         "upgrade.install-baseline-package",
@@ -431,7 +431,7 @@ class WindowsSmoke {
     }
     await this.phase(
       "upgrade.update-dev",
-      Number(process.env.OPENCLAW_PARALLELS_WINDOWS_UPDATE_TIMEOUT_S || 1200),
+      Number(process.env.OPENCLI_PARALLELS_WINDOWS_UPDATE_TIMEOUT_S || 1200),
       () => this.runDevChannelUpdate(),
     );
     this.status.upgradeVersion = await this.extractLastVersion("upgrade.update-dev");
@@ -443,7 +443,7 @@ class WindowsSmoke {
     this.status.upgradeGateway = "pass";
     await this.phase(
       "upgrade.first-agent-turn",
-      Number(process.env.OPENCLAW_PARALLELS_WINDOWS_AGENT_TIMEOUT_S || 900),
+      Number(process.env.OPENCLI_PARALLELS_WINDOWS_AGENT_TIMEOUT_S || 900),
       () => this.verifyTurn(),
     );
     this.status.upgradeAgent = "pass";
@@ -481,7 +481,7 @@ class WindowsSmoke {
     script: string,
     options: { check?: boolean; timeoutMs?: number } = {},
   ): string {
-    return this.guest.powershell(`${windowsOpenClawResolver}\n${script}`, options);
+    return this.guest.powershell(`${windowsOpenCLIResolver}\n${script}`, options);
   }
 
   private restoreSnapshot(): void {
@@ -563,8 +563,8 @@ class WindowsSmoke {
 $script = Invoke-RestMethod -Uri ${psSingleQuote(this.options.installUrl)}
 & ([scriptblock]::Create($script))${versionArg} -NoOnboard
 if ($LASTEXITCODE -ne 0) { throw "installer failed with exit code $LASTEXITCODE" }
-Invoke-OpenClaw --version
-if ($LASTEXITCODE -ne 0) { throw "openclaw --version failed with exit code $LASTEXITCODE" }`,
+Invoke-OpenCLI --version
+if ($LASTEXITCODE -ne 0) { throw "opencli --version failed with exit code $LASTEXITCODE" }`,
       { timeoutMs: 420_000 },
     );
   }
@@ -580,8 +580,8 @@ $tgz = Join-Path $env:TEMP ${psSingleQuote(tempName)}
 curl.exe -fsSL ${psSingleQuote(tgzUrl)} -o $tgz
 npm.cmd install -g $tgz --no-fund --no-audit --loglevel=error
 if ($LASTEXITCODE -ne 0) { throw "npm install failed with exit code $LASTEXITCODE" }
-Invoke-OpenClaw --version
-if ($LASTEXITCODE -ne 0) { throw "openclaw --version failed with exit code $LASTEXITCODE" }`,
+Invoke-OpenCLI --version
+if ($LASTEXITCODE -ne 0) { throw "opencli --version failed with exit code $LASTEXITCODE" }`,
       { timeoutMs: 420_000 },
     );
   }
@@ -601,7 +601,7 @@ if ($LASTEXITCODE -ne 0) { throw "openclaw --version failed with exit code $LAST
   }
 
   private verifyVersionContains(needle: string): void {
-    const version = this.guestPowerShell("Invoke-OpenClaw --version");
+    const version = this.guestPowerShell("Invoke-OpenCLI --version");
     if (!version.includes(needle)) {
       throw new Error(`version mismatch: expected substring ${needle}`);
     }
@@ -618,8 +618,8 @@ if ($LASTEXITCODE -ne 0) { throw "openclaw --version failed with exit code $LAST
       `$ErrorActionPreference = 'Continue'
 $PSNativeCommandUseErrorActionPreference = $false
 Set-Item -Path ('Env:' + ${psSingleQuote(this.auth.apiKeyEnv)}) -Value ${psSingleQuote(this.auth.apiKeyValue)}
-Invoke-OpenClaw onboard --non-interactive --mode local --auth-choice ${psSingleQuote(this.auth.authChoice)} --secret-input-mode ref --gateway-port 18789 --gateway-bind loopback --install-daemon --skip-skills --skip-health --accept-risk --json
-if ($LASTEXITCODE -ne 0) { throw "openclaw onboard failed with exit code $LASTEXITCODE" }`,
+Invoke-OpenCLI onboard --non-interactive --mode local --auth-choice ${psSingleQuote(this.auth.authChoice)} --secret-input-mode ref --gateway-port 18789 --gateway-bind loopback --install-daemon --skip-skills --skip-health --accept-risk --json
+if ($LASTEXITCODE -ne 0) { throw "opencli onboard failed with exit code $LASTEXITCODE" }`,
       720_000,
     );
   }
@@ -627,7 +627,7 @@ if ($LASTEXITCODE -ne 0) { throw "openclaw onboard failed with exit code $LASTEX
   private guestPowerShellBackground(label: string, script: string, timeoutMs: number): void {
     const safeLabel = label.replaceAll(/[^A-Za-z0-9_-]/g, "-");
     const nonce = `${safeLabel}-${Date.now()}-${Math.floor(Math.random() * 100000)}`;
-    const fileBase = `openclaw-parallels-${nonce}`;
+    const fileBase = `opencli-parallels-${nonce}`;
     const pathsScript = `$base = Join-Path $env:TEMP ${psSingleQuote(fileBase)}
 $scriptPath = "$base.ps1"
 $logPath = "$base.log"
@@ -636,7 +636,7 @@ $exitPath = "$base.exit"`;
     const payload = Buffer.from(
       `$ErrorActionPreference = 'Stop'
 $PSNativeCommandUseErrorActionPreference = $false
-${windowsOpenClawResolver}
+${windowsOpenCLIResolver}
 ${pathsScript}
 try {
   & {
@@ -711,23 +711,23 @@ $offset = ${lastLogOffset}
 if (Test-Path $logPath) {
   $bytes = [System.IO.File]::ReadAllBytes($logPath)
   if ($bytes.Length -gt $offset) {
-    "__OPENCLAW_LOG_OFFSET__:$($bytes.Length)"
+    "__OPENCLI_LOG_OFFSET__:$($bytes.Length)"
     [System.Text.Encoding]::UTF8.GetString($bytes, $offset, $bytes.Length - $offset)
   }
 }
 if (Test-Path $donePath) {
-  '__OPENCLAW_BACKGROUND_DONE__'
+  '__OPENCLI_BACKGROUND_DONE__'
   if ((Test-Path $exitPath) -and ((Get-Content -Path $exitPath -Raw).Trim() -ne '0')) { exit 23 }
   exit 0
 }`),
         ],
         { check: false, timeoutMs: this.remainingPhaseTimeoutMs(30_000) },
       );
-      const offsetMatch = result.stdout.match(/__OPENCLAW_LOG_OFFSET__:(\d+)/);
+      const offsetMatch = result.stdout.match(/__OPENCLI_LOG_OFFSET__:(\d+)/);
       if (offsetMatch) {
         lastLogOffset = Number(offsetMatch[1]);
       }
-      if (result.stdout.includes("__OPENCLAW_BACKGROUND_DONE__")) {
+      if (result.stdout.includes("__OPENCLI_BACKGROUND_DONE__")) {
         if (result.status !== 0) {
           throw new Error(`${label} failed`);
         }
@@ -749,24 +749,24 @@ Remove-Item -Path $scriptPath, $logPath, $donePath, $exitPath -Force -ErrorActio
   private runDevChannelUpdate(): void {
     this.guestPowerShell(
       `$ErrorActionPreference = 'Stop'
-$portableGit = Join-Path (Join-Path (Join-Path $env:LOCALAPPDATA 'OpenClaw\\deps') 'portable-git') ''
+$portableGit = Join-Path (Join-Path (Join-Path $env:LOCALAPPDATA 'OpenCLI\\deps') 'portable-git') ''
 $env:PATH = "$portableGit\\cmd;$portableGit\\mingw64\\bin;$portableGit\\usr\\bin;$env:PATH"
 where.exe git.exe
-$env:OPENCLAW_DISABLE_BUNDLED_PLUGINS = '1'
-Invoke-OpenClaw update --channel dev --yes --json
-if ($LASTEXITCODE -ne 0) { throw "openclaw update failed with exit code $LASTEXITCODE" }
-Invoke-OpenClaw --version
-Invoke-OpenClaw update status --json`,
-      { timeoutMs: Number(process.env.OPENCLAW_PARALLELS_WINDOWS_UPDATE_TIMEOUT_S || 1200) * 1000 },
+$env:OPENCLI_DISABLE_BUNDLED_PLUGINS = '1'
+Invoke-OpenCLI update --channel dev --yes --json
+if ($LASTEXITCODE -ne 0) { throw "opencli update failed with exit code $LASTEXITCODE" }
+Invoke-OpenCLI --version
+Invoke-OpenCLI update status --json`,
+      { timeoutMs: Number(process.env.OPENCLI_PARALLELS_WINDOWS_UPDATE_TIMEOUT_S || 1200) * 1000 },
     );
   }
 
   private verifyDevChannelUpdate(): void {
     const status = this.guestPowerShell(
-      `$portableGit = Join-Path (Join-Path (Join-Path $env:LOCALAPPDATA 'OpenClaw\\deps') 'portable-git') ''
+      `$portableGit = Join-Path (Join-Path (Join-Path $env:LOCALAPPDATA 'OpenCLI\\deps') 'portable-git') ''
 $env:PATH = "$portableGit\\cmd;$portableGit\\mingw64\\bin;$portableGit\\usr\\bin;$env:PATH"
 where.exe git.exe
-Invoke-OpenClaw update status --json`,
+Invoke-OpenCLI update status --json`,
     );
     for (const needle of ['"installKind": "git"', '"value": "dev"', '"branch": "main"']) {
       if (!status.includes(needle)) {
@@ -780,7 +780,7 @@ Invoke-OpenClaw update status --json`,
       `gateway-${action}`,
       `$ErrorActionPreference = 'Continue'
 $PSNativeCommandUseErrorActionPreference = $false
-Invoke-OpenClaw gateway ${action}
+Invoke-OpenCLI gateway ${action}
 if ($LASTEXITCODE -ne 0) { throw "gateway ${action} failed with exit code $LASTEXITCODE" }`,
       420_000,
     );
@@ -791,11 +791,11 @@ if ($LASTEXITCODE -ne 0) { throw "gateway ${action} failed with exit code $LASTE
     let attempt = 1;
     let recoveryTried = false;
     const recoveryAfter =
-      Number(process.env.OPENCLAW_PARALLELS_WINDOWS_GATEWAY_RECOVERY_AFTER_S || 180) * 1000;
+      Number(process.env.OPENCLI_PARALLELS_WINDOWS_GATEWAY_RECOVERY_AFTER_S || 180) * 1000;
     const start = Date.now();
     while (Date.now() < deadline) {
       const probe = this.guestPowerShell(
-        "Invoke-OpenClaw gateway probe --url ws://127.0.0.1:18789 --timeout 30000 --json",
+        "Invoke-OpenCLI gateway probe --url ws://127.0.0.1:18789 --timeout 30000 --json",
         { check: false, timeoutMs: 60_000 },
       );
       if (/"ok"\s*:\s*true/.test(probe)) {
@@ -805,7 +805,7 @@ if ($LASTEXITCODE -ne 0) { throw "gateway ${action} failed with exit code $LASTE
         warn(
           `gateway-reachable recovery: gateway start after ${Math.floor((Date.now() - start) / 1000)}s`,
         );
-        this.guestPowerShell("Invoke-OpenClaw gateway start", {
+        this.guestPowerShell("Invoke-OpenCLI gateway start", {
           check: false,
           timeoutMs: 120_000,
         });
@@ -819,11 +819,11 @@ if ($LASTEXITCODE -ne 0) { throw "gateway ${action} failed with exit code $LASTE
   }
 
   private showGatewayStatusCompat(): void {
-    const help = this.guestPowerShell("Invoke-OpenClaw gateway status --help", {
+    const help = this.guestPowerShell("Invoke-OpenCLI gateway status --help", {
       check: false,
     });
     const suffix = help.includes("--require-rpc") ? "--deep --require-rpc" : "--deep";
-    this.guestPowerShell(`Invoke-OpenClaw gateway status ${suffix}`);
+    this.guestPowerShell(`Invoke-OpenCLI gateway status ${suffix}`);
   }
 
   private verifyTurn(): void {
@@ -831,9 +831,9 @@ if ($LASTEXITCODE -ne 0) { throw "gateway ${action} failed with exit code $LASTE
       "agent-turn",
       `$ErrorActionPreference = 'Continue'
 $PSNativeCommandUseErrorActionPreference = $false
-Invoke-OpenClaw models set ${psSingleQuote(this.auth.modelId)}
+Invoke-OpenCLI models set ${psSingleQuote(this.auth.modelId)}
 if ($LASTEXITCODE -ne 0) { throw "models set failed" }
-Invoke-OpenClaw config set agents.defaults.skipBootstrap true --strict-json
+Invoke-OpenCLI config set agents.defaults.skipBootstrap true --strict-json
 if ($LASTEXITCODE -ne 0) { throw "config set failed" }
 ${windowsAgentWorkspaceScript("Parallels Windows smoke test assistant.")}
 Set-Item -Path ('Env:' + ${psSingleQuote(this.auth.apiKeyEnv)}) -Value ${psSingleQuote(this.auth.apiKeyValue)}
@@ -848,17 +848,17 @@ $args = ${psArray([
         "Reply with exact ASCII text OK only.",
         "--json",
       ])}
-$output = Invoke-OpenClaw @args 2>&1
+$output = Invoke-OpenCLI @args 2>&1
 if ($null -ne $output) { $output | ForEach-Object { $_ } }
 if ($LASTEXITCODE -ne 0) { throw "agent failed with exit code $LASTEXITCODE" }
-if (($output | Out-String) -notmatch '"finalAssistant(Raw|Visible)Text":\\s*"OK"') { throw 'openclaw agent finished without OK response' }`,
-      Number(process.env.OPENCLAW_PARALLELS_WINDOWS_AGENT_TIMEOUT_S || 900) * 1000,
+if (($output | Out-String) -notmatch '"finalAssistant(Raw|Visible)Text":\\s*"OK"') { throw 'opencli agent finished without OK response' }`,
+      Number(process.env.OPENCLI_PARALLELS_WINDOWS_AGENT_TIMEOUT_S || 900) * 1000,
     );
   }
 
   private async extractLastVersion(phaseName: string): Promise<string> {
     const log = await readFile(path.join(this.runDir, `${phaseName}.log`), "utf8").catch(() => "");
-    const matches = [...log.matchAll(/openclaw\s+([0-9][^\s]*)/g)];
+    const matches = [...log.matchAll(/opencli\s+([0-9][^\s]*)/g)];
     return matches.at(-1)?.[1] ?? "";
   }
 

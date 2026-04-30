@@ -274,19 +274,19 @@ describe("SSRF external proxy routing", () => {
           throw new Error("expected external proxy routing to start");
         }
         try {
-          const response = await undiciFetch(process.env.OPENCLAW_TEST_TARGET_URL, {
+          const response = await undiciFetch(process.env.OPENCLI_TEST_TARGET_URL, {
             signal: AbortSignal.timeout(5000),
           });
           const body = await response.text();
-          const nodeHttp = await nodeHttpGet(process.env.OPENCLAW_TEST_NODE_HTTP_TARGET_URL);
-          const explicitAgent = await nodeHttpGet(process.env.OPENCLAW_TEST_EXPLICIT_AGENT_TARGET_URL, {
+          const nodeHttp = await nodeHttpGet(process.env.OPENCLI_TEST_NODE_HTTP_TARGET_URL);
+          const explicitAgent = await nodeHttpGet(process.env.OPENCLI_TEST_EXPLICIT_AGENT_TARGET_URL, {
             agent: new http.Agent(),
           });
           await expectFailure("node:https", () =>
-            nodeHttpsProbe(process.env.OPENCLAW_TEST_NODE_HTTPS_TARGET_URL),
+            nodeHttpsProbe(process.env.OPENCLI_TEST_NODE_HTTPS_TARGET_URL),
           );
-          await websocketProbe(process.env.OPENCLAW_TEST_WS_TARGET_URL);
-          await gatewayLoopbackBypassProbe(process.env.OPENCLAW_TEST_GATEWAY_BYPASS_WS_URL);
+          await websocketProbe(process.env.OPENCLI_TEST_WS_TARGET_URL);
+          await gatewayLoopbackBypassProbe(process.env.OPENCLI_TEST_GATEWAY_BYPASS_WS_URL);
           await expectFailure("non-loopback bypass", () =>
             gatewayLoopbackBypassProbe("wss://gateway.example.com/socket"),
           );
@@ -301,13 +301,13 @@ describe("SSRF external proxy routing", () => {
       `,
       {
         ...process.env,
-        OPENCLAW_PROXY_URL: `http://127.0.0.1:${proxyPort}`,
-        OPENCLAW_TEST_TARGET_URL: `http://127.0.0.1:${targetPort}/private-metadata`,
-        OPENCLAW_TEST_NODE_HTTP_TARGET_URL: `http://127.0.0.1:${targetPort}/node-http-metadata`,
-        OPENCLAW_TEST_EXPLICIT_AGENT_TARGET_URL: `http://127.0.0.1:${targetPort}/explicit-agent`,
-        OPENCLAW_TEST_NODE_HTTPS_TARGET_URL: `https://127.0.0.1:${httpsLikeTargetPort}/https-connect-proof`,
-        OPENCLAW_TEST_WS_TARGET_URL: `ws://127.0.0.1:${targetPort}/websocket-proxied`,
-        OPENCLAW_TEST_GATEWAY_BYPASS_WS_URL: `ws://127.0.0.1:${targetPort}/gateway-bypass`,
+        OPENCLI_PROXY_URL: `http://127.0.0.1:${proxyPort}`,
+        OPENCLI_TEST_TARGET_URL: `http://127.0.0.1:${targetPort}/private-metadata`,
+        OPENCLI_TEST_NODE_HTTP_TARGET_URL: `http://127.0.0.1:${targetPort}/node-http-metadata`,
+        OPENCLI_TEST_EXPLICIT_AGENT_TARGET_URL: `http://127.0.0.1:${targetPort}/explicit-agent`,
+        OPENCLI_TEST_NODE_HTTPS_TARGET_URL: `https://127.0.0.1:${httpsLikeTargetPort}/https-connect-proof`,
+        OPENCLI_TEST_WS_TARGET_URL: `ws://127.0.0.1:${targetPort}/websocket-proxied`,
+        OPENCLI_TEST_GATEWAY_BYPASS_WS_URL: `ws://127.0.0.1:${targetPort}/gateway-bypass`,
         NO_PROXY: "127.0.0.1,localhost",
         no_proxy: "localhost",
         GLOBAL_AGENT_NO_PROXY: "localhost",

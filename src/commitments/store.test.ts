@@ -17,9 +17,9 @@ describe("commitment store delivery selection", () => {
   });
 
   async function useTempStateDir(): Promise<void> {
-    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-commitments-store-"));
+    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "opencli-commitments-store-"));
     tmpDirs.push(tmpDir);
-    vi.stubEnv("OPENCLAW_STATE_DIR", tmpDir);
+    vi.stubEnv("OPENCLI_STATE_DIR", tmpDir);
   }
 
   function commitment(overrides?: Partial<CommitmentRecord>): CommitmentRecord {

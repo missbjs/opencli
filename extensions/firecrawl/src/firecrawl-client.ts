@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
 import {
   DEFAULT_CACHE_TTL_MINUTES,
   markdownToText,
@@ -9,9 +9,9 @@ import {
   truncateText,
   withStrictWebToolsEndpoint,
   writeCache,
-} from "openclaw/plugin-sdk/provider-web-fetch";
-import { normalizeSecretInput } from "openclaw/plugin-sdk/secret-input";
-import { wrapExternalContent, wrapWebContent } from "openclaw/plugin-sdk/security-runtime";
+} from "opencli/plugin-sdk/provider-web-fetch";
+import { normalizeSecretInput } from "opencli/plugin-sdk/secret-input";
+import { wrapExternalContent, wrapWebContent } from "opencli/plugin-sdk/security-runtime";
 import {
   resolveFirecrawlApiKey,
   resolveFirecrawlBaseUrl,
@@ -43,7 +43,7 @@ type FirecrawlSearchItem = {
 };
 
 export type FirecrawlSearchParams = {
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   query: string;
   count?: number;
   timeoutSeconds?: number;
@@ -53,7 +53,7 @@ export type FirecrawlSearchParams = {
 };
 
 export type FirecrawlScrapeParams = {
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   url: string;
   extractMode: "markdown" | "text";
   maxChars?: number;

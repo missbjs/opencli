@@ -9,7 +9,7 @@ import Darwin
 ///
 /// Uses `ssh -N -L` to forward the remote gateway ports to localhost.
 final class RemotePortTunnel {
-    private static let logger = Logger(subsystem: "ai.openclaw", category: "remote.tunnel")
+    private static let logger = Logger(subsystem: "ai.opencli", category: "remote.tunnel")
 
     let process: Process
     let localPort: UInt16?
@@ -134,7 +134,7 @@ final class RemotePortTunnel {
     }
 
     private static func resolveRemotePortOverride(for sshHost: String) -> Int? {
-        let root = OpenClawConfigFile.loadDict()
+        let root = OpenCLIConfigFile.loadDict()
         guard let gateway = root["gateway"] as? [String: Any],
               let remote = gateway["remote"] as? [String: Any],
               let urlRaw = remote["url"] as? String
@@ -150,8 +150,8 @@ final class RemotePortTunnel {
         else {
             return nil
         }
-        guard let sshKey = OpenClawConfigFile.canonicalHostForComparison(sshHost),
-              let urlKey = OpenClawConfigFile.canonicalHostForComparison(host)
+        guard let sshKey = OpenCLIConfigFile.canonicalHostForComparison(sshHost),
+              let urlKey = OpenCLIConfigFile.canonicalHostForComparison(host)
         else {
             return nil
         }
@@ -175,7 +175,7 @@ final class RemotePortTunnel {
         }
 
         return try await withCheckedThrowingContinuation { cont in
-            let queue = DispatchQueue(label: "ai.openclaw.remote.tunnel.port", qos: .utility)
+            let queue = DispatchQueue(label: "ai.opencli.remote.tunnel.port", qos: .utility)
             do {
                 let listener = try NWListener(using: .tcp, on: .any)
                 listener.newConnectionHandler = { connection in connection.cancel() }

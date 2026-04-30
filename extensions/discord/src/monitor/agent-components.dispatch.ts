@@ -1,14 +1,14 @@
-import { resolveHumanDelayConfig } from "openclaw/plugin-sdk/agent-runtime";
+import { resolveHumanDelayConfig } from "opencli/plugin-sdk/agent-runtime";
 import {
   formatInboundEnvelope,
   resolveEnvelopeFormatOptions,
-} from "openclaw/plugin-sdk/channel-inbound";
-import { isDangerousNameMatchingEnabled } from "openclaw/plugin-sdk/dangerous-name-runtime";
-import { runPreparedInboundReplyTurn } from "openclaw/plugin-sdk/inbound-reply-dispatch";
-import { resolveMarkdownTableMode } from "openclaw/plugin-sdk/markdown-table-runtime";
-import { getAgentScopedMediaLocalRoots } from "openclaw/plugin-sdk/media-runtime";
-import { createNonExitingRuntime, logVerbose } from "openclaw/plugin-sdk/runtime-env";
-import { logError } from "openclaw/plugin-sdk/text-runtime";
+} from "opencli/plugin-sdk/channel-inbound";
+import { isDangerousNameMatchingEnabled } from "opencli/plugin-sdk/dangerous-name-runtime";
+import { runPreparedInboundReplyTurn } from "opencli/plugin-sdk/inbound-reply-dispatch";
+import { resolveMarkdownTableMode } from "opencli/plugin-sdk/markdown-table-runtime";
+import { getAgentScopedMediaLocalRoots } from "opencli/plugin-sdk/media-runtime";
+import { createNonExitingRuntime, logVerbose } from "opencli/plugin-sdk/runtime-env";
+import { logError } from "opencli/plugin-sdk/text-runtime";
 import { resolveDiscordMaxLinesPerMessage } from "../accounts.js";
 import { createDiscordRestClient } from "../client.js";
 import { resolveDiscordConversationIdentity } from "../conversation-identity.js";
@@ -37,7 +37,7 @@ import { deliverDiscordReply } from "./reply-delivery.js";
 
 let conversationRuntimePromise: Promise<typeof import("./agent-components.runtime.js")> | undefined;
 let replyPipelineRuntimePromise:
-  | Promise<typeof import("openclaw/plugin-sdk/channel-reply-pipeline")>
+  | Promise<typeof import("opencli/plugin-sdk/channel-reply-pipeline")>
   | undefined;
 let typingRuntimePromise: Promise<typeof import("./typing.js")> | undefined;
 
@@ -47,7 +47,7 @@ async function loadConversationRuntime() {
 }
 
 async function loadReplyPipelineRuntime() {
-  replyPipelineRuntimePromise ??= import("openclaw/plugin-sdk/channel-reply-pipeline");
+  replyPipelineRuntimePromise ??= import("opencli/plugin-sdk/channel-reply-pipeline");
   return await replyPipelineRuntimePromise;
 }
 

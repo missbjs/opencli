@@ -1,6 +1,6 @@
-# OpenClaw iOS Versioning
+# OpenCLI iOS Versioning
 
-OpenClaw iOS uses a **pinned CalVer release version** instead of reading the current gateway version automatically on every build.
+OpenCLI iOS uses a **pinned CalVer release version** instead of reading the current gateway version automatically on every build.
 
 ## Goals
 

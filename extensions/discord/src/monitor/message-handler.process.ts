@@ -1,26 +1,26 @@
-import { resolveAckReaction, resolveHumanDelayConfig } from "openclaw/plugin-sdk/agent-runtime";
+import { resolveAckReaction, resolveHumanDelayConfig } from "opencli/plugin-sdk/agent-runtime";
 import {
   createStatusReactionController,
   DEFAULT_TIMING,
   logAckFailure,
   logTypingFailure,
   shouldAckReaction as shouldAckReactionGate,
-} from "openclaw/plugin-sdk/channel-feedback";
-import { deliverFinalizableDraftPreview } from "openclaw/plugin-sdk/channel-lifecycle";
+} from "opencli/plugin-sdk/channel-feedback";
+import { deliverFinalizableDraftPreview } from "opencli/plugin-sdk/channel-lifecycle";
 import {
   createChannelReplyPipeline,
   resolveChannelSourceReplyDeliveryMode,
-} from "openclaw/plugin-sdk/channel-reply-pipeline";
-import { resolveChannelStreamingBlockEnabled } from "openclaw/plugin-sdk/channel-streaming";
-import { recordInboundSession } from "openclaw/plugin-sdk/conversation-runtime";
-import { runPreparedInboundReplyTurn } from "openclaw/plugin-sdk/inbound-reply-dispatch";
-import { resolveMarkdownTableMode } from "openclaw/plugin-sdk/markdown-table-runtime";
-import { getAgentScopedMediaLocalRoots } from "openclaw/plugin-sdk/media-runtime";
-import { resolveChunkMode } from "openclaw/plugin-sdk/reply-chunking";
-import type { ReplyPayload } from "openclaw/plugin-sdk/reply-dispatch-runtime";
-import { clearHistoryEntriesIfEnabled } from "openclaw/plugin-sdk/reply-history";
-import { resolveSendableOutboundReplyParts } from "openclaw/plugin-sdk/reply-payload";
-import { danger, logVerbose, shouldLogVerbose } from "openclaw/plugin-sdk/runtime-env";
+} from "opencli/plugin-sdk/channel-reply-pipeline";
+import { resolveChannelStreamingBlockEnabled } from "opencli/plugin-sdk/channel-streaming";
+import { recordInboundSession } from "opencli/plugin-sdk/conversation-runtime";
+import { runPreparedInboundReplyTurn } from "opencli/plugin-sdk/inbound-reply-dispatch";
+import { resolveMarkdownTableMode } from "opencli/plugin-sdk/markdown-table-runtime";
+import { getAgentScopedMediaLocalRoots } from "opencli/plugin-sdk/media-runtime";
+import { resolveChunkMode } from "opencli/plugin-sdk/reply-chunking";
+import type { ReplyPayload } from "opencli/plugin-sdk/reply-dispatch-runtime";
+import { clearHistoryEntriesIfEnabled } from "opencli/plugin-sdk/reply-history";
+import { resolveSendableOutboundReplyParts } from "opencli/plugin-sdk/reply-payload";
+import { danger, logVerbose, shouldLogVerbose } from "opencli/plugin-sdk/runtime-env";
 import { resolveDiscordMaxLinesPerMessage } from "../accounts.js";
 import { createDiscordRestClient } from "../client.js";
 import { removeReactionDiscord } from "../send.js";
@@ -48,10 +48,10 @@ function sleep(ms: number): Promise<void> {
 }
 
 const DISCORD_TYPING_MAX_DURATION_MS = 20 * 60_000;
-let replyRuntimePromise: Promise<typeof import("openclaw/plugin-sdk/reply-runtime")> | undefined;
+let replyRuntimePromise: Promise<typeof import("opencli/plugin-sdk/reply-runtime")> | undefined;
 
 async function loadReplyRuntime() {
-  replyRuntimePromise ??= import("openclaw/plugin-sdk/reply-runtime");
+  replyRuntimePromise ??= import("opencli/plugin-sdk/reply-runtime");
   return await replyRuntimePromise;
 }
 

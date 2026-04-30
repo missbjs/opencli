@@ -1,15 +1,15 @@
 import { spawn } from "node:child_process";
 import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { runFfmpeg } from "openclaw/plugin-sdk/media-runtime";
-import { createSubsystemLogger } from "openclaw/plugin-sdk/runtime-env";
+import { runFfmpeg } from "opencli/plugin-sdk/media-runtime";
+import { createSubsystemLogger } from "opencli/plugin-sdk/runtime-env";
 import type {
   SpeechProviderConfig,
   SpeechProviderPlugin,
   SpeechSynthesisRequest,
   SpeechTelephonySynthesisRequest,
-} from "openclaw/plugin-sdk/speech-core";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
+} from "opencli/plugin-sdk/speech-core";
+import { resolvePreferredOpenCLITmpDir } from "opencli/plugin-sdk/temp-path";
 
 const log = createSubsystemLogger("tts-local-cli");
 
@@ -326,7 +326,7 @@ export function buildCliSpeechProvider(): SpeechProviderPlugin {
 
       log.debug(`synthesize: text=${req.text.slice(0, 50)}...`);
 
-      const tempDir = mkdtempSync(path.join(resolvePreferredOpenClawTmpDir(), "openclaw-cli-tts-"));
+      const tempDir = mkdtempSync(path.join(resolvePreferredOpenCLITmpDir(), "opencli-cli-tts-"));
 
       try {
         const result = await runCli({
@@ -397,7 +397,7 @@ export function buildCliSpeechProvider(): SpeechProviderPlugin {
 
       log.debug(`synthesizeTelephony: text=${req.text.slice(0, 50)}...`);
 
-      const tempDir = mkdtempSync(path.join(resolvePreferredOpenClawTmpDir(), "openclaw-cli-tts-"));
+      const tempDir = mkdtempSync(path.join(resolvePreferredOpenCLITmpDir(), "opencli-cli-tts-"));
 
       try {
         const result = await runCli({

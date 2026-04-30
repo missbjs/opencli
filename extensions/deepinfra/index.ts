@@ -1,11 +1,11 @@
-import { readConfiguredProviderCatalogEntries } from "openclaw/plugin-sdk/provider-catalog-shared";
-import { defineSingleProviderPluginEntry } from "openclaw/plugin-sdk/provider-entry";
-import { PASSTHROUGH_GEMINI_REPLAY_HOOKS } from "openclaw/plugin-sdk/provider-model-shared";
+import { readConfiguredProviderCatalogEntries } from "opencli/plugin-sdk/provider-catalog-shared";
+import { defineSingleProviderPluginEntry } from "opencli/plugin-sdk/provider-entry";
+import { PASSTHROUGH_GEMINI_REPLAY_HOOKS } from "opencli/plugin-sdk/provider-model-shared";
 import {
   createOpenRouterSystemCacheWrapper,
   createOpenRouterWrapper,
   isProxyReasoningUnsupported,
-} from "openclaw/plugin-sdk/provider-stream";
+} from "opencli/plugin-sdk/provider-stream";
 import { buildDeepInfraImageGenerationProvider } from "./image-generation-provider.js";
 import { deepinfraMediaUnderstandingProvider } from "./media-understanding-provider.js";
 import { deepinfraMemoryEmbeddingProviderAdapter } from "./memory-embedding-adapter.js";

@@ -17,7 +17,7 @@ function readOptionalUtf8(filePath) {
 }
 
 export function resolveLegacyRuntimeDepsStampPath(pluginDir) {
-  return path.join(pluginDir, ".openclaw-runtime-deps-stamp.json");
+  return path.join(pluginDir, ".opencli-runtime-deps-stamp.json");
 }
 
 export function resolveRuntimeDepsStampPath(repoRoot, pluginId) {

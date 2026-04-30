@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { isRecord } from "../utils.js";
 import { listProfilesForProvider } from "./auth-profiles/profile-list.js";
 import { ensureAuthProfileStore } from "./auth-profiles/store.js";
@@ -42,7 +42,7 @@ export function hasCodexNativeWebSearchTool(tools: unknown): boolean {
 }
 
 export function hasAvailableCodexAuth(params: {
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   agentDir?: string;
 }): boolean {
   if (
@@ -68,7 +68,7 @@ export function hasAvailableCodexAuth(params: {
 }
 
 export function resolveCodexNativeSearchActivation(params: {
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   modelProvider?: string;
   modelApi?: string;
   agentDir?: string;
@@ -137,7 +137,7 @@ export function resolveCodexNativeSearchActivation(params: {
 }
 
 export function buildCodexNativeWebSearchTool(
-  config: OpenClawConfig | undefined,
+  config: OpenCLIConfig | undefined,
 ): Record<string, unknown> {
   const nativeConfig = resolveCodexNativeWebSearchConfig(config);
   const tool: Record<string, unknown> = {
@@ -167,7 +167,7 @@ export function buildCodexNativeWebSearchTool(
 
 export function patchCodexNativeWebSearchPayload(params: {
   payload: unknown;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
 }): CodexNativeSearchPayloadPatchResult {
   if (!isRecord(params.payload)) {
     return { status: "payload_not_object" };
@@ -185,7 +185,7 @@ export function patchCodexNativeWebSearchPayload(params: {
 }
 
 export function shouldSuppressManagedWebSearchTool(params: {
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   modelProvider?: string;
   modelApi?: string;
   agentDir?: string;

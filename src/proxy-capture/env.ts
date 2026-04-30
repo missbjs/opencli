@@ -8,13 +8,13 @@ import {
   resolveDebugProxyDbPath,
 } from "./paths.js";
 
-export const OPENCLAW_DEBUG_PROXY_ENABLED = "OPENCLAW_DEBUG_PROXY_ENABLED";
-export const OPENCLAW_DEBUG_PROXY_URL = "OPENCLAW_DEBUG_PROXY_URL";
-export const OPENCLAW_DEBUG_PROXY_DB_PATH = "OPENCLAW_DEBUG_PROXY_DB_PATH";
-export const OPENCLAW_DEBUG_PROXY_BLOB_DIR = "OPENCLAW_DEBUG_PROXY_BLOB_DIR";
-export const OPENCLAW_DEBUG_PROXY_CERT_DIR = "OPENCLAW_DEBUG_PROXY_CERT_DIR";
-export const OPENCLAW_DEBUG_PROXY_SESSION_ID = "OPENCLAW_DEBUG_PROXY_SESSION_ID";
-export const OPENCLAW_DEBUG_PROXY_REQUIRE = "OPENCLAW_DEBUG_PROXY_REQUIRE";
+export const OPENCLI_DEBUG_PROXY_ENABLED = "OPENCLI_DEBUG_PROXY_ENABLED";
+export const OPENCLI_DEBUG_PROXY_URL = "OPENCLI_DEBUG_PROXY_URL";
+export const OPENCLI_DEBUG_PROXY_DB_PATH = "OPENCLI_DEBUG_PROXY_DB_PATH";
+export const OPENCLI_DEBUG_PROXY_BLOB_DIR = "OPENCLI_DEBUG_PROXY_BLOB_DIR";
+export const OPENCLI_DEBUG_PROXY_CERT_DIR = "OPENCLI_DEBUG_PROXY_CERT_DIR";
+export const OPENCLI_DEBUG_PROXY_SESSION_ID = "OPENCLI_DEBUG_PROXY_SESSION_ID";
+export const OPENCLI_DEBUG_PROXY_REQUIRE = "OPENCLI_DEBUG_PROXY_REQUIRE";
 
 export type DebugProxySettings = {
   enabled: boolean;
@@ -36,18 +36,18 @@ function isTruthy(value: string | undefined): boolean {
 export function resolveDebugProxySettings(
   env: NodeJS.ProcessEnv = process.env,
 ): DebugProxySettings {
-  const enabled = isTruthy(env[OPENCLAW_DEBUG_PROXY_ENABLED]);
-  const explicitSessionId = env[OPENCLAW_DEBUG_PROXY_SESSION_ID]?.trim() || undefined;
+  const enabled = isTruthy(env[OPENCLI_DEBUG_PROXY_ENABLED]);
+  const explicitSessionId = env[OPENCLI_DEBUG_PROXY_SESSION_ID]?.trim() || undefined;
   const sessionId = explicitSessionId ?? (cachedImplicitSessionId ??= randomUUID());
   return {
     enabled,
-    required: isTruthy(env[OPENCLAW_DEBUG_PROXY_REQUIRE]),
-    proxyUrl: env[OPENCLAW_DEBUG_PROXY_URL]?.trim() || undefined,
-    dbPath: env[OPENCLAW_DEBUG_PROXY_DB_PATH]?.trim() || resolveDebugProxyDbPath(env),
-    blobDir: env[OPENCLAW_DEBUG_PROXY_BLOB_DIR]?.trim() || resolveDebugProxyBlobDir(env),
-    certDir: env[OPENCLAW_DEBUG_PROXY_CERT_DIR]?.trim() || resolveDebugProxyCertDir(env),
+    required: isTruthy(env[OPENCLI_DEBUG_PROXY_REQUIRE]),
+    proxyUrl: env[OPENCLI_DEBUG_PROXY_URL]?.trim() || undefined,
+    dbPath: env[OPENCLI_DEBUG_PROXY_DB_PATH]?.trim() || resolveDebugProxyDbPath(env),
+    blobDir: env[OPENCLI_DEBUG_PROXY_BLOB_DIR]?.trim() || resolveDebugProxyBlobDir(env),
+    certDir: env[OPENCLI_DEBUG_PROXY_CERT_DIR]?.trim() || resolveDebugProxyCertDir(env),
     sessionId,
-    sourceProcess: "openclaw",
+    sourceProcess: "opencli",
   };
 }
 
@@ -63,13 +63,13 @@ export function applyDebugProxyEnv(
 ): NodeJS.ProcessEnv {
   return {
     ...env,
-    [OPENCLAW_DEBUG_PROXY_ENABLED]: "1",
-    [OPENCLAW_DEBUG_PROXY_REQUIRE]: "1",
-    [OPENCLAW_DEBUG_PROXY_URL]: params.proxyUrl,
-    [OPENCLAW_DEBUG_PROXY_DB_PATH]: params.dbPath ?? resolveDebugProxyDbPath(env),
-    [OPENCLAW_DEBUG_PROXY_BLOB_DIR]: params.blobDir ?? resolveDebugProxyBlobDir(env),
-    [OPENCLAW_DEBUG_PROXY_CERT_DIR]: params.certDir ?? resolveDebugProxyCertDir(env),
-    [OPENCLAW_DEBUG_PROXY_SESSION_ID]: params.sessionId,
+    [OPENCLI_DEBUG_PROXY_ENABLED]: "1",
+    [OPENCLI_DEBUG_PROXY_REQUIRE]: "1",
+    [OPENCLI_DEBUG_PROXY_URL]: params.proxyUrl,
+    [OPENCLI_DEBUG_PROXY_DB_PATH]: params.dbPath ?? resolveDebugProxyDbPath(env),
+    [OPENCLI_DEBUG_PROXY_BLOB_DIR]: params.blobDir ?? resolveDebugProxyBlobDir(env),
+    [OPENCLI_DEBUG_PROXY_CERT_DIR]: params.certDir ?? resolveDebugProxyCertDir(env),
+    [OPENCLI_DEBUG_PROXY_SESSION_ID]: params.sessionId,
     HTTP_PROXY: params.proxyUrl,
     HTTPS_PROXY: params.proxyUrl,
     ALL_PROXY: params.proxyUrl,

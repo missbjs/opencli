@@ -51,7 +51,7 @@ export async function scanStatus(
       const overview = await collectStatusScanOverview({
         commandName: "status",
         opts,
-        showSecrets: process.env.OPENCLAW_SHOW_SECRETS?.trim() !== "0",
+        showSecrets: process.env.OPENCLI_SHOW_SECRETS?.trim() !== "0",
         includeLiveChannelStatus: includeLiveChannelChecks,
         includeChannelSetupRuntimeFallback: includeLiveChannelChecks,
         progress,

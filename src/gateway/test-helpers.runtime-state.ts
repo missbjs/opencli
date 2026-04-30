@@ -7,7 +7,7 @@ import type { ReplyPayload } from "../auto-reply/reply-payload.js";
 import type { MsgContext } from "../auto-reply/templating.js";
 import type { AgentBinding } from "../config/types.agents.js";
 import type { HooksConfig } from "../config/types.hooks.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import type { RunCronAgentTurnResult } from "../cron/isolated-agent/run.types.js";
 import type { TailscaleWhoisIdentity } from "../infra/tailscale.js";
 import { resolveGlobalSingleton } from "../shared/global-singleton.js";
@@ -15,7 +15,7 @@ import { resolveGlobalSingleton } from "../shared/global-singleton.js";
 export type GetReplyFromConfigFn = (
   ctx: MsgContext,
   opts?: GetReplyOptions,
-  configOverride?: OpenClawConfig,
+  configOverride?: OpenCLIConfig,
 ) => Promise<ReplyPayload | ReplyPayload[] | undefined>;
 export type CronIsolatedRunFn = (...args: unknown[]) => Promise<RunCronAgentTurnResult>;
 export type AgentCommandFn = (...args: unknown[]) => Promise<void>;
@@ -24,7 +24,7 @@ export type RunBtwSideQuestionFn = (...args: unknown[]) => Promise<unknown>;
 export type DispatchInboundMessageFn = (...args: unknown[]) => Promise<unknown>;
 export type CompactEmbeddedPiSessionFn = (...args: unknown[]) => Promise<unknown>;
 
-const GATEWAY_TEST_CONFIG_ROOT_KEY = Symbol.for("openclaw.gatewayTestHelpers.configRoot");
+const GATEWAY_TEST_CONFIG_ROOT_KEY = Symbol.for("opencli.gatewayTestHelpers.configRoot");
 
 export type GatewayTestHoistedState = {
   testTailnetIPv4: { value: string | undefined };
@@ -78,7 +78,7 @@ export type GatewayTestHoistedState = {
 };
 
 const gatewayTestHoisted = vi.hoisted(() => {
-  const key = Symbol.for("openclaw.gatewayTestHelpers.hoisted");
+  const key = Symbol.for("opencli.gatewayTestHelpers.hoisted");
   const store = globalThis as Record<PropertyKey, unknown>;
   if (Object.prototype.hasOwnProperty.call(store, key)) {
     return store[key] as GatewayTestHoistedState;
@@ -162,10 +162,10 @@ export const sessionStoreSaveDelayMs = gatewayTestHoisted.sessionStoreSaveDelayM
 export const embeddedRunMock = gatewayTestHoisted.embeddedRunMock;
 
 export const testConfigRoot = resolveGlobalSingleton(GATEWAY_TEST_CONFIG_ROOT_KEY, () => ({
-  value: path.join(os.tmpdir(), `openclaw-gateway-test-${process.pid}-${crypto.randomUUID()}`),
+  value: path.join(os.tmpdir(), `opencli-gateway-test-${process.pid}-${crypto.randomUUID()}`),
 }));
 
 export function setTestConfigRoot(root: string): void {
   testConfigRoot.value = root;
-  process.env.OPENCLAW_CONFIG_PATH = path.join(root, "openclaw.json");
+  process.env.OPENCLI_CONFIG_PATH = path.join(root, "opencli.json");
 }

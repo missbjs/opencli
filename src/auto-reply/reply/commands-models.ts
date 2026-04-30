@@ -18,7 +18,7 @@ import {
 import { resolveDefaultAgentWorkspaceDir } from "../../agents/workspace.js";
 import { getChannelPlugin } from "../../channels/plugins/index.js";
 import type { SessionEntry } from "../../config/sessions.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../../config/types.opencli.js";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
@@ -66,7 +66,7 @@ type ParsedModelsCommand =
     };
 
 export async function buildModelsProviderData(
-  cfg: OpenClawConfig,
+  cfg: OpenCLIConfig,
   agentId?: string,
   options: { view?: "default" | "all"; workspaceDir?: string } = {},
 ): Promise<ModelsProviderData> {
@@ -177,8 +177,8 @@ export async function buildModelsProviderData(
     const choices = runtimeChoicesByProvider.get(provider) ?? [
       {
         id: "pi",
-        label: "OpenClaw Pi Default",
-        description: "Use the built-in OpenClaw Pi runtime.",
+        label: "OpenCLI Pi Default",
+        description: "Use the built-in OpenCLI Pi runtime.",
       },
     ];
     choices.push({
@@ -271,7 +271,7 @@ function parseModelsArgs(raw: string): ParsedModelsCommand {
 
 function resolveProviderLabel(params: {
   provider: string;
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   agentDir?: string;
   workspaceDir?: string;
   sessionEntry?: ModelsCommandSessionEntry;
@@ -292,7 +292,7 @@ function resolveProviderLabel(params: {
 export function formatModelsAvailableHeader(params: {
   provider: string;
   total: number;
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   agentDir?: string;
   workspaceDir?: string;
   sessionEntry?: ModelsCommandSessionEntry;
@@ -336,7 +336,7 @@ function buildProviderInfos(params: {
 }
 
 export async function resolveModelsCommandReply(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   commandBodyNormalized: string;
   surface?: string;
   currentModel?: string;

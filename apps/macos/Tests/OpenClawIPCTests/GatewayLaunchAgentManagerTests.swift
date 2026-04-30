@@ -1,16 +1,16 @@
 import Foundation
 import Testing
-@testable import OpenClaw
+@testable import OpenCLI
 
 struct GatewayLaunchAgentManagerTests {
     @Test func `launch agent plist snapshot parses args and env`() throws {
         let url = FileManager().temporaryDirectory
-            .appendingPathComponent("openclaw-launchd-\(UUID().uuidString).plist")
+            .appendingPathComponent("opencli-launchd-\(UUID().uuidString).plist")
         let plist: [String: Any] = [
-            "ProgramArguments": ["openclaw", "gateway", "--port", "18789", "--bind", "loopback"],
+            "ProgramArguments": ["opencli", "gateway", "--port", "18789", "--bind", "loopback"],
             "EnvironmentVariables": [
-                "OPENCLAW_GATEWAY_TOKEN": " secret ",
-                "OPENCLAW_GATEWAY_PASSWORD": "pw",
+                "OPENCLI_GATEWAY_TOKEN": " secret ",
+                "OPENCLI_GATEWAY_PASSWORD": "pw",
             ],
         ]
         let data = try PropertyListSerialization.data(fromPropertyList: plist, format: .xml, options: 0)
@@ -26,9 +26,9 @@ struct GatewayLaunchAgentManagerTests {
 
     @Test func `launch agent plist snapshot allows missing bind`() throws {
         let url = FileManager().temporaryDirectory
-            .appendingPathComponent("openclaw-launchd-\(UUID().uuidString).plist")
+            .appendingPathComponent("opencli-launchd-\(UUID().uuidString).plist")
         let plist: [String: Any] = [
-            "ProgramArguments": ["openclaw", "gateway", "--port", "18789"],
+            "ProgramArguments": ["opencli", "gateway", "--port", "18789"],
         ]
         let data = try PropertyListSerialization.data(fromPropertyList: plist, format: .xml, options: 0)
         try data.write(to: url, options: [.atomic])

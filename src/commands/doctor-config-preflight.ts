@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { readConfigFileSnapshot, recoverConfigFromJsonRootSuffix } from "../config/io.js";
 import { formatConfigIssueLines } from "../config/issue-format.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { note } from "../terminal/note.js";
 import { resolveHomeDir } from "../utils.js";
 import { noteIncludeConfinementWarning } from "./doctor-config-analysis.js";
@@ -14,8 +14,8 @@ async function maybeMigrateLegacyConfig(): Promise<string[]> {
     return changes;
   }
 
-  const targetDir = path.join(home, ".openclaw");
-  const targetPath = path.join(targetDir, "openclaw.json");
+  const targetDir = path.join(home, ".opencli");
+  const targetPath = path.join(targetDir, "opencli.json");
   try {
     await fs.access(targetPath);
     return changes;
@@ -52,7 +52,7 @@ async function maybeMigrateLegacyConfig(): Promise<string[]> {
 
 export type DoctorConfigPreflightResult = {
   snapshot: Awaited<ReturnType<typeof readConfigFileSnapshot>>;
-  baseConfig: OpenClawConfig;
+  baseConfig: OpenCLIConfig;
 };
 
 export async function runDoctorConfigPreflight(
@@ -88,7 +88,7 @@ export async function runDoctorConfigPreflight(
     !snapshot.valid &&
     (await recoverConfigFromJsonRootSuffix(snapshot))
   ) {
-    note("Removed non-JSON prefix from openclaw.json; original saved as .clobbered.*.", "Config");
+    note("Removed non-JSON prefix from opencli.json; original saved as .clobbered.*.", "Config");
     snapshot = await readConfigFileSnapshot();
   }
   const invalidConfigNote =

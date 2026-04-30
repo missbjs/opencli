@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import type { DispatchReplyWithBufferedBlockDispatcher } from "../auto-reply/reply/provider-dispatcher.types.js";
 import type { FinalizedMsgContext } from "../auto-reply/templating.js";
 import type { RecordInboundSession } from "../channels/session.types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { recordInboundSessionAndDispatchReply } from "./inbound-reply-dispatch.js";
 
 describe("recordInboundSessionAndDispatchReply", () => {
@@ -34,7 +34,7 @@ describe("recordInboundSessionAndDispatchReply", () => {
     } as FinalizedMsgContext;
 
     await recordInboundSessionAndDispatchReply({
-      cfg: {} as OpenClawConfig,
+      cfg: {} as OpenCLIConfig,
       channel: "test",
       accountId: "default",
       agentId: "main",

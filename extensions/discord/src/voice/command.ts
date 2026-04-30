@@ -3,8 +3,8 @@ import {
   ChannelType as DiscordChannelType,
   type APIApplicationCommandChannelOption,
 } from "discord-api-types/v10";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
-import type { DiscordAccountConfig } from "openclaw/plugin-sdk/config-types";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
+import type { DiscordAccountConfig } from "opencli/plugin-sdk/config-types";
 import { resolveDiscordAccountAllowFrom } from "../accounts.js";
 import {
   Command,
@@ -25,7 +25,7 @@ const VOICE_CHANNEL_TYPES: NonNullable<APIApplicationCommandChannelOption["chann
 ];
 
 type VoiceCommandContext = {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   discordConfig: DiscordAccountConfig;
   accountId: string;
   groupPolicy: "open" | "disabled" | "allowlist";

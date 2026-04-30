@@ -10,7 +10,7 @@ import {
 } from "../config/recovery-policy.js";
 import { resolveConfigWriteFollowUp } from "../config/runtime-snapshot.js";
 import type { GatewayReloadMode } from "../config/types.gateway.js";
-import type { ConfigFileSnapshot, OpenClawConfig } from "../config/types.openclaw.js";
+import type { ConfigFileSnapshot, OpenCLIConfig } from "../config/types.opencli.js";
 import { validateConfigObjectWithPlugins } from "../config/validation.js";
 import { isPlainObject } from "../utils.js";
 import {
@@ -94,7 +94,7 @@ function resolvePluginLocalInvalidReloadSnapshot(params: {
   const runtimeConfig = materializeRuntimeConfig(validated.config, "load");
   for (const issue of params.snapshot.issues) {
     params.log.warn(
-      `config reload skipped plugin config validation issue at ${issue.path}: ${issue.message}. Run "openclaw doctor --fix" to quarantine the plugin config.`,
+      `config reload skipped plugin config validation issue at ${issue.path}: ${issue.message}. Run "opencli doctor --fix" to quarantine the plugin config.`,
     );
   }
   return {
@@ -140,7 +140,7 @@ export function diffConfigPaths(prev: unknown, next: unknown, prefix = ""): stri
   return [prefix || "<root>"];
 }
 
-export function resolveGatewayReloadSettings(cfg: OpenClawConfig): GatewayReloadSettings {
+export function resolveGatewayReloadSettings(cfg: OpenCLIConfig): GatewayReloadSettings {
   const rawMode = cfg.gateway?.reload?.mode;
   const mode =
     rawMode === "off" || rawMode === "restart" || rawMode === "hot" || rawMode === "hybrid"
@@ -159,12 +159,12 @@ export type GatewayConfigReloader = {
 };
 
 export function startGatewayConfigReloader(opts: {
-  initialConfig: OpenClawConfig;
-  initialCompareConfig?: OpenClawConfig;
+  initialConfig: OpenCLIConfig;
+  initialCompareConfig?: OpenCLIConfig;
   initialInternalWriteHash?: string | null;
   readSnapshot: () => Promise<ConfigFileSnapshot>;
-  onHotReload: (plan: GatewayReloadPlan, nextConfig: OpenClawConfig) => Promise<void>;
-  onRestart: (plan: GatewayReloadPlan, nextConfig: OpenClawConfig) => void | Promise<void>;
+  onHotReload: (plan: GatewayReloadPlan, nextConfig: OpenCLIConfig) => Promise<void>;
+  onRestart: (plan: GatewayReloadPlan, nextConfig: OpenCLIConfig) => void | Promise<void>;
   recoverSnapshot?: (snapshot: ConfigFileSnapshot, reason: string) => Promise<boolean>;
   promoteSnapshot?: (snapshot: ConfigFileSnapshot, reason: string) => Promise<boolean>;
   onRecovered?: (params: {
@@ -190,8 +190,8 @@ export function startGatewayConfigReloader(opts: {
   let restartQueued = false;
   let missingConfigRetries = 0;
   let pendingInProcessConfig: {
-    config: OpenClawConfig;
-    compareConfig: OpenClawConfig;
+    config: OpenCLIConfig;
+    compareConfig: OpenCLIConfig;
     persistedHash: string;
     afterWrite?: ConfigWriteNotification["afterWrite"];
   } | null = null;
@@ -211,7 +211,7 @@ export function startGatewayConfigReloader(opts: {
   const schedule = () => {
     scheduleAfter(settings.debounceMs);
   };
-  const queueRestart = (plan: GatewayReloadPlan, nextConfig: OpenClawConfig) => {
+  const queueRestart = (plan: GatewayReloadPlan, nextConfig: OpenCLIConfig) => {
     if (restartQueued) {
       return;
     }
@@ -287,8 +287,8 @@ export function startGatewayConfigReloader(opts: {
   };
 
   const applySnapshot = async (
-    nextConfig: OpenClawConfig,
-    nextCompareConfig: OpenClawConfig,
+    nextConfig: OpenCLIConfig,
+    nextCompareConfig: OpenCLIConfig,
     afterWrite?: ConfigWriteNotification["afterWrite"],
   ) => {
     const changedPaths = diffConfigPaths(currentCompareConfig, nextCompareConfig);

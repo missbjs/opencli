@@ -1,5 +1,5 @@
 import Foundation
-import OpenClawIPC
+import OpenCLIIPC
 import Testing
 
 struct CanvasIPCTests {

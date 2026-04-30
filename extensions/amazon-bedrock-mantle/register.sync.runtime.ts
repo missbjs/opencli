@@ -1,4 +1,4 @@
-import type { OpenClawPluginApi } from "openclaw/plugin-sdk/plugin-entry";
+import type { OpenCLIPluginApi } from "opencli/plugin-sdk/plugin-entry";
 import {
   mergeImplicitMantleProvider,
   resolveImplicitMantleProvider,
@@ -7,7 +7,7 @@ import {
 } from "./discovery.js";
 import { createMantleAnthropicStreamFn } from "./mantle-anthropic.runtime.js";
 
-export function registerBedrockMantlePlugin(api: OpenClawPluginApi): void {
+export function registerBedrockMantlePlugin(api: OpenCLIPluginApi): void {
   const providerId = "amazon-bedrock-mantle";
 
   api.registerProvider({

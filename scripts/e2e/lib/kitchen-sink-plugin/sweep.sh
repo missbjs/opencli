@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-source scripts/lib/openclaw-e2e-instance.sh
+source scripts/lib/opencli-e2e-instance.sh
 source scripts/lib/docker-e2e-logs.sh
 
-OPENCLAW_ENTRY="$(openclaw_e2e_resolve_entrypoint)"
-export OPENCLAW_ENTRY
+OPENCLI_ENTRY="$(opencli_e2e_resolve_entrypoint)"
+export OPENCLI_ENTRY
 
-openclaw_e2e_eval_test_state_from_b64 "${OPENCLAW_TEST_STATE_SCRIPT_B64:?missing OPENCLAW_TEST_STATE_SCRIPT_B64}"
+opencli_e2e_eval_test_state_from_b64 "${OPENCLI_TEST_STATE_SCRIPT_B64:?missing OPENCLI_TEST_STATE_SCRIPT_B64}"
 
 run_expect_failure() {
   local label="$1"
@@ -37,7 +37,7 @@ start_kitchen_sink_clawhub_fixture_server() {
 
   for _ in $(seq 1 100); do
     if [[ -s "$server_port_file" ]]; then
-      export OPENCLAW_CLAWHUB_URL="http://127.0.0.1:$(cat "$server_port_file")"
+      export OPENCLI_CLAWHUB_URL="http://127.0.0.1:$(cat "$server_port_file")"
       trap 'if [[ -f "'"$server_pid_file"'" ]]; then kill "$(cat "'"$server_pid_file"'")" 2>/dev/null || true; fi' EXIT
       return 0
     fi
@@ -75,35 +75,35 @@ assert_kitchen_sink_removed() {
 
 run_success_scenario() {
   echo "Testing ${KITCHEN_SINK_LABEL} install from ${KITCHEN_SINK_SPEC}..."
-  run_logged_print "kitchen-sink-install-${KITCHEN_SINK_LABEL}" node "$OPENCLAW_ENTRY" plugins install "$KITCHEN_SINK_SPEC"
+  run_logged_print "kitchen-sink-install-${KITCHEN_SINK_LABEL}" node "$OPENCLI_ENTRY" plugins install "$KITCHEN_SINK_SPEC"
   configure_kitchen_sink_runtime
-  run_logged_print "kitchen-sink-enable-${KITCHEN_SINK_LABEL}" node "$OPENCLAW_ENTRY" plugins enable "$KITCHEN_SINK_ID"
-  node "$OPENCLAW_ENTRY" plugins list --json >"/tmp/kitchen-sink-${KITCHEN_SINK_LABEL}-plugins.json"
-  node "$OPENCLAW_ENTRY" plugins inspect "$KITCHEN_SINK_ID" --json >"/tmp/kitchen-sink-${KITCHEN_SINK_LABEL}-inspect.json"
-  node "$OPENCLAW_ENTRY" plugins inspect --all --json >"/tmp/kitchen-sink-${KITCHEN_SINK_LABEL}-inspect-all.json"
+  run_logged_print "kitchen-sink-enable-${KITCHEN_SINK_LABEL}" node "$OPENCLI_ENTRY" plugins enable "$KITCHEN_SINK_ID"
+  node "$OPENCLI_ENTRY" plugins list --json >"/tmp/kitchen-sink-${KITCHEN_SINK_LABEL}-plugins.json"
+  node "$OPENCLI_ENTRY" plugins inspect "$KITCHEN_SINK_ID" --json >"/tmp/kitchen-sink-${KITCHEN_SINK_LABEL}-inspect.json"
+  node "$OPENCLI_ENTRY" plugins inspect --all --json >"/tmp/kitchen-sink-${KITCHEN_SINK_LABEL}-inspect-all.json"
   assert_kitchen_sink_installed
   if [ "$KITCHEN_SINK_SOURCE" = "clawhub" ]; then
-    run_logged_print "kitchen-sink-uninstall-${KITCHEN_SINK_LABEL}" node "$OPENCLAW_ENTRY" plugins uninstall "$KITCHEN_SINK_SPEC" --force
+    run_logged_print "kitchen-sink-uninstall-${KITCHEN_SINK_LABEL}" node "$OPENCLI_ENTRY" plugins uninstall "$KITCHEN_SINK_SPEC" --force
   else
-    run_logged_print "kitchen-sink-uninstall-${KITCHEN_SINK_LABEL}" node "$OPENCLAW_ENTRY" plugins uninstall "$KITCHEN_SINK_ID" --force
+    run_logged_print "kitchen-sink-uninstall-${KITCHEN_SINK_LABEL}" node "$OPENCLI_ENTRY" plugins uninstall "$KITCHEN_SINK_ID" --force
   fi
   remove_kitchen_sink_channel_config
-  node "$OPENCLAW_ENTRY" plugins list --json >"/tmp/kitchen-sink-${KITCHEN_SINK_LABEL}-uninstalled.json"
+  node "$OPENCLI_ENTRY" plugins list --json >"/tmp/kitchen-sink-${KITCHEN_SINK_LABEL}-uninstalled.json"
   assert_kitchen_sink_removed
 }
 
 run_failure_scenario() {
   echo "Testing expected ${KITCHEN_SINK_LABEL} install failure from ${KITCHEN_SINK_SPEC}..."
-  run_expect_failure "install-${KITCHEN_SINK_LABEL}" node "$OPENCLAW_ENTRY" plugins install "$KITCHEN_SINK_SPEC"
+  run_expect_failure "install-${KITCHEN_SINK_LABEL}" node "$OPENCLI_ENTRY" plugins install "$KITCHEN_SINK_SPEC"
   remove_kitchen_sink_channel_config
-  node "$OPENCLAW_ENTRY" plugins list --json >"/tmp/kitchen-sink-${KITCHEN_SINK_LABEL}-uninstalled.json"
+  node "$OPENCLI_ENTRY" plugins list --json >"/tmp/kitchen-sink-${KITCHEN_SINK_LABEL}-uninstalled.json"
   assert_kitchen_sink_removed
 }
 
 if [[ "$KITCHEN_SINK_SCENARIOS" == *"clawhub:"* ]] &&
-  [[ "${OPENCLAW_KITCHEN_SINK_LIVE_CLAWHUB:-0}" != "1" ]] &&
-  [[ -z "${OPENCLAW_CLAWHUB_URL:-}" && -z "${CLAWHUB_URL:-}" ]]; then
-  clawhub_fixture_dir="$(mktemp -d "/tmp/openclaw-kitchen-sink-clawhub.XXXXXX")"
+  [[ "${OPENCLI_KITCHEN_SINK_LIVE_CLAWHUB:-0}" != "1" ]] &&
+  [[ -z "${OPENCLI_CLAWHUB_URL:-}" && -z "${CLAWHUB_URL:-}" ]]; then
+  clawhub_fixture_dir="$(mktemp -d "/tmp/opencli-kitchen-sink-clawhub.XXXXXX")"
   start_kitchen_sink_clawhub_fixture_server "$clawhub_fixture_dir"
 fi
 

@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../../config/types.opencli.js";
 import {
   providerSupportsNativePdfDocument,
   resolveAutoMediaKeyProviders,
@@ -14,7 +14,7 @@ import { hasAuthForProvider, resolveDefaultModelRef } from "./model-config.helpe
 import { coercePdfModelConfig } from "./pdf-tool.helpers.js";
 
 function resolveImageCandidateRefs(params: {
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   agentDir: string;
   filter?: (providerId: string) => boolean;
 }): string[] {
@@ -38,7 +38,7 @@ function resolveImageCandidateRefs(params: {
 }
 
 export function resolvePdfModelConfigForTool(params: {
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   agentDir: string;
 }): ImageModelConfig | null {
   const explicitPdf = coercePdfModelConfig(params.cfg);

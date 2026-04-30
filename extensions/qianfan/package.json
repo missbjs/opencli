@@ -1,13 +1,13 @@
 {
-  "name": "@openclaw/qianfan-provider",
+  "name": "@opencli/qianfan-provider",
   "version": "2026.4.25",
   "private": true,
-  "description": "OpenClaw Qianfan provider plugin",
+  "description": "OpenCLI Qianfan provider plugin",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@opencli/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "opencli": {
     "extensions": [
       "./index.ts"
     ]

@@ -1,16 +1,16 @@
 {
-  "name": "@openclaw/brave-plugin",
+  "name": "@opencli/brave-plugin",
   "version": "2026.4.25",
   "private": true,
-  "description": "OpenClaw Brave plugin",
+  "description": "OpenCLI Brave plugin",
   "type": "module",
   "dependencies": {
     "typebox": "1.1.34"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@opencli/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "opencli": {
     "extensions": [
       "./index.ts"
     ]

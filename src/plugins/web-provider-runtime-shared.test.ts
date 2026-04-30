@@ -2,7 +2,7 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   isPluginRegistryLoadInFlight: vi.fn(() => false),
-  loadOpenClawPlugins: vi.fn(),
+  loadOpenCLIPlugins: vi.fn(),
   resolveCompatibleRuntimePluginRegistry: vi.fn(),
   resolvePluginRegistryLoadCacheKey: vi.fn((options: unknown) => JSON.stringify(options)),
   resolveRuntimePluginRegistry: vi.fn(),
@@ -22,7 +22,7 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("./loader.js", () => ({
   isPluginRegistryLoadInFlight: mocks.isPluginRegistryLoadInFlight,
-  loadOpenClawPlugins: mocks.loadOpenClawPlugins,
+  loadOpenCLIPlugins: mocks.loadOpenCLIPlugins,
   resolveCompatibleRuntimePluginRegistry: mocks.resolveCompatibleRuntimePluginRegistry,
   resolvePluginRegistryLoadCacheKey: mocks.resolvePluginRegistryLoadCacheKey,
   resolveRuntimePluginRegistry: mocks.resolveRuntimePluginRegistry,
@@ -49,7 +49,7 @@ describe("web-provider-runtime-shared", () => {
   beforeEach(() => {
     mocks.isPluginRegistryLoadInFlight.mockReset();
     mocks.isPluginRegistryLoadInFlight.mockReturnValue(false);
-    mocks.loadOpenClawPlugins.mockReset();
+    mocks.loadOpenCLIPlugins.mockReset();
     mocks.resolveCompatibleRuntimePluginRegistry.mockReset();
     mocks.resolvePluginRegistryLoadCacheKey.mockReset();
     mocks.resolvePluginRegistryLoadCacheKey.mockImplementation((options: unknown) =>

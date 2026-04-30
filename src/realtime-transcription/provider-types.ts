@@ -1,16 +1,16 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 
 export type RealtimeTranscriptionProviderId = string;
 
 export type RealtimeTranscriptionProviderConfig = Record<string, unknown>;
 
 export type RealtimeTranscriptionProviderResolveConfigContext = {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   rawConfig: RealtimeTranscriptionProviderConfig;
 };
 
 export type RealtimeTranscriptionProviderConfiguredContext = {
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   providerConfig: RealtimeTranscriptionProviderConfig;
 };
 

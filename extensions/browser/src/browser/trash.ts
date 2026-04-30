@@ -1,9 +1,9 @@
 import os from "node:os";
-import { movePathToTrash as movePathToTrashWithAllowedRoots } from "openclaw/plugin-sdk/browser-config";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
+import { movePathToTrash as movePathToTrashWithAllowedRoots } from "opencli/plugin-sdk/browser-config";
+import { resolvePreferredOpenCLITmpDir } from "opencli/plugin-sdk/temp-path";
 
 export async function movePathToTrash(targetPath: string): Promise<string> {
   return await movePathToTrashWithAllowedRoots(targetPath, {
-    allowedRoots: [os.homedir(), resolvePreferredOpenClawTmpDir()],
+    allowedRoots: [os.homedir(), resolvePreferredOpenCLITmpDir()],
   });
 }

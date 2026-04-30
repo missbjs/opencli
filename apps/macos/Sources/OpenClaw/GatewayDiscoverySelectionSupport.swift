@@ -1,6 +1,6 @@
 import Foundation
-import OpenClawDiscovery
-import OpenClawKit
+import OpenCLIDiscovery
+import OpenCLIKit
 
 @MainActor
 enum GatewayDiscoverySelectionSupport {
@@ -26,14 +26,14 @@ enum GatewayDiscoverySelectionSupport {
 
         if preferredTransport == .direct {
             if let endpoint = GatewayDiscoveryHelpers.serviceEndpoint(for: gateway) {
-                OpenClawConfigFile.setRemoteGatewayUrl(
+                OpenCLIConfigFile.setRemoteGatewayUrl(
                     host: endpoint.host,
                     port: endpoint.port)
             } else {
-                OpenClawConfigFile.clearRemoteGatewayUrl()
+                OpenCLIConfigFile.clearRemoteGatewayUrl()
             }
         } else {
-            OpenClawConfigFile.setRemoteGatewayUrlString(state.remoteUrl)
+            OpenCLIConfigFile.setRemoteGatewayUrlString(state.remoteUrl)
         }
     }
 

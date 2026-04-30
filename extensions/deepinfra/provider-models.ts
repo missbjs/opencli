@@ -1,11 +1,11 @@
-import { fetchWithTimeout } from "openclaw/plugin-sdk/provider-http";
-import type { ModelDefinitionConfig } from "openclaw/plugin-sdk/provider-model-shared";
-import { createSubsystemLogger } from "openclaw/plugin-sdk/runtime-env";
+import { fetchWithTimeout } from "opencli/plugin-sdk/provider-http";
+import type { ModelDefinitionConfig } from "opencli/plugin-sdk/provider-model-shared";
+import { createSubsystemLogger } from "opencli/plugin-sdk/runtime-env";
 
 const log = createSubsystemLogger("deepinfra-models");
 
 export const DEEPINFRA_BASE_URL = "https://api.deepinfra.com/v1/openai";
-export const DEEPINFRA_MODELS_URL = `${DEEPINFRA_BASE_URL}/models?sort_by=openclaw&filter=with_meta`;
+export const DEEPINFRA_MODELS_URL = `${DEEPINFRA_BASE_URL}/models?sort_by=opencli&filter=with_meta`;
 
 export const DEEPINFRA_DEFAULT_MODEL_ID = "deepseek-ai/DeepSeek-V3.2";
 export const DEEPINFRA_DEFAULT_MODEL_REF = `deepinfra/${DEEPINFRA_DEFAULT_MODEL_ID}`;

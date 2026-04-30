@@ -1,15 +1,15 @@
 import {
   registerProviderPlugin,
   requireRegisteredProvider,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
+} from "opencli/plugin-sdk/plugin-test-runtime";
 import {
   expectAugmentedCodexCatalog,
   expectedOpenaiPluginCodexCatalogEntriesWithGpt55,
   expectCodexMissingAuthHint,
   importProviderRuntimeCatalogModule,
   loadBundledPluginPublicSurface,
-} from "openclaw/plugin-sdk/provider-test-contracts";
-import type { ProviderPlugin } from "openclaw/plugin-sdk/provider-test-contracts";
+} from "opencli/plugin-sdk/provider-test-contracts";
+import type { ProviderPlugin } from "opencli/plugin-sdk/provider-test-contracts";
 import { beforeEach, describe, it, vi } from "vitest";
 
 const PROVIDER_CATALOG_CONTRACT_TIMEOUT_MS = 300_000;
@@ -26,10 +26,10 @@ const resolveCatalogHookProviderPluginIdsMock = vi.hoisted(() =>
   vi.fn<ResolveCatalogHookProviderPluginIds>((_) => [] as string[]),
 );
 
-vi.mock("openclaw/plugin-sdk/provider-catalog-runtime", async () => {
+vi.mock("opencli/plugin-sdk/provider-catalog-runtime", async () => {
   const actual = await vi.importActual<
-    typeof import("openclaw/plugin-sdk/provider-catalog-runtime")
-  >("openclaw/plugin-sdk/provider-catalog-runtime");
+    typeof import("opencli/plugin-sdk/provider-catalog-runtime")
+  >("opencli/plugin-sdk/provider-catalog-runtime");
   const resolveCatalogHookProviders = (params: unknown) =>
     resolvePluginProvidersMock({
       onlyPluginIds: resolveCatalogHookProviderPluginIdsMock(params),

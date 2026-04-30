@@ -2,7 +2,7 @@ import {
   resolveAckReaction,
   shouldAckReaction as shouldAckReactionGate,
   type AckReactionScope,
-} from "openclaw/plugin-sdk/channel-feedback";
+} from "opencli/plugin-sdk/channel-feedback";
 import {
   buildMentionRegexes,
   formatInboundEnvelope,
@@ -11,25 +11,25 @@ import {
   matchesMentionWithExplicit,
   resolveEnvelopeFormatOptions,
   resolveInboundMentionDecision,
-} from "openclaw/plugin-sdk/channel-inbound";
-import { resolveChannelSourceReplyDeliveryMode } from "openclaw/plugin-sdk/channel-reply-pipeline";
-import { hasControlCommand } from "openclaw/plugin-sdk/command-detection";
-import { resolveControlCommandGate } from "openclaw/plugin-sdk/command-gating";
-import { shouldHandleTextCommands } from "openclaw/plugin-sdk/command-surface";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { finalizeInboundContext } from "openclaw/plugin-sdk/reply-dispatch-runtime";
+} from "opencli/plugin-sdk/channel-inbound";
+import { resolveChannelSourceReplyDeliveryMode } from "opencli/plugin-sdk/channel-reply-pipeline";
+import { hasControlCommand } from "opencli/plugin-sdk/command-detection";
+import { resolveControlCommandGate } from "opencli/plugin-sdk/command-gating";
+import { shouldHandleTextCommands } from "opencli/plugin-sdk/command-surface";
+import { formatErrorMessage } from "opencli/plugin-sdk/error-runtime";
+import { finalizeInboundContext } from "opencli/plugin-sdk/reply-dispatch-runtime";
 import {
   buildPendingHistoryContextFromMap,
   recordPendingHistoryEntryIfEnabled,
-} from "openclaw/plugin-sdk/reply-history";
-import type { FinalizedMsgContext } from "openclaw/plugin-sdk/reply-runtime";
-import { logVerbose, shouldLogVerbose } from "openclaw/plugin-sdk/runtime-env";
-import { resolvePinnedMainDmOwnerFromAllowlist } from "openclaw/plugin-sdk/security-runtime";
-import { enqueueSystemEvent } from "openclaw/plugin-sdk/system-event-runtime";
+} from "opencli/plugin-sdk/reply-history";
+import type { FinalizedMsgContext } from "opencli/plugin-sdk/reply-runtime";
+import { logVerbose, shouldLogVerbose } from "opencli/plugin-sdk/runtime-env";
+import { resolvePinnedMainDmOwnerFromAllowlist } from "opencli/plugin-sdk/security-runtime";
+import { enqueueSystemEvent } from "opencli/plugin-sdk/system-event-runtime";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "openclaw/plugin-sdk/text-runtime";
+} from "opencli/plugin-sdk/text-runtime";
 import type { ResolvedSlackAccount } from "../../accounts.js";
 import { reactSlackMessage } from "../../actions.js";
 import { formatSlackFileReference } from "../../file-reference.js";

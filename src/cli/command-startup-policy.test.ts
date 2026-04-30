@@ -94,21 +94,21 @@ describe("command-startup-policy", () => {
     ).toBe(false);
     expect(
       shouldLoadPluginsForCommandPath({
-        argv: ["node", "openclaw", "agent", "--json"],
+        argv: ["node", "opencli", "agent", "--json"],
         commandPath: ["agent"],
         jsonOutputMode: true,
       }),
     ).toBe(false);
     expect(
       shouldLoadPluginsForCommandPath({
-        argv: ["node", "openclaw", "agent", "--json", "--local"],
+        argv: ["node", "opencli", "agent", "--json", "--local"],
         commandPath: ["agent"],
         jsonOutputMode: true,
       }),
     ).toBe(true);
     expect(
       shouldLoadPluginsForCommandPath({
-        argv: ["node", "openclaw", "agent"],
+        argv: ["node", "opencli", "agent"],
         commandPath: ["agent"],
         jsonOutputMode: false,
       }),
@@ -166,7 +166,7 @@ describe("command-startup-policy", () => {
     expect(
       shouldHideCliBannerForCommandPath(["status"], {
         ...process.env,
-        OPENCLAW_HIDE_BANNER: "1",
+        OPENCLI_HIDE_BANNER: "1",
       }),
     ).toBe(true);
     expect(shouldHideCliBannerForCommandPath(["status"], {})).toBe(false);

@@ -1,6 +1,6 @@
-import { createChannelPairingController } from "openclaw/plugin-sdk/channel-pairing";
-import { attachChannelToResult } from "openclaw/plugin-sdk/channel-send-result";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
+import { createChannelPairingController } from "opencli/plugin-sdk/channel-pairing";
+import { attachChannelToResult } from "opencli/plugin-sdk/channel-send-result";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
 import {
   createPreCryptoDirectDmAuthorizer,
   DEFAULT_ACCOUNT_ID,
@@ -54,7 +54,7 @@ function isNostrSenderAllowed(senderPubkey: string, allowFrom: string[]): boolea
 }
 
 async function resolveNostrDirectAccess(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   accountId: string;
   dmPolicy: "pairing" | "allowlist" | "open" | "disabled";
   allowFrom: Array<string | number> | undefined;
@@ -261,7 +261,7 @@ export const nostrPairingTextAdapter = {
     message,
     accountId,
   }: {
-    cfg: OpenClawConfig;
+    cfg: OpenCLIConfig;
     id: string;
     message: string;
     accountId?: string;

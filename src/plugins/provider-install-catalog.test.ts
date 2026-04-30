@@ -1,13 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-type LoadOpenClawProviderIndex =
-  typeof import("../model-catalog/index.js").loadOpenClawProviderIndex;
+type LoadOpenCLIProviderIndex = typeof import("../model-catalog/index.js").loadOpenCLIProviderIndex;
 type LoadPluginRegistrySnapshot = typeof import("./plugin-registry.js").loadPluginRegistrySnapshot;
 type ResolveManifestProviderAuthChoices =
   typeof import("./provider-auth-choices.js").resolveManifestProviderAuthChoices;
 
-const loadOpenClawProviderIndex = vi.hoisted(() =>
-  vi.fn<LoadOpenClawProviderIndex>(() => ({ version: 1, providers: {} })),
+const loadOpenCLIProviderIndex = vi.hoisted(() =>
+  vi.fn<LoadOpenCLIProviderIndex>(() => ({ version: 1, providers: {} })),
 );
 vi.mock("../model-catalog/index.js", async () => {
   const actual = await vi.importActual<typeof import("../model-catalog/index.js")>(
@@ -15,7 +14,7 @@ vi.mock("../model-catalog/index.js", async () => {
   );
   return {
     ...actual,
-    loadOpenClawProviderIndex,
+    loadOpenCLIProviderIndex,
   };
 });
 
@@ -51,7 +50,7 @@ import {
 describe("provider install catalog", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    loadOpenClawProviderIndex.mockReturnValue({ version: 1, providers: {} });
+    loadOpenCLIProviderIndex.mockReturnValue({ version: 1, providers: {} });
     loadPluginRegistrySnapshot.mockReturnValue({
       version: 1,
       hostContractVersion: "test",
@@ -79,7 +78,7 @@ describe("provider install catalog", () => {
         {
           pluginId: "openai",
           origin: "bundled",
-          manifestPath: "/repo/extensions/openai/openclaw.plugin.json",
+          manifestPath: "/repo/extensions/openai/opencli.plugin.json",
           manifestHash: "hash",
           rootDir: "/repo/extensions/openai",
           enabled: true,
@@ -90,12 +89,12 @@ describe("provider install catalog", () => {
             agentHarnesses: [],
           },
           compat: [],
-          packageName: "@openclaw/openai",
+          packageName: "@opencli/openai",
           packageInstall: {
             defaultChoice: "npm",
             npm: {
-              spec: "@openclaw/openai@1.2.3",
-              packageName: "@openclaw/openai",
+              spec: "@opencli/openai@1.2.3",
+              packageName: "@opencli/openai",
               selector: "1.2.3",
               selectorKind: "exact-version",
               exactVersion: true,
@@ -135,7 +134,7 @@ describe("provider install catalog", () => {
         label: "OpenAI",
         origin: "bundled",
         install: {
-          npmSpec: "@openclaw/openai@1.2.3",
+          npmSpec: "@opencli/openai@1.2.3",
           localPath: "extensions/openai",
           defaultChoice: "npm",
           expectedIntegrity: "sha512-openai",
@@ -143,8 +142,8 @@ describe("provider install catalog", () => {
         installSource: {
           defaultChoice: "npm",
           npm: {
-            spec: "@openclaw/openai@1.2.3",
-            packageName: "@openclaw/openai",
+            spec: "@opencli/openai@1.2.3",
+            packageName: "@opencli/openai",
             selector: "1.2.3",
             selectorKind: "exact-version",
             exactVersion: true,
@@ -171,8 +170,8 @@ describe("provider install catalog", () => {
       installRecords: {
         vllm: {
           source: "npm",
-          spec: "@openclaw/vllm",
-          resolvedSpec: "@openclaw/vllm@2.0.0",
+          spec: "@opencli/vllm",
+          resolvedSpec: "@opencli/vllm@2.0.0",
           integrity: "sha512-vllm",
         },
       },
@@ -180,9 +179,9 @@ describe("provider install catalog", () => {
         {
           pluginId: "vllm",
           origin: "global",
-          manifestPath: "/Users/test/.openclaw/plugins/vllm/openclaw.plugin.json",
+          manifestPath: "/Users/test/.opencli/plugins/vllm/opencli.plugin.json",
           manifestHash: "hash",
-          rootDir: "/Users/test/.openclaw/plugins/vllm",
+          rootDir: "/Users/test/.opencli/plugins/vllm",
           enabled: true,
           startup: {
             sidecar: false,
@@ -191,11 +190,11 @@ describe("provider install catalog", () => {
             agentHarnesses: [],
           },
           compat: [],
-          packageName: "@openclaw/vllm",
+          packageName: "@opencli/vllm",
           packageInstall: {
             npm: {
-              spec: "@openclaw/vllm-fork@1.0.0",
-              packageName: "@openclaw/vllm-fork",
+              spec: "@opencli/vllm-fork@1.0.0",
+              packageName: "@opencli/vllm-fork",
               selector: "1.0.0",
               selectorKind: "exact-version",
               exactVersion: true,
@@ -229,15 +228,15 @@ describe("provider install catalog", () => {
       label: "vLLM",
       origin: "global",
       install: {
-        npmSpec: "@openclaw/vllm@2.0.0",
+        npmSpec: "@opencli/vllm@2.0.0",
         expectedIntegrity: "sha512-vllm",
         defaultChoice: "npm",
       },
       installSource: {
         defaultChoice: "npm",
         npm: {
-          spec: "@openclaw/vllm@2.0.0",
-          packageName: "@openclaw/vllm",
+          spec: "@opencli/vllm@2.0.0",
+          packageName: "@opencli/vllm",
           selector: "2.0.0",
           selectorKind: "exact-version",
           exactVersion: true,
@@ -262,9 +261,9 @@ describe("provider install catalog", () => {
         {
           pluginId: "demo-provider",
           origin: "global",
-          manifestPath: "/Users/test/.openclaw/plugins/demo-provider/openclaw.plugin.json",
+          manifestPath: "/Users/test/.opencli/plugins/demo-provider/opencli.plugin.json",
           manifestHash: "hash",
-          rootDir: "/Users/test/.openclaw/plugins/demo-provider",
+          rootDir: "/Users/test/.opencli/plugins/demo-provider",
           enabled: true,
           startup: {
             sidecar: false,
@@ -316,7 +315,7 @@ describe("provider install catalog", () => {
         {
           pluginId: "demo-provider",
           origin: "workspace",
-          manifestPath: "/repo/extensions/demo-provider/openclaw.plugin.json",
+          manifestPath: "/repo/extensions/demo-provider/opencli.plugin.json",
           manifestHash: "hash",
           rootDir: "/repo/extensions/demo-provider",
           enabled: false,
@@ -360,7 +359,7 @@ describe("provider install catalog", () => {
   });
 
   it("surfaces provider-index install metadata when the provider plugin is not installed", () => {
-    loadOpenClawProviderIndex.mockReturnValue({
+    loadOpenCLIProviderIndex.mockReturnValue({
       version: 1,
       providers: {
         moonshot: {
@@ -368,9 +367,9 @@ describe("provider install catalog", () => {
           name: "Moonshot AI",
           plugin: {
             id: "moonshot",
-            package: "@openclaw/plugin-moonshot",
+            package: "@opencli/plugin-moonshot",
             install: {
-              npmSpec: "@openclaw/plugin-moonshot@1.2.3",
+              npmSpec: "@opencli/plugin-moonshot@1.2.3",
               defaultChoice: "npm",
               expectedIntegrity: "sha512-moonshot",
             },
@@ -401,15 +400,15 @@ describe("provider install catalog", () => {
       label: "Moonshot AI",
       origin: "bundled",
       install: {
-        npmSpec: "@openclaw/plugin-moonshot@1.2.3",
+        npmSpec: "@opencli/plugin-moonshot@1.2.3",
         defaultChoice: "npm",
         expectedIntegrity: "sha512-moonshot",
       },
       installSource: {
         defaultChoice: "npm",
         npm: {
-          spec: "@openclaw/plugin-moonshot@1.2.3",
-          packageName: "@openclaw/plugin-moonshot",
+          spec: "@opencli/plugin-moonshot@1.2.3",
+          packageName: "@opencli/plugin-moonshot",
           selector: "1.2.3",
           selectorKind: "exact-version",
           exactVersion: true,
@@ -434,7 +433,7 @@ describe("provider install catalog", () => {
         {
           pluginId: "moonshot",
           origin: "bundled",
-          manifestPath: "/repo/extensions/moonshot/openclaw.plugin.json",
+          manifestPath: "/repo/extensions/moonshot/opencli.plugin.json",
           manifestHash: "hash",
           rootDir: "/repo/extensions/moonshot",
           enabled: true,
@@ -449,7 +448,7 @@ describe("provider install catalog", () => {
       ],
       diagnostics: [],
     });
-    loadOpenClawProviderIndex.mockReturnValue({
+    loadOpenCLIProviderIndex.mockReturnValue({
       version: 1,
       providers: {
         moonshot: {
@@ -457,9 +456,9 @@ describe("provider install catalog", () => {
           name: "Moonshot AI",
           plugin: {
             id: "moonshot",
-            package: "@openclaw/plugin-moonshot",
+            package: "@opencli/plugin-moonshot",
             install: {
-              npmSpec: "@openclaw/plugin-moonshot@1.2.3",
+              npmSpec: "@opencli/plugin-moonshot@1.2.3",
               expectedIntegrity: "sha512-moonshot",
             },
           },

@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: Trigger locale translates in publish repo
         env:
-          GH_TOKEN: ${{ secrets.OPENCLAW_DOCS_SYNC_TOKEN }}
+          GH_TOKEN: ${{ secrets.OPENCLI_DOCS_SYNC_TOKEN }}
           RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
           set -euo pipefail
@@ -38,7 +38,7 @@ jobs:
             translate-pl-release \
             translate-th-release
           do
-            gh api repos/openclaw/docs/dispatches \
+            gh api repos/opencli/docs/dispatches \
               --method POST \
               -f event_type="${event_type}" \
               -f client_payload[release_tag]="${RELEASE_TAG}" \

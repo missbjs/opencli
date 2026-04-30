@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import OpenClaw
+@testable import OpenCLI
 
 struct NodeManagerPathsTests {
     @Test func `fnm node bins prefer newest installed version`() throws {

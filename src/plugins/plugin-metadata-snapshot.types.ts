@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import type { InstalledPluginIndex } from "./installed-plugin-index.js";
 import type { PluginManifestRecord, PluginManifestRegistry } from "./manifest-registry.js";
 import type { PluginDiagnostic } from "./manifest-types.js";
@@ -48,7 +48,7 @@ export type PluginMetadataSnapshot = {
 };
 
 export type LoadPluginMetadataSnapshotParams = {
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
   index?: InstalledPluginIndex;

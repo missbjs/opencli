@@ -3,24 +3,24 @@ summary: "Inferred follow-up memory for check-ins that are not exact reminders"
 title: "Inferred commitments"
 sidebarTitle: "Commitments"
 read_when:
-  - You want OpenClaw to remember natural follow-ups
+  - You want OpenCLI to remember natural follow-ups
   - You want to understand how inferred check-ins differ from reminders
   - You want to review or dismiss follow-up commitments
 ---
 
-Commitments are short-lived follow-up memories. When enabled, OpenClaw can
+Commitments are short-lived follow-up memories. When enabled, OpenCLI can
 notice that a conversation created a future check-in opportunity and remember
 to bring it back later.
 
 Examples:
 
-- You mention an interview tomorrow. OpenClaw may check in afterward.
-- You say you are exhausted. OpenClaw may ask later whether you slept.
-- The agent says it will follow up after something changes. OpenClaw may track
+- You mention an interview tomorrow. OpenCLI may check in afterward.
+- You say you are exhausted. OpenCLI may ask later whether you slept.
+- The agent says it will follow up after something changes. OpenCLI may track
   that open loop.
 
 Commitments are not durable facts like `MEMORY.md`, and they are not exact
-reminders. They sit between memory and automation: OpenClaw remembers a
+reminders. They sit between memory and automation: OpenCLI remembers a
 conversation-bound obligation, then heartbeat delivers it when it is due.
 
 ## Enable commitments
@@ -28,11 +28,11 @@ conversation-bound obligation, then heartbeat delivers it when it is due.
 Commitments are off by default. Enable them in config:
 
 ```bash
-openclaw config set commitments.enabled true
-openclaw config set commitments.maxPerDay 3
+opencli config set commitments.enabled true
+opencli config set commitments.maxPerDay 3
 ```
 
-Equivalent `openclaw.json`:
+Equivalent `opencli.json`:
 
 ```json
 {
@@ -48,12 +48,12 @@ per agent session in a rolling day. The default is `3`.
 
 ## How it works
 
-After an agent reply, OpenClaw may run a hidden background extraction pass in a
+After an agent reply, OpenCLI may run a hidden background extraction pass in a
 separate context. That pass looks only for inferred follow-up commitments. It
 does not write into the visible conversation and it does not ask the main agent
 to reason about the extraction.
 
-When it finds a high-confidence candidate, OpenClaw stores a commitment with:
+When it finds a high-confidence candidate, OpenCLI stores a commitment with:
 
 - the agent id
 - the session key
@@ -66,7 +66,7 @@ Delivery happens through heartbeat. When a commitment becomes due, heartbeat
 adds the commitment to the heartbeat turn for the same agent and channel scope.
 The model can send one natural check-in or reply `HEARTBEAT_OK` to dismiss it.
 
-OpenClaw never delivers an inferred commitment immediately after writing it.
+OpenCLI never delivers an inferred commitment immediately after writing it.
 The due time is clamped to at least one heartbeat interval after the commitment
 is created, so the follow-up cannot echo back in the same moment it was
 inferred.
@@ -100,14 +100,14 @@ but the conversation clearly created a useful future check-in.
 Use the CLI to inspect and clear stored commitments:
 
 ```bash
-openclaw commitments
-openclaw commitments --all
-openclaw commitments --agent main
-openclaw commitments --status snoozed
-openclaw commitments dismiss cm_abc123
+opencli commitments
+opencli commitments --all
+opencli commitments --agent main
+opencli commitments --status snoozed
+opencli commitments dismiss cm_abc123
 ```
 
-See [`openclaw commitments`](/cli/commitments) for the command reference.
+See [`opencli commitments`](/cli/commitments) for the command reference.
 
 ## Privacy and cost
 
@@ -116,11 +116,11 @@ usage after eligible turns. The pass is hidden from the user-visible
 conversation, but it can read the recent exchange needed to decide whether a
 follow-up exists.
 
-Stored commitments are local OpenClaw state. They are operational memory, not
+Stored commitments are local OpenCLI state. They are operational memory, not
 long-term memory. Disable the feature with:
 
 ```bash
-openclaw config set commitments.enabled false
+opencli config set commitments.enabled false
 ```
 
 ## Troubleshooting
@@ -128,7 +128,7 @@ openclaw config set commitments.enabled false
 If expected follow-ups are not appearing:
 
 - Confirm `commitments.enabled` is `true`.
-- Check `openclaw commitments --all` for pending, dismissed, snoozed, or expired
+- Check `opencli commitments --all` for pending, dismissed, snoozed, or expired
   records.
 - Make sure heartbeat is running for the agent.
 - Check whether `commitments.maxPerDay` has already been reached for that
@@ -142,5 +142,5 @@ If expected follow-ups are not appearing:
 - [Active memory](/concepts/active-memory)
 - [Heartbeat](/gateway/heartbeat)
 - [Scheduled tasks](/automation/cron-jobs)
-- [`openclaw commitments`](/cli/commitments)
+- [`opencli commitments`](/cli/commitments)
 - [Configuration reference](/gateway/configuration-reference#commitments)

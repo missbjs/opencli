@@ -1,16 +1,16 @@
 {
-  "name": "@openclaw/kimi-provider",
+  "name": "@opencli/kimi-provider",
   "version": "2026.4.25",
   "private": true,
-  "description": "OpenClaw Kimi provider plugin",
+  "description": "OpenCLI Kimi provider plugin",
   "type": "module",
   "dependencies": {
     "@mariozechner/pi-ai": "0.70.6"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@opencli/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "opencli": {
     "extensions": [
       "./index.ts"
     ]

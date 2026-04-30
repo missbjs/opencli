@@ -3,11 +3,11 @@ import {
   loadModelCatalog,
   modelSupportsVision,
   resolveDefaultModelForAgent,
-} from "openclaw/plugin-sdk/agent-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
+} from "opencli/plugin-sdk/agent-runtime";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
 
 export async function resolveStickerVisionSupportRuntime(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   agentId?: string;
 }): Promise<boolean> {
   const catalog = await loadModelCatalog({ config: params.cfg });

@@ -1,9 +1,9 @@
-import { describeAccountSnapshot } from "openclaw/plugin-sdk/account-helpers";
-import { formatAllowFromLowercase } from "openclaw/plugin-sdk/allow-from";
+import { describeAccountSnapshot } from "opencli/plugin-sdk/account-helpers";
+import { formatAllowFromLowercase } from "opencli/plugin-sdk/allow-from";
 import {
   adaptScopedAccountAccessor,
   createScopedChannelConfigAdapter,
-} from "openclaw/plugin-sdk/channel-config-helpers";
+} from "opencli/plugin-sdk/channel-config-helpers";
 import { inspectSlackAccount } from "./account-inspect.js";
 import {
   listSlackAccountIds,
@@ -16,7 +16,7 @@ import { getChatChannelMeta, type ChannelPlugin } from "./channel-api.js";
 import { SlackChannelConfigSchema } from "./config-schema.js";
 import { slackDoctor } from "./doctor.js";
 import { isSlackInteractiveRepliesEnabled } from "./interactive-replies.js";
-import type { OpenClawConfig } from "./runtime-api.js";
+import type { OpenCLIConfig } from "./runtime-api.js";
 import { collectRuntimeConfigAssignments, secretTargetRegistryEntries } from "./secret-contract.js";
 import { slackSecurityAdapter } from "./security.js";
 import { SLACK_CHANNEL } from "./setup-shared.js";
@@ -46,7 +46,7 @@ type SlackConfigAccessorAccount = {
 };
 
 function resolveSlackConfigAccessorAccount(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   accountId?: string | null;
 }): SlackConfigAccessorAccount {
   const account = resolveSlackAccount(params);

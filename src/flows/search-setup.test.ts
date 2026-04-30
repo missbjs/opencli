@@ -8,7 +8,7 @@ const mockGrokProvider = vi.hoisted(() => ({
   pluginId: "xai",
   label: "Grok",
   hint: "Search with xAI",
-  docsUrl: "https://docs.openclaw.ai/tools/web",
+  docsUrl: "https://docs.opencli.ai/tools/web",
   requiresCredential: true,
   credentialLabel: "xAI API key",
   placeholder: "xai-...",

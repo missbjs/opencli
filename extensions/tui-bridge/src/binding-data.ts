@@ -1,4 +1,4 @@
-import type { PluginConversationBinding } from "openclaw/plugin-sdk/plugin-entry";
+import type { PluginConversationBinding } from "opencli/plugin-sdk/plugin-entry";
 import type { TuiBindingData, TuiMode } from "./types.js";
 
 export const BINDING_KIND = "tui-bridge-process";

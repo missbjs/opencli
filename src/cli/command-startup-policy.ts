@@ -37,8 +37,7 @@ export function shouldHideCliBannerForCommandPath(
   env: NodeJS.ProcessEnv = process.env,
 ): boolean {
   return (
-    isTruthyEnvValue(env.OPENCLAW_HIDE_BANNER) ||
-    resolveCliCommandPathPolicy(commandPath).hideBanner
+    isTruthyEnvValue(env.OPENCLI_HIDE_BANNER) || resolveCliCommandPathPolicy(commandPath).hideBanner
   );
 }
 

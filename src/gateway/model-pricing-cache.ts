@@ -9,7 +9,7 @@ import {
 } from "../agents/model-selection.js";
 import { resolvePluginWebSearchConfig } from "../config/plugin-web-search-config.js";
 import type { ModelDefinitionConfig } from "../config/types.models.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { planManifestModelCatalogRows, type ModelCatalogCost } from "../model-catalog/index.js";
 import { isInstalledPluginEnabled } from "../plugins/installed-plugin-index.js";
@@ -92,7 +92,7 @@ function clearRefreshTimer(): void {
 }
 
 function getPricingModelNormalizationOptions(
-  config: OpenClawConfig,
+  config: OpenCLIConfig,
 ): PricingModelNormalizationOptions {
   const allowPluginBackedNormalization = config.plugins?.enabled !== false;
   return {
@@ -388,7 +388,7 @@ function normalizeExternalPricingPolicy(
 function filterActiveManifestRegistry(params: {
   registry: PluginManifestRegistry;
   index: PluginRegistrySnapshot;
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
 }): PluginManifestRegistry {
   return {
     diagnostics: params.registry.diagnostics,
@@ -399,7 +399,7 @@ function filterActiveManifestRegistry(params: {
 }
 
 function resolveModelPricingManifestMetadata(params: {
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   pluginLookUpTable?: Pick<PluginLookUpTable, "index" | "manifestRegistry">;
   manifestRegistry?: PluginManifestRegistry;
 }): ModelPricingManifestMetadata {
@@ -663,7 +663,7 @@ function addProviderModelPair(params: {
 }
 
 function addConfiguredWebSearchPluginModels(params: {
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   aliasIndex: ReturnType<typeof buildModelAliasIndex>;
   refs: Map<string, ModelRef>;
   manifestRegistry: PluginManifestRegistry;
@@ -721,7 +721,7 @@ function isPrivateOrLoopbackBaseUrl(baseUrl: string | undefined): boolean {
 }
 
 function findConfiguredProviderModel(
-  config: OpenClawConfig,
+  config: OpenCLIConfig,
   ref: ModelRef,
   options: PricingModelNormalizationOptions = {
     allowManifestNormalization: true,
@@ -739,7 +739,7 @@ function findConfiguredProviderModel(
 }
 
 function getConfiguredModelPricing(
-  config: OpenClawConfig,
+  config: OpenCLIConfig,
   ref: ModelRef,
   options: PricingModelNormalizationOptions = {
     allowManifestNormalization: true,
@@ -750,7 +750,7 @@ function getConfiguredModelPricing(
 }
 
 function hasPrivateOrLoopbackConfiguredEndpoint(
-  config: OpenClawConfig,
+  config: OpenCLIConfig,
   ref: ModelRef,
   options: PricingModelNormalizationOptions = {
     allowManifestNormalization: true,
@@ -766,7 +766,7 @@ function hasPrivateOrLoopbackConfiguredEndpoint(
 }
 
 function shouldFetchExternalPricingForRef(params: {
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   ref: ModelRef;
   policies: ReadonlyMap<string, ExternalPricingPolicy>;
   seededPricing: ReadonlyMap<string, CachedModelPricing>;
@@ -791,7 +791,7 @@ function shouldFetchExternalPricingForRef(params: {
 }
 
 function filterExternalPricingRefs(params: {
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   refs: ModelRef[];
   policies: ReadonlyMap<string, ExternalPricingPolicy>;
   seededPricing: ReadonlyMap<string, CachedModelPricing>;
@@ -811,7 +811,7 @@ function filterExternalPricingRefs(params: {
 }
 
 export function collectConfiguredModelPricingRefs(
-  config: OpenClawConfig,
+  config: OpenCLIConfig,
   options: { manifestRegistry?: PluginManifestRegistry } = {},
 ): ModelRef[] {
   const manifestRegistry =
@@ -1064,7 +1064,7 @@ function resolveLiteLLMPricingForRef(params: {
   return undefined;
 }
 
-function scheduleRefresh(params: { config: OpenClawConfig; fetchImpl: typeof fetch }): void {
+function scheduleRefresh(params: { config: OpenCLIConfig; fetchImpl: typeof fetch }): void {
   clearRefreshTimer();
   refreshTimer = setTimeout(() => {
     refreshTimer = null;
@@ -1075,7 +1075,7 @@ function scheduleRefresh(params: { config: OpenClawConfig; fetchImpl: typeof fet
 }
 
 function collectSeededPricing(params: {
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   refs: readonly ModelRef[];
   catalogPricing: ReadonlyMap<string, CachedModelPricing>;
   allowManifestNormalization: boolean;
@@ -1101,7 +1101,7 @@ function collectSeededPricing(params: {
 }
 
 export async function refreshGatewayModelPricingCache(params: {
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   fetchImpl?: typeof fetch;
   pluginLookUpTable?: Pick<PluginLookUpTable, "index" | "manifestRegistry">;
   manifestRegistry?: PluginManifestRegistry;
@@ -1250,7 +1250,7 @@ export async function refreshGatewayModelPricingCache(params: {
 }
 
 export function startGatewayModelPricingRefresh(params: {
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   fetchImpl?: typeof fetch;
   pluginLookUpTable?: Pick<PluginLookUpTable, "index" | "manifestRegistry">;
   manifestRegistry?: PluginManifestRegistry;

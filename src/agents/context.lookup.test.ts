@@ -7,7 +7,7 @@ const contextTestState = vi.hoisted(() => {
   const state = {
     loadConfigImpl: () => ({}) as unknown,
     discoveredModels: [] as DiscoveredModel[],
-    ensureOpenClawModelsJson: vi.fn(async () => {}),
+    ensureOpenCLIModelsJson: vi.fn(async () => {}),
     discoverAuthStorage: vi.fn(() => ({})),
     discoverModels: vi.fn(() => ({
       getAll: () => state.discoveredModels,
@@ -21,11 +21,11 @@ vi.mock("../config/config.js", () => ({
 }));
 
 vi.mock("./models-config.runtime.js", () => ({
-  ensureOpenClawModelsJson: contextTestState.ensureOpenClawModelsJson,
+  ensureOpenCLIModelsJson: contextTestState.ensureOpenCLIModelsJson,
 }));
 
 vi.mock("./agent-paths.js", () => ({
-  resolveOpenClawAgentDir: () => "/tmp/openclaw-agent",
+  resolveOpenCLIAgentDir: () => "/tmp/opencli-agent",
 }));
 
 vi.mock("./pi-model-discovery-runtime.js", () => ({
@@ -39,8 +39,8 @@ function mockContextDeps(params: {
 }) {
   contextTestState.loadConfigImpl = params.getRuntimeConfig;
   contextTestState.discoveredModels = params.discoveredModels ?? [];
-  contextTestState.ensureOpenClawModelsJson.mockClear();
-  return { ensureOpenClawModelsJson: contextTestState.ensureOpenClawModelsJson };
+  contextTestState.ensureOpenCLIModelsJson.mockClear();
+  return { ensureOpenCLIModelsJson: contextTestState.ensureOpenCLIModelsJson };
 }
 
 function mockContextModuleDeps(loadConfigImpl: () => unknown) {
@@ -107,7 +107,7 @@ describe("lookupContextTokens", () => {
   beforeEach(() => {
     contextTestState.loadConfigImpl = () => ({});
     contextTestState.discoveredModels = [];
-    contextTestState.ensureOpenClawModelsJson.mockClear();
+    contextTestState.ensureOpenCLIModelsJson.mockClear();
     contextTestState.discoverAuthStorage.mockClear();
     contextTestState.discoverModels.mockClear();
     contextModule.resetContextWindowCacheForTest();
@@ -197,36 +197,36 @@ describe("lookupContextTokens", () => {
     expect(secondLoadConfigMock).not.toHaveBeenCalled();
   });
 
-  it("only warms eagerly for real openclaw startup commands that need model metadata", async () => {
+  it("only warms eagerly for real opencli startup commands that need model metadata", async () => {
     const { shouldEagerWarmContextWindowCache } = await importContextModule();
 
-    expect(shouldEagerWarmContextWindowCache(["node", "openclaw", "chat"])).toBe(true);
-    expect(shouldEagerWarmContextWindowCache(["node", "openclaw", "chat", "--help"])).toBe(false);
+    expect(shouldEagerWarmContextWindowCache(["node", "opencli", "chat"])).toBe(true);
+    expect(shouldEagerWarmContextWindowCache(["node", "opencli", "chat", "--help"])).toBe(false);
     expect(
-      shouldEagerWarmContextWindowCache(["node", "openclaw", "matrix", "encryption", "help"]),
+      shouldEagerWarmContextWindowCache(["node", "opencli", "matrix", "encryption", "help"]),
     ).toBe(false);
-    expect(shouldEagerWarmContextWindowCache(["node", "openclaw", "help", "matrix"])).toBe(false);
+    expect(shouldEagerWarmContextWindowCache(["node", "opencli", "help", "matrix"])).toBe(false);
     expect(
-      shouldEagerWarmContextWindowCache(["node", "openclaw", "browser", "status", "--help"]),
+      shouldEagerWarmContextWindowCache(["node", "opencli", "browser", "status", "--help"]),
     ).toBe(false);
     expect(
       shouldEagerWarmContextWindowCache([
         "node",
-        "openclaw",
+        "opencli",
         "--profile",
         "--",
         "config",
         "validate",
       ]),
     ).toBe(false);
-    expect(shouldEagerWarmContextWindowCache(["node", "openclaw", "logs", "--limit", "5"])).toBe(
+    expect(shouldEagerWarmContextWindowCache(["node", "opencli", "logs", "--limit", "5"])).toBe(
       false,
     );
     expect(
-      shouldEagerWarmContextWindowCache(["node", "openclaw", "memory", "search", "--json"]),
+      shouldEagerWarmContextWindowCache(["node", "opencli", "memory", "search", "--json"]),
     ).toBe(false);
-    expect(shouldEagerWarmContextWindowCache(["node", "openclaw", "status", "--json"])).toBe(false);
-    expect(shouldEagerWarmContextWindowCache(["node", "openclaw", "sessions", "--json"])).toBe(
+    expect(shouldEagerWarmContextWindowCache(["node", "opencli", "status", "--json"])).toBe(false);
+    expect(shouldEagerWarmContextWindowCache(["node", "opencli", "sessions", "--json"])).toBe(
       false,
     );
     expect(

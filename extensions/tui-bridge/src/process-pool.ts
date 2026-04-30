@@ -1,7 +1,7 @@
 import { statSync } from "node:fs";
 import { appendFile } from "node:fs/promises";
-import { delimiter, isAbsolute, join } from "node:path";
 import { platform } from "node:os";
+import { delimiter, isAbsolute, join } from "node:path";
 import { ensureSessionDir, sessionLogPath } from "./persistence.js";
 import { createTuiScreen, scrubTxt, type TuiScreen } from "./screen.js";
 import type { TuiMode } from "./types.js";
@@ -85,7 +85,7 @@ export type Session = {
   exitInfo?: { code: number | undefined; signal: number | undefined };
 };
 
-const SESSIONS_KEY = Symbol.for("openclaw.tui-bridge.sessions");
+const SESSIONS_KEY = Symbol.for("opencli.tui-bridge.sessions");
 type SessionState = { byKey: Map<string, Session> };
 function state(): SessionState {
   const g = globalThis as typeof globalThis & { [SESSIONS_KEY]?: SessionState };

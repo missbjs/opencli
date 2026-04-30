@@ -1,8 +1,8 @@
 import AppKit
-import OpenClawProtocol
+import OpenCLIProtocol
 import SwiftUI
 import Testing
-@testable import OpenClaw
+@testable import OpenCLI
 
 @Suite(.serialized)
 @MainActor

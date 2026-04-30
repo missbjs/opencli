@@ -4,7 +4,7 @@ description: Summarize or transcribe URLs, YouTube/videos, podcasts, articles, t
 homepage: https://summarize.sh
 metadata:
   {
-    "openclaw":
+    "opencli":
       {
         "emoji": "🧾",
         "requires": { "bins": ["summarize"] },

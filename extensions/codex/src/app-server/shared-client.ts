@@ -1,4 +1,4 @@
-import { resolveOpenClawAgentDir } from "openclaw/plugin-sdk/provider-auth";
+import { resolveOpenCLIAgentDir } from "opencli/plugin-sdk/provider-auth";
 import { applyCodexAppServerAuthProfile, bridgeCodexAppServerStartOptions } from "./auth-bridge.js";
 import { CodexAppServerClient } from "./client.js";
 import {
@@ -15,7 +15,7 @@ type SharedCodexAppServerClientState = {
   key?: string;
 };
 
-const SHARED_CODEX_APP_SERVER_CLIENT_STATE = Symbol.for("openclaw.codexAppServerClientState");
+const SHARED_CODEX_APP_SERVER_CLIENT_STATE = Symbol.for("opencli.codexAppServerClientState");
 
 function getSharedCodexAppServerClientState(): SharedCodexAppServerClientState {
   const globalState = globalThis as typeof globalThis & {
@@ -32,7 +32,7 @@ export async function getSharedCodexAppServerClient(options?: {
   agentDir?: string;
 }): Promise<CodexAppServerClient> {
   const state = getSharedCodexAppServerClientState();
-  const agentDir = options?.agentDir ?? resolveOpenClawAgentDir();
+  const agentDir = options?.agentDir ?? resolveOpenCLIAgentDir();
   const requestedStartOptions =
     options?.startOptions ?? resolveCodexAppServerRuntimeOptions().start;
   const managedStartOptions = await resolveManagedCodexAppServerStartOptions(requestedStartOptions);
@@ -91,7 +91,7 @@ export async function createIsolatedCodexAppServerClient(options?: {
   authProfileId?: string;
   agentDir?: string;
 }): Promise<CodexAppServerClient> {
-  const agentDir = options?.agentDir ?? resolveOpenClawAgentDir();
+  const agentDir = options?.agentDir ?? resolveOpenCLIAgentDir();
   const requestedStartOptions =
     options?.startOptions ?? resolveCodexAppServerRuntimeOptions().start;
   const managedStartOptions = await resolveManagedCodexAppServerStartOptions(requestedStartOptions);

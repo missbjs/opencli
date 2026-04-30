@@ -1,9 +1,9 @@
 import {
   registerProviderPlugin,
   requireRegisteredProvider,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
-import { normalizeTranscriptForMatch } from "openclaw/plugin-sdk/provider-test-contracts";
-import { isLiveTestEnabled } from "openclaw/plugin-sdk/test-env";
+} from "opencli/plugin-sdk/plugin-test-runtime";
+import { normalizeTranscriptForMatch } from "opencli/plugin-sdk/provider-test-contracts";
+import { isLiveTestEnabled } from "opencli/plugin-sdk/test-env";
 import { describe, expect, it } from "vitest";
 import plugin from "./index.js";
 import { createGeminiWebSearchProvider } from "./src/gemini-web-search-provider.js";
@@ -37,7 +37,7 @@ describeLive("google plugin live", () => {
     const provider = requireRegisteredProvider(speechProviders, "google");
 
     const audioFile = await provider.synthesize({
-      text: "OpenClaw Google text to speech integration test OK.",
+      text: "OpenCLI Google text to speech integration test OK.",
       cfg: { plugins: { enabled: true } } as never,
       providerConfig: { apiKey: GOOGLE_API_KEY },
       target: "audio-file",
@@ -54,7 +54,7 @@ describeLive("google plugin live", () => {
     const provider = requireRegisteredProvider(speechProviders, "google");
 
     const audioFile = await provider.synthesize({
-      text: "OpenClaw Google voice note integration test OK.",
+      text: "OpenCLI Google voice note integration test OK.",
       cfg: { plugins: { enabled: true } } as never,
       providerConfig: { apiKey: GOOGLE_API_KEY },
       target: "voice-note",
@@ -105,7 +105,7 @@ describeLive("google plugin live", () => {
     let lastError: unknown;
     for (let attempt = 0; attempt < 2; attempt += 1) {
       try {
-        result = await tool?.execute({ query: "OpenClaw GitHub", count: 1 });
+        result = await tool?.execute({ query: "OpenCLI GitHub", count: 1 });
         lastError = undefined;
         break;
       } catch (error) {

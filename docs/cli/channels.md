@@ -1,12 +1,12 @@
 ---
-summary: "CLI reference for `openclaw channels` (accounts, status, login/logout, logs)"
+summary: "CLI reference for `opencli channels` (accounts, status, login/logout, logs)"
 read_when:
   - You want to add/remove channel accounts (WhatsApp/Telegram/Discord/Google Chat/Slack/Mattermost (plugin)/Signal/iMessage/Matrix)
   - You want to check channel status or tail channel logs
 title: "Channels"
 ---
 
-# `openclaw channels`
+# `opencli channels`
 
 Manage chat channel accounts and their runtime status on the Gateway.
 
@@ -18,12 +18,12 @@ Related docs:
 ## Common commands
 
 ```bash
-openclaw channels list
-openclaw channels status
-openclaw channels capabilities
-openclaw channels capabilities --channel discord --target channel:123
-openclaw channels resolve --channel slack "#general" "@jane"
-openclaw channels logs --channel all
+opencli channels list
+opencli channels status
+opencli channels capabilities
+opencli channels capabilities --channel discord --target channel:123
+opencli channels resolve --channel slack "#general" "@jane"
+opencli channels logs --channel all
 ```
 
 ## Status / capabilities / resolve / logs
@@ -42,13 +42,13 @@ instead of live probe output.
 ## Add / remove accounts
 
 ```bash
-openclaw channels add --channel telegram --token <bot-token>
-openclaw channels add --channel nostr --private-key "$NOSTR_PRIVATE_KEY"
-openclaw channels remove --channel telegram --delete
+opencli channels add --channel telegram --token <bot-token>
+opencli channels add --channel nostr --private-key "$NOSTR_PRIVATE_KEY"
+opencli channels remove --channel telegram --delete
 ```
 
 <Tip>
-`openclaw channels add --help` shows per-channel flags (token, private key, app token, signal-cli paths, etc).
+`opencli channels add --help` shows per-channel flags (token, private key, app token, signal-cli paths, etc).
 </Tip>
 
 Common non-interactive add surfaces include:
@@ -61,9 +61,9 @@ Common non-interactive add surfaces include:
 - Tlon fields: `--ship`, `--url`, `--code`, `--group-channels`, `--dm-allowlist`, `--auto-discover-channels`
 - `--use-env` for default-account env-backed auth where supported
 
-If a channel plugin needs to be installed during a flag-driven add command, OpenClaw uses the channel's default install source without opening the interactive plugin install prompt.
+If a channel plugin needs to be installed during a flag-driven add command, OpenCLI uses the channel's default install source without opening the interactive plugin install prompt.
 
-When you run `openclaw channels add` without flags, the interactive wizard can prompt:
+When you run `opencli channels add` without flags, the interactive wizard can prompt:
 
 - account ids per selected channel
 - optional display names for those accounts
@@ -71,9 +71,9 @@ When you run `openclaw channels add` without flags, the interactive wizard can p
 
 If you confirm bind now, the wizard asks which agent should own each configured channel account and writes account-scoped routing bindings.
 
-You can also manage the same routing rules later with `openclaw agents bindings`, `openclaw agents bind`, and `openclaw agents unbind` (see [agents](/cli/agents)).
+You can also manage the same routing rules later with `opencli agents bindings`, `opencli agents bind`, and `opencli agents unbind` (see [agents](/cli/agents)).
 
-When you add a non-default account to a channel that is still using single-account top-level settings, OpenClaw promotes account-scoped top-level values into the channel's account map before writing the new account. Most channels land those values in `channels.<channel>.accounts.default`, but bundled channels can preserve an existing matching promoted account instead. Matrix is the current example: if one named account already exists, or `defaultAccount` points at an existing named account, promotion preserves that account instead of creating a new `accounts.default`.
+When you add a non-default account to a channel that is still using single-account top-level settings, OpenCLI promotes account-scoped top-level values into the channel's account map before writing the new account. Most channels land those values in `channels.<channel>.accounts.default`, but bundled channels can preserve an existing matching promoted account instead. Matrix is the current example: if one named account already exists, or `defaultAccount` points at an existing named account, promotion preserves that account instead of creating a new `accounts.default`.
 
 Routing behavior stays consistent:
 
@@ -81,13 +81,13 @@ Routing behavior stays consistent:
 - `channels add` does not auto-create or rewrite bindings in non-interactive mode.
 - Interactive setup can optionally add account-scoped bindings.
 
-If your config was already in a mixed state (named accounts present and top-level single-account values still set), run `openclaw doctor --fix` to move account-scoped values into the promoted account chosen for that channel. Most channels promote into `accounts.default`; Matrix can preserve an existing named/default target instead.
+If your config was already in a mixed state (named accounts present and top-level single-account values still set), run `opencli doctor --fix` to move account-scoped values into the promoted account chosen for that channel. Most channels promote into `accounts.default`; Matrix can preserve an existing named/default target instead.
 
 ## Login and logout (interactive)
 
 ```bash
-openclaw channels login --channel whatsapp
-openclaw channels logout --channel whatsapp
+opencli channels login --channel whatsapp
+opencli channels logout --channel whatsapp
 ```
 
 - `channels login` supports `--verbose`.
@@ -96,18 +96,18 @@ openclaw channels logout --channel whatsapp
 
 ## Troubleshooting
 
-- Run `openclaw status --deep` for a broad probe.
-- Use `openclaw doctor` for guided fixes.
-- `openclaw channels list` prints `Claude: HTTP 403 ... user:profile` → usage snapshot needs the `user:profile` scope. Use `--no-usage`, or provide a claude.ai session key (`CLAUDE_WEB_SESSION_KEY` / `CLAUDE_WEB_COOKIE`), or re-auth via Claude CLI.
-- `openclaw channels status` falls back to config-only summaries when the gateway is unreachable. If a supported channel credential is configured via SecretRef but unavailable in the current command path, it reports that account as configured with degraded notes instead of showing it as not configured.
+- Run `opencli status --deep` for a broad probe.
+- Use `opencli doctor` for guided fixes.
+- `opencli channels list` prints `Claude: HTTP 403 ... user:profile` → usage snapshot needs the `user:profile` scope. Use `--no-usage`, or provide a claude.ai session key (`CLAUDE_WEB_SESSION_KEY` / `CLAUDE_WEB_COOKIE`), or re-auth via Claude CLI.
+- `opencli channels status` falls back to config-only summaries when the gateway is unreachable. If a supported channel credential is configured via SecretRef but unavailable in the current command path, it reports that account as configured with degraded notes instead of showing it as not configured.
 
 ## Capabilities probe
 
 Fetch provider capability hints (intents/scopes where available) plus static feature support:
 
 ```bash
-openclaw channels capabilities
-openclaw channels capabilities --channel discord --target channel:123
+opencli channels capabilities
+opencli channels capabilities --channel discord --target channel:123
 ```
 
 Notes:
@@ -122,9 +122,9 @@ Notes:
 Resolve channel/user names to IDs using the provider directory:
 
 ```bash
-openclaw channels resolve --channel slack "#general" "@jane"
-openclaw channels resolve --channel discord "My Server/#support" "@someone"
-openclaw channels resolve --channel matrix "Project Room"
+opencli channels resolve --channel slack "#general" "@jane"
+opencli channels resolve --channel discord "My Server/#support" "@someone"
+opencli channels resolve --channel matrix "Project Room"
 ```
 
 Notes:

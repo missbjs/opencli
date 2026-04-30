@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { resolveGatewayClientBootstrap } from "./client-bootstrap.js";
 import { startGatewayClientWhenEventLoopReady } from "./client-start-readiness.js";
 import { GatewayClient, type GatewayClientOptions } from "./client.js";
@@ -14,7 +14,7 @@ export async function createOperatorApprovalsGatewayClient(
     | "onHelloOk"
     | "onReconnectPaused"
   > & {
-    config: OpenClawConfig;
+    config: OpenCLIConfig;
     gatewayUrl?: string;
   },
 ): Promise<GatewayClient> {
@@ -43,7 +43,7 @@ export async function createOperatorApprovalsGatewayClient(
 
 export async function withOperatorApprovalsGatewayClient<T>(
   params: {
-    config: OpenClawConfig;
+    config: OpenCLIConfig;
     gatewayUrl?: string;
     clientDisplayName: string;
   },

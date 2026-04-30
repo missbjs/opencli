@@ -1,13 +1,13 @@
 {
-  "name": "@openclaw/openrouter-provider",
+  "name": "@opencli/openrouter-provider",
   "version": "2026.4.25",
   "private": true,
-  "description": "OpenClaw OpenRouter provider plugin",
+  "description": "OpenCLI OpenRouter provider plugin",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@opencli/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "opencli": {
     "extensions": [
       "./index.ts"
     ]

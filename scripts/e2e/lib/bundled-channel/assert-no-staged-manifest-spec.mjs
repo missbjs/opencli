@@ -3,7 +3,7 @@ import path from "node:path";
 
 const stageDir = process.argv[2];
 const depName = process.argv[3];
-const manifestName = ".openclaw-runtime-deps.json";
+const manifestName = ".opencli-runtime-deps.json";
 const matches = [];
 
 function visit(dir) {

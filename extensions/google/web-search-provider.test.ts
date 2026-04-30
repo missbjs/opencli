@@ -1,5 +1,5 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
-import { withEnv } from "openclaw/plugin-sdk/test-env";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
+import { withEnv } from "opencli/plugin-sdk/test-env";
 import { describe, expect, it } from "vitest";
 import { __testing, createGeminiWebSearchProvider } from "./src/gemini-web-search-provider.js";
 
@@ -20,7 +20,7 @@ describe("google web search provider", () => {
 
   it("stores configured credentials at the canonical plugin config path", () => {
     const provider = createGeminiWebSearchProvider();
-    const config = {} as OpenClawConfig;
+    const config = {} as OpenCLIConfig;
 
     provider.setConfiguredCredentialValue?.(config, "AIza-plugin-test");
 

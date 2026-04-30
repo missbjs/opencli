@@ -1,17 +1,17 @@
 import path from "node:path";
-import { markMigrationItemSkipped, summarizeMigrationItems } from "openclaw/plugin-sdk/migration";
+import { markMigrationItemSkipped, summarizeMigrationItems } from "opencli/plugin-sdk/migration";
 import {
   archiveMigrationItem,
   copyMigrationFileItem,
   withCachedMigrationConfigRuntime,
   writeMigrationReport,
-} from "openclaw/plugin-sdk/migration-runtime";
+} from "opencli/plugin-sdk/migration-runtime";
 import type {
   MigrationApplyResult,
   MigrationItem,
   MigrationPlan,
   MigrationProviderContext,
-} from "openclaw/plugin-sdk/plugin-entry";
+} from "opencli/plugin-sdk/plugin-entry";
 import { applyConfigItem, applyManualItem } from "./config.js";
 import { appendItem } from "./helpers.js";
 import { applyModelItem } from "./model.js";

@@ -3,7 +3,7 @@ import path from "node:path";
 import {
   createPluginRegistryFixture,
   registerTestPlugin,
-} from "openclaw/plugin-sdk/plugin-test-contracts";
+} from "opencli/plugin-sdk/plugin-test-contracts";
 import { afterEach, describe, expect, it } from "vitest";
 import { loadSessionStore, updateSessionStore, type SessionEntry } from "../../config/sessions.js";
 import { APPROVALS_SCOPE, READ_SCOPE, WRITE_SCOPE } from "../../gateway/operator-scopes.js";
@@ -14,7 +14,7 @@ import {
 import { buildGatewaySessionRow } from "../../gateway/session-utils.js";
 import { withTempConfig } from "../../gateway/test-temp-config.js";
 import { emitAgentEvent, resetAgentEventsForTest } from "../../infra/agent-events.js";
-import { resolvePreferredOpenClawTmpDir } from "../../infra/tmp-openclaw-dir.js";
+import { resolvePreferredOpenCLITmpDir } from "../../infra/tmp-opencli-dir.js";
 import { executePluginCommand, validatePluginCommandDefinition } from "../commands.js";
 import { createHookRunner } from "../hooks.js";
 import {
@@ -674,15 +674,15 @@ describe("host-hook fixture plugin contract", () => {
     setActivePluginRegistry(registry.registry);
 
     const stateDir = await fs.mkdtemp(
-      path.join(resolvePreferredOpenClawTmpDir(), "openclaw-host-hooks-patch-"),
+      path.join(resolvePreferredOpenCLITmpDir(), "opencli-host-hooks-patch-"),
     );
     const storePath = path.join(stateDir, "sessions.json");
     const tempConfig = {
       session: { store: storePath },
     };
-    const previousStateDir = process.env.OPENCLAW_STATE_DIR;
+    const previousStateDir = process.env.OPENCLI_STATE_DIR;
     try {
-      process.env.OPENCLAW_STATE_DIR = stateDir;
+      process.env.OPENCLI_STATE_DIR = stateDir;
       await withTempConfig({
         cfg: tempConfig,
         run: async () => {
@@ -763,9 +763,9 @@ describe("host-hook fixture plugin contract", () => {
       });
     } finally {
       if (previousStateDir === undefined) {
-        delete process.env.OPENCLAW_STATE_DIR;
+        delete process.env.OPENCLI_STATE_DIR;
       } else {
-        process.env.OPENCLAW_STATE_DIR = previousStateDir;
+        process.env.OPENCLI_STATE_DIR = previousStateDir;
       }
       await fs.rm(stateDir, { recursive: true, force: true });
     }
@@ -888,15 +888,15 @@ describe("host-hook fixture plugin contract", () => {
 
   it("reports duplicate next-turn injections as not newly enqueued", async () => {
     const stateDir = await fs.mkdtemp(
-      path.join(resolvePreferredOpenClawTmpDir(), "openclaw-host-hooks-injection-"),
+      path.join(resolvePreferredOpenCLITmpDir(), "opencli-host-hooks-injection-"),
     );
     const storePath = path.join(stateDir, "sessions.json");
     const tempConfig = {
       session: { store: storePath },
     };
-    const previousStateDir = process.env.OPENCLAW_STATE_DIR;
+    const previousStateDir = process.env.OPENCLI_STATE_DIR;
     try {
-      process.env.OPENCLAW_STATE_DIR = stateDir;
+      process.env.OPENCLI_STATE_DIR = stateDir;
       await withTempConfig({
         cfg: tempConfig,
         run: async () => {
@@ -946,9 +946,9 @@ describe("host-hook fixture plugin contract", () => {
       });
     } finally {
       if (previousStateDir === undefined) {
-        delete process.env.OPENCLAW_STATE_DIR;
+        delete process.env.OPENCLI_STATE_DIR;
       } else {
-        process.env.OPENCLAW_STATE_DIR = previousStateDir;
+        process.env.OPENCLI_STATE_DIR = previousStateDir;
       }
       await fs.rm(stateDir, { recursive: true, force: true });
     }
@@ -975,7 +975,7 @@ describe("host-hook fixture plugin contract", () => {
     );
     setActivePluginRegistry(registry);
     const stateDir = await fs.mkdtemp(
-      path.join(resolvePreferredOpenClawTmpDir(), "openclaw-host-hooks-stale-"),
+      path.join(resolvePreferredOpenCLITmpDir(), "opencli-host-hooks-stale-"),
     );
     const storePath = path.join(stateDir, "sessions.json");
     const tempConfig = {
@@ -988,9 +988,9 @@ describe("host-hook fixture plugin contract", () => {
         },
       },
     };
-    const previousStateDir = process.env.OPENCLAW_STATE_DIR;
+    const previousStateDir = process.env.OPENCLI_STATE_DIR;
     try {
-      process.env.OPENCLAW_STATE_DIR = stateDir;
+      process.env.OPENCLI_STATE_DIR = stateDir;
       await withTempConfig({
         cfg: tempConfig,
         run: async () => {
@@ -1050,9 +1050,9 @@ describe("host-hook fixture plugin contract", () => {
       });
     } finally {
       if (previousStateDir === undefined) {
-        delete process.env.OPENCLAW_STATE_DIR;
+        delete process.env.OPENCLI_STATE_DIR;
       } else {
-        process.env.OPENCLAW_STATE_DIR = previousStateDir;
+        process.env.OPENCLI_STATE_DIR = previousStateDir;
       }
       await fs.rm(stateDir, { recursive: true, force: true });
     }
@@ -1074,15 +1074,15 @@ describe("host-hook fixture plugin contract", () => {
     );
     setActivePluginRegistry(registry);
     const stateDir = await fs.mkdtemp(
-      path.join(resolvePreferredOpenClawTmpDir(), "openclaw-host-hooks-order-"),
+      path.join(resolvePreferredOpenCLITmpDir(), "opencli-host-hooks-order-"),
     );
     const storePath = path.join(stateDir, "sessions.json");
     const tempConfig = {
       session: { store: storePath },
     };
-    const previousStateDir = process.env.OPENCLAW_STATE_DIR;
+    const previousStateDir = process.env.OPENCLI_STATE_DIR;
     try {
-      process.env.OPENCLAW_STATE_DIR = stateDir;
+      process.env.OPENCLI_STATE_DIR = stateDir;
       await withTempConfig({
         cfg: tempConfig,
         run: async () => {
@@ -1136,9 +1136,9 @@ describe("host-hook fixture plugin contract", () => {
       });
     } finally {
       if (previousStateDir === undefined) {
-        delete process.env.OPENCLAW_STATE_DIR;
+        delete process.env.OPENCLI_STATE_DIR;
       } else {
-        process.env.OPENCLAW_STATE_DIR = previousStateDir;
+        process.env.OPENCLI_STATE_DIR = previousStateDir;
       }
       await fs.rm(stateDir, { recursive: true, force: true });
     }
@@ -1652,14 +1652,14 @@ describe("host-hook fixture plugin contract", () => {
     });
 
     const stateDir = await fs.mkdtemp(
-      path.join(resolvePreferredOpenClawTmpDir(), "openclaw-host-hooks-state-"),
+      path.join(resolvePreferredOpenCLITmpDir(), "opencli-host-hooks-state-"),
     );
     const tempConfig = {
       session: { store: path.join(stateDir, "sessions.json") },
     };
-    const previousStateDir = process.env.OPENCLAW_STATE_DIR;
+    const previousStateDir = process.env.OPENCLI_STATE_DIR;
     try {
-      process.env.OPENCLAW_STATE_DIR = stateDir;
+      process.env.OPENCLI_STATE_DIR = stateDir;
       await withTempConfig({
         cfg: tempConfig,
         run: async () => {
@@ -1679,9 +1679,9 @@ describe("host-hook fixture plugin contract", () => {
       });
     } finally {
       if (previousStateDir === undefined) {
-        delete process.env.OPENCLAW_STATE_DIR;
+        delete process.env.OPENCLI_STATE_DIR;
       } else {
-        process.env.OPENCLAW_STATE_DIR = previousStateDir;
+        process.env.OPENCLI_STATE_DIR = previousStateDir;
       }
       await fs.rm(stateDir, { recursive: true, force: true });
     }
@@ -1963,15 +1963,15 @@ describe("host-hook fixture plugin contract", () => {
     });
 
     const stateDir = await fs.mkdtemp(
-      path.join(resolvePreferredOpenClawTmpDir(), "openclaw-host-hooks-store-"),
+      path.join(resolvePreferredOpenCLITmpDir(), "opencli-host-hooks-store-"),
     );
     const storePath = path.join(stateDir, "sessions.json");
     const tempConfig = {
       session: { store: storePath },
     };
-    const previousStateDir = process.env.OPENCLAW_STATE_DIR;
+    const previousStateDir = process.env.OPENCLI_STATE_DIR;
     try {
-      process.env.OPENCLAW_STATE_DIR = stateDir;
+      process.env.OPENCLI_STATE_DIR = stateDir;
       await withTempConfig({
         cfg: tempConfig,
         run: async () => {
@@ -2039,9 +2039,9 @@ describe("host-hook fixture plugin contract", () => {
       });
     } finally {
       if (previousStateDir === undefined) {
-        delete process.env.OPENCLAW_STATE_DIR;
+        delete process.env.OPENCLI_STATE_DIR;
       } else {
-        process.env.OPENCLAW_STATE_DIR = previousStateDir;
+        process.env.OPENCLI_STATE_DIR = previousStateDir;
       }
       await fs.rm(stateDir, { recursive: true, force: true });
     }
@@ -2063,14 +2063,14 @@ describe("host-hook fixture plugin contract", () => {
     ).toBe(true);
 
     const stateDir = await fs.mkdtemp(
-      path.join(resolvePreferredOpenClawTmpDir(), "openclaw-host-hooks-run-context-"),
+      path.join(resolvePreferredOpenCLITmpDir(), "opencli-host-hooks-run-context-"),
     );
     const tempConfig = {
       session: { store: path.join(stateDir, "sessions.json") },
     };
-    const previousStateDir = process.env.OPENCLAW_STATE_DIR;
+    const previousStateDir = process.env.OPENCLI_STATE_DIR;
     try {
-      process.env.OPENCLAW_STATE_DIR = stateDir;
+      process.env.OPENCLI_STATE_DIR = stateDir;
       await withTempConfig({
         cfg: tempConfig,
         run: async () => {
@@ -2084,9 +2084,9 @@ describe("host-hook fixture plugin contract", () => {
       });
     } finally {
       if (previousStateDir === undefined) {
-        delete process.env.OPENCLAW_STATE_DIR;
+        delete process.env.OPENCLI_STATE_DIR;
       } else {
-        process.env.OPENCLAW_STATE_DIR = previousStateDir;
+        process.env.OPENCLI_STATE_DIR = previousStateDir;
       }
       await fs.rm(stateDir, { recursive: true, force: true });
     }
@@ -2123,15 +2123,15 @@ describe("host-hook fixture plugin contract", () => {
     });
 
     const stateDir = await fs.mkdtemp(
-      path.join(resolvePreferredOpenClawTmpDir(), "openclaw-host-hooks-restart-state-"),
+      path.join(resolvePreferredOpenCLITmpDir(), "opencli-host-hooks-restart-state-"),
     );
     const storePath = path.join(stateDir, "sessions.json");
     const tempConfig = {
       session: { store: storePath },
     };
-    const previousStateDir = process.env.OPENCLAW_STATE_DIR;
+    const previousStateDir = process.env.OPENCLI_STATE_DIR;
     try {
-      process.env.OPENCLAW_STATE_DIR = stateDir;
+      process.env.OPENCLI_STATE_DIR = stateDir;
       await withTempConfig({
         cfg: tempConfig,
         run: async () => {
@@ -2185,9 +2185,9 @@ describe("host-hook fixture plugin contract", () => {
       });
     } finally {
       if (previousStateDir === undefined) {
-        delete process.env.OPENCLAW_STATE_DIR;
+        delete process.env.OPENCLI_STATE_DIR;
       } else {
-        process.env.OPENCLAW_STATE_DIR = previousStateDir;
+        process.env.OPENCLI_STATE_DIR = previousStateDir;
       }
       await fs.rm(stateDir, { recursive: true, force: true });
     }
@@ -2203,15 +2203,15 @@ describe("host-hook fixture plugin contract", () => {
       }),
     );
     const stateDir = await fs.mkdtemp(
-      path.join(resolvePreferredOpenClawTmpDir(), "openclaw-host-hooks-injection-only-"),
+      path.join(resolvePreferredOpenCLITmpDir(), "opencli-host-hooks-injection-only-"),
     );
     const storePath = path.join(stateDir, "sessions.json");
     const tempConfig = {
       session: { store: storePath },
     };
-    const previousStateDir = process.env.OPENCLAW_STATE_DIR;
+    const previousStateDir = process.env.OPENCLI_STATE_DIR;
     try {
-      process.env.OPENCLAW_STATE_DIR = stateDir;
+      process.env.OPENCLI_STATE_DIR = stateDir;
       await withTempConfig({
         cfg: tempConfig,
         run: async () => {
@@ -2248,9 +2248,9 @@ describe("host-hook fixture plugin contract", () => {
       });
     } finally {
       if (previousStateDir === undefined) {
-        delete process.env.OPENCLAW_STATE_DIR;
+        delete process.env.OPENCLI_STATE_DIR;
       } else {
-        process.env.OPENCLAW_STATE_DIR = previousStateDir;
+        process.env.OPENCLI_STATE_DIR = previousStateDir;
       }
       await fs.rm(stateDir, { recursive: true, force: true });
     }

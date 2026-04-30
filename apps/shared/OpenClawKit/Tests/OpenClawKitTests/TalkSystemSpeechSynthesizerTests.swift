@@ -1,5 +1,5 @@
 import XCTest
-@testable import OpenClawKit
+@testable import OpenCLIKit
 
 @MainActor
 final class TalkSystemSpeechSynthesizerTests: XCTestCase {

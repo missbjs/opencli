@@ -1,15 +1,15 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { withTempHome } from "openclaw/plugin-sdk/test-env";
+import { withTempHome } from "opencli/plugin-sdk/test-env";
 import { describe, expect, it, vi } from "vitest";
 import { setupCommand } from "./setup.js";
 
 function createSetupDeps(home: string) {
-  const configPath = path.join(home, ".openclaw", "openclaw.json");
+  const configPath = path.join(home, ".opencli", "opencli.json");
   return {
     createConfigIO: () => ({ configPath }),
     ensureAgentWorkspace: vi.fn(async (params?: { dir?: string }) => ({
-      dir: params?.dir ?? path.join(home, ".openclaw", "workspace"),
+      dir: params?.dir ?? path.join(home, ".opencli", "workspace"),
     })),
     formatConfigPath: (value: string) => value,
     logConfigUpdated: vi.fn(
@@ -19,7 +19,7 @@ function createSetupDeps(home: string) {
       },
     ),
     mkdir: vi.fn(async () => {}),
-    resolveSessionTranscriptsDir: vi.fn(() => path.join(home, ".openclaw", "sessions")),
+    resolveSessionTranscriptsDir: vi.fn(() => path.join(home, ".opencli", "sessions")),
     replaceConfigFile: vi.fn(async ({ nextConfig }: { nextConfig: unknown }) => {
       await fs.mkdir(path.dirname(configPath), { recursive: true });
       await fs.writeFile(configPath, JSON.stringify(nextConfig, null, 2));
@@ -36,11 +36,11 @@ describe("setupCommand", () => {
         exit: vi.fn(),
       };
       const deps = createSetupDeps(home);
-      const workspace = path.join(home, ".openclaw", "workspace");
+      const workspace = path.join(home, ".opencli", "workspace");
 
       await setupCommand({ workspace }, runtime, deps);
 
-      const configPath = path.join(home, ".openclaw", "openclaw.json");
+      const configPath = path.join(home, ".opencli", "opencli.json");
       const raw = await fs.readFile(configPath, "utf-8");
 
       expect(raw).toContain('"mode": "local"');
@@ -55,8 +55,8 @@ describe("setupCommand", () => {
         error: vi.fn(),
         exit: vi.fn(),
       };
-      const configDir = path.join(home, ".openclaw");
-      const configPath = path.join(configDir, "openclaw.json");
+      const configDir = path.join(home, ".opencli");
+      const configPath = path.join(configDir, "opencli.json");
       const workspace = path.join(home, "custom-workspace");
       const deps = createSetupDeps(home);
 
@@ -91,10 +91,10 @@ describe("setupCommand", () => {
         error: vi.fn(),
         exit: vi.fn(),
       };
-      const configDir = path.join(home, ".openclaw");
-      const configPath = path.join(configDir, "openclaw.json");
+      const configDir = path.join(home, ".opencli");
+      const configPath = path.join(configDir, "opencli.json");
       const deps = createSetupDeps(home);
-      const workspace = path.join(home, ".openclaw", "workspace");
+      const workspace = path.join(home, ".opencli", "workspace");
 
       await fs.mkdir(configDir, { recursive: true });
       await fs.writeFile(configPath, '"not-an-object"', "utf-8");

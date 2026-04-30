@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "./runtime-api.js";
+import type { OpenCLIConfig } from "./runtime-api.js";
 import { resolveBlueBubblesOutboundSessionRoute } from "./session-route.js";
 
-const EMPTY_CFG = {} as OpenClawConfig;
+const EMPTY_CFG = {} as OpenCLIConfig;
 const PER_PEER_CFG = {
   session: { dmScope: "per-peer" },
-} as OpenClawConfig;
+} as OpenCLIConfig;
 
 function call(target: string, cfg = EMPTY_CFG) {
   return resolveBlueBubblesOutboundSessionRoute({

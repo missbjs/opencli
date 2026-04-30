@@ -83,7 +83,7 @@ async function createStagedNpmInstall(
     return null;
   }
   await fs.mkdir(targetLayout.globalRoot, { recursive: true });
-  const prefix = await fs.mkdtemp(path.join(targetLayout.globalRoot, ".openclaw-update-stage-"));
+  const prefix = await fs.mkdtemp(path.join(targetLayout.globalRoot, ".opencli-update-stage-"));
   const layout = resolveNpmGlobalPrefixLayoutFromPrefix(prefix);
   return {
     prefix,
@@ -163,7 +163,7 @@ async function replaceNpmBinShims(params: {
     return;
   }
 
-  const names = new Set([params.packageName, "openclaw"]);
+  const names = new Set([params.packageName, "opencli"]);
   const shimEntries = entries.filter((entry) => {
     const parsed = path.parse(entry);
     return names.has(entry) || names.has(parsed.name);
@@ -173,9 +173,7 @@ async function replaceNpmBinShims(params: {
   }
 
   const backup: NpmBinShimBackup = {
-    backupDir: await fs.mkdtemp(
-      path.join(params.targetLayout.globalRoot, ".openclaw-shim-backup-"),
-    ),
+    backupDir: await fs.mkdtemp(path.join(params.targetLayout.globalRoot, ".opencli-shim-backup-")),
     targetBinDir: params.targetLayout.binDir,
     entries: [],
   };
@@ -236,7 +234,7 @@ async function swapStagedNpmInstall(params: {
     };
   }
 
-  const backupRoot = path.join(targetLayout.globalRoot, `.openclaw-${process.pid}-${Date.now()}`);
+  const backupRoot = path.join(targetLayout.globalRoot, `.opencli-${process.pid}-${Date.now()}`);
   let movedExisting = false;
   let movedStaged = false;
   try {

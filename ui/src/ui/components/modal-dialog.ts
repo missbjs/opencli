@@ -12,7 +12,7 @@ const FOCUSABLE_SELECTOR = [
   "[tabindex]:not([tabindex='-1'])",
 ].join(",");
 
-export class OpenClawModalDialog extends LitElement {
+export class OpenCLIModalDialog extends LitElement {
   @property() label = "";
   @property() description = "";
 
@@ -97,8 +97,8 @@ export class OpenClawModalDialog extends LitElement {
   }
 
   override render() {
-    const labelId = this.label ? "openclaw-modal-dialog-label" : "";
-    const descriptionId = this.description ? "openclaw-modal-dialog-description" : "";
+    const labelId = this.label ? "opencli-modal-dialog-label" : "";
+    const descriptionId = this.description ? "opencli-modal-dialog-description" : "";
     return html`
       <dialog
         role="dialog"
@@ -268,12 +268,12 @@ export class OpenClawModalDialog extends LitElement {
   }
 }
 
-if (!customElements.get("openclaw-modal-dialog")) {
-  customElements.define("openclaw-modal-dialog", OpenClawModalDialog);
+if (!customElements.get("opencli-modal-dialog")) {
+  customElements.define("opencli-modal-dialog", OpenCLIModalDialog);
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    "openclaw-modal-dialog": OpenClawModalDialog;
+    "opencli-modal-dialog": OpenCLIModalDialog;
   }
 }

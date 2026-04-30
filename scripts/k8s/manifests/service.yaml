@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: openclaw
+  name: opencli
   labels:
-    app: openclaw
+    app: opencli
 spec:
   type: ClusterIP
   selector:
-    app: openclaw
+    app: opencli
   ports:
     - name: gateway
       port: 18789

@@ -13,7 +13,7 @@ import {
   TUI,
 } from "@mariozechner/pi-tui";
 import { resolveAgentIdByWorkspacePath, resolveDefaultAgentId } from "../agents/agent-scope.js";
-import { getRuntimeConfig, type OpenClawConfig } from "../config/config.js";
+import { getRuntimeConfig, type OpenCLIConfig } from "../config/config.js";
 import { setConsoleSubsystemFilter } from "../logging/console.js";
 import { loggingState } from "../logging/state.js";
 import {
@@ -59,20 +59,18 @@ export {
   shouldEnableWindowsGitBashPasteFallback,
 } from "./tui-submit.js";
 
-const OPENCLAW_CLI_WRAPPER_PATH = fileURLToPath(new URL("../../openclaw.mjs", import.meta.url));
-const OPENCLAW_RUN_NODE_SCRIPT_PATH = fileURLToPath(
+const OPENCLI_CLI_WRAPPER_PATH = fileURLToPath(new URL("../../opencli.mjs", import.meta.url));
+const OPENCLI_RUN_NODE_SCRIPT_PATH = fileURLToPath(
   new URL("../../scripts/run-node.mjs", import.meta.url),
 );
-const OPENCLAW_DIST_ENTRY_JS_PATH = fileURLToPath(new URL("../../dist/entry.js", import.meta.url));
-const OPENCLAW_DIST_ENTRY_MJS_PATH = fileURLToPath(
-  new URL("../../dist/entry.mjs", import.meta.url),
-);
+const OPENCLI_DIST_ENTRY_JS_PATH = fileURLToPath(new URL("../../dist/entry.js", import.meta.url));
+const OPENCLI_DIST_ENTRY_MJS_PATH = fileURLToPath(new URL("../../dist/entry.mjs", import.meta.url));
 
 const OPENAI_CODEX_PROVIDER = "openai-codex";
 
 type RunTuiOptions = TuiOptions & {
   backend?: TuiBackend;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   title?: string;
 };
 
@@ -130,11 +128,11 @@ export function resolveLocalAuthCliInvocation(params?: {
 }): { command: string; args: string[] } {
   const hasDistEntry =
     params?.hasDistEntry ??
-    (existsSync(OPENCLAW_DIST_ENTRY_JS_PATH) || existsSync(OPENCLAW_DIST_ENTRY_MJS_PATH));
-  const hasRunNodeScript = params?.hasRunNodeScript ?? existsSync(OPENCLAW_RUN_NODE_SCRIPT_PATH);
+    (existsSync(OPENCLI_DIST_ENTRY_JS_PATH) || existsSync(OPENCLI_DIST_ENTRY_MJS_PATH));
+  const hasRunNodeScript = params?.hasRunNodeScript ?? existsSync(OPENCLI_RUN_NODE_SCRIPT_PATH);
   const command = params?.execPath ?? process.execPath;
-  const wrapperPath = params?.wrapperPath ?? OPENCLAW_CLI_WRAPPER_PATH;
-  const runNodePath = params?.runNodePath ?? OPENCLAW_RUN_NODE_SCRIPT_PATH;
+  const wrapperPath = params?.wrapperPath ?? OPENCLI_CLI_WRAPPER_PATH;
+  const runNodePath = params?.runNodePath ?? OPENCLI_RUN_NODE_SCRIPT_PATH;
 
   // Prefer the packaged wrapper when build output exists, but keep source-tree
   // auth working in unbuilt checkouts that only have scripts/run-node.mjs.
@@ -160,7 +158,7 @@ export function resolveLocalAuthSpawnCwd(params: { args: string[]; defaultCwd?: 
     return defaultCwd;
   }
   const entryBase = path.basename(entryArg).toLowerCase();
-  if (entryBase === "openclaw.mjs") {
+  if (entryBase === "opencli.mjs") {
     return path.dirname(entryArg);
   }
   if (entryBase === "run-node.mjs") {
@@ -195,7 +193,7 @@ export function resolveTuiSessionKey(params: {
 }
 
 export function resolveInitialTuiAgentId(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   fallbackAgentId: string;
   initialSessionInput?: string;
   cwd?: string;
@@ -225,9 +223,9 @@ export function resolveGatewayDisconnectState(reason?: string): {
   if (/pairing required/i.test(reasonLabel)) {
     return {
       connectionStatus: `gateway disconnected: ${reasonLabel}`,
-      activityStatus: "pairing required: run openclaw devices list",
+      activityStatus: "pairing required: run opencli devices list",
       pairingHint:
-        "Pairing required. Run `openclaw devices list`, approve your request ID, then reconnect.",
+        "Pairing required. Run `opencli devices list`, approve your request ID, then reconnect.",
     };
   }
   return {
@@ -550,7 +548,7 @@ export async function runTui(opts: RunTuiOptions): Promise<TuiResult> {
       : null
     : null;
   if (isLocalMode) {
-    setConsoleSubsystemFilter(["__openclaw_tui_quiet__"]);
+    setConsoleSubsystemFilter(["__opencli_tui_quiet__"]);
   }
 
   const tui = new TUI(new ProcessTerminal());
@@ -619,7 +617,7 @@ export async function runTui(opts: RunTuiOptions): Promise<TuiResult> {
   const updateHeader = () => {
     const sessionLabel = formatSessionKey(currentSessionKey);
     const agentLabel = formatAgentLabel(currentAgentId);
-    const title = opts.title ?? "openclaw tui";
+    const title = opts.title ?? "opencli tui";
     header.setText(
       theme.header(
         `${title} - ${client.connection.url} - agent ${agentLabel} - session ${sessionLabel}`,
@@ -806,7 +804,7 @@ export async function runTui(opts: RunTuiOptions): Promise<TuiResult> {
       return await work();
     } finally {
       if (isLocalMode) {
-        setConsoleSubsystemFilter(["__openclaw_tui_quiet__"]);
+        setConsoleSubsystemFilter(["__opencli_tui_quiet__"]);
       }
       tui.start();
       tui.setFocus(editor);

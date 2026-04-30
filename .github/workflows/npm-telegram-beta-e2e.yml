@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       package_spec:
-        description: Published OpenClaw package spec to test when no artifact is supplied
+        description: Published OpenCLI package spec to test when no artifact is supplied
         required: true
-        default: openclaw@beta
+        default: opencli@beta
         type: string
       package_label:
         description: Optional display label for an artifact-backed package candidate
@@ -38,7 +38,7 @@ on:
   workflow_call:
     inputs:
       package_spec:
-        description: Published OpenClaw package spec to test when no artifact is supplied
+        description: Published OpenCLI package spec to test when no artifact is supplied
         required: true
         type: string
       package_artifact_name:
@@ -69,9 +69,9 @@ on:
     secrets:
       OPENAI_API_KEY:
         required: false
-      OPENCLAW_QA_CONVEX_SITE_URL:
+      OPENCLI_QA_CONVEX_SITE_URL:
         required: false
-      OPENCLAW_QA_CONVEX_SECRET_CI:
+      OPENCLI_QA_CONVEX_SECRET_CI:
         required: false
 
 permissions:
@@ -116,7 +116,7 @@ jobs:
           file: ./scripts/e2e/Dockerfile
           target: build
           platforms: linux/amd64
-          tags: openclaw-docker-e2e:local
+          tags: opencli-docker-e2e:local
           load: true
           push: false
           provenance: false
@@ -134,15 +134,15 @@ jobs:
           PACKAGE_ARTIFACT_NAME: ${{ inputs.package_artifact_name || '' }}
           PROVIDER_MODE: ${{ inputs.provider_mode }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENCLAW_QA_CONVEX_SITE_URL: ${{ secrets.OPENCLAW_QA_CONVEX_SITE_URL }}
-          OPENCLAW_QA_CONVEX_SECRET_CI: ${{ secrets.OPENCLAW_QA_CONVEX_SECRET_CI }}
+          OPENCLI_QA_CONVEX_SITE_URL: ${{ secrets.OPENCLI_QA_CONVEX_SITE_URL }}
+          OPENCLI_QA_CONVEX_SECRET_CI: ${{ secrets.OPENCLI_QA_CONVEX_SECRET_CI }}
         shell: bash
         run: |
           set -euo pipefail
 
           if [[ -z "${PACKAGE_ARTIFACT_NAME// }" ]]; then
-            if [[ ! "${PACKAGE_SPEC}" =~ ^openclaw@(beta|latest|[0-9]{4}\.[1-9][0-9]*\.[1-9][0-9]*(-[1-9][0-9]*|-beta\.[1-9][0-9]*)?)$ ]]; then
-              echo "package_spec must be openclaw@beta, openclaw@latest, or an exact OpenClaw release version; got: ${PACKAGE_SPEC}" >&2
+            if [[ ! "${PACKAGE_SPEC}" =~ ^opencli@(beta|latest|[0-9]{4}\.[1-9][0-9]*\.[1-9][0-9]*(-[1-9][0-9]*|-beta\.[1-9][0-9]*)?)$ ]]; then
+              echo "package_spec must be opencli@beta, opencli@latest, or an exact OpenCLI release version; got: ${PACKAGE_SPEC}" >&2
               exit 1
             fi
           fi
@@ -162,8 +162,8 @@ jobs:
             fi
           }
 
-          require_var OPENCLAW_QA_CONVEX_SITE_URL
-          require_var OPENCLAW_QA_CONVEX_SECRET_CI
+          require_var OPENCLI_QA_CONVEX_SITE_URL
+          require_var OPENCLI_QA_CONVEX_SECRET_CI
           if [[ "${PROVIDER_MODE}" == "live-frontier" ]]; then
             require_var OPENAI_API_KEY
           fi
@@ -180,17 +180,17 @@ jobs:
         shell: bash
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENCLAW_SKIP_DOCKER_BUILD: "1"
-          OPENCLAW_DOCKER_E2E_IMAGE: openclaw-docker-e2e:local
-          OPENCLAW_NPM_TELEGRAM_PACKAGE_SPEC: ${{ inputs.package_spec }}
-          OPENCLAW_NPM_TELEGRAM_PACKAGE_LABEL: ${{ inputs.package_label }}
-          OPENCLAW_NPM_TELEGRAM_PROVIDER_MODE: ${{ inputs.provider_mode }}
-          OPENCLAW_NPM_TELEGRAM_CREDENTIAL_SOURCE: convex
-          OPENCLAW_NPM_TELEGRAM_CREDENTIAL_ROLE: ci
-          OPENCLAW_QA_CONVEX_SITE_URL: ${{ secrets.OPENCLAW_QA_CONVEX_SITE_URL }}
-          OPENCLAW_QA_CONVEX_SECRET_CI: ${{ secrets.OPENCLAW_QA_CONVEX_SECRET_CI }}
-          OPENCLAW_QA_REDACT_PUBLIC_METADATA: "1"
-          OPENCLAW_QA_TELEGRAM_CAPTURE_CONTENT: "1"
+          OPENCLI_SKIP_DOCKER_BUILD: "1"
+          OPENCLI_DOCKER_E2E_IMAGE: opencli-docker-e2e:local
+          OPENCLI_NPM_TELEGRAM_PACKAGE_SPEC: ${{ inputs.package_spec }}
+          OPENCLI_NPM_TELEGRAM_PACKAGE_LABEL: ${{ inputs.package_label }}
+          OPENCLI_NPM_TELEGRAM_PROVIDER_MODE: ${{ inputs.provider_mode }}
+          OPENCLI_NPM_TELEGRAM_CREDENTIAL_SOURCE: convex
+          OPENCLI_NPM_TELEGRAM_CREDENTIAL_ROLE: ci
+          OPENCLI_QA_CONVEX_SITE_URL: ${{ secrets.OPENCLI_QA_CONVEX_SITE_URL }}
+          OPENCLI_QA_CONVEX_SECRET_CI: ${{ secrets.OPENCLI_QA_CONVEX_SECRET_CI }}
+          OPENCLI_QA_REDACT_PUBLIC_METADATA: "1"
+          OPENCLI_QA_TELEGRAM_CAPTURE_CONTENT: "1"
           INPUT_SCENARIO: ${{ inputs.scenario }}
           PACKAGE_ARTIFACT_NAME: ${{ inputs.package_artifact_name || '' }}
         run: |
@@ -198,7 +198,7 @@ jobs:
 
           output_dir=".artifacts/qa-e2e/npm-telegram-beta-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
           echo "output_dir=${output_dir}" >> "$GITHUB_OUTPUT"
-          export OPENCLAW_NPM_TELEGRAM_OUTPUT_DIR="${output_dir}"
+          export OPENCLI_NPM_TELEGRAM_OUTPUT_DIR="${output_dir}"
 
           if [[ -n "${PACKAGE_ARTIFACT_NAME// }" ]]; then
             mapfile -t package_tgzs < <(find .artifacts/telegram-package-under-test -type f -name "*.tgz" | sort)
@@ -206,16 +206,16 @@ jobs:
               echo "package artifact ${PACKAGE_ARTIFACT_NAME} must contain exactly one .tgz; found ${#package_tgzs[@]}" >&2
               exit 1
             fi
-            export OPENCLAW_NPM_TELEGRAM_PACKAGE_TGZ="${package_tgzs[0]}"
-            if [[ -z "${OPENCLAW_NPM_TELEGRAM_PACKAGE_LABEL// }" ]]; then
-              export OPENCLAW_NPM_TELEGRAM_PACKAGE_LABEL="$(basename "${package_tgzs[0]}")"
+            export OPENCLI_NPM_TELEGRAM_PACKAGE_TGZ="${package_tgzs[0]}"
+            if [[ -z "${OPENCLI_NPM_TELEGRAM_PACKAGE_LABEL// }" ]]; then
+              export OPENCLI_NPM_TELEGRAM_PACKAGE_LABEL="$(basename "${package_tgzs[0]}")"
             fi
-          elif [[ -z "${OPENCLAW_NPM_TELEGRAM_PACKAGE_LABEL// }" ]]; then
-            export OPENCLAW_NPM_TELEGRAM_PACKAGE_LABEL="${OPENCLAW_NPM_TELEGRAM_PACKAGE_SPEC}"
+          elif [[ -z "${OPENCLI_NPM_TELEGRAM_PACKAGE_LABEL// }" ]]; then
+            export OPENCLI_NPM_TELEGRAM_PACKAGE_LABEL="${OPENCLI_NPM_TELEGRAM_PACKAGE_SPEC}"
           fi
 
           if [[ -n "${INPUT_SCENARIO// }" ]]; then
-            export OPENCLAW_NPM_TELEGRAM_SCENARIOS="${INPUT_SCENARIO}"
+            export OPENCLI_NPM_TELEGRAM_SCENARIOS="${INPUT_SCENARIO}"
           fi
 
           pnpm test:docker:npm-telegram-live

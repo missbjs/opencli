@@ -9,22 +9,17 @@ import { mkdtempSync, rmSync, statSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import process from "node:process";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type {
   PluginCommandContext,
   PluginConversationBinding,
   PluginConversationBindingRequestParams,
   PluginConversationBindingRequestResult,
   PluginHookInboundClaimContext,
-} from "openclaw/plugin-sdk/plugin-entry";
+} from "opencli/plugin-sdk/plugin-entry";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { handleTuiCommand } from "./commands.js";
 import { handleTuiInboundClaim } from "./inbound-claim.js";
-import {
-  getSession,
-  listSessions,
-  resolveExecutable,
-  stopSession,
-} from "./process-pool.js";
+import { getSession, listSessions, resolveExecutable, stopSession } from "./process-pool.js";
 
 const isWindows = process.platform === "win32";
 
@@ -83,7 +78,10 @@ describe("slash command surface", () => {
     logDir: "",
   };
 
-  function makeCtx(args: string, override: Partial<PluginCommandContext> = {}): PluginCommandContext {
+  function makeCtx(
+    args: string,
+    override: Partial<PluginCommandContext> = {},
+  ): PluginCommandContext {
     const sessionKey = liveSessionKey ?? `cov-${process.pid}-${Date.now()}`;
     liveSessionKey = sessionKey;
     return {

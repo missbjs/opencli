@@ -13,7 +13,7 @@ const knownDeprecatedSurfaceMarkers = [
   {
     code: "legacy-extension-api-import",
     file: "src/extensionAPI.ts",
-    marker: "openclaw/extension-api is deprecated",
+    marker: "opencli/extension-api is deprecated",
   },
   {
     code: "memory-split-registration",
@@ -93,7 +93,7 @@ const knownDeprecatedSurfaceMarkers = [
   {
     code: "plugin-sdk-test-utils-alias",
     file: "src/plugin-sdk/test-utils.ts",
-    marker: "focused `openclaw/plugin-sdk/*` test subpaths",
+    marker: "focused `opencli/plugin-sdk/*` test subpaths",
   },
   {
     code: "plugin-install-config-ledger",

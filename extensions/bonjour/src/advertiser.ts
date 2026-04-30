@@ -2,8 +2,8 @@ import type { ChildProcess } from "node:child_process";
 import fs from "node:fs";
 import { createRequire } from "node:module";
 import os from "node:os";
-import type { PluginLogger } from "openclaw/plugin-sdk/plugin-entry";
-import { isTruthyEnvValue } from "openclaw/plugin-sdk/runtime-env";
+import type { PluginLogger } from "opencli/plugin-sdk/plugin-entry";
+import { isTruthyEnvValue } from "opencli/plugin-sdk/runtime-env";
 import { classifyCiaoProcessError, type CiaoProcessErrorClassification } from "./ciao.js";
 import { formatBonjourError } from "./errors.js";
 
@@ -85,7 +85,7 @@ const REPAIR_DEBOUNCE_MS = 30_000;
 // previous 8s threshold was triggering false-positive teardowns on every gateway
 // restart in such environments. 20s gives healthy networks plenty of room while
 // still catching genuinely stuck advertisers (announce that never completes).
-// See https://github.com/openclaw/openclaw/issues/72481
+// See https://github.com/opencli/opencli/issues/72481
 const STUCK_ANNOUNCING_MS = 20_000;
 const MAX_CONSECUTIVE_RESTARTS = 3;
 const BONJOUR_ANNOUNCED_STATE = "announced";
@@ -110,7 +110,7 @@ async function loadCiaoModule(): Promise<CiaoModule> {
 }
 
 function readBonjourDisableOverride(): boolean | null {
-  const raw = process.env.OPENCLAW_DISABLE_BONJOUR;
+  const raw = process.env.OPENCLI_DISABLE_BONJOUR;
   const normalized = raw?.trim().toLowerCase();
   if (!normalized) {
     return null;
@@ -192,7 +192,7 @@ function resolveSystemMdnsHostname(): string | null {
 const MAX_DNS_LABEL_BYTES = 63;
 const utf8Encoder = new TextEncoder();
 
-function truncateToDnsLabel(name: string, fallback = "OpenClaw"): string {
+function truncateToDnsLabel(name: string, fallback = "OpenCLI"): string {
   const encoded = utf8Encoder.encode(name);
   if (encoded.byteLength <= MAX_DNS_LABEL_BYTES) {
     return name;
@@ -210,12 +210,12 @@ function truncateToDnsLabel(name: string, fallback = "OpenClaw"): string {
 
 function safeServiceName(name: string) {
   const trimmed = name.trim();
-  return trimmed.length > 0 ? truncateToDnsLabel(trimmed) : "OpenClaw";
+  return trimmed.length > 0 ? truncateToDnsLabel(trimmed) : "OpenCLI";
 }
 
 function prettifyInstanceName(name: string) {
   const normalized = name.trim().replace(/\s+/g, " ");
-  return normalized.replace(/\s+\(OpenClaw\)\s*$/i, "").trim() || normalized;
+  return normalized.replace(/\s+\(OpenCLI\)\s*$/i, "").trim() || normalized;
 }
 
 function serviceSummary(label: string, svc: BonjourService): string {
@@ -407,18 +407,18 @@ export async function startGatewayBonjourAdvertiser(
     cleanupUncaughtException = deps.registerUncaughtExceptionHandler?.(handleCiaoProcessError);
 
     const hostnameRaw =
-      process.env.OPENCLAW_MDNS_HOSTNAME?.trim() || resolveSystemMdnsHostname() || "openclaw";
+      process.env.OPENCLI_MDNS_HOSTNAME?.trim() || resolveSystemMdnsHostname() || "opencli";
     const hostname = truncateToDnsLabel(
       hostnameRaw
         .replace(/\.local$/i, "")
         .split(".")[0]
-        .trim() || "openclaw",
-      "openclaw",
+        .trim() || "opencli",
+      "opencli",
     );
     const instanceName =
       typeof opts.instanceName === "string" && opts.instanceName.trim()
         ? opts.instanceName.trim()
-        : `${hostname} (OpenClaw)`;
+        : `${hostname} (OpenCLI)`;
     const displayName = prettifyInstanceName(instanceName);
 
     const txtBase: Record<string, string> = {
@@ -458,7 +458,7 @@ export async function startGatewayBonjourAdvertiser(
 
       const gateway = responder.createService({
         name: safeServiceName(instanceName),
-        type: "openclaw-gw",
+        type: "opencli-gw",
         protocol: Protocol.TCP,
         port: opts.gatewayPort,
         domain: "local",
@@ -593,7 +593,7 @@ export async function startGatewayBonjourAdvertiser(
         if (consecutiveRestarts > MAX_CONSECUTIVE_RESTARTS) {
           disabled = true;
           logger.warn(
-            `bonjour: disabling advertiser after ${MAX_CONSECUTIVE_RESTARTS} failed restarts (${reason}); set discovery.mdns.mode="off" or OPENCLAW_DISABLE_BONJOUR=1 to disable mDNS discovery`,
+            `bonjour: disabling advertiser after ${MAX_CONSECUTIVE_RESTARTS} failed restarts (${reason}); set discovery.mdns.mode="off" or OPENCLI_DISABLE_BONJOUR=1 to disable mDNS discovery`,
           );
           const previous = cycle;
           cycle = null;

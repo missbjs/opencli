@@ -6,14 +6,14 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import process from "node:process";
-import { describe, expect, it, afterEach, beforeEach } from "vitest";
 import type {
   PluginCommandContext,
   PluginConversationBinding,
   PluginConversationBindingRequestParams,
   PluginConversationBindingRequestResult,
   PluginHookInboundClaimContext,
-} from "openclaw/plugin-sdk/plugin-entry";
+} from "opencli/plugin-sdk/plugin-entry";
+import { describe, expect, it, afterEach, beforeEach } from "vitest";
 import { handleTuiCommand } from "./commands.js";
 import { handleTuiInboundClaim } from "./inbound-claim.js";
 import { getSession, stopSession } from "./process-pool.js";
@@ -23,10 +23,7 @@ import { getSession, stopSession } from "./process-pool.js";
 // harmless for tests — suppress them so they don't fail the run.
 const originalHandler = process.listeners("uncaughtException").slice();
 process.on("uncaughtException", (err: Error) => {
-  if (
-    err.message.includes("error code: 267") ||
-    err.message.includes("Cannot create process")
-  ) {
+  if (err.message.includes("error code: 267") || err.message.includes("Cannot create process")) {
     return; // swallow known PTY teardown race
   }
   // Re-emit for anything else

@@ -1,7 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { safeEqualSecret } from "openclaw/plugin-sdk/security-runtime";
-import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/string-coerce-runtime";
+import { formatErrorMessage } from "opencli/plugin-sdk/error-runtime";
+import { safeEqualSecret } from "opencli/plugin-sdk/security-runtime";
+import { normalizeLowercaseStringOrEmpty } from "opencli/plugin-sdk/string-coerce-runtime";
 import { resolveBlueBubblesEffectiveAllowPrivateNetwork } from "./accounts.js";
 import { createBlueBubblesDebounceRegistry } from "./monitor-debounce.js";
 import {

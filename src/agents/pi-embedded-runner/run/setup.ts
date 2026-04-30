@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../../../config/types.opencli.js";
 import type { ProviderRuntimeModel } from "../../../plugins/provider-runtime-model.types.js";
 import type {
   PluginHookBeforeAgentStartResult,
@@ -117,7 +117,7 @@ export function buildBeforeModelResolveAttachments(
 }
 
 export function resolveEffectiveRuntimeModel(params: {
-  cfg: OpenClawConfig | undefined;
+  cfg: OpenCLIConfig | undefined;
   provider: string;
   modelId: string;
   runtimeModel: ProviderRuntimeModel;

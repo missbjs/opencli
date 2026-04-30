@@ -44,7 +44,7 @@ test("sessions.list surfaces transcript usage and model fallbacks from the trans
       JSON.stringify({
         message: {
           role: "assistant",
-          provider: "openclaw",
+          provider: "opencli",
           model: "delivery-mirror",
           usage: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
         },

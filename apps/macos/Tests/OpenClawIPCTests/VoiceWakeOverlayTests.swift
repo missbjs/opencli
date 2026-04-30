@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import OpenClaw
+@testable import OpenCLI
 
 struct VoiceWakeOverlayTests {
     @Test func `guard token drops when no active`() {

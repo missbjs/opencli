@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: openclaw-home-pvc
+  name: opencli-home-pvc
   labels:
-    app: openclaw
+    app: opencli
 spec:
   accessModes:
     - ReadWriteOnce

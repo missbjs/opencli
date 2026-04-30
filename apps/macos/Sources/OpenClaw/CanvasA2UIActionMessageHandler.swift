@@ -1,11 +1,11 @@
 import AppKit
 import Foundation
-import OpenClawIPC
-import OpenClawKit
+import OpenCLIIPC
+import OpenCLIKit
 import WebKit
 
 final class CanvasA2UIActionMessageHandler: NSObject, WKScriptMessageHandler {
-    static let messageName = "openclawCanvasA2UIAction"
+    static let messageName = "opencliCanvasA2UIAction"
     static let allMessageNames = [messageName]
 
     /// Compatibility helper for debug/test shims. Runtime dispatch remains
@@ -68,7 +68,7 @@ final class CanvasA2UIActionMessageHandler: NSObject, WKScriptMessageHandler {
         }()
         guard !userAction.isEmpty else { return }
 
-        guard let name = OpenClawCanvasA2UIAction.extractActionName(userAction) else { return }
+        guard let name = OpenCLICanvasA2UIAction.extractActionName(userAction) else { return }
         let actionId =
             (userAction["id"] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines).nonEmpty
                 ?? UUID().uuidString
@@ -80,15 +80,15 @@ final class CanvasA2UIActionMessageHandler: NSObject, WKScriptMessageHandler {
         let sourceComponentId = (userAction["sourceComponentId"] as? String)?
             .trimmingCharacters(in: .whitespacesAndNewlines).nonEmpty ?? "-"
         let instanceId = InstanceIdentity.instanceId.lowercased()
-        let contextJSON = OpenClawCanvasA2UIAction.compactJSON(userAction["context"])
+        let contextJSON = OpenCLICanvasA2UIAction.compactJSON(userAction["context"])
 
         // Token-efficient and unambiguous. The agent should treat this as a UI event and (by default) update Canvas.
-        let messageContext = OpenClawCanvasA2UIAction.AgentMessageContext(
+        let messageContext = OpenCLICanvasA2UIAction.AgentMessageContext(
             actionName: name,
             session: .init(key: self.sessionKey, surfaceId: surfaceId),
             component: .init(id: sourceComponentId, host: InstanceIdentity.displayName, instanceId: instanceId),
             contextJSON: contextJSON)
-        let text = OpenClawCanvasA2UIAction.formatAgentMessage(messageContext)
+        let text = OpenCLICanvasA2UIAction.formatAgentMessage(messageContext)
 
         Task { [weak webView] in
             if AppStateStore.shared.connectionMode == .local {
@@ -107,7 +107,7 @@ final class CanvasA2UIActionMessageHandler: NSObject, WKScriptMessageHandler {
 
             await MainActor.run {
                 guard let webView else { return }
-                let js = OpenClawCanvasA2UIAction.jsDispatchA2UIActionStatus(
+                let js = OpenCLICanvasA2UIAction.jsDispatchA2UIActionStatus(
                     actionId: actionId,
                     ok: result.ok,
                     error: result.error)
@@ -141,5 +141,5 @@ final class CanvasA2UIActionMessageHandler: NSObject, WKScriptMessageHandler {
         if a == 100, (64...127).contains(Int(b)) { return true }
         return false
     }
-    // Formatting helpers live in OpenClawKit (`OpenClawCanvasA2UIAction`).
+    // Formatting helpers live in OpenCLIKit (`OpenCLICanvasA2UIAction`).
 }

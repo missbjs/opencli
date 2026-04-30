@@ -8,7 +8,7 @@ read_when:
   - You need to understand how the Codex plugin relates to model providers
 ---
 
-An **agent harness** is the low level executor for one prepared OpenClaw agent
+An **agent harness** is the low level executor for one prepared OpenCLI agent
 turn. It is not a model provider, not a channel, and not a tool registry.
 For the user-facing mental model, see [Agent runtimes](/concepts/agent-runtimes).
 
@@ -19,13 +19,13 @@ embedded runner.
 ## When to use a harness
 
 Register an agent harness when a model family has its own native session
-runtime and the normal OpenClaw provider transport is the wrong abstraction.
+runtime and the normal OpenCLI provider transport is the wrong abstraction.
 
 Examples:
 
 - a native coding-agent server that owns threads and compaction
 - a local CLI or daemon that must stream native plan/reasoning/tool events
-- a model runtime that needs its own resume id in addition to the OpenClaw
+- a model runtime that needs its own resume id in addition to the OpenCLI
   session transcript
 
 Do **not** register a harness just to add a new LLM API. For normal HTTP or
@@ -33,12 +33,12 @@ WebSocket model APIs, build a [provider plugin](/plugins/sdk-provider-plugins).
 
 ## What core still owns
 
-Before a harness is selected, OpenClaw has already resolved:
+Before a harness is selected, OpenCLI has already resolved:
 
 - provider and model
 - runtime auth state
 - thinking level and context budget
-- the OpenClaw transcript/session file
+- the OpenCLI transcript/session file
 - workspace, sandbox, and tool policy
 - channel reply callbacks and streaming callbacks
 - model fallback and live model switching policy
@@ -46,7 +46,7 @@ Before a harness is selected, OpenClaw has already resolved:
 That split is intentional. A harness runs a prepared attempt; it does not pick
 providers, replace channel delivery, or silently switch models.
 
-The prepared attempt also includes `params.runtimePlan`, an OpenClaw-owned
+The prepared attempt also includes `params.runtimePlan`, an OpenCLI-owned
 policy bundle for runtime decisions that must stay shared across PI and native
 harnesses:
 
@@ -65,11 +65,11 @@ switch providers/models inside a turn.
 
 ## Register a harness
 
-**Import:** `openclaw/plugin-sdk/agent-harness`
+**Import:** `opencli/plugin-sdk/agent-harness`
 
 ```typescript
-import type { AgentHarness } from "openclaw/plugin-sdk/agent-harness";
-import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
+import type { AgentHarness } from "opencli/plugin-sdk/agent-harness";
+import { definePluginEntry } from "opencli/plugin-sdk/plugin-entry";
 
 const myHarness: AgentHarness = {
   id: "my-harness",
@@ -101,21 +101,21 @@ export default definePluginEntry({
 
 ## Selection policy
 
-OpenClaw chooses a harness after provider/model resolution:
+OpenCLI chooses a harness after provider/model resolution:
 
 1. An existing session's recorded harness id wins, so config/env changes do not
    hot-switch that transcript to another runtime.
-2. `OPENCLAW_AGENT_RUNTIME=<id>` forces a registered harness with that id for
+2. `OPENCLI_AGENT_RUNTIME=<id>` forces a registered harness with that id for
    sessions that are not already pinned.
-3. `OPENCLAW_AGENT_RUNTIME=pi` forces the built-in PI harness.
-4. `OPENCLAW_AGENT_RUNTIME=auto` asks registered harnesses if they support the
+3. `OPENCLI_AGENT_RUNTIME=pi` forces the built-in PI harness.
+4. `OPENCLI_AGENT_RUNTIME=auto` asks registered harnesses if they support the
    resolved provider/model.
-5. If no registered harness matches, OpenClaw uses PI unless PI fallback is
+5. If no registered harness matches, OpenCLI uses PI unless PI fallback is
    disabled.
 
 Plugin harness failures surface as run failures. In `auto` mode, PI fallback is
 only used when no registered plugin harness supports the resolved
-provider/model. Once a plugin harness has claimed a run, OpenClaw does not
+provider/model. Once a plugin harness has claimed a run, OpenCLI does not
 replay that same turn through PI because that can change auth/runtime semantics
 or duplicate side effects.
 
@@ -137,7 +137,7 @@ or operator config, not in the shared runtime selector.
 
 Most harnesses should also register a provider. The provider makes model refs,
 auth status, model metadata, and `/model` selection visible to the rest of
-OpenClaw. The harness then claims that provider in `supports(...)`.
+OpenCLI. The harness then claims that provider in `supports(...)`.
 
 The bundled Codex plugin follows this pattern:
 
@@ -148,22 +148,22 @@ The bundled Codex plugin follows this pattern:
 - harness id: `codex`
 - auth: synthetic provider availability, because the Codex harness owns the
   native Codex login/session
-- app-server request: OpenClaw sends the bare model id to Codex and lets the
+- app-server request: OpenCLI sends the bare model id to Codex and lets the
   harness talk to the native app-server protocol
 
 The Codex plugin is additive. Plain `openai/gpt-*` refs continue to use the
-normal OpenClaw provider path unless you force the Codex harness with
+normal OpenCLI provider path unless you force the Codex harness with
 `agentRuntime.id: "codex"`. Older `codex/gpt-*` refs still select the
 Codex provider and harness for compatibility.
 
 For operator setup, model prefix examples, and Codex-only configs, see
 [Codex Harness](/plugins/codex-harness).
 
-OpenClaw requires Codex app-server `0.125.0` or newer. The Codex plugin checks
+OpenCLI requires Codex app-server `0.125.0` or newer. The Codex plugin checks
 the app-server initialize handshake and blocks older or unversioned servers so
-OpenClaw only runs against the protocol surface it has been tested with. The
+OpenCLI only runs against the protocol surface it has been tested with. The
 `0.125.0` floor includes the native MCP hook payload support that landed in
-Codex `0.124.0`, while pinning OpenClaw to the newer tested stable line.
+Codex `0.124.0`, while pinning OpenCLI to the newer tested stable line.
 
 ### Tool-result middleware
 
@@ -183,15 +183,15 @@ Pi tool-result transforms must use runtime-neutral middleware.
 
 Native harnesses that own their own protocol projection can use
 `classifyAgentHarnessTerminalOutcome(...)` from
-`openclaw/plugin-sdk/agent-harness-runtime` when a completed turn produced no
+`opencli/plugin-sdk/agent-harness-runtime` when a completed turn produced no
 visible assistant text. The helper returns `empty`, `reasoning-only`, or
-`planning-only` so OpenClaw's fallback policy can decide whether to retry on a
+`planning-only` so OpenCLI's fallback policy can decide whether to retry on a
 different model. It intentionally leaves prompt errors, in-flight turns, and
 intentional silent replies such as `NO_REPLY` unclassified.
 
 ### Native Codex harness mode
 
-The bundled `codex` harness is the native Codex mode for embedded OpenClaw
+The bundled `codex` harness is the native Codex mode for embedded OpenCLI
 agent turns. Enable the bundled `codex` plugin first, and include `codex` in
 `plugins.allow` if your config uses a restrictive allowlist. Native app-server
 configs should use `openai/gpt-*` with `agentRuntime.id: "codex"`.
@@ -199,7 +199,7 @@ Use `openai-codex/*` for Codex OAuth through PI instead. Legacy `codex/*`
 model refs remain compatibility aliases for the native harness.
 
 When this mode runs, Codex owns the native thread id, resume behavior,
-compaction, and app-server execution. OpenClaw still owns the chat channel,
+compaction, and app-server execution. OpenCLI still owns the chat channel,
 visible transcript mirror, tool policy, approvals, media delivery, and session
 selection. Use `agentRuntime.id: "codex"` without a `fallback` override
 when you need to prove that only the Codex app-server path can claim the run.
@@ -209,9 +209,9 @@ app-server failures already fail directly instead of retrying through PI.
 
 ## Disable PI fallback
 
-By default, OpenClaw runs embedded agents with `agents.defaults.agentRuntime`
+By default, OpenCLI runs embedded agents with `agents.defaults.agentRuntime`
 set to `{ id: "auto", fallback: "pi" }`. In `auto` mode, registered plugin
-harnesses can claim a provider/model pair. If none match, OpenClaw falls back
+harnesses can claim a provider/model pair. If none match, OpenCLI falls back
 to PI.
 
 In `auto` mode, set `fallback: "none"` when you need missing plugin harness
@@ -219,7 +219,7 @@ selection to fail instead of using PI. Explicit plugin runtimes such as
 `runtime: "codex"` already fail closed by default, unless `fallback: "pi"` is
 set in the same config or environment override scope. Selected plugin harness
 failures always fail hard. This does not block an explicit `runtime: "pi"` or
-`OPENCLAW_AGENT_RUNTIME=pi`.
+`OPENCLI_AGENT_RUNTIME=pi`.
 
 For Codex-only embedded runs:
 
@@ -237,7 +237,7 @@ For Codex-only embedded runs:
 ```
 
 If you want any registered plugin harness to claim matching models but never
-want OpenClaw to silently fall back to PI, keep `runtime: "auto"` and disable
+want OpenCLI to silently fall back to PI, keep `runtime: "auto"` and disable
 the fallback:
 
 ```json
@@ -278,14 +278,14 @@ Per-agent overrides use the same shape:
 }
 ```
 
-`OPENCLAW_AGENT_RUNTIME` still overrides the configured runtime. Use
-`OPENCLAW_AGENT_HARNESS_FALLBACK=none` to disable PI fallback from the
+`OPENCLI_AGENT_RUNTIME` still overrides the configured runtime. Use
+`OPENCLI_AGENT_HARNESS_FALLBACK=none` to disable PI fallback from the
 environment.
 
 ```bash
-OPENCLAW_AGENT_RUNTIME=codex \
-OPENCLAW_AGENT_HARNESS_FALLBACK=none \
-openclaw gateway run
+OPENCLI_AGENT_RUNTIME=codex \
+OPENCLI_AGENT_HARNESS_FALLBACK=none \
+opencli gateway run
 ```
 
 With fallback disabled, a session fails early when the requested harness is not
@@ -299,22 +299,22 @@ image, video, music, TTS, PDF, or other provider-specific model routing.
 ## Native sessions and transcript mirror
 
 A harness may keep a native session id, thread id, or daemon-side resume token.
-Keep that binding explicitly associated with the OpenClaw session, and keep
-mirroring user-visible assistant/tool output into the OpenClaw transcript.
+Keep that binding explicitly associated with the OpenCLI session, and keep
+mirroring user-visible assistant/tool output into the OpenCLI transcript.
 
-The OpenClaw transcript remains the compatibility layer for:
+The OpenCLI transcript remains the compatibility layer for:
 
 - channel-visible session history
 - transcript search and indexing
 - switching back to the built-in PI harness on a later turn
 - generic `/new`, `/reset`, and session deletion behavior
 
-If your harness stores a sidecar binding, implement `reset(...)` so OpenClaw can
-clear it when the owning OpenClaw session is reset.
+If your harness stores a sidecar binding, implement `reset(...)` so OpenCLI can
+clear it when the owning OpenCLI session is reset.
 
 ## Tool and media results
 
-Core constructs the OpenClaw tool list and passes it into the prepared attempt.
+Core constructs the OpenCLI tool list and passes it into the prepared attempt.
 When a harness executes a dynamic tool call, return the tool result back through
 the harness result shape instead of sending channel media yourself.
 

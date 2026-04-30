@@ -26,9 +26,7 @@ describe("check-gateway-watch-regression", () => {
   it("keeps plugin runtime graph paths counted", () => {
     expect(isIgnoredDistRuntimeWatchPath("dist-runtime/extensions/openai/index.js")).toBe(false);
     expect(
-      isIgnoredDistRuntimeWatchPath(
-        "dist-runtime/extensions/openai/node_modules/openclaw/index.js",
-      ),
+      isIgnoredDistRuntimeWatchPath("dist-runtime/extensions/openai/node_modules/opencli/index.js"),
     ).toBe(false);
   });
 
@@ -60,7 +58,7 @@ describe("check-gateway-watch-regression", () => {
   });
 
   it("refreshes runtime postbuild stamps after build stamps", () => {
-    const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-gateway-watch-stamps-"));
+    const rootDir = fs.mkdtempSync(path.join(os.tmpdir(), "opencli-gateway-watch-stamps-"));
     try {
       fs.mkdirSync(path.join(rootDir, ".git"), { recursive: true });
       writeBuildAndRuntimePostBuildStamps({ cwd: rootDir });

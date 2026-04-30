@@ -1,4 +1,4 @@
-import { REALTIME_VOICE_AUDIO_FORMAT_PCM16_24KHZ } from "openclaw/plugin-sdk/realtime-voice";
+import { REALTIME_VOICE_AUDIO_FORMAT_PCM16_24KHZ } from "opencli/plugin-sdk/realtime-voice";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { buildOpenAIRealtimeVoiceProvider } from "./realtime-voice-provider.js";
 
@@ -58,7 +58,7 @@ vi.mock("ws", () => ({
   default: FakeWebSocket,
 }));
 
-vi.mock("openclaw/plugin-sdk/ssrf-runtime", () => ({
+vi.mock("opencli/plugin-sdk/ssrf-runtime", () => ({
   fetchWithSsrFGuard: fetchWithSsrFGuardMock,
 }));
 
@@ -95,8 +95,8 @@ describe("buildOpenAIRealtimeVoiceProvider", () => {
     vi.unstubAllEnvs();
   });
 
-  it("adds OpenClaw attribution headers to native realtime websocket requests", () => {
-    vi.stubEnv("OPENCLAW_VERSION", "2026.3.22");
+  it("adds OpenCLI attribution headers to native realtime websocket requests", () => {
+    vi.stubEnv("OPENCLI_VERSION", "2026.3.22");
     const provider = buildOpenAIRealtimeVoiceProvider();
     const bridge = provider.createBridge({
       providerConfig: { apiKey: "sk-test" }, // pragma: allowlist secret
@@ -110,14 +110,14 @@ describe("buildOpenAIRealtimeVoiceProvider", () => {
     const socket = FakeWebSocket.instances[0];
     const options = socket?.args[1] as { headers?: Record<string, string> } | undefined;
     expect(options?.headers).toMatchObject({
-      originator: "openclaw",
+      originator: "opencli",
       version: "2026.3.22",
-      "User-Agent": "openclaw/2026.3.22",
+      "User-Agent": "opencli/2026.3.22",
     });
   });
 
-  it("returns browser-safe OpenClaw attribution headers for native WebRTC offers", async () => {
-    vi.stubEnv("OPENCLAW_VERSION", "2026.3.22");
+  it("returns browser-safe OpenCLI attribution headers for native WebRTC offers", async () => {
+    vi.stubEnv("OPENCLI_VERSION", "2026.3.22");
     fetchWithSsrFGuardMock.mockResolvedValueOnce({
       response: createJsonResponse({
         client_secret: { value: "client-secret-123" },
@@ -143,9 +143,9 @@ describe("buildOpenAIRealtimeVoiceProvider", () => {
           headers: expect.objectContaining({
             Authorization: "Bearer sk-test", // pragma: allowlist secret
             "Content-Type": "application/json",
-            originator: "openclaw",
+            originator: "opencli",
             version: "2026.3.22",
-            "User-Agent": "openclaw/2026.3.22",
+            "User-Agent": "opencli/2026.3.22",
           }),
         }),
       }),
@@ -156,7 +156,7 @@ describe("buildOpenAIRealtimeVoiceProvider", () => {
       clientSecret: "client-secret-123",
       offerUrl: "https://api.openai.com/v1/realtime/calls",
       offerHeaders: {
-        originator: "openclaw",
+        originator: "opencli",
         version: "2026.3.22",
       },
     });

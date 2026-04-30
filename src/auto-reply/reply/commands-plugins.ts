@@ -14,7 +14,7 @@ import {
   replaceConfigFile,
   validateConfigObjectWithPlugins,
 } from "../../config/config.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../../config/types.opencli.js";
 import type { PluginInstallRecord } from "../../config/types.plugins.js";
 import { resolveArchiveKind } from "../../infra/archive.js";
 import { parseClawHubPluginSpec } from "../../infra/clawhub.js";
@@ -49,7 +49,7 @@ function renderJsonBlock(label: string, value: unknown): string {
 
 function buildPluginInspectJson(params: {
   id: string;
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   installRecords: Record<string, PluginInstallRecord>;
   report: PluginStatusReport;
 }): {
@@ -81,7 +81,7 @@ function buildPluginInspectJson(params: {
 }
 
 function buildAllPluginInspectJson(params: {
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   installRecords: Record<string, PluginInstallRecord>;
   report: PluginStatusReport;
 }): Array<{
@@ -124,8 +124,8 @@ function formatPluginsList(report: PluginStatusReport): string {
     `🔌 Plugins (${loaded}/${report.plugins.length} loaded)`,
     ...report.plugins.map((plugin) => {
       const format = plugin.bundleFormat
-        ? `${plugin.format ?? "openclaw"}/${plugin.bundleFormat}`
-        : (plugin.format ?? "openclaw");
+        ? `${plugin.format ?? "opencli"}/${plugin.bundleFormat}`
+        : (plugin.format ?? "opencli");
       return `- ${formatPluginLabel(plugin)} [${plugin.status}] ${format}`;
     }),
   ];
@@ -283,7 +283,7 @@ async function loadPluginCommandState(
   | {
       ok: true;
       path: string;
-      config: OpenClawConfig;
+      config: OpenCLIConfig;
       report: PluginStatusReport;
     }
   | { ok: false; path: string; error: string }

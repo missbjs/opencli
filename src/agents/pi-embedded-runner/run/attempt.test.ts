@@ -1,6 +1,6 @@
 import { streamSimple } from "@mariozechner/pi-ai";
 import { describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../../config/config.js";
+import type { OpenCLIConfig } from "../../../config/config.js";
 import { appendBootstrapPromptWarning } from "../../bootstrap-budget.js";
 import { SYSTEM_PROMPT_CACHE_BOUNDARY } from "../../system-prompt-cache-boundary.js";
 import { buildAgentSystemPrompt } from "../../system-prompt.js";
@@ -114,7 +114,7 @@ describe("normalizeMessagesForLlmBoundary", () => {
       },
       {
         role: "custom",
-        customType: "openclaw.runtime-context",
+        customType: "opencli.runtime-context",
         content: "secret runtime context",
         display: false,
         timestamp: 2,
@@ -134,7 +134,7 @@ describe("normalizeMessagesForLlmBoundary", () => {
 
     expect(output).toHaveLength(2);
     expect(output).not.toEqual(
-      expect.arrayContaining([expect.objectContaining({ customType: "openclaw.runtime-context" })]),
+      expect.arrayContaining([expect.objectContaining({ customType: "opencli.runtime-context" })]),
     );
     expect(output).toEqual(
       expect.arrayContaining([expect.objectContaining({ customType: "other-extension-context" })]),
@@ -335,7 +335,7 @@ describe("composeSystemPromptWithHookContext", () => {
 
   it("keeps hook-composed system prompt stable when bootstrap warnings only change the user prompt", () => {
     const baseSystemPrompt = buildAgentSystemPrompt({
-      workspaceDir: "/tmp/openclaw",
+      workspaceDir: "/tmp/opencli",
       contextFiles: [{ path: "AGENTS.md", content: "Follow AGENTS guidance." }],
       toolNames: ["read"],
     });
@@ -726,7 +726,7 @@ describe("resolveEmbeddedAgentStreamFn", () => {
 
 describe("resolveAttemptFsWorkspaceOnly", () => {
   it("uses global tools.fs.workspaceOnly when agent has no override", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: OpenCLIConfig = {
       tools: {
         fs: { workspaceOnly: true },
       },
@@ -741,7 +741,7 @@ describe("resolveAttemptFsWorkspaceOnly", () => {
   });
 
   it("prefers agent-specific tools.fs.workspaceOnly override", () => {
-    const cfg: OpenClawConfig = {
+    const cfg: OpenCLIConfig = {
       tools: {
         fs: { workspaceOnly: true },
       },
@@ -2080,7 +2080,7 @@ describe("wrapStreamFnSanitizeMalformedToolCalls", () => {
         content: [
           {
             type: "text",
-            text: "[openclaw] missing tool result in session history; inserted synthetic error result for transcript repair.",
+            text: "[opencli] missing tool result in session history; inserted synthetic error result for transcript repair.",
           },
         ],
         isError: true,
@@ -3189,7 +3189,7 @@ describe("buildAfterTurnRuntimeContext", () => {
         messageProvider: "slack",
         agentAccountId: "acct-1",
         authProfileId: "openai:p1",
-        config: {} as OpenClawConfig,
+        config: {} as OpenCLIConfig,
         skillsSnapshot: undefined,
         senderIsOwner: true,
         provider: "openai-codex",
@@ -3225,7 +3225,7 @@ describe("buildAfterTurnRuntimeContext", () => {
               },
             },
           },
-        } as OpenClawConfig,
+        } as OpenCLIConfig,
         skillsSnapshot: undefined,
         senderIsOwner: true,
         provider: "openai-codex",
@@ -3266,7 +3266,7 @@ describe("buildAfterTurnRuntimeContext", () => {
         messageProvider: "slack",
         agentAccountId: "acct-1",
         authProfileId: "openai:p1",
-        config: { plugins: { slots: { contextEngine: "lossless-claw" } } } as OpenClawConfig,
+        config: { plugins: { slots: { contextEngine: "lossless-claw" } } } as OpenCLIConfig,
         skillsSnapshot: undefined,
         senderIsOwner: true,
         provider: "openai-codex",
@@ -3315,7 +3315,7 @@ describe("buildAfterTurnRuntimeContext", () => {
         messageProvider: "slack",
         agentAccountId: "acct-1",
         authProfileId: "openai:p1",
-        config: { plugins: { slots: { contextEngine: "lossless-claw" } } } as OpenClawConfig,
+        config: { plugins: { slots: { contextEngine: "lossless-claw" } } } as OpenCLIConfig,
         skillsSnapshot: undefined,
         senderIsOwner: true,
         provider: "openai-codex",
@@ -3353,7 +3353,7 @@ describe("buildAfterTurnRuntimeContext", () => {
         currentThreadTs: "thread-9",
         currentMessageId: "msg-42",
         authProfileId: "openai:p1",
-        config: {} as OpenClawConfig,
+        config: {} as OpenCLIConfig,
         skillsSnapshot: undefined,
         senderIsOwner: true,
         senderId: "user-123",

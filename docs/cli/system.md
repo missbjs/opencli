@@ -1,5 +1,5 @@
 ---
-summary: "CLI reference for `openclaw system` (system events, heartbeat, presence)"
+summary: "CLI reference for `opencli system` (system events, heartbeat, presence)"
 read_when:
   - You want to enqueue a system event without creating a cron job
   - You need to enable or disable heartbeats
@@ -7,7 +7,7 @@ read_when:
 title: "System"
 ---
 
-# `openclaw system`
+# `opencli system`
 
 System-level helpers for the Gateway: enqueue system events, control heartbeats,
 and view presence.
@@ -22,11 +22,11 @@ All `system` subcommands use Gateway RPC and accept the shared client flags:
 ## Common commands
 
 ```bash
-openclaw system event --text "Check for urgent follow-ups" --mode now
-openclaw system event --text "Check for urgent follow-ups" --url ws://127.0.0.1:18789 --token "$OPENCLAW_GATEWAY_TOKEN"
-openclaw system heartbeat enable
-openclaw system heartbeat last
-openclaw system presence
+opencli system event --text "Check for urgent follow-ups" --mode now
+opencli system event --text "Check for urgent follow-ups" --url ws://127.0.0.1:18789 --token "$OPENCLI_GATEWAY_TOKEN"
+opencli system heartbeat enable
+opencli system heartbeat last
+opencli system presence
 ```
 
 ## `system event`

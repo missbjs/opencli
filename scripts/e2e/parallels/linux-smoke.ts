@@ -8,7 +8,7 @@ import {
   makeTempDir,
   packageBuildCommitFromTgz,
   packageVersionFromTgz,
-  packOpenClaw,
+  packOpenCLI,
   parseBoolEnv,
   parseMode,
   parseProvider,
@@ -87,7 +87,7 @@ const defaultOptions = (): LinuxOptions => ({
   hostIp: undefined,
   hostPort: 18427,
   hostPortExplicit: false,
-  installUrl: "https://openclaw.ai/install.sh",
+  installUrl: "https://opencli.ai/install.sh",
   installVersion: "",
   json: false,
   keepServer: false,
@@ -114,7 +114,7 @@ Options:
   --model <provider/model>    Override the model used for the agent-turn smoke.
   --api-key-env <var>        Host env var name for provider API key.
   --openai-api-key-env <var> Alias for --api-key-env (backward compatible)
-  --install-url <url>        Installer URL for latest release. Default: https://openclaw.ai/install.sh
+  --install-url <url>        Installer URL for latest release. Default: https://opencli.ai/install.sh
   --host-port <port>         Host HTTP port for current-main tgz. Default: 18427
   --host-ip <ip>             Override Parallels host IP.
   --latest-version <ver>     Override npm latest version lookup.
@@ -204,7 +204,7 @@ function parseArgs(argv: string[]): LinuxOptions {
 
 class LinuxSmoke {
   private auth: ProviderAuth;
-  private disableBonjour = parseBoolEnv(process.env.OPENCLAW_PARALLELS_LINUX_DISABLE_BONJOUR);
+  private disableBonjour = parseBoolEnv(process.env.OPENCLI_PARALLELS_LINUX_DISABLE_BONJOUR);
   private hostIp = "";
   private hostPort = 0;
   private server: HostServer | null = null;
@@ -238,9 +238,9 @@ class LinuxSmoke {
   }
 
   async run(): Promise<void> {
-    this.runDir = await makeTempDir("openclaw-parallels-linux.");
+    this.runDir = await makeTempDir("opencli-parallels-linux.");
     this.phases = new PhaseRunner(this.runDir);
-    this.tgzDir = await makeTempDir("openclaw-parallels-linux-tgz.");
+    this.tgzDir = await makeTempDir("opencli-parallels-linux-tgz.");
     try {
       this.options.vmName = this.resolveVmName();
       this.snapshot = resolveSnapshot(this.options.vmName, this.options.snapshotHint);
@@ -262,7 +262,7 @@ class LinuxSmoke {
       );
       say(`Run logs: ${this.runDir}`);
 
-      this.artifact = await packOpenClaw({
+      this.artifact = await packOpenCLI({
         destination: this.tgzDir,
         packageSpec: this.options.targetPackageSpec,
         requireControlUi: false,
@@ -328,7 +328,7 @@ class LinuxSmoke {
     await this.phase("fresh.bootstrap-guest", 600, () => this.bootstrapGuest());
     await this.phase("fresh.install-latest-bootstrap", 420, () => this.installLatestRelease());
     await this.phase("fresh.install-main", 420, () =>
-      this.installMainTgz("openclaw-main-fresh.tgz"),
+      this.installMainTgz("opencli-main-fresh.tgz"),
     );
     this.status.freshVersion = await this.extractLastVersion("fresh.install-main");
     await this.phase("fresh.verify-main-version", 90, () => this.verifyTargetVersion());
@@ -342,7 +342,7 @@ class LinuxSmoke {
     this.status.freshGateway = "pass";
     await this.phase(
       "fresh.first-local-agent-turn",
-      Number(process.env.OPENCLAW_PARALLELS_LINUX_AGENT_TIMEOUT_S || 900),
+      Number(process.env.OPENCLI_PARALLELS_LINUX_AGENT_TIMEOUT_S || 900),
       () => this.verifyLocalTurn(),
     );
     this.status.freshAgent = "pass";
@@ -357,7 +357,7 @@ class LinuxSmoke {
       this.verifyVersionContains(this.latestVersion),
     );
     await this.phase("upgrade.install-main", 420, () =>
-      this.installMainTgz("openclaw-main-upgrade.tgz"),
+      this.installMainTgz("opencli-main-upgrade.tgz"),
     );
     this.status.upgradeVersion = await this.extractLastVersion("upgrade.install-main");
     await this.phase("upgrade.verify-main-version", 90, () => this.verifyTargetVersion());
@@ -371,7 +371,7 @@ class LinuxSmoke {
     this.status.upgradeGateway = "pass";
     await this.phase(
       "upgrade.first-local-agent-turn",
-      Number(process.env.OPENCLAW_PARALLELS_LINUX_AGENT_TIMEOUT_S || 900),
+      Number(process.env.OPENCLI_PARALLELS_LINUX_AGENT_TIMEOUT_S || 900),
       () => this.verifyLocalTurn(),
     );
     this.status.upgradeAgent = "pass";
@@ -442,13 +442,13 @@ class LinuxSmoke {
   }
 
   private installLatestRelease(): void {
-    this.guestExec(["curl", "-fsSL", this.options.installUrl, "-o", "/tmp/openclaw-install.sh"]);
+    this.guestExec(["curl", "-fsSL", this.options.installUrl, "-o", "/tmp/opencli-install.sh"]);
     if (this.options.installVersion) {
       this.guestExec([
         "/usr/bin/env",
-        "OPENCLAW_NO_ONBOARD=1",
+        "OPENCLI_NO_ONBOARD=1",
         "bash",
-        "/tmp/openclaw-install.sh",
+        "/tmp/opencli-install.sh",
         "--version",
         this.options.installVersion,
         "--no-onboard",
@@ -456,13 +456,13 @@ class LinuxSmoke {
     } else {
       this.guestExec([
         "/usr/bin/env",
-        "OPENCLAW_NO_ONBOARD=1",
+        "OPENCLI_NO_ONBOARD=1",
         "bash",
-        "/tmp/openclaw-install.sh",
+        "/tmp/opencli-install.sh",
         "--no-onboard",
       ]);
     }
-    this.guestExec(["openclaw", "--version"]);
+    this.guestExec(["opencli", "--version"]);
   }
 
   private installMainTgz(tempName: string): void {
@@ -472,7 +472,7 @@ class LinuxSmoke {
     const tgzUrl = this.server.urlFor(this.artifact.path);
     this.guestExec(["curl", "-fsSL", tgzUrl, "-o", `/tmp/${tempName}`]);
     this.guestExec(["npm", "install", "-g", `/tmp/${tempName}`, "--no-fund", "--no-audit"]);
-    this.guestExec(["openclaw", "--version"]);
+    this.guestExec(["opencli", "--version"]);
   }
 
   private async verifyTargetVersion(): Promise<void> {
@@ -491,7 +491,7 @@ class LinuxSmoke {
   }
 
   private verifyVersionContains(needle: string): void {
-    const version = this.guestExec(["openclaw", "--version"]);
+    const version = this.guestExec(["opencli", "--version"]);
     if (!version.includes(needle)) {
       throw new Error(`version mismatch: expected substring ${needle}`);
     }
@@ -501,7 +501,7 @@ class LinuxSmoke {
     this.guestExec([
       "/usr/bin/env",
       `${this.auth.apiKeyEnv}=${this.auth.apiKeyValue}`,
-      "openclaw",
+      "opencli",
       "onboard",
       "--non-interactive",
       "--mode",
@@ -523,12 +523,12 @@ class LinuxSmoke {
 
   private injectBadPluginFixture(): void {
     this.guestBash(String.raw`set -euo pipefail
-plugin_dir=/root/.openclaw/test-bad-plugin
+plugin_dir=/root/.opencli/test-bad-plugin
 mkdir -p "$plugin_dir"
 cat >"$plugin_dir/package.json" <<'JSON'
-{"name":"@openclaw/test-bad-plugin","version":"1.0.0","openclaw":{"extensions":["./index.cjs"],"setupEntry":"./setup-entry.cjs"}}
+{"name":"@opencli/test-bad-plugin","version":"1.0.0","opencli":{"extensions":["./index.cjs"],"setupEntry":"./setup-entry.cjs"}}
 JSON
-cat >"$plugin_dir/openclaw.plugin.json" <<'JSON'
+cat >"$plugin_dir/opencli.plugin.json" <<'JSON'
 {"id":"test-bad-plugin","configSchema":{"type":"object","additionalProperties":false,"properties":{}},"channels":["test-bad-plugin"]}
 JSON
 cat >"$plugin_dir/index.cjs" <<'JS'
@@ -545,12 +545,12 @@ JS
 python3 - <<'PY'
 import json
 from pathlib import Path
-config_path = Path("/root/.openclaw/openclaw.json")
+config_path = Path("/root/.opencli/opencli.json")
 config = json.loads(config_path.read_text()) if config_path.exists() else {}
 plugins = config.setdefault("plugins", {})
 load = plugins.setdefault("load", {})
 paths = load.setdefault("paths", [])
-plugin_dir = "/root/.openclaw/test-bad-plugin"
+plugin_dir = "/root/.opencli/test-bad-plugin"
 if plugin_dir not in paths:
     paths.append(plugin_dir)
 allow = plugins.get("allow")
@@ -564,15 +564,15 @@ PY`);
   }
 
   private startGatewayBackground(): void {
-    const bonjourEnv = this.disableBonjour ? " OPENCLAW_DISABLE_BONJOUR=1" : "";
+    const bonjourEnv = this.disableBonjour ? " OPENCLI_DISABLE_BONJOUR=1" : "";
     this.guestBash(
-      String.raw`pkill -f "openclaw gateway run" >/dev/null 2>&1 || true
-rm -f /tmp/openclaw-parallels-linux-gateway.log
+      String.raw`pkill -f "opencli gateway run" >/dev/null 2>&1 || true
+rm -f /tmp/opencli-parallels-linux-gateway.log
 setsid sh -lc ` +
         shellQuote(
-          `exec env OPENCLAW_HOME=/root OPENCLAW_STATE_DIR=/root/.openclaw OPENCLAW_CONFIG_PATH=/root/.openclaw/openclaw.json${bonjourEnv} ${this.auth.apiKeyEnv}=${shellQuote(
+          `exec env OPENCLI_HOME=/root OPENCLI_STATE_DIR=/root/.opencli OPENCLI_CONFIG_PATH=/root/.opencli/opencli.json${bonjourEnv} ${this.auth.apiKeyEnv}=${shellQuote(
             this.auth.apiKeyValue,
-          )} openclaw gateway run --bind loopback --port 18789 --force >/tmp/openclaw-parallels-linux-gateway.log 2>&1`,
+          )} opencli gateway run --bind loopback --port 18789 --force >/tmp/opencli-parallels-linux-gateway.log 2>&1`,
         ) +
         String.raw` >/dev/null 2>&1 < /dev/null &`,
     );
@@ -587,10 +587,10 @@ setsid sh -lc ` +
   }
 
   private showGatewayStatusCompat(check = true): boolean {
-    const help = this.guestExec(["openclaw", "gateway", "status", "--help"], { check: false });
+    const help = this.guestExec(["opencli", "gateway", "status", "--help"], { check: false });
     const args = help.includes("--require-rpc")
-      ? ["openclaw", "gateway", "status", "--deep", "--require-rpc"]
-      : ["openclaw", "gateway", "status", "--deep"];
+      ? ["opencli", "gateway", "status", "--deep", "--require-rpc"]
+      : ["opencli", "gateway", "status", "--deep"];
     const result = run(
       "prlctl",
       ["exec", this.options.vmName, "/usr/bin/env", "HOME=/root", ...args],
@@ -617,7 +617,7 @@ setsid sh -lc ` +
           this.options.vmName,
           "/usr/bin/env",
           "HOME=/root",
-          "openclaw",
+          "opencli",
           "gateway",
           "status",
           "--deep",
@@ -655,25 +655,25 @@ setsid sh -lc ` +
 python3 - <<'PY'
 import json
 from pathlib import Path
-config_path = Path("/root/.openclaw/openclaw.json")
+config_path = Path("/root/.opencli/opencli.json")
 config = json.loads(config_path.read_text()) if config_path.exists() else {}
 plugins = config.setdefault("plugins", {})
 load = plugins.setdefault("load", {})
 paths = load.get("paths")
 if isinstance(paths, list):
-    load["paths"] = [path for path in paths if path != "/root/.openclaw/test-bad-plugin"]
+    load["paths"] = [path for path in paths if path != "/root/.opencli/test-bad-plugin"]
 allow = plugins.get("allow")
 if isinstance(allow, list):
     plugins["allow"] = [plugin_id for plugin_id in allow if plugin_id != "test-bad-plugin"]
 config_path.write_text(json.dumps(config, indent=2) + "\n")
 PY
-rm -rf /root/.openclaw/test-bad-plugin`);
+rm -rf /root/.opencli/test-bad-plugin`);
   }
 
   private verifyLocalTurn(): void {
-    this.guestExec(["openclaw", "models", "set", this.auth.modelId]);
+    this.guestExec(["opencli", "models", "set", this.auth.modelId]);
     this.guestExec([
-      "openclaw",
+      "opencli",
       "config",
       "set",
       "agents.defaults.skipBootstrap",
@@ -682,7 +682,7 @@ rm -rf /root/.openclaw/test-bad-plugin`);
     ]);
     this.prepareAgentWorkspace();
     this.guestBash(
-      `exec /usr/bin/env ${shellQuote(`${this.auth.apiKeyEnv}=${this.auth.apiKeyValue}`)} openclaw agent --local --agent main --session-id parallels-linux-smoke --message ${shellQuote(
+      `exec /usr/bin/env ${shellQuote(`${this.auth.apiKeyEnv}=${this.auth.apiKeyValue}`)} opencli agent --local --agent main --session-id parallels-linux-smoke --message ${shellQuote(
         "Reply with exact ASCII text OK only.",
       )} --json`,
     );
@@ -694,7 +694,7 @@ rm -rf /root/.openclaw/test-bad-plugin`);
 
   private async extractLastVersion(phaseId: string): Promise<string> {
     const text = await readFile(path.join(this.runDir, `${phaseId}.log`), "utf8").catch(() => "");
-    return [...text.matchAll(/OpenClaw [^\r\n]+ \([0-9a-f]{7,}\)/g)].at(-1)?.[0] ?? "";
+    return [...text.matchAll(/OpenCLI [^\r\n]+ \([0-9a-f]{7,}\)/g)].at(-1)?.[0] ?? "";
   }
 
   private async writeSummary(): Promise<string> {

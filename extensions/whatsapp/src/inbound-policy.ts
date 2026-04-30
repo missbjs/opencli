@@ -1,20 +1,20 @@
 import {
   resolveChannelGroupPolicy,
   resolveChannelGroupRequireMention,
-} from "openclaw/plugin-sdk/channel-policy";
+} from "opencli/plugin-sdk/channel-policy";
 import type {
   ChannelGroupPolicy,
   DmPolicy,
   GroupPolicy,
-  OpenClawConfig,
-} from "openclaw/plugin-sdk/config-types";
-import { resolveDefaultGroupPolicy } from "openclaw/plugin-sdk/runtime-group-policy";
+  OpenCLIConfig,
+} from "opencli/plugin-sdk/config-types";
+import { resolveDefaultGroupPolicy } from "opencli/plugin-sdk/runtime-group-policy";
 import {
   readStoreAllowFromForDmPolicy,
   resolveEffectiveAllowFromLists,
   resolveDmGroupAccessWithCommandGate,
-} from "openclaw/plugin-sdk/security-runtime";
-import { resolveGroupSessionKey } from "openclaw/plugin-sdk/session-store-runtime";
+} from "opencli/plugin-sdk/security-runtime";
+import { resolveGroupSessionKey } from "opencli/plugin-sdk/session-store-runtime";
 import { resolveWhatsAppAccount, type ResolvedWhatsAppAccount } from "./accounts.js";
 import { getSelfIdentity, getSenderIdentity } from "./identity.js";
 import type { WebInboundMessage } from "./inbound/types.js";
@@ -67,7 +67,7 @@ function isNormalizedSenderAllowed(allowEntries: string[], sender?: string | nul
 function buildResolvedWhatsAppGroupConfig(params: {
   groupPolicy: GroupPolicy;
   groups: ResolvedWhatsAppAccount["groups"];
-}): OpenClawConfig {
+}): OpenCLIConfig {
   return {
     channels: {
       whatsapp: {
@@ -75,11 +75,11 @@ function buildResolvedWhatsAppGroupConfig(params: {
         groups: params.groups,
       },
     },
-  } as OpenClawConfig;
+  } as OpenCLIConfig;
 }
 
 export function resolveWhatsAppInboundPolicy(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   accountId?: string | null;
   selfE164?: string | null;
 }): ResolvedWhatsAppInboundPolicy {
@@ -142,7 +142,7 @@ export function resolveWhatsAppInboundPolicy(params: {
 }
 
 export async function resolveWhatsAppCommandAuthorized(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   msg: WebInboundMessage;
   policy?: ResolvedWhatsAppInboundPolicy;
 }): Promise<boolean> {

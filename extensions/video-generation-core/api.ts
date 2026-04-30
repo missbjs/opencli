@@ -1,4 +1,4 @@
-export type { AuthProfileStore } from "openclaw/plugin-sdk/video-generation-core";
+export type { AuthProfileStore } from "opencli/plugin-sdk/video-generation-core";
 export {
   buildNoCapabilityModelConfiguredMessage,
   createSubsystemLogger,
@@ -12,11 +12,11 @@ export {
   resolveAgentModelPrimaryValue,
   resolveCapabilityModelCandidates,
   throwCapabilityGenerationFailure,
-} from "openclaw/plugin-sdk/video-generation-core";
+} from "opencli/plugin-sdk/video-generation-core";
 export type {
   FallbackAttempt,
   GeneratedVideoAsset,
-  OpenClawConfig,
+  OpenCLIConfig,
   VideoGenerationIgnoredOverride,
   VideoGenerationMode,
   VideoGenerationModeCapabilities,
@@ -29,4 +29,4 @@ export type {
   VideoGenerationResult,
   VideoGenerationSourceAsset,
   VideoGenerationTransformCapabilities,
-} from "openclaw/plugin-sdk/video-generation-core";
+} from "opencli/plugin-sdk/video-generation-core";

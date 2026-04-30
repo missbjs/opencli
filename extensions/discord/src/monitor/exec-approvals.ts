@@ -1,13 +1,13 @@
 import { ButtonStyle } from "discord-api-types/v10";
-import { resolveApprovalOverGateway } from "openclaw/plugin-sdk/approval-gateway-runtime";
+import { resolveApprovalOverGateway } from "opencli/plugin-sdk/approval-gateway-runtime";
 import type {
   ExecApprovalDecision,
   ExecApprovalRequest,
   ExecApprovalResolved,
   PluginApprovalRequest,
   PluginApprovalResolved,
-} from "openclaw/plugin-sdk/approval-runtime";
-import type { DiscordExecApprovalConfig, OpenClawConfig } from "openclaw/plugin-sdk/config-types";
+} from "opencli/plugin-sdk/approval-runtime";
+import type { DiscordExecApprovalConfig, OpenCLIConfig } from "opencli/plugin-sdk/config-types";
 import { Button, type ButtonInteraction, type ComponentData } from "../internal/discord.js";
 export { buildExecApprovalCustomId } from "../approval-handler.runtime.js";
 import { getDiscordExecApprovalApprovers } from "../exec-approvals.js";
@@ -18,7 +18,7 @@ export type {
   ExecApprovalResolved,
   PluginApprovalRequest,
   PluginApprovalResolved,
-} from "openclaw/plugin-sdk/approval-runtime";
+} from "opencli/plugin-sdk/approval-runtime";
 
 function decodeCustomIdValue(value: string): string {
   try {
@@ -138,7 +138,7 @@ export function createExecApprovalButton(ctx: ExecApprovalButtonContext): Button
 }
 
 export function createDiscordExecApprovalButtonContext(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   accountId: string;
   config: DiscordExecApprovalConfig;
   gatewayUrl?: string;

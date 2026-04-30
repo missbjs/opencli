@@ -3,13 +3,13 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { applyPluginAutoEnable } from "../config/plugin-auto-enable.js";
-import { clearPluginLoaderCache, loadOpenClawPlugins } from "./loader.js";
+import { clearPluginLoaderCache, loadOpenCLIPlugins } from "./loader.js";
 import { resetPluginRuntimeStateForTest } from "./runtime.js";
 
 const tempDirs: string[] = [];
 
 function makeTempDir(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-plugin-prefer-over-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "opencli-plugin-prefer-over-"));
   if (process.platform !== "win32") {
     fs.chmodSync(dir, 0o755);
   }
@@ -30,7 +30,7 @@ function writeChannelToolPlugin(params: {
     fs.chmodSync(pluginDir, 0o755);
   }
   fs.writeFileSync(
-    path.join(pluginDir, "openclaw.plugin.json"),
+    path.join(pluginDir, "opencli.plugin.json"),
     JSON.stringify(
       {
         id: params.id,
@@ -105,13 +105,13 @@ describe("plugin loader preferOver activation", () => {
     const externalRoot = makeTempDir();
     const externalPluginDir = writeChannelToolPlugin({
       rootDir: externalRoot,
-      id: "openclaw-qqbot",
+      id: "opencli-qqbot",
       channelId: "qqbot",
       preferOver: ["qqbot"],
     });
     const env = {
-      OPENCLAW_STATE_DIR: makeTempDir(),
-      OPENCLAW_BUNDLED_PLUGINS_DIR: bundledRoot,
+      OPENCLI_STATE_DIR: makeTempDir(),
+      OPENCLI_BUNDLED_PLUGINS_DIR: bundledRoot,
     };
     const rawConfig = {
       channels: { qqbot: { appId: "app", clientSecret: "secret" } },
@@ -119,7 +119,7 @@ describe("plugin loader preferOver activation", () => {
     };
     const autoEnabled = applyPluginAutoEnable({ config: rawConfig, env });
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadOpenCLIPlugins({
       cache: false,
       config: autoEnabled.config,
       activationSourceConfig: rawConfig,
@@ -127,13 +127,11 @@ describe("plugin loader preferOver activation", () => {
       env,
     });
 
-    expect(autoEnabled.config.plugins?.entries?.["openclaw-qqbot"]?.enabled).toBe(true);
+    expect(autoEnabled.config.plugins?.entries?.["opencli-qqbot"]?.enabled).toBe(true);
     expect(autoEnabled.config.plugins?.entries?.qqbot?.enabled).toBe(false);
-    expect(registry.plugins.find((plugin) => plugin.id === "openclaw-qqbot")?.status).toBe(
-      "loaded",
-    );
+    expect(registry.plugins.find((plugin) => plugin.id === "opencli-qqbot")?.status).toBe("loaded");
     expect(registry.plugins.find((plugin) => plugin.id === "qqbot")?.status).toBe("disabled");
-    expect(registry.tools.map((tool) => tool.pluginId)).toEqual(["openclaw-qqbot"]);
+    expect(registry.tools.map((tool) => tool.pluginId)).toEqual(["opencli-qqbot"]);
     expect(registry.diagnostics.map((diag) => diag.message).join("\n")).not.toContain(
       "plugin tool name conflict",
     );
@@ -150,15 +148,15 @@ describe("plugin loader preferOver activation", () => {
     const externalRoot = makeTempDir();
     const externalPluginDir = writeChannelToolPlugin({
       rootDir: externalRoot,
-      id: "openclaw-qqbot",
+      id: "opencli-qqbot",
       channelId: "qqbot",
     });
     const env = {
-      OPENCLAW_STATE_DIR: makeTempDir(),
-      OPENCLAW_BUNDLED_PLUGINS_DIR: bundledRoot,
+      OPENCLI_STATE_DIR: makeTempDir(),
+      OPENCLI_BUNDLED_PLUGINS_DIR: bundledRoot,
     };
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadOpenCLIPlugins({
       cache: false,
       config: {
         channels: { qqbot: { appId: "app", clientSecret: "secret" } },
@@ -166,7 +164,7 @@ describe("plugin loader preferOver activation", () => {
           load: { paths: [externalPluginDir] },
           entries: {
             qqbot: { enabled: true },
-            "openclaw-qqbot": { enabled: true },
+            "opencli-qqbot": { enabled: true },
           },
         },
       },

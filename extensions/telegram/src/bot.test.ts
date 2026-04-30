@@ -1,11 +1,11 @@
 import { rm } from "node:fs/promises";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
 import {
   clearPluginInteractiveHandlers,
   registerPluginInteractiveHandler,
-} from "openclaw/plugin-sdk/plugin-runtime";
-import { loadSessionStore } from "openclaw/plugin-sdk/session-store-runtime";
-import { mockPinnedHostnameResolution } from "openclaw/plugin-sdk/test-env";
+} from "opencli/plugin-sdk/plugin-runtime";
+import { loadSessionStore } from "opencli/plugin-sdk/session-store-runtime";
+import { mockPinnedHostnameResolution } from "opencli/plugin-sdk/test-env";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import type { TelegramInteractiveHandlerContext } from "./interactive-dispatch.js";
 const {
@@ -72,7 +72,7 @@ function waitForReplyCalls(count: number) {
 }
 
 async function loadEnvelopeTimestampHelpers() {
-  return await import("openclaw/plugin-sdk/channel-test-helpers");
+  return await import("opencli/plugin-sdk/channel-test-helpers");
 }
 
 async function loadInboundContextContract() {
@@ -148,7 +148,7 @@ describe("createTelegramBot", () => {
           message_id: 11,
         },
       },
-      me: { username: "openclaw_bot" },
+      me: { username: "opencli_bot" },
       getFile: async () => ({ download: async () => new Uint8Array() }),
     });
 
@@ -161,7 +161,7 @@ describe("createTelegramBot", () => {
     replySpy.mockClear();
     editMessageTextSpy.mockClear();
 
-    const storePath = `/tmp/openclaw-telegram-callback-authz-${process.pid}-${Date.now()}.json`;
+    const storePath = `/tmp/opencli-telegram-callback-authz-${process.pid}-${Date.now()}.json`;
 
     await rm(storePath, { force: true });
     try {
@@ -209,7 +209,7 @@ describe("createTelegramBot", () => {
             message_id: 19,
           },
         },
-        me: { username: "openclaw_bot" },
+        me: { username: "opencli_bot" },
         getFile: async () => ({ download: async () => new Uint8Array() }),
       });
 
@@ -227,7 +227,7 @@ describe("createTelegramBot", () => {
     replySpy.mockClear();
     editMessageTextSpy.mockClear();
 
-    const storePath = `/tmp/openclaw-telegram-group-model-authz-${process.pid}-${Date.now()}.json`;
+    const storePath = `/tmp/opencli-telegram-group-model-authz-${process.pid}-${Date.now()}.json`;
 
     await rm(storePath, { force: true });
     try {
@@ -280,7 +280,7 @@ describe("createTelegramBot", () => {
             message_id: 21,
           },
         },
-        me: { username: "openclaw_bot" },
+        me: { username: "opencli_bot" },
         getFile: async () => ({ download: async () => new Uint8Array() }),
       });
 
@@ -298,7 +298,7 @@ describe("createTelegramBot", () => {
     replySpy.mockClear();
     editMessageTextSpy.mockClear();
 
-    const storePath = `/tmp/openclaw-telegram-group-model-authz-runtime-${process.pid}-${Date.now()}.json`;
+    const storePath = `/tmp/opencli-telegram-group-model-authz-runtime-${process.pid}-${Date.now()}.json`;
 
     await rm(storePath, { force: true });
     try {
@@ -360,7 +360,7 @@ describe("createTelegramBot", () => {
             message_id: 22,
           },
         },
-        me: { username: "openclaw_bot" },
+        me: { username: "opencli_bot" },
         getFile: async () => ({ download: async () => new Uint8Array() }),
       });
 
@@ -419,7 +419,7 @@ describe("createTelegramBot", () => {
           message_id: 20,
         },
       },
-      me: { username: "openclaw_bot" },
+      me: { username: "opencli_bot" },
       getFile: async () => ({ download: async () => new Uint8Array() }),
     });
 
@@ -475,7 +475,7 @@ describe("createTelegramBot", () => {
           ].join("\n"),
         },
       },
-      me: { username: "openclaw_bot" },
+      me: { username: "opencli_bot" },
       getFile: async () => ({ download: async () => new Uint8Array() }),
     });
 
@@ -544,7 +544,7 @@ describe("createTelegramBot", () => {
           text: "Approval required.",
         },
       },
-      me: { username: "openclaw_bot" },
+      me: { username: "opencli_bot" },
       getFile: async () => ({ download: async () => new Uint8Array() }),
     });
 
@@ -589,7 +589,7 @@ describe("createTelegramBot", () => {
           text: "Plugin approval required.",
         },
       },
-      me: { username: "openclaw_bot" },
+      me: { username: "opencli_bot" },
       getFile: async () => ({ download: async () => new Uint8Array() }),
     });
 
@@ -651,7 +651,7 @@ describe("createTelegramBot", () => {
           text: "Run: /approve 138e9b8c allow-once",
         },
       },
-      me: { username: "openclaw_bot" },
+      me: { username: "opencli_bot" },
       getFile: async () => ({ download: async () => new Uint8Array() }),
     });
 
@@ -699,7 +699,7 @@ describe("createTelegramBot", () => {
             text: "Approval required.",
           },
         },
-        me: { username: "openclaw_bot" },
+        me: { username: "opencli_bot" },
         getFile: async () => ({ download: async () => new Uint8Array() }),
       }),
     ).rejects.toThrow("gateway secret detail");
@@ -748,7 +748,7 @@ describe("createTelegramBot", () => {
           text: "Approval required.",
         },
       },
-      me: { username: "openclaw_bot" },
+      me: { username: "opencli_bot" },
       getFile: async () => ({ download: async () => new Uint8Array() }),
     });
 
@@ -813,7 +813,7 @@ describe("createTelegramBot", () => {
             text: "Legacy plugin approval required.",
           },
         },
-        me: { username: "openclaw_bot" },
+        me: { username: "opencli_bot" },
         getFile: async () => ({ download: async () => new Uint8Array() }),
       }),
     ).rejects.toThrow("unknown or expired approval id");
@@ -877,7 +877,7 @@ describe("createTelegramBot", () => {
           text: "Plugin approval required.",
         },
       },
-      me: { username: "openclaw_bot" },
+      me: { username: "opencli_bot" },
       getFile: async () => ({ download: async () => new Uint8Array() }),
     });
 
@@ -907,7 +907,7 @@ describe("createTelegramBot", () => {
           message_id: 12,
         },
       },
-      me: { username: "openclaw_bot" },
+      me: { username: "opencli_bot" },
       getFile: async () => ({ download: async () => new Uint8Array() }),
     });
 
@@ -954,7 +954,7 @@ describe("createTelegramBot", () => {
           message_id: 14,
         },
       },
-      me: { username: "openclaw_bot" },
+      me: { username: "opencli_bot" },
       getFile: async () => ({ download: async () => new Uint8Array() }),
     });
 
@@ -997,7 +997,7 @@ describe("createTelegramBot", () => {
           message_id: 13,
         },
       },
-      me: { username: "openclaw_bot" },
+      me: { username: "opencli_bot" },
       getFile: async () => ({ download: async () => new Uint8Array() }),
     });
 
@@ -1011,8 +1011,8 @@ describe("createTelegramBot", () => {
     editMessageTextSpy.mockClear();
 
     const modelId = "us.anthropic.claude-3-5-sonnet-20240620-v1:0";
-    const storePath = `/tmp/openclaw-telegram-model-compact-${process.pid}-${Date.now()}.json`;
-    const config: OpenClawConfig = {
+    const storePath = `/tmp/opencli-telegram-model-compact-${process.pid}-${Date.now()}.json`;
+    const config: OpenCLIConfig = {
       agents: {
         defaults: {
           model: `bedrock/${modelId}`,
@@ -1052,7 +1052,7 @@ describe("createTelegramBot", () => {
             message_id: 14,
           },
         },
-        me: { username: "openclaw_bot" },
+        me: { username: "opencli_bot" },
         getFile: async () => ({ download: async () => new Uint8Array() }),
       });
 
@@ -1123,7 +1123,7 @@ describe("createTelegramBot", () => {
           message_id: 23,
         },
       },
-      me: { username: "openclaw_bot" },
+      me: { username: "opencli_bot" },
       getFile: async () => ({ download: async () => new Uint8Array() }),
     });
 
@@ -1152,8 +1152,8 @@ describe("createTelegramBot", () => {
     replySpy.mockClear();
     editMessageTextSpy.mockClear();
 
-    const storePath = `/tmp/openclaw-telegram-model-default-${process.pid}-${Date.now()}.json`;
-    const config: OpenClawConfig = {
+    const storePath = `/tmp/opencli-telegram-model-default-${process.pid}-${Date.now()}.json`;
+    const config: OpenCLIConfig = {
       agents: {
         defaults: {
           model: "claude-opus-4-6",
@@ -1196,7 +1196,7 @@ describe("createTelegramBot", () => {
             message_id: 16,
           },
         },
-        me: { username: "openclaw_bot" },
+        me: { username: "opencli_bot" },
         getFile: async () => ({ download: async () => new Uint8Array() }),
       });
 
@@ -1220,7 +1220,7 @@ describe("createTelegramBot", () => {
     replySpy.mockClear();
     editMessageTextSpy.mockClear();
 
-    const storePath = `/tmp/openclaw-telegram-model-html-${process.pid}-${Date.now()}.json`;
+    const storePath = `/tmp/opencli-telegram-model-html-${process.pid}-${Date.now()}.json`;
 
     await rm(storePath, { force: true });
     try {
@@ -1266,7 +1266,7 @@ describe("createTelegramBot", () => {
             message_id: 17,
           },
         },
-        me: { username: "openclaw_bot" },
+        me: { username: "opencli_bot" },
         getFile: async () => ({ download: async () => new Uint8Array() }),
       });
 
@@ -1297,7 +1297,7 @@ describe("createTelegramBot", () => {
     replySpy.mockClear();
     editMessageTextSpy.mockClear();
 
-    const storePath = `/tmp/openclaw-telegram-model-fresh-cfg-${process.pid}-${Date.now()}.json`;
+    const storePath = `/tmp/opencli-telegram-model-fresh-cfg-${process.pid}-${Date.now()}.json`;
 
     await rm(storePath, { force: true });
     try {
@@ -1361,7 +1361,7 @@ describe("createTelegramBot", () => {
             message_id: 20,
           },
         },
-        me: { username: "openclaw_bot" },
+        me: { username: "opencli_bot" },
         getFile: async () => ({ download: async () => new Uint8Array() }),
       });
 
@@ -1416,7 +1416,7 @@ describe("createTelegramBot", () => {
           message_id: 15,
         },
       },
-      me: { username: "openclaw_bot" },
+      me: { username: "opencli_bot" },
       getFile: async () => ({ download: async () => new Uint8Array() }),
     });
 
@@ -1462,7 +1462,7 @@ describe("createTelegramBot", () => {
           username: "ada",
         },
       },
-      me: { username: "openclaw_bot" },
+      me: { username: "opencli_bot" },
       getFile: async () => ({ download: async () => new Uint8Array() }),
     });
 
@@ -1506,7 +1506,7 @@ describe("createTelegramBot", () => {
           entities: [{ type: "bold", offset: 1, length: 9 }],
         },
       },
-      me: { username: "openclaw_bot" },
+      me: { username: "opencli_bot" },
       getFile: async () => ({ download: async () => new Uint8Array() }),
     });
 
@@ -1543,7 +1543,7 @@ describe("createTelegramBot", () => {
           from: { first_name: "Ada" },
         },
       },
-      me: { username: "openclaw_bot" },
+      me: { username: "opencli_bot" },
       getFile: async () => ({ download: async () => new Uint8Array() }),
     });
 
@@ -1594,7 +1594,7 @@ describe("createTelegramBot", () => {
             from: { first_name: "Ada" },
           },
         },
-        me: { username: "openclaw_bot" },
+        me: { username: "opencli_bot" },
         getFile: async () => ({}),
       });
     } finally {
@@ -1643,7 +1643,7 @@ describe("createTelegramBot", () => {
           from: { first_name: "Ada" },
         },
       },
-      me: { username: "openclaw_bot" },
+      me: { username: "opencli_bot" },
       getFile: async () => ({}),
     });
 
@@ -1710,7 +1710,7 @@ describe("createTelegramBot", () => {
             from: { first_name: "Ada" },
           },
         },
-        me: { username: "openclaw_bot" },
+        me: { username: "opencli_bot" },
         getFile: async () => ({}),
       });
       await handler({
@@ -1726,7 +1726,7 @@ describe("createTelegramBot", () => {
             from: { first_name: "Ada" },
           },
         },
-        me: { username: "openclaw_bot" },
+        me: { username: "opencli_bot" },
         getFile: async () => ({}),
       });
 
@@ -1775,7 +1775,7 @@ describe("createTelegramBot", () => {
           text: "summarize this",
         },
       },
-      me: { username: "openclaw_bot" },
+      me: { username: "opencli_bot" },
       getFile: async () => ({ download: async () => new Uint8Array() }),
     });
 
@@ -1810,7 +1810,7 @@ describe("createTelegramBot", () => {
           from: { first_name: "Ada" },
         },
       },
-      me: { username: "openclaw_bot" },
+      me: { username: "opencli_bot" },
       getFile: async () => ({ download: async () => new Uint8Array() }),
     });
 
@@ -1857,7 +1857,7 @@ describe("createTelegramBot", () => {
           },
         },
       },
-      me: { username: "openclaw_bot" },
+      me: { username: "opencli_bot" },
       getFile: async () => ({ download: async () => new Uint8Array() }),
     });
 
@@ -1920,7 +1920,7 @@ describe("createTelegramBot", () => {
           },
         },
       },
-      me: { username: "openclaw_bot" },
+      me: { username: "opencli_bot" },
       getFile: async () => ({ download: async () => new Uint8Array() }),
     });
 
@@ -1957,10 +1957,10 @@ describe("createTelegramBot", () => {
         reply_to_message: {
           message_id: 42,
           text: "original reply",
-          from: { id: 999, first_name: "OpenClaw" },
+          from: { id: 999, first_name: "OpenCLI" },
         },
       },
-      me: { id: 999, username: "openclaw_bot" },
+      me: { id: 999, username: "opencli_bot" },
       getFile: async () => ({ download: async () => new Uint8Array() }),
     });
 
@@ -2005,7 +2005,7 @@ describe("createTelegramBot", () => {
         date: 1736380800,
         message_thread_id: 99,
       },
-      me: { username: "openclaw_bot" },
+      me: { username: "opencli_bot" },
       getFile: async () => ({ download: async () => new Uint8Array() }),
     });
 
@@ -2047,7 +2047,7 @@ describe("createTelegramBot", () => {
         date: 1736380800,
         message_thread_id: 99,
       },
-      me: { username: "openclaw_bot" },
+      me: { username: "opencli_bot" },
       getFile: async () => ({ download: async () => new Uint8Array() }),
     });
 
@@ -2082,7 +2082,7 @@ describe("createTelegramBot", () => {
         text: "hello",
         date: 1736380800,
       },
-      me: { username: "openclaw_bot" },
+      me: { username: "opencli_bot" },
       getFile: async () => ({ download: async () => new Uint8Array() }),
     });
 
@@ -2117,7 +2117,7 @@ describe("createTelegramBot", () => {
         text: "/status",
         date: 1736380800,
       },
-      me: { username: "openclaw_bot" },
+      me: { username: "opencli_bot" },
       getFile: async () => ({ download: async () => new Uint8Array() }),
     });
 
@@ -2167,7 +2167,7 @@ describe("createTelegramBot", () => {
           text: "Select a thread",
         },
       },
-      me: { username: "openclaw_bot" },
+      me: { username: "opencli_bot" },
       getFile: async () => ({ download: async () => new Uint8Array() }),
     });
 
@@ -2221,7 +2221,7 @@ describe("createTelegramBot", () => {
           text: "Select a thread",
         },
       },
-      me: { username: "openclaw_bot" },
+      me: { username: "opencli_bot" },
       getFile: async () => ({ download: async () => new Uint8Array() }),
     });
 

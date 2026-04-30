@@ -1,5 +1,5 @@
 import { modelKey } from "../agents/model-selection.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import type { SecretInput } from "../config/types.secrets.js";
 import { ensureApiKeyFromEnvOrPrompt } from "../plugins/provider-auth-input.js";
 import { OLLAMA_DEFAULT_BASE_URL } from "../plugins/provider-model-defaults.js";
@@ -131,7 +131,7 @@ async function requestAnthropicVerification(params: {
 
 async function promptBaseUrlAndKey(params: {
   prompter: WizardPrompter;
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   secretInputMode?: SecretInputMode;
   initialBaseUrl?: string;
 }): Promise<{ baseUrl: string; apiKey?: SecretInput; resolvedApiKey: string }> {
@@ -191,7 +191,7 @@ async function promptCustomApiModelId(prompter: WizardPrompter): Promise<string>
 
 async function applyCustomApiRetryChoice(params: {
   prompter: WizardPrompter;
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   secretInputMode?: SecretInputMode;
   retryChoice: CustomApiRetryChoice;
   current: { baseUrl: string; apiKey?: SecretInput; resolvedApiKey: string; modelId: string };
@@ -217,7 +217,7 @@ async function applyCustomApiRetryChoice(params: {
 export async function promptCustomApiConfig(params: {
   prompter: WizardPrompter;
   runtime: RuntimeEnv;
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   secretInputMode?: SecretInputMode;
 }): Promise<CustomApiResult> {
   const { prompter, runtime, config } = params;

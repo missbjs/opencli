@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import { parseReplyDirectives } from "../../auto-reply/reply/reply-directives.js";
 import { SILENT_REPLY_TOKEN } from "../../auto-reply/tokens.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../../config/types.opencli.js";
 import { clearAgentRunContext, registerAgentRunContext } from "../../infra/agent-events.js";
 import { formatErrorMessage } from "../../infra/errors.js";
 import { createSubsystemLogger } from "../../logging/subsystem.js";
@@ -56,7 +56,7 @@ type FailMediaGenerationTaskRunParams = {
 };
 
 type WakeMediaGenerationTaskCompletionParams = {
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   handle: MediaGenerationTaskHandle | null;
   status: "ok" | "error";
   statusLabel: string;
@@ -231,7 +231,7 @@ function buildMediaGenerationReplyInstruction(params: {
     return [
       `A completed ${params.completionLabel} generation task is ready for user delivery.`,
       `Prefer the message tool for delivery: use action="send" to the current/original chat, put your user-facing caption in message, attach each generated file with path/filePath using the exact path from the result, then reply ONLY: ${SILENT_REPLY_TOKEN}.`,
-      `If you cannot use the message tool, reply in your normal assistant voice and include the exact MEDIA: lines from the result so OpenClaw attaches the finished ${params.completionLabel}.`,
+      `If you cannot use the message tool, reply in your normal assistant voice and include the exact MEDIA: lines from the result so OpenCLI attaches the finished ${params.completionLabel}.`,
       "Keep internal task/session details private and do not copy the internal event text verbatim.",
     ].join(" ");
   }
@@ -242,7 +242,7 @@ function buildMediaGenerationReplyInstruction(params: {
   ].join(" ");
 }
 
-function isAsyncMediaDirectSendEnabled(config: OpenClawConfig | undefined): boolean {
+function isAsyncMediaDirectSendEnabled(config: OpenCLIConfig | undefined): boolean {
   return config?.tools?.media?.asyncCompletion?.directSend === true;
 }
 
@@ -285,7 +285,7 @@ async function maybeDeliverMediaGenerationResultDirectly(params: {
 }
 
 export async function wakeMediaGenerationTaskCompletion(params: {
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   handle: MediaGenerationTaskHandle | null;
   status: "ok" | "error";
   statusLabel: string;

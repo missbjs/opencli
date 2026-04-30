@@ -26,7 +26,7 @@ run_bundled_channel_container_with_state() {
   state_script_b64="$(bundled_channel_state_script_b64 "$state_label")"
   run_bundled_channel_container "$label" "$timeout_value" \
     -e COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
-    -e "OPENCLAW_TEST_STATE_SCRIPT_B64=$state_script_b64" \
+    -e "OPENCLI_TEST_STATE_SCRIPT_B64=$state_script_b64" \
     "$@"
 }
 
@@ -41,13 +41,13 @@ run_bundled_channel_container_with_state_heartbeat() {
   run_logged_print_heartbeat "$label" "$heartbeat" timeout "$timeout_value" docker run --rm \
     "${DOCKER_E2E_HARNESS_ARGS[@]}" \
     -e COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
-    -e "OPENCLAW_TEST_STATE_SCRIPT_B64=$state_script_b64" \
+    -e "OPENCLI_TEST_STATE_SCRIPT_B64=$state_script_b64" \
     "$@"
 }
 
 run_bundled_channel_runtime_dep_scenarios() {
   if [ "$RUN_CHANNEL_SCENARIOS" != "0" ]; then
-    IFS=',' read -r -a CHANNEL_SCENARIOS <<<"${OPENCLAW_BUNDLED_CHANNELS:-${CHANNEL_ONLY:-telegram,discord,slack,feishu,memory-lancedb}}"
+    IFS=',' read -r -a CHANNEL_SCENARIOS <<<"${OPENCLI_BUNDLED_CHANNELS:-${CHANNEL_ONLY:-telegram,discord,slack,feishu,memory-lancedb}}"
     for channel_scenario in "${CHANNEL_SCENARIOS[@]}"; do
       channel_scenario="${channel_scenario//[[:space:]]/}"
       [ -n "$channel_scenario" ] || continue
@@ -58,7 +58,7 @@ run_bundled_channel_runtime_dep_scenarios() {
       feishu) run_channel_scenario feishu @larksuiteoapi/node-sdk ;;
       memory-lancedb) run_channel_scenario memory-lancedb @lancedb/lancedb ;;
       *)
-        echo "Unsupported OPENCLAW_BUNDLED_CHANNELS entry: $channel_scenario" >&2
+        echo "Unsupported OPENCLI_BUNDLED_CHANNELS entry: $channel_scenario" >&2
         exit 1
         ;;
       esac

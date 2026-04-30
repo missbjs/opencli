@@ -23,24 +23,24 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
-function localOpenClawProfile(): Parameters<typeof createProfileResetOps>[0]["profile"] {
+function localOpenCLIProfile(): Parameters<typeof createProfileResetOps>[0]["profile"] {
   return {
-    name: "openclaw",
+    name: "opencli",
     cdpUrl: "http://127.0.0.1:18800",
     cdpHost: "127.0.0.1",
     cdpIsLoopback: true,
     cdpPort: 18800,
     color: "#f60",
-    driver: "openclaw",
+    driver: "opencli",
     headless: false,
     attachOnly: false,
   };
 }
 
-function createLocalOpenClawResetOps(
+function createLocalOpenCLIResetOps(
   params: Omit<Parameters<typeof createProfileResetOps>[0], "profile">,
 ) {
-  return createProfileResetOps({ profile: localOpenClawProfile(), ...params });
+  return createProfileResetOps({ profile: localOpenCLIProfile(), ...params });
 }
 
 function createStatelessResetOps(profile: Parameters<typeof createProfileResetOps>[0]["profile"]) {
@@ -49,14 +49,14 @@ function createStatelessResetOps(profile: Parameters<typeof createProfileResetOp
     getProfileState: () => ({ profile: {} as never, running: null }),
     stopRunningBrowser: vi.fn(async () => ({ stopped: false })),
     isHttpReachable: vi.fn(async () => false),
-    resolveOpenClawUserDataDir: (name: string) => `/tmp/${name}`,
+    resolveOpenCLIUserDataDir: (name: string) => `/tmp/${name}`,
   });
 }
 
 describe("createProfileResetOps", () => {
   it("rejects remote non-extension profiles", async () => {
     const ops = createStatelessResetOps({
-      ...localOpenClawProfile(),
+      ...localOpenCLIProfile(),
       name: "remote",
       cdpUrl: "https://browserless.example/chrome",
       cdpHost: "browserless.example",
@@ -69,8 +69,8 @@ describe("createProfileResetOps", () => {
   });
 
   it("stops local browser, closes playwright connection, and trashes profile dir", async () => {
-    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-reset-"));
-    const profileDir = path.join(tempRoot, "openclaw");
+    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "opencli-reset-"));
+    const profileDir = path.join(tempRoot, "opencli");
     fs.mkdirSync(profileDir, { recursive: true });
 
     const stopRunningBrowser = vi.fn(async () => ({ stopped: true }));
@@ -80,11 +80,11 @@ describe("createProfileResetOps", () => {
       running: { pid: 1 } as never,
     }));
 
-    const ops = createLocalOpenClawResetOps({
+    const ops = createLocalOpenCLIResetOps({
       getProfileState,
       stopRunningBrowser,
       isHttpReachable,
-      resolveOpenClawUserDataDir: () => profileDir,
+      resolveOpenCLIUserDataDir: () => profileDir,
     });
 
     const result = await ops.resetProfile();
@@ -102,16 +102,16 @@ describe("createProfileResetOps", () => {
   });
 
   it("forces playwright disconnect when loopback cdp is occupied by non-owned process", async () => {
-    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-reset-no-own-"));
-    const profileDir = path.join(tempRoot, "openclaw");
+    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "opencli-reset-no-own-"));
+    const profileDir = path.join(tempRoot, "opencli");
     fs.mkdirSync(profileDir, { recursive: true });
 
     const stopRunningBrowser = vi.fn(async () => ({ stopped: false }));
-    const ops = createLocalOpenClawResetOps({
+    const ops = createLocalOpenCLIResetOps({
       getProfileState: () => ({ profile: {} as never, running: null }),
       stopRunningBrowser,
       isHttpReachable: vi.fn(async () => true),
-      resolveOpenClawUserDataDir: () => profileDir,
+      resolveOpenCLIUserDataDir: () => profileDir,
     });
 
     await ops.resetProfile();

@@ -1,9 +1,9 @@
 import { normalizeProviderId } from "../agents/provider-id.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 
 export function resolveProviderConfigApiOwnerHint(params: {
   provider: string;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
 }): string | undefined {
   const providers = params.config?.models?.providers;
   if (!providers) {

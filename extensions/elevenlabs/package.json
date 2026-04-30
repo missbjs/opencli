@@ -1,13 +1,13 @@
 {
-  "name": "@openclaw/elevenlabs-speech",
+  "name": "@opencli/elevenlabs-speech",
   "version": "2026.4.25",
   "private": true,
-  "description": "OpenClaw ElevenLabs speech plugin",
+  "description": "OpenCLI ElevenLabs speech plugin",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@opencli/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "opencli": {
     "extensions": [
       "./index.ts"
     ]

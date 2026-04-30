@@ -1,13 +1,13 @@
 {
-  "name": "@openclaw/arcee-provider",
+  "name": "@opencli/arcee-provider",
   "version": "2026.4.25",
   "private": true,
-  "description": "OpenClaw Arcee provider plugin",
+  "description": "OpenCLI Arcee provider plugin",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@opencli/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "opencli": {
     "extensions": [
       "./index.ts"
     ]

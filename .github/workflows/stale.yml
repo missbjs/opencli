@@ -55,7 +55,7 @@ jobs:
             Please add updates or it will be closed.
           close-issue-message: |
             Closing due to inactivity.
-            If this is still an issue, please retry on the latest OpenClaw release and share updated details.
+            If this is still an issue, please retry on the latest OpenCLI release and share updated details.
             If you are absolutely sure it still happens on the latest release, open a new issue with fresh steps to reproduce.
           close-issue-reason: not_planned
           close-pr-message: |
@@ -83,7 +83,7 @@ jobs:
             Please add updates or it will be closed.
           close-issue-message: |
             Closing due to inactivity.
-            If this is still an issue, please retry on the latest OpenClaw release and share updated details.
+            If this is still an issue, please retry on the latest OpenCLI release and share updated details.
             If you are absolutely sure it still happens on the latest release, open a new issue with fresh steps to reproduce.
           close-issue-reason: not_planned
       - name: Mark stale assigned pull requests (primary)
@@ -159,7 +159,7 @@ jobs:
             Please add updates or it will be closed.
           close-issue-message: |
             Closing due to inactivity.
-            If this is still an issue, please retry on the latest OpenClaw release and share updated details.
+            If this is still an issue, please retry on the latest OpenCLI release and share updated details.
             If you are absolutely sure it still happens on the latest release, open a new issue with fresh steps to reproduce.
           close-issue-reason: not_planned
           close-pr-message: |
@@ -186,7 +186,7 @@ jobs:
             Please add updates or it will be closed.
           close-issue-message: |
             Closing due to inactivity.
-            If this is still an issue, please retry on the latest OpenClaw release and share updated details.
+            If this is still an issue, please retry on the latest OpenCLI release and share updated details.
             If you are absolutely sure it still happens on the latest release, open a new issue with fresh steps to reproduce.
           close-issue-reason: not_planned
       - name: Mark stale assigned pull requests (fallback)

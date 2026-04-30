@@ -13,13 +13,13 @@ afterEach(() => {
 });
 
 function makeTempDir() {
-  return makeTrackedTempDir("openclaw-plugin-registry-snapshot", tempDirs);
+  return makeTrackedTempDir("opencli-plugin-registry-snapshot", tempDirs);
 }
 
 function createHermeticEnv(rootDir: string): NodeJS.ProcessEnv {
   return {
-    OPENCLAW_BUNDLED_PLUGINS_DIR: path.join(rootDir, "bundled"),
-    OPENCLAW_VERSION: "2026.4.26",
+    OPENCLI_BUNDLED_PLUGINS_DIR: path.join(rootDir, "bundled"),
+    OPENCLI_VERSION: "2026.4.26",
     VITEST: "true",
   };
 }

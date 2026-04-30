@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import {
   ensureAuthProfileStore,
   listProfilesForProvider,
@@ -9,7 +9,7 @@ import { normalizeProviderId } from "./model-selection.js";
 
 export function hasAuthForModelProvider(params: {
   provider: string;
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   workspaceDir?: string;
   agentDir?: string;
   env?: NodeJS.ProcessEnv;
@@ -38,7 +38,7 @@ export function hasAuthForModelProvider(params: {
 }
 
 export function createProviderAuthChecker(params: {
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   workspaceDir?: string;
   agentDir?: string;
   env?: NodeJS.ProcessEnv;

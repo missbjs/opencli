@@ -1,5 +1,5 @@
 import { normalizeLowercaseStringOrEmpty } from "../shared/string-coerce.js";
-import { listOpenClawPluginManifestMetadata } from "./manifest-metadata-scan.js";
+import { listOpenCLIPluginManifestMetadata } from "./manifest-metadata-scan.js";
 import type { PluginManifestModelIdNormalizationProvider } from "./manifest.js";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -98,7 +98,7 @@ function collectManifestModelIdNormalizationPolicies(): Map<
   PluginManifestModelIdNormalizationProvider
 > {
   const policies = new Map<string, PluginManifestModelIdNormalizationProvider>();
-  for (const { manifest } of listOpenClawPluginManifestMetadata()) {
+  for (const { manifest } of listOpenCLIPluginManifestMetadata()) {
     for (const [provider, policy] of readManifestModelIdNormalizationPolicies(manifest)) {
       policies.set(provider, policy);
     }

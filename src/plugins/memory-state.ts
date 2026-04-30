@@ -1,5 +1,5 @@
 import type { MemoryCitationsMode } from "../config/types.memory.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import type { MemorySearchManager } from "../memory-host-sdk/host/types.js";
 
 export type MemoryPromptSectionBuilder = (params: {
@@ -75,7 +75,7 @@ export type MemoryFlushPlan = {
 };
 
 export type MemoryFlushPlanResolver = (params: {
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   nowMs?: number;
 }) => MemoryFlushPlan | null;
 
@@ -96,7 +96,7 @@ export type MemoryRuntimeBackendConfig =
 
 export type MemoryPluginRuntime = {
   getMemorySearchManager(params: {
-    cfg: OpenClawConfig;
+    cfg: OpenCLIConfig;
     agentId: string;
     purpose?: "default" | "status" | "cli";
   }): Promise<{
@@ -104,7 +104,7 @@ export type MemoryPluginRuntime = {
     error?: string;
   }>;
   resolveMemoryBackendConfig(params: {
-    cfg: OpenClawConfig;
+    cfg: OpenCLIConfig;
     agentId: string;
   }): MemoryRuntimeBackendConfig;
   closeAllMemorySearchManagers?(): Promise<void>;
@@ -122,7 +122,7 @@ export type MemoryPluginPublicArtifact = {
 };
 
 export type MemoryPluginPublicArtifactsProvider = {
-  listArtifacts(params: { cfg: OpenClawConfig }): Promise<MemoryPluginPublicArtifact[]>;
+  listArtifacts(params: { cfg: OpenCLIConfig }): Promise<MemoryPluginPublicArtifact[]>;
 };
 
 export type MemoryPluginCapability = {
@@ -241,7 +241,7 @@ export function registerMemoryFlushPlanResolver(resolver: MemoryFlushPlanResolve
 }
 
 export function resolveMemoryFlushPlan(params: {
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   nowMs?: number;
 }): MemoryFlushPlan | null {
   return (
@@ -281,7 +281,7 @@ function cloneMemoryPublicArtifact(
 }
 
 export async function listActiveMemoryPublicArtifacts(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
 }): Promise<MemoryPluginPublicArtifact[]> {
   const artifacts =
     (await memoryPluginState.capability?.capability.publicArtifacts?.listArtifacts(params)) ?? [];

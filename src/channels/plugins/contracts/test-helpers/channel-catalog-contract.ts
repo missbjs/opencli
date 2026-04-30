@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { resolvePreferredOpenClawTmpDir } from "../../../../infra/tmp-openclaw-dir.js";
+import { resolvePreferredOpenCLITmpDir } from "../../../../infra/tmp-opencli-dir.js";
 import { getChannelPluginCatalogEntry, listChannelPluginCatalogEntries } from "../../catalog.js";
 
 type CatalogEntryMeta = {
@@ -23,8 +23,8 @@ function createCatalogFixtureEnv(overrides: NodeJS.ProcessEnv = {}): NodeJS.Proc
 
 function createCatalogFallbackOnlyEnv(): NodeJS.ProcessEnv {
   return createCatalogFixtureEnv({
-    OPENCLAW_DISABLE_BUNDLED_PLUGINS: "1",
-    OPENCLAW_BUNDLED_PLUGINS_DIR: "/nonexistent/bundled/plugins",
+    OPENCLI_DISABLE_BUNDLED_PLUGINS: "1",
+    OPENCLI_BUNDLED_PLUGINS_DIR: "/nonexistent/bundled/plugins",
   });
 }
 
@@ -59,20 +59,20 @@ export function describeBundledMetadataOnlyChannelCatalogContract(params: {
   describe(`${params.pluginId} bundled metadata-only channel catalog contract`, () => {
     it("includes the bundled metadata-only channel entry when the runtime entrypoint is omitted", () => {
       const workspaceDir = fs.mkdtempSync(
-        path.join(resolvePreferredOpenClawTmpDir(), "openclaw-bundled-catalog-"),
+        path.join(resolvePreferredOpenCLITmpDir(), "opencli-bundled-catalog-"),
       );
-      const bundledDir = path.join(workspaceDir, ".openclaw", "extensions", params.pluginId);
+      const bundledDir = path.join(workspaceDir, ".opencli", "extensions", params.pluginId);
       fs.mkdirSync(bundledDir, { recursive: true });
       fs.writeFileSync(
         path.join(workspaceDir, "package.json"),
-        JSON.stringify({ name: "openclaw" }),
+        JSON.stringify({ name: "opencli" }),
         "utf8",
       );
       fs.writeFileSync(
         path.join(bundledDir, "package.json"),
         JSON.stringify({
           name: params.packageName,
-          openclaw: {
+          opencli: {
             extensions: ["./index.js"],
             channel: params.meta,
             install: {
@@ -85,14 +85,14 @@ export function describeBundledMetadataOnlyChannelCatalogContract(params: {
       );
       fs.writeFileSync(path.join(bundledDir, "index.js"), "export default {};\n", "utf8");
       fs.writeFileSync(
-        path.join(bundledDir, "openclaw.plugin.json"),
+        path.join(bundledDir, "opencli.plugin.json"),
         JSON.stringify({ id: params.pluginId, channels: [params.meta.id], configSchema: {} }),
         "utf8",
       );
 
       const entry = listChannelPluginCatalogEntries({
         workspaceDir,
-        env: createCatalogFixtureEnv({ OPENCLAW_DISABLE_BUNDLED_PLUGINS: "1" }),
+        env: createCatalogFixtureEnv({ OPENCLI_DISABLE_BUNDLED_PLUGINS: "1" }),
       }).find((item) => item.id === params.meta.id);
 
       expect(entry?.install.npmSpec).toBe(params.npmSpec);
@@ -113,7 +113,7 @@ export function describeOfficialFallbackChannelCatalogContract(params: {
   describe(`${params.channelId} official fallback channel catalog contract`, () => {
     it("includes shipped official channel catalog entries when bundled metadata is omitted", () => {
       const dir = fs.mkdtempSync(
-        path.join(resolvePreferredOpenClawTmpDir(), "openclaw-official-catalog-"),
+        path.join(resolvePreferredOpenCLITmpDir(), "opencli-official-catalog-"),
       );
       const catalogPath = path.join(dir, "channel-catalog.json");
       fs.writeFileSync(
@@ -122,7 +122,7 @@ export function describeOfficialFallbackChannelCatalogContract(params: {
           entries: [
             {
               name: params.packageName,
-              openclaw: {
+              opencli: {
                 channel: params.meta,
                 install: {
                   npmSpec: params.npmSpec,
@@ -145,7 +145,7 @@ export function describeOfficialFallbackChannelCatalogContract(params: {
 
     it("lets external catalogs override shipped fallback channel metadata", () => {
       const dir = fs.mkdtempSync(
-        path.join(resolvePreferredOpenClawTmpDir(), "openclaw-fallback-catalog-"),
+        path.join(resolvePreferredOpenCLITmpDir(), "opencli-fallback-catalog-"),
       );
       const bundledDir = path.join(dir, "dist", "extensions", params.pluginId);
       const officialCatalogPath = path.join(dir, "channel-catalog.json");
@@ -155,7 +155,7 @@ export function describeOfficialFallbackChannelCatalogContract(params: {
         path.join(bundledDir, "package.json"),
         JSON.stringify({
           name: params.packageName,
-          openclaw: {
+          opencli: {
             channel: {
               ...params.meta,
               label: `${params.meta.label} Bundled`,
@@ -173,7 +173,7 @@ export function describeOfficialFallbackChannelCatalogContract(params: {
           entries: [
             {
               name: params.packageName,
-              openclaw: {
+              opencli: {
                 channel: {
                   ...params.meta,
                   label: `${params.meta.label} Official`,
@@ -193,7 +193,7 @@ export function describeOfficialFallbackChannelCatalogContract(params: {
           entries: [
             {
               name: params.externalNpmSpec,
-              openclaw: {
+              opencli: {
                 channel: {
                   ...params.meta,
                   label: params.externalLabel,
@@ -221,7 +221,7 @@ export function describeOfficialFallbackChannelCatalogContract(params: {
 
     it("surfaces package-name drift in external channel catalog install metadata", () => {
       const dir = fs.mkdtempSync(
-        path.join(resolvePreferredOpenClawTmpDir(), "openclaw-drifted-catalog-"),
+        path.join(resolvePreferredOpenCLITmpDir(), "opencli-drifted-catalog-"),
       );
       const catalogPath = path.join(dir, "catalog.json");
       fs.writeFileSync(
@@ -230,7 +230,7 @@ export function describeOfficialFallbackChannelCatalogContract(params: {
           entries: [
             {
               name: params.packageName,
-              openclaw: {
+              opencli: {
                 channel: params.meta,
                 install: {
                   npmSpec: `${params.packageName}-fork@1.2.3`,

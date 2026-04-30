@@ -29,11 +29,11 @@ let createMatrixClient: typeof import("./create-client.js").createMatrixClient;
 
 describe("createMatrixClient", () => {
   const storagePaths = {
-    rootDir: "/tmp/openclaw-matrix-create-client-test",
-    storagePath: "/tmp/openclaw-matrix-create-client-test/storage.json",
-    recoveryKeyPath: "/tmp/openclaw-matrix-create-client-test/recovery.key",
-    idbSnapshotPath: "/tmp/openclaw-matrix-create-client-test/idb.snapshot",
-    metaPath: "/tmp/openclaw-matrix-create-client-test/storage-meta.json",
+    rootDir: "/tmp/opencli-matrix-create-client-test",
+    storagePath: "/tmp/opencli-matrix-create-client-test/storage.json",
+    recoveryKeyPath: "/tmp/opencli-matrix-create-client-test/recovery.key",
+    idbSnapshotPath: "/tmp/opencli-matrix-create-client-test/idb.snapshot",
+    metaPath: "/tmp/opencli-matrix-create-client-test/storage-meta.json",
     accountKey: "default",
     tokenHash: "token-hash",
   };
@@ -79,7 +79,7 @@ describe("createMatrixClient", () => {
       storagePath: storagePaths.storagePath,
       recoveryKeyPath: storagePaths.recoveryKeyPath,
       idbSnapshotPath: storagePaths.idbSnapshotPath,
-      cryptoDatabasePrefix: "openclaw-matrix-default-token-hash",
+      cryptoDatabasePrefix: "opencli-matrix-default-token-hash",
       autoBootstrapCrypto: undefined,
       ssrfPolicy: undefined,
       dispatcherPolicy: undefined,

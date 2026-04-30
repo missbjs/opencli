@@ -4,13 +4,13 @@ import UIKit
 #endif
 
 @MainActor
-public struct OpenClawChatView: View {
+public struct OpenCLIChatView: View {
     public enum Style {
         case standard
         case onboarding
     }
 
-    @State private var viewModel: OpenClawChatViewModel
+    @State private var viewModel: OpenCLIChatViewModel
     @State private var scrollerBottomID = UUID()
     @State private var scrollPosition: UUID?
     @State private var showSessions = false
@@ -46,7 +46,7 @@ public struct OpenClawChatView: View {
     }
 
     public init(
-        viewModel: OpenClawChatViewModel,
+        viewModel: OpenCLIChatViewModel,
         showsSessionSwitcher: Bool = false,
         style: Style = .standard,
         markdownVariant: ChatMarkdownVariant = .standard,
@@ -64,14 +64,14 @@ public struct OpenClawChatView: View {
     public var body: some View {
         ZStack {
             if self.style == .standard {
-                OpenClawChatTheme.background
+                OpenCLIChatTheme.background
                     .ignoresSafeArea()
             }
 
             VStack(spacing: Layout.stackSpacing) {
                 self.messageList
                     .padding(.horizontal, Layout.outerPaddingHorizontal)
-                OpenClawChatComposer(
+                OpenCLIChatComposer(
                     viewModel: self.viewModel,
                     style: self.style,
                     showsSessionSwitcher: self.showsSessionSwitcher)
@@ -224,8 +224,8 @@ public struct OpenClawChatView: View {
         }
     }
 
-    private var visibleMessages: [OpenClawChatMessage] {
-        let base: [OpenClawChatMessage]
+    private var visibleMessages: [OpenCLIChatMessage] {
+        let base: [OpenCLIChatMessage]
         if self.style == .onboarding {
             guard let first = self.viewModel.messages.first else { return [] }
             base = first.role.lowercased() == "user" ? Array(self.viewModel.messages.dropFirst()) : self.viewModel
@@ -344,8 +344,8 @@ public struct OpenClawChatView: View {
         return ("Error", "exclamationmark.triangle.fill", .orange)
     }
 
-    private func mergeToolResults(in messages: [OpenClawChatMessage]) -> [OpenClawChatMessage] {
-        var result: [OpenClawChatMessage] = []
+    private func mergeToolResults(in messages: [OpenCLIChatMessage]) -> [OpenCLIChatMessage] {
+        var result: [OpenCLIChatMessage] = []
         result.reserveCapacity(messages.count)
 
         for message in messages {
@@ -369,7 +369,7 @@ public struct OpenClawChatView: View {
 
             var content = last.content
             content.append(
-                OpenClawChatMessageContent(
+                OpenCLIChatMessageContent(
                     type: "tool_result",
                     text: toolText,
                     thinking: nil,
@@ -381,7 +381,7 @@ public struct OpenClawChatView: View {
                     name: message.toolName,
                     arguments: nil))
 
-            let merged = OpenClawChatMessage(
+            let merged = OpenCLIChatMessage(
                 id: last.id,
                 role: last.role,
                 content: content,
@@ -396,12 +396,12 @@ public struct OpenClawChatView: View {
         return result
     }
 
-    private func isToolResultMessage(_ message: OpenClawChatMessage) -> Bool {
+    private func isToolResultMessage(_ message: OpenCLIChatMessage) -> Bool {
         let role = message.role.lowercased()
         return role == "toolresult" || role == "tool_result"
     }
 
-    private func shouldDisplayMessage(_ message: OpenClawChatMessage) -> Bool {
+    private func shouldDisplayMessage(_ message: OpenCLIChatMessage) -> Bool {
         if self.hasInlineAttachments(in: message) {
             return true
         }
@@ -427,7 +427,7 @@ public struct OpenClawChatView: View {
         return !self.toolCalls(in: message).isEmpty || !self.inlineToolResults(in: message).isEmpty
     }
 
-    private func primaryText(in message: OpenClawChatMessage) -> String {
+    private func primaryText(in message: OpenCLIChatMessage) -> String {
         let parts = message.content.compactMap { content -> String? in
             let kind = (content.type ?? "text").lowercased()
             guard kind == "text" || kind.isEmpty else { return nil }
@@ -436,7 +436,7 @@ public struct OpenClawChatView: View {
         return parts.joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
-    private func hasInlineAttachments(in message: OpenClawChatMessage) -> Bool {
+    private func hasInlineAttachments(in message: OpenCLIChatMessage) -> Bool {
         message.content.contains { content in
             switch content.type ?? "text" {
             case "file", "attachment":
@@ -447,7 +447,7 @@ public struct OpenClawChatView: View {
         }
     }
 
-    private func toolCalls(in message: OpenClawChatMessage) -> [OpenClawChatMessageContent] {
+    private func toolCalls(in message: OpenCLIChatMessage) -> [OpenCLIChatMessageContent] {
         message.content.filter { content in
             let kind = (content.type ?? "").lowercased()
             if ["toolcall", "tool_call", "tooluse", "tool_use"].contains(kind) {
@@ -457,14 +457,14 @@ public struct OpenClawChatView: View {
         }
     }
 
-    private func inlineToolResults(in message: OpenClawChatMessage) -> [OpenClawChatMessageContent] {
+    private func inlineToolResults(in message: OpenCLIChatMessage) -> [OpenCLIChatMessageContent] {
         message.content.filter { content in
             let kind = (content.type ?? "").lowercased()
             return kind == "toolresult" || kind == "tool_result"
         }
     }
 
-    private func toolCallIds(in message: OpenClawChatMessage) -> Set<String> {
+    private func toolCallIds(in message: OpenCLIChatMessage) -> Set<String> {
         var ids = Set<String>()
         for content in self.toolCalls(in: message) {
             if let id = content.id {
@@ -477,7 +477,7 @@ public struct OpenClawChatView: View {
         return ids
     }
 
-    private func toolResultText(from message: OpenClawChatMessage) -> String {
+    private func toolResultText(from message: OpenCLIChatMessage) -> String {
         self.primaryText(in: message)
     }
 
@@ -530,7 +530,7 @@ private struct ChatNoticeCard: View {
         .padding(18)
         .background(
             RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .fill(OpenClawChatTheme.subtleCard)
+                .fill(OpenCLIChatTheme.subtleCard)
                 .overlay(
                     RoundedRectangle(cornerRadius: 18, style: .continuous)
                         .strokeBorder(Color.white.opacity(0.12), lineWidth: 1)))
@@ -583,7 +583,7 @@ private struct ChatNoticeBanner: View {
         .padding(.vertical, 10)
         .background(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(OpenClawChatTheme.subtleCard)
+                .fill(OpenCLIChatTheme.subtleCard)
                 .overlay(
                     RoundedRectangle(cornerRadius: 14, style: .continuous)
                         .strokeBorder(Color.white.opacity(0.12), lineWidth: 1)))

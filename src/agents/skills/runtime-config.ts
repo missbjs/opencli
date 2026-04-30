@@ -1,8 +1,8 @@
 import { getRuntimeConfigSnapshot } from "../../config/runtime-snapshot.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../../config/types.opencli.js";
 import { coerceSecretRef } from "../../config/types.secrets.js";
 
-function hasConfiguredSkillApiKeyRef(config?: OpenClawConfig): boolean {
+function hasConfiguredSkillApiKeyRef(config?: OpenCLIConfig): boolean {
   const entries = config?.skills?.entries;
   if (!entries || typeof entries !== "object") {
     return false;
@@ -18,7 +18,7 @@ function hasConfiguredSkillApiKeyRef(config?: OpenClawConfig): boolean {
   return false;
 }
 
-export function resolveSkillRuntimeConfig(config?: OpenClawConfig): OpenClawConfig | undefined {
+export function resolveSkillRuntimeConfig(config?: OpenCLIConfig): OpenCLIConfig | undefined {
   const runtimeConfig = getRuntimeConfigSnapshot();
   if (!runtimeConfig) {
     return config;

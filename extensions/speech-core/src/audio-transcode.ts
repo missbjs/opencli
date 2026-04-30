@@ -1,7 +1,7 @@
 import { spawn } from "node:child_process";
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/sandbox";
+import { resolvePreferredOpenCLITmpDir } from "opencli/plugin-sdk/sandbox";
 
 /** Container token (file-extension shape, no leading dot) the host knows how
  * to pre-transcode into. Update in lockstep with `pickAfconvertRecipe`. */
@@ -58,7 +58,7 @@ export async function transcodeAudioBuffer(params: {
     return { ok: false, reason: "platform-unsupported" };
   }
 
-  const tmpRoot = resolvePreferredOpenClawTmpDir();
+  const tmpRoot = resolvePreferredOpenCLITmpDir();
   mkdirSync(tmpRoot, { recursive: true, mode: 0o700 });
   const tmpDir = mkdtempSync(join(tmpRoot, "tts-transcode-"));
   const inPath = join(tmpDir, `in.${source}`);

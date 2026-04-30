@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import {
   clearCurrentPluginMetadataSnapshotState,
   getCurrentPluginMetadataSnapshotState,
@@ -7,7 +7,7 @@ import {
 import { resolveInstalledPluginIndexPolicyHash } from "./installed-plugin-index-policy.js";
 import type { PluginMetadataSnapshot } from "./plugin-metadata-snapshot.types.js";
 
-function normalizeLoadPaths(config: OpenClawConfig | undefined): readonly string[] {
+function normalizeLoadPaths(config: OpenCLIConfig | undefined): readonly string[] {
   const paths = config?.plugins?.load?.paths;
   if (!Array.isArray(paths)) {
     return [];
@@ -16,7 +16,7 @@ function normalizeLoadPaths(config: OpenClawConfig | undefined): readonly string
 }
 
 export function resolvePluginMetadataSnapshotConfigFingerprint(
-  config: OpenClawConfig | undefined,
+  config: OpenCLIConfig | undefined,
   options: { policyHash?: string } = {},
 ): string {
   return JSON.stringify({
@@ -29,7 +29,7 @@ export function resolvePluginMetadataSnapshotConfigFingerprint(
 // never accumulate historical metadata snapshots here.
 export function setCurrentPluginMetadataSnapshot(
   snapshot: PluginMetadataSnapshot | undefined,
-  options: { config?: OpenClawConfig } = {},
+  options: { config?: OpenCLIConfig } = {},
 ): void {
   setCurrentPluginMetadataSnapshotState(
     snapshot,
@@ -47,7 +47,7 @@ export function clearCurrentPluginMetadataSnapshot(): void {
 
 export function getCurrentPluginMetadataSnapshot(
   params: {
-    config?: OpenClawConfig;
+    config?: OpenCLIConfig;
     workspaceDir?: string;
   } = {},
 ): PluginMetadataSnapshot | undefined {

@@ -1,8 +1,8 @@
 import type {
   PluginHookInboundClaimContext,
   PluginHookInboundClaimEvent,
-} from "openclaw/plugin-sdk/plugin-entry";
-import type { ReplyPayload } from "openclaw/plugin-sdk/reply-payload";
+} from "opencli/plugin-sdk/plugin-entry";
+import type { ReplyPayload } from "opencli/plugin-sdk/reply-payload";
 import { readBindingData } from "./binding-data.js";
 import { defaultLogRoot } from "./persistence.js";
 import { getSession, readReply, startSession, waitForSettle, writeStdin } from "./process-pool.js";

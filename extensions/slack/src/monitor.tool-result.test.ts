@@ -1,7 +1,7 @@
-import { CURRENT_MESSAGE_MARKER } from "openclaw/plugin-sdk/channel-mention-gating";
-import { expectPairingReplyText } from "openclaw/plugin-sdk/channel-test-helpers";
-import { resetInboundDedupe } from "openclaw/plugin-sdk/reply-dedupe";
-import { HISTORY_CONTEXT_MARKER } from "openclaw/plugin-sdk/reply-history";
+import { CURRENT_MESSAGE_MARKER } from "opencli/plugin-sdk/channel-mention-gating";
+import { expectPairingReplyText } from "opencli/plugin-sdk/channel-test-helpers";
+import { resetInboundDedupe } from "opencli/plugin-sdk/reply-dedupe";
+import { HISTORY_CONTEXT_MARKER } from "opencli/plugin-sdk/reply-history";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   defaultSlackTestConfig,
@@ -456,7 +456,7 @@ describe("monitorSlackProvider tool results", () => {
   });
 
   async function expectMentionPatternMessageAccepted(text: string): Promise<void> {
-    setRequireMentionChannelConfig(["\\bopenclaw\\b"]);
+    setRequireMentionChannelConfig(["\\bopencli\\b"]);
     replyMock.mockResolvedValue({ text: "hi" });
 
     await runSlackMessageOnce(monitorSlackProvider, {
@@ -471,11 +471,11 @@ describe("monitorSlackProvider tool results", () => {
   }
 
   it("accepts channel messages when mentionPatterns match", async () => {
-    await expectMentionPatternMessageAccepted("openclaw: hello");
+    await expectMentionPatternMessageAccepted("opencli: hello");
   });
 
   it("accepts channel messages when mentionPatterns match even if another user is mentioned", async () => {
-    await expectMentionPatternMessageAccepted("openclaw: hello <@U2>");
+    await expectMentionPatternMessageAccepted("opencli: hello <@U2>");
   });
 
   it("treats replies to bot threads as implicit mentions", async () => {

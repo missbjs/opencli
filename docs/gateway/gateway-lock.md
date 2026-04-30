@@ -27,7 +27,7 @@ title: "Gateway lock"
 
 ## Operational notes
 
-- If the port is occupied by _another_ process, the error is the same; free the port or choose another with `openclaw gateway --port <port>`.
+- If the port is occupied by _another_ process, the error is the same; free the port or choose another with `opencli gateway --port <port>`.
 - Under a service supervisor, a new gateway process that sees an existing healthy `/healthz` responder exits successfully and leaves that process in control. If the existing process never becomes healthy, retries are bounded and startup fails with a clear lock error instead of looping forever.
 - The macOS app still maintains its own lightweight PID guard before spawning the gateway; the runtime lock is enforced by the lock file plus HTTP/WebSocket bind.
 

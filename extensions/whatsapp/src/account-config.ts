@@ -3,16 +3,16 @@ import {
   mergeAccountConfig,
   resolveAccountEntry,
   resolveMergedAccountConfig,
-  type OpenClawConfig,
-} from "openclaw/plugin-sdk/account-core";
+  type OpenCLIConfig,
+} from "opencli/plugin-sdk/account-core";
 import {
   resolveChannelStreamingBlockEnabled,
   resolveChannelStreamingChunkMode,
-} from "openclaw/plugin-sdk/channel-streaming";
+} from "opencli/plugin-sdk/channel-streaming";
 import type { WhatsAppAccountConfig } from "./account-types.js";
 
 function resolveWhatsAppDefaultAccountSharedConfig(
-  cfg: OpenClawConfig,
+  cfg: OpenCLIConfig,
 ): Partial<WhatsAppAccountConfig> | undefined {
   const defaultAccount = resolveAccountEntry(cfg.channels?.whatsapp?.accounts, DEFAULT_ACCOUNT_ID);
   if (!defaultAccount) {
@@ -29,14 +29,14 @@ function resolveWhatsAppDefaultAccountSharedConfig(
 }
 
 function _resolveWhatsAppAccountConfig(
-  cfg: OpenClawConfig,
+  cfg: OpenCLIConfig,
   accountId: string,
 ): WhatsAppAccountConfig | undefined {
   return resolveAccountEntry(cfg.channels?.whatsapp?.accounts, accountId);
 }
 
 function resolveMergedNamedWhatsAppAccountConfig(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   accountId: string;
 }): WhatsAppAccountConfig {
   const rootCfg = params.cfg.channels?.whatsapp;
@@ -53,7 +53,7 @@ function resolveMergedNamedWhatsAppAccountConfig(params: {
 }
 
 export function resolveMergedWhatsAppAccountConfig(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   accountId?: string | null;
 }): WhatsAppAccountConfig & { accountId: string } {
   const rootCfg = params.cfg.channels?.whatsapp;

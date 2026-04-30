@@ -10,7 +10,7 @@ import {
   resolveCoreToolProfiles,
 } from "../../agents/tool-catalog.js";
 import { summarizeToolDescriptionText } from "../../agents/tool-description-summary.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../../config/types.opencli.js";
 import { getActivePluginRegistry } from "../../plugins/runtime.js";
 import {
   buildPluginToolMetadataKey,
@@ -47,11 +47,7 @@ type ToolCatalogGroup = {
   tools: ToolCatalogEntry[];
 };
 
-function resolveAgentIdOrRespondError(
-  rawAgentId: unknown,
-  respond: RespondFn,
-  cfg: OpenClawConfig,
-) {
+function resolveAgentIdOrRespondError(rawAgentId: unknown, respond: RespondFn, cfg: OpenCLIConfig) {
   const knownAgents = listAgentIds(cfg);
   const requestedAgentId = normalizeOptionalString(rawAgentId) ?? "";
   const agentId = requestedAgentId || resolveDefaultAgentId(cfg);
@@ -82,7 +78,7 @@ function buildCoreGroups(): ToolCatalogGroup[] {
 }
 
 function buildPluginGroups(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   agentId: string;
   existingToolNames: Set<string>;
 }): ToolCatalogGroup[] {
@@ -156,7 +152,7 @@ function buildPluginGroups(params: {
 }
 
 export function buildToolsCatalogResult(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   agentId?: string;
   includePlugins?: boolean;
 }): ToolsCatalogResult {

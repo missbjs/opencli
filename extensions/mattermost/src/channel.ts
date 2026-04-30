@@ -2,24 +2,24 @@ import type {
   ChannelMessageActionAdapter,
   ChannelMessageActionName,
   ChannelMessageToolDiscovery,
-} from "openclaw/plugin-sdk/channel-contract";
-import { createChatChannelPlugin } from "openclaw/plugin-sdk/channel-core";
-import { createLoggedPairingApprovalNotifier } from "openclaw/plugin-sdk/channel-pairing";
-import { createRestrictSendersChannelSecurity } from "openclaw/plugin-sdk/channel-policy";
-import { createChannelDirectoryAdapter } from "openclaw/plugin-sdk/directory-runtime";
-import { buildPassiveProbedChannelStatusSummary } from "openclaw/plugin-sdk/extension-shared";
+} from "opencli/plugin-sdk/channel-contract";
+import { createChatChannelPlugin } from "opencli/plugin-sdk/channel-core";
+import { createLoggedPairingApprovalNotifier } from "opencli/plugin-sdk/channel-pairing";
+import { createRestrictSendersChannelSecurity } from "opencli/plugin-sdk/channel-policy";
+import { createChannelDirectoryAdapter } from "opencli/plugin-sdk/directory-runtime";
+import { buildPassiveProbedChannelStatusSummary } from "opencli/plugin-sdk/extension-shared";
 import {
   normalizeMessagePresentation,
   presentationToInteractiveReply,
   renderMessagePresentationFallbackText,
-} from "openclaw/plugin-sdk/interactive-runtime";
-import { createLazyRuntimeModule } from "openclaw/plugin-sdk/lazy-runtime";
-import { isPrivateNetworkOptInEnabled } from "openclaw/plugin-sdk/ssrf-runtime";
+} from "opencli/plugin-sdk/interactive-runtime";
+import { createLazyRuntimeModule } from "opencli/plugin-sdk/lazy-runtime";
+import { isPrivateNetworkOptInEnabled } from "opencli/plugin-sdk/ssrf-runtime";
 import {
   createComputedAccountStatusAdapter,
   createDefaultChannelRuntimeState,
-} from "openclaw/plugin-sdk/status-helpers";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/text-runtime";
+} from "opencli/plugin-sdk/status-helpers";
+import { normalizeOptionalString } from "opencli/plugin-sdk/text-runtime";
 import { mattermostApprovalAuth } from "./approval-auth.js";
 import {
   chunkTextForOutbound,
@@ -402,7 +402,7 @@ export const mattermostPlugin: ChannelPlugin<ResolvedMattermostAccount> = create
   pairing: {
     text: {
       idLabel: "mattermostUserId",
-      message: "OpenClaw: your access has been approved.",
+      message: "OpenCLI: your access has been approved.",
       normalizeAllowEntry: (entry) => normalizeAllowEntry(entry),
       notify: createLoggedPairingApprovalNotifier(
         ({ id }) => `[mattermost] User ${id} approved for pairing`,

@@ -7,7 +7,7 @@ import {
   createBundledRuntimeDependencyInstallEnv,
   createNestedNpmInstallEnv,
   isDirectPostinstallInvocation,
-  pruneOpenClawCompileCache,
+  pruneOpenCLICompileCache,
   pruneInstalledPackageDist,
   discoverBundledPluginRuntimeDeps,
   pruneBundledPluginSourceNodeModules,
@@ -20,7 +20,7 @@ import { createScriptTestHarness } from "./test-helpers.js";
 const { createTempDirAsync } = createScriptTestHarness();
 
 async function createExtensionsDir() {
-  const root = await createTempDirAsync("openclaw-postinstall-");
+  const root = await createTempDirAsync("opencli-postinstall-");
   const extensionsDir = path.join(root, "dist", "extensions");
   await fs.mkdir(extensionsDir, { recursive: true });
   return extensionsDir;
@@ -93,8 +93,8 @@ describe("bundled plugin postinstall", () => {
 
     expect(
       isDirectPostinstallInvocation({
-        entryPath: "/var/folders/tmp/openclaw/scripts/postinstall-bundled-plugins.mjs",
-        modulePath: "/private/var/folders/tmp/openclaw/scripts/postinstall-bundled-plugins.mjs",
+        entryPath: "/var/folders/tmp/opencli/scripts/postinstall-bundled-plugins.mjs",
+        modulePath: "/private/var/folders/tmp/opencli/scripts/postinstall-bundled-plugins.mjs",
         realpathSync,
       }),
     ).toBe(true);
@@ -183,7 +183,7 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("prunes Node versioned compile cache dirs during package postinstall", () => {
-    const configuredBase = path.join("/tmp", "openclaw-cache");
+    const configuredBase = path.join("/tmp", "opencli-cache");
     const defaultBase = path.join(tmpdir(), "node-compile-cache");
     const removed: string[] = [];
     const existsSync = vi.fn((value: string) => value === configuredBase || value === defaultBase);
@@ -191,7 +191,7 @@ describe("bundled plugin postinstall", () => {
       if (value === configuredBase) {
         return [
           { name: "v22.13.1-x64-efe9a9df-1001", isDirectory: () => true },
-          { name: "openclaw", isDirectory: () => true },
+          { name: "opencli", isDirectory: () => true },
           { name: "README", isDirectory: () => false },
         ];
       }
@@ -204,7 +204,7 @@ describe("bundled plugin postinstall", () => {
       removed.push(value);
     });
 
-    pruneOpenClawCompileCache({
+    pruneOpenCLICompileCache({
       env: { NODE_COMPILE_CACHE: configuredBase },
       existsSync,
       readdirSync,
@@ -216,7 +216,7 @@ describe("bundled plugin postinstall", () => {
       path.join(configuredBase, "v22.13.1-x64-efe9a9df-1001"),
       path.join(defaultBase, "v24.14.1-x64-efe9a9df-1001"),
     ]);
-    expect(removed).not.toContain(path.join(configuredBase, "openclaw"));
+    expect(removed).not.toContain(path.join(configuredBase, "opencli"));
     for (const cacheDir of removed) {
       expect(rmSync).toHaveBeenCalledWith(cacheDir, {
         recursive: true,
@@ -228,7 +228,7 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("keeps pruning sibling compile cache dirs after one removal fails", () => {
-    const configuredBase = path.join("/tmp", "openclaw-cache");
+    const configuredBase = path.join("/tmp", "opencli-cache");
     const attempted: string[] = [];
     const warn = vi.fn();
     const firstCacheDir = path.join(configuredBase, "v22.13.1-x64-efe9a9df-1001");
@@ -240,7 +240,7 @@ describe("bundled plugin postinstall", () => {
       }
     });
 
-    pruneOpenClawCompileCache({
+    pruneOpenCLICompileCache({
       env: { NODE_COMPILE_CACHE: configuredBase },
       existsSync: vi.fn((value: string) => value === configuredBase),
       readdirSync: vi.fn(() => [
@@ -253,12 +253,12 @@ describe("bundled plugin postinstall", () => {
 
     expect(attempted).toEqual([firstCacheDir, secondCacheDir]);
     expect(warn).toHaveBeenCalledWith(
-      "[postinstall] could not prune OpenClaw compile cache: Error: locked",
+      "[postinstall] could not prune OpenCLI compile cache: Error: locked",
     );
   });
 
   it("prunes source-checkout bundled plugin node_modules", async () => {
-    const packageRoot = await createTempDirAsync("openclaw-source-checkout-");
+    const packageRoot = await createTempDirAsync("opencli-source-checkout-");
     const extensionsDir = path.join(packageRoot, "extensions");
     await fs.mkdir(path.join(packageRoot, ".git"), { recursive: true });
     await fs.mkdir(path.join(packageRoot, "src"), { recursive: true });
@@ -289,7 +289,7 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("keeps source-checkout prune non-fatal", async () => {
-    const packageRoot = await createTempDirAsync("openclaw-source-checkout-prune-error-");
+    const packageRoot = await createTempDirAsync("opencli-source-checkout-prune-error-");
     const extensionsDir = path.join(packageRoot, "extensions");
     await fs.mkdir(path.join(packageRoot, ".git"), { recursive: true });
     await fs.mkdir(path.join(packageRoot, "src"), { recursive: true });
@@ -314,7 +314,7 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("honors disable env before source-checkout pruning", async () => {
-    const packageRoot = await createTempDirAsync("openclaw-source-checkout-disabled-");
+    const packageRoot = await createTempDirAsync("opencli-source-checkout-disabled-");
     const extensionsDir = path.join(packageRoot, "extensions");
     await fs.mkdir(path.join(packageRoot, ".git"), { recursive: true });
     await fs.mkdir(path.join(packageRoot, "src"), { recursive: true });
@@ -322,7 +322,7 @@ describe("bundled plugin postinstall", () => {
     await fs.writeFile(path.join(extensionsDir, "acpx", "package.json"), "{}\n");
 
     runBundledPluginPostinstall({
-      env: { OPENCLAW_DISABLE_BUNDLED_PLUGIN_POSTINSTALL: "1" },
+      env: { OPENCLI_DISABLE_BUNDLED_PLUGIN_POSTINSTALL: "1" },
       packageRoot,
       log: { log: vi.fn(), warn: vi.fn() },
     });
@@ -331,7 +331,7 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("migrates the plugin registry during postinstall from built dist contracts", async () => {
-    const packageRoot = await createTempDirAsync("openclaw-postinstall-registry-");
+    const packageRoot = await createTempDirAsync("opencli-postinstall-registry-");
     const log = { log: vi.fn(), warn: vi.fn() };
     const migratePluginRegistryForInstall = vi.fn(async () => ({
       status: "migrated",
@@ -358,13 +358,13 @@ describe("bundled plugin postinstall", () => {
         ),
       ),
       importModule,
-      env: { OPENCLAW_HOME: "/tmp/home" },
+      env: { OPENCLI_HOME: "/tmp/home" },
       log,
     });
 
     expect(result).toMatchObject({ status: "migrated" });
     expect(migratePluginRegistryForInstall).toHaveBeenCalledWith({
-      env: { OPENCLAW_HOME: "/tmp/home" },
+      env: { OPENCLI_HOME: "/tmp/home" },
       packageRoot,
     });
     expect(log.log).toHaveBeenCalledWith(
@@ -378,7 +378,7 @@ describe("bundled plugin postinstall", () => {
       status: "skip-existing",
       migrated: false,
       preflight: {
-        deprecationWarnings: ["OPENCLAW_FORCE_PLUGIN_REGISTRY_MIGRATION is deprecated"],
+        deprecationWarnings: ["OPENCLI_FORCE_PLUGIN_REGISTRY_MIGRATION is deprecated"],
       },
     }));
     const importModule = vi.fn(async () => ({ migratePluginRegistryForInstall }));
@@ -391,7 +391,7 @@ describe("bundled plugin postinstall", () => {
     });
 
     expect(warn).toHaveBeenCalledWith(
-      "[postinstall] OPENCLAW_FORCE_PLUGIN_REGISTRY_MIGRATION is deprecated",
+      "[postinstall] OPENCLI_FORCE_PLUGIN_REGISTRY_MIGRATION is deprecated",
     );
   });
 
@@ -418,7 +418,7 @@ describe("bundled plugin postinstall", () => {
     await expect(
       runPluginRegistryPostinstallMigration({
         packageRoot: "/pkg",
-        env: { OPENCLAW_DISABLE_PLUGIN_REGISTRY_MIGRATION: "1" },
+        env: { OPENCLI_DISABLE_PLUGIN_REGISTRY_MIGRATION: "1" },
         existsSync: vi.fn(() => true),
         importModule,
         log: { log: vi.fn(), warn: vi.fn() },
@@ -442,7 +442,7 @@ describe("bundled plugin postinstall", () => {
     await expect(
       runPluginRegistryPostinstallMigration({
         packageRoot: "/pkg",
-        env: { OPENCLAW_DISABLE_PLUGIN_REGISTRY_MIGRATION: "0" },
+        env: { OPENCLI_DISABLE_PLUGIN_REGISTRY_MIGRATION: "0" },
         existsSync: vi.fn(() => true),
         importModule,
         log: { log: vi.fn(), warn: vi.fn() },
@@ -453,13 +453,13 @@ describe("bundled plugin postinstall", () => {
     });
     expect(importModule).toHaveBeenCalledOnce();
     expect(migratePluginRegistryForInstall).toHaveBeenCalledWith({
-      env: { OPENCLAW_DISABLE_PLUGIN_REGISTRY_MIGRATION: "0" },
+      env: { OPENCLI_DISABLE_PLUGIN_REGISTRY_MIGRATION: "0" },
       packageRoot: "/pkg",
     });
   });
 
   it("prunes stale dist files from packaged installs", async () => {
-    const packageRoot = await createTempDirAsync("openclaw-packaged-install-");
+    const packageRoot = await createTempDirAsync("opencli-packaged-install-");
     const currentFile = path.join(packageRoot, "dist", "channel-BOa4MfoC.js");
     const staleFile = path.join(packageRoot, "dist", "channel-CJUAgRQR.js");
     await fs.mkdir(path.dirname(currentFile), { recursive: true });
@@ -479,7 +479,7 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("keeps imported dist chunks even when inventory is stale", async () => {
-    const packageRoot = await createTempDirAsync("openclaw-packaged-install-import-");
+    const packageRoot = await createTempDirAsync("opencli-packaged-install-import-");
     const entryFile = path.join(packageRoot, "dist", "cli", "run-main.js");
     const importedChunk = path.join(packageRoot, "dist", "memory-state-CcqRgDZU.js");
     const staleFile = path.join(packageRoot, "dist", "memory-state-old.js");
@@ -501,7 +501,7 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("prunes stale private QA files without restoring compat sidecars", async () => {
-    const packageRoot = await createTempDirAsync("openclaw-packaged-install-qa-compat-");
+    const packageRoot = await createTempDirAsync("opencli-packaged-install-qa-compat-");
     const currentFile = path.join(packageRoot, "dist", "entry.js");
     const stalePackage = path.join(packageRoot, "dist", "extensions", "qa-lab", "package.json");
     const staleManifest = path.join(
@@ -509,7 +509,7 @@ describe("bundled plugin postinstall", () => {
       "dist",
       "extensions",
       "qa-lab",
-      "openclaw.plugin.json",
+      "opencli.plugin.json",
     );
     await fs.mkdir(path.dirname(stalePackage), { recursive: true });
     await fs.writeFile(currentFile, "export {};\n");
@@ -532,7 +532,7 @@ describe("bundled plugin postinstall", () => {
       fs.stat(path.join(packageRoot, "dist", "extensions", "qa-channel", "package.json")),
     ).rejects.toMatchObject({ code: "ENOENT" });
     await expect(
-      fs.stat(path.join(packageRoot, "dist", "extensions", "qa-channel", "openclaw.plugin.json")),
+      fs.stat(path.join(packageRoot, "dist", "extensions", "qa-channel", "opencli.plugin.json")),
     ).rejects.toMatchObject({ code: "ENOENT" });
     await expect(
       fs.stat(path.join(packageRoot, "dist", "extensions", "qa-lab", "runtime-api.js")),
@@ -540,7 +540,7 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("keeps packaged postinstall non-fatal when the dist inventory is missing", async () => {
-    const packageRoot = await createTempDirAsync("openclaw-packaged-install-missing-inventory-");
+    const packageRoot = await createTempDirAsync("opencli-packaged-install-missing-inventory-");
     const staleFile = path.join(packageRoot, "dist", "channel-CJUAgRQR.js");
     await fs.mkdir(path.dirname(staleFile), { recursive: true });
     await fs.writeFile(staleFile, "export {};\n");
@@ -560,7 +560,7 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("keeps packaged postinstall non-fatal when the dist inventory is invalid", async () => {
-    const packageRoot = await createTempDirAsync("openclaw-packaged-install-invalid-inventory-");
+    const packageRoot = await createTempDirAsync("opencli-packaged-install-invalid-inventory-");
     const currentFile = path.join(packageRoot, "dist", "channel-BOa4MfoC.js");
     const inventoryPath = path.join(packageRoot, "dist", "postinstall-inventory.json");
     await fs.mkdir(path.dirname(currentFile), { recursive: true });
@@ -630,7 +630,7 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("ignores staged bundled plugin node_modules when pruning packaged dist", async () => {
-    const packageRoot = await createTempDirAsync("openclaw-packaged-install-runtime-deps-");
+    const packageRoot = await createTempDirAsync("opencli-packaged-install-runtime-deps-");
     const staleFile = path.join(packageRoot, "dist", "stale-runtime.js");
     const packageJson = path.join(packageRoot, "dist", "extensions", "slack", "package.json");
     const binDir = path.join(packageRoot, "dist", "extensions", "slack", "node_modules", ".bin");
@@ -639,7 +639,7 @@ describe("bundled plugin postinstall", () => {
       "dist",
       "extensions",
       "slack",
-      ".openclaw-install-stage",
+      ".opencli-install-stage",
       "node_modules",
       "typebox",
       "build",
@@ -651,7 +651,7 @@ describe("bundled plugin postinstall", () => {
       "dist",
       "extensions",
       "slack",
-      ".openclaw-install-stage-retry",
+      ".opencli-install-stage-retry",
       "node_modules",
       "typebox",
       "build",
@@ -726,7 +726,7 @@ describe("bundled plugin postinstall", () => {
 
     runBundledPluginPostinstall({
       env: {
-        OPENCLAW_EAGER_BUNDLED_PLUGIN_DEPS: "1",
+        OPENCLI_EAGER_BUNDLED_PLUGIN_DEPS: "1",
         npm_config_global: "true",
         npm_config_location: "global",
         npm_config_prefix: "/opt/homebrew",
@@ -775,7 +775,7 @@ describe("bundled plugin postinstall", () => {
     const spawnSync = vi.fn(() => ({ status: 0, stderr: "", stdout: "" }));
 
     runBundledPluginPostinstall({
-      env: { HOME: "/tmp/home", OPENCLAW_EAGER_BUNDLED_PLUGIN_DEPS: "1" },
+      env: { HOME: "/tmp/home", OPENCLI_EAGER_BUNDLED_PLUGIN_DEPS: "1" },
       extensionsDir,
       packageRoot,
       arch: "arm64",
@@ -880,7 +880,7 @@ describe("bundled plugin postinstall", () => {
 
     runBundledPluginPostinstall({
       env: {
-        OPENCLAW_EAGER_BUNDLED_PLUGIN_DEPS: "1",
+        OPENCLI_EAGER_BUNDLED_PLUGIN_DEPS: "1",
         npm_config_global: "true",
         npm_config_location: "global",
         npm_config_prefix: "/opt/homebrew",
@@ -920,7 +920,7 @@ describe("bundled plugin postinstall", () => {
 
     runBundledPluginPostinstall({
       env: {
-        OPENCLAW_EAGER_BUNDLED_PLUGIN_DEPS: "1",
+        OPENCLI_EAGER_BUNDLED_PLUGIN_DEPS: "1",
         HOME: "/tmp/home",
       },
       extensionsDir,
@@ -945,7 +945,7 @@ describe("bundled plugin postinstall", () => {
 
     runBundledPluginPostinstall({
       env: {
-        OPENCLAW_EAGER_BUNDLED_PLUGIN_DEPS: "1",
+        OPENCLI_EAGER_BUNDLED_PLUGIN_DEPS: "1",
         npm_config_location: "global",
         npm_config_prefix: "/opt/homebrew",
         HOME: "/tmp/home",
@@ -961,13 +961,13 @@ describe("bundled plugin postinstall", () => {
   });
 
   it("prunes only bundled plugin package node_modules in source checkouts", async () => {
-    const packageRoot = await createTempDirAsync("openclaw-source-prune-");
+    const packageRoot = await createTempDirAsync("opencli-source-prune-");
     const extensionsDir = path.join(packageRoot, "extensions");
     await fs.mkdir(path.join(extensionsDir, "acpx", "node_modules"), { recursive: true });
     await fs.mkdir(path.join(extensionsDir, "fixtures", "node_modules"), { recursive: true });
     await fs.writeFile(
       path.join(extensionsDir, "acpx", "package.json"),
-      JSON.stringify({ name: "@openclaw/acpx" }),
+      JSON.stringify({ name: "@opencli/acpx" }),
     );
 
     pruneBundledPluginSourceNodeModules({ extensionsDir });

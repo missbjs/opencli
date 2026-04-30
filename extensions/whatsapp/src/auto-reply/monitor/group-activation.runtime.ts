@@ -1,1 +1,1 @@
-export { normalizeGroupActivation } from "openclaw/plugin-sdk/group-activation";
+export { normalizeGroupActivation } from "opencli/plugin-sdk/group-activation";

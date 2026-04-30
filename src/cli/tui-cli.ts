@@ -27,16 +27,13 @@ export function registerTuiCli(program: Command) {
     .option("--history-limit <n>", "History entries to load", "200")
     .addHelpText(
       "after",
-      () => `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/tui", "docs.openclaw.ai/cli/tui")}\n`,
+      () => `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/tui", "docs.opencli.ai/cli/tui")}\n`,
     )
-    .action(async (opts, cmd) => {
+    .action(async (opts, _cmd) => {
       try {
-        // `cmd.name()` always returns the canonical subcommand name (`tui`).
-        // Use the parsed parent args to see which alias the user actually typed.
-        const invokedSubcommand = cmd.parent?.args[0];
-        const invokedAsLocalAlias =
-          invokedSubcommand === "terminal" || invokedSubcommand === "chat";
-        const isLocal = Boolean(opts.local) || invokedAsLocalAlias;
+        // chat / terminal / tui all behave the same: connect to the running
+        // gateway via WS by default; pass --local to use the embedded runtime.
+        const isLocal = Boolean(opts.local);
         if (isLocal && (opts.url || opts.token || opts.password)) {
           throw new Error("--local cannot be combined with --url, --token, or --password");
         }

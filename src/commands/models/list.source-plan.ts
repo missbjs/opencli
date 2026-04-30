@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../../config/types.opencli.js";
 import type { NormalizedModelCatalogRow } from "../../model-catalog/index.js";
 
 export type ModelListSourcePlanKind =
@@ -45,7 +45,7 @@ export function createRegistryModelListSourcePlan(): ModelListSourcePlan {
 export async function planAllModelListSources(params: {
   all?: boolean;
   providerFilter?: string;
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
 }): Promise<ModelListSourcePlan> {
   if (!params.all) {
     return createRegistryModelListSourcePlan();

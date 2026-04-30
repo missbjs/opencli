@@ -1,11 +1,11 @@
 import Foundation
-import OpenClawIPC
+import OpenCLIIPC
 import Security
 import UserNotifications
 
 @MainActor
 struct NotificationManager {
-    private let logger = Logger(subsystem: "ai.openclaw", category: "notifications")
+    private let logger = Logger(subsystem: "ai.opencli", category: "notifications")
 
     private static let hasTimeSensitiveEntitlement: Bool = {
         guard let task = SecTaskCreateFromSelf(nil) else { return false }

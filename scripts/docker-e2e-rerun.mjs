@@ -9,7 +9,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const DEFAULT_WORKFLOW = "openclaw-live-and-e2e-checks-reusable.yml";
+const DEFAULT_WORKFLOW = "opencli-live-and-e2e-checks-reusable.yml";
 
 function usage() {
   return [
@@ -303,7 +303,7 @@ if (isLocalJson) {
   const run = runInfo(options.input, repo);
   const ref = options.ref || run.headSha || run.headBranch;
   const outputDir =
-    options.dir || path.join(os.tmpdir(), `openclaw-docker-e2e-rerun-${options.input}`);
+    options.dir || path.join(os.tmpdir(), `opencli-docker-e2e-rerun-${options.input}`);
   const artifactNames = downloadDockerArtifacts(options.input, repo, outputDir);
   const files = findFiles(outputDir, new Set(["failures.json", "summary.json"]));
   const entries = mergeByLane(

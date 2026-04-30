@@ -1,13 +1,13 @@
 {
-  "name": "@openclaw/cerebras-provider",
+  "name": "@opencli/cerebras-provider",
   "version": "2026.4.26",
   "private": true,
-  "description": "OpenClaw Cerebras provider plugin",
+  "description": "OpenCLI Cerebras provider plugin",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@opencli/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "opencli": {
     "extensions": [
       "./index.ts"
     ]

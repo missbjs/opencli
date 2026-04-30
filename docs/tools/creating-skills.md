@@ -18,7 +18,7 @@ For how skills are loaded and prioritized, see [Skills](/tools/skills).
     Skills live in your workspace. Create a new folder:
 
     ```bash
-    mkdir -p ~/.openclaw/workspace/skills/hello-world
+    mkdir -p ~/.opencli/workspace/skills/hello-world
     ```
 
   </Step>
@@ -52,20 +52,20 @@ For how skills are loaded and prioritized, see [Skills](/tools/skills).
   </Step>
 
   <Step title="Load the skill">
-    Start a new session so OpenClaw picks up the skill:
+    Start a new session so OpenCLI picks up the skill:
 
     ```bash
     # From chat
     /new
 
     # Or restart the gateway
-    openclaw gateway restart
+    opencli gateway restart
     ```
 
     Verify the skill loaded:
 
     ```bash
-    openclaw skills list
+    opencli skills list
     ```
 
   </Step>
@@ -74,7 +74,7 @@ For how skills are loaded and prioritized, see [Skills](/tools/skills).
     Send a message that should trigger the skill:
 
     ```bash
-    openclaw agent --message "give me a greeting"
+    opencli agent --message "give me a greeting"
     ```
 
     Or just chat with the agent and ask for a greeting.
@@ -86,19 +86,19 @@ For how skills are loaded and prioritized, see [Skills](/tools/skills).
 
 The YAML frontmatter supports these fields:
 
-| Field                               | Required | Description                                                    |
-| ----------------------------------- | -------- | -------------------------------------------------------------- |
-| `name`                              | Yes      | Unique identifier using lowercase letters, digits, and hyphens |
-| `description`                       | Yes      | One-line description shown to the agent                        |
-| `metadata.openclaw.os`              | No       | OS filter (`["darwin"]`, `["linux"]`, etc.)                    |
-| `metadata.openclaw.requires.bins`   | No       | Required binaries on PATH                                      |
-| `metadata.openclaw.requires.config` | No       | Required config keys                                           |
+| Field                              | Required | Description                                                    |
+| ---------------------------------- | -------- | -------------------------------------------------------------- |
+| `name`                             | Yes      | Unique identifier using lowercase letters, digits, and hyphens |
+| `description`                      | Yes      | One-line description shown to the agent                        |
+| `metadata.opencli.os`              | No       | OS filter (`["darwin"]`, `["linux"]`, etc.)                    |
+| `metadata.opencli.requires.bins`   | No       | Required binaries on PATH                                      |
+| `metadata.opencli.requires.config` | No       | Required config keys                                           |
 
 ## Best practices
 
 - **Be concise** — instruct the model on _what_ to do, not how to be an AI
 - **Safety first** — if your skill uses `exec`, ensure prompts don't allow arbitrary command injection from untrusted input
-- **Test locally** — use `openclaw agent --message "..."` to test before sharing
+- **Test locally** — use `opencli agent --message "..."` to test before sharing
 - **Use ClawHub** — browse and contribute skills at [ClawHub](https://clawhub.ai)
 
 ## Where skills live
@@ -108,8 +108,8 @@ The YAML frontmatter supports these fields:
 | `\<workspace\>/skills/`         | Highest    | Per-agent             |
 | `\<workspace\>/.agents/skills/` | High       | Per-workspace agent   |
 | `~/.agents/skills/`             | Medium     | Shared agent profile  |
-| `~/.openclaw/skills/`           | Medium     | Shared (all agents)   |
-| Bundled (shipped with OpenClaw) | Low        | Global                |
+| `~/.opencli/skills/`            | Medium     | Shared (all agents)   |
+| Bundled (shipped with OpenCLI)  | Low        | Global                |
 | `skills.load.extraDirs`         | Lowest     | Custom shared folders |
 
 ## Related

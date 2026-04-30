@@ -12,12 +12,12 @@ run_root_owned_global_scenario() {
     -i "$IMAGE_NAME" bash -s <<'EOF'
 set -euo pipefail
 
-source scripts/lib/openclaw-e2e-instance.sh
+source scripts/lib/opencli-e2e-instance.sh
 source scripts/e2e/lib/bundled-channel/common.sh
 export HOME="/root"
-export OPENAI_API_KEY="sk-openclaw-bundled-channel-root-owned-e2e"
-export OPENCLAW_NO_ONBOARD=1
-export OPENCLAW_PLUGIN_STAGE_DIR="/var/lib/openclaw/plugin-runtime-deps"
+export OPENAI_API_KEY="sk-opencli-bundled-channel-root-owned-e2e"
+export OPENCLI_NO_ONBOARD=1
+export OPENCLI_PLUGIN_STAGE_DIR="/var/lib/opencli/plugin-runtime-deps"
 
 TOKEN="bundled-channel-root-owned-token"
 PORT="18791"
@@ -33,25 +33,25 @@ cleanup() {
 }
 trap cleanup EXIT
 
-bundled_channel_install_package /tmp/openclaw-root-owned-install.log "mounted OpenClaw package into root-owned global npm"
+bundled_channel_install_package /tmp/opencli-root-owned-install.log "mounted OpenCLI package into root-owned global npm"
 
 root="$(bundled_channel_package_root)"
 test -d "$root/dist/extensions/$CHANNEL"
 rm -rf "$root/dist/extensions/$CHANNEL/node_modules"
 chmod -R a-w "$root"
-mkdir -p "$OPENCLAW_PLUGIN_STAGE_DIR" /home/appuser/.openclaw
-chown -R appuser:appuser /home/appuser/.openclaw /var/lib/openclaw
+mkdir -p "$OPENCLI_PLUGIN_STAGE_DIR" /home/appuser/.opencli
+chown -R appuser:appuser /home/appuser/.opencli /var/lib/opencli
 
 if runuser -u appuser -- test -w "$root"; then
   echo "expected package root to be unwritable for appuser" >&2
   exit 1
 fi
 
-OPENCLAW_BUNDLED_CHANNEL_CONFIG_PATH=/home/appuser/.openclaw/openclaw.json \
-  OPENCLAW_BUNDLED_CHANNEL_SLACK_BOT_TOKEN=xoxb-bundled-channel-root-owned-token \
-  OPENCLAW_BUNDLED_CHANNEL_SLACK_APP_TOKEN=xapp-bundled-channel-root-owned-token \
+OPENCLI_BUNDLED_CHANNEL_CONFIG_PATH=/home/appuser/.opencli/opencli.json \
+  OPENCLI_BUNDLED_CHANNEL_SLACK_BOT_TOKEN=xoxb-bundled-channel-root-owned-token \
+  OPENCLI_BUNDLED_CHANNEL_SLACK_APP_TOKEN=xapp-bundled-channel-root-owned-token \
   bundled_channel_write_config slack
-chown appuser:appuser /home/appuser/.openclaw/openclaw.json
+chown appuser:appuser /home/appuser/.opencli/opencli.json
 
 start_gateway() {
   local log_file="$1"
@@ -60,10 +60,10 @@ start_gateway() {
   runuser -u appuser -- env \
     HOME=/home/appuser \
     OPENAI_API_KEY="$OPENAI_API_KEY" \
-    OPENCLAW_NO_ONBOARD=1 \
-    OPENCLAW_PLUGIN_STAGE_DIR="$OPENCLAW_PLUGIN_STAGE_DIR" \
-    npm_config_cache=/tmp/openclaw-root-owned-npm-cache \
-    bash -c 'openclaw gateway --port "$1" --bind loopback --allow-unconfigured >"$2" 2>&1' \
+    OPENCLI_NO_ONBOARD=1 \
+    OPENCLI_PLUGIN_STAGE_DIR="$OPENCLI_PLUGIN_STAGE_DIR" \
+    npm_config_cache=/tmp/opencli-root-owned-npm-cache \
+    bash -c 'opencli gateway --port "$1" --bind loopback --allow-unconfigured >"$2" 2>&1' \
     bash "$PORT" "$log_file" &
   gateway_pid="$!"
 
@@ -87,35 +87,35 @@ start_gateway() {
 
 wait_for_slack_provider_start() {
   for _ in $(seq 1 180); do
-    if grep -Eq "\\[slack\\] \\[default\\] starting provider|An API error occurred: invalid_auth|\\[plugins\\] slack installed bundled runtime deps|\\[gateway\\] ready \\(.*\\bslack\\b" /tmp/openclaw-root-owned-gateway.log; then
+    if grep -Eq "\\[slack\\] \\[default\\] starting provider|An API error occurred: invalid_auth|\\[plugins\\] slack installed bundled runtime deps|\\[gateway\\] ready \\(.*\\bslack\\b" /tmp/opencli-root-owned-gateway.log; then
       return 0
     fi
     sleep 1
   done
   echo "timed out waiting for slack provider startup" >&2
-  cat /tmp/openclaw-root-owned-gateway.log >&2
+  cat /tmp/opencli-root-owned-gateway.log >&2
   exit 1
 }
 
-start_gateway /tmp/openclaw-root-owned-gateway.log
+start_gateway /tmp/opencli-root-owned-gateway.log
 wait_for_slack_provider_start
 
 bundled_channel_assert_no_package_dep_available "$CHANNEL" "$DEP_SENTINEL" "$root"
-bundled_channel_assert_staged_dep "$CHANNEL" "$DEP_SENTINEL" /tmp/openclaw-root-owned-gateway.log
-if [ -e "$root/dist/extensions/node_modules/openclaw/package.json" ]; then
+bundled_channel_assert_staged_dep "$CHANNEL" "$DEP_SENTINEL" /tmp/opencli-root-owned-gateway.log
+if [ -e "$root/dist/extensions/node_modules/opencli/package.json" ]; then
   echo "root-owned package tree was mutated with SDK alias" >&2
-  find "$root/dist/extensions/node_modules/openclaw" -maxdepth 4 -type f | sort | head -80 >&2 || true
+  find "$root/dist/extensions/node_modules/opencli" -maxdepth 4 -type f | sort | head -80 >&2 || true
   exit 1
 fi
-if ! find "$(bundled_channel_stage_dir)" -maxdepth 12 -path "*/dist/extensions/node_modules/openclaw/package.json" -type f | grep -q .; then
-  echo "missing external staged openclaw/plugin-sdk alias" >&2
+if ! find "$(bundled_channel_stage_dir)" -maxdepth 12 -path "*/dist/extensions/node_modules/opencli/package.json" -type f | grep -q .; then
+  echo "missing external staged opencli/plugin-sdk alias" >&2
   bundled_channel_dump_stage_dir
-  cat /tmp/openclaw-root-owned-gateway.log >&2
+  cat /tmp/opencli-root-owned-gateway.log >&2
   exit 1
 fi
-if grep -Eq "failed to install bundled runtime deps|Cannot find package 'openclaw'|Cannot find module 'openclaw/plugin-sdk'" /tmp/openclaw-root-owned-gateway.log; then
+if grep -Eq "failed to install bundled runtime deps|Cannot find package 'opencli'|Cannot find module 'opencli/plugin-sdk'" /tmp/opencli-root-owned-gateway.log; then
   echo "root-owned gateway hit bundled runtime dependency errors" >&2
-  cat /tmp/openclaw-root-owned-gateway.log >&2
+  cat /tmp/opencli-root-owned-gateway.log >&2
   exit 1
 fi
 

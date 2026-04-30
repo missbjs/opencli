@@ -3,22 +3,22 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
-IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-plugins-e2e" OPENCLAW_PLUGINS_E2E_IMAGE)"
+IMAGE_NAME="$(docker_e2e_resolve_image "opencli-plugins-e2e" OPENCLI_PLUGINS_E2E_IMAGE)"
 
 docker_e2e_build_or_reuse "$IMAGE_NAME" plugins
 
-OPENCLAW_TEST_STATE_SCRIPT_B64="$(docker_e2e_test_state_shell_b64 plugins empty)"
+OPENCLI_TEST_STATE_SCRIPT_B64="$(docker_e2e_test_state_shell_b64 plugins empty)"
 DOCKER_ENV_ARGS=(
   -e COREPACK_ENABLE_DOWNLOAD_PROMPT=0
-  -e "OPENCLAW_TEST_STATE_SCRIPT_B64=$OPENCLAW_TEST_STATE_SCRIPT_B64"
+  -e "OPENCLI_TEST_STATE_SCRIPT_B64=$OPENCLI_TEST_STATE_SCRIPT_B64"
 )
 for env_name in \
-  OPENCLAW_PLUGINS_E2E_CLAWHUB \
-  OPENCLAW_PLUGINS_E2E_CLAWHUB_SPEC \
-  OPENCLAW_PLUGINS_E2E_CLAWHUB_ID \
-  OPENCLAW_CLAWHUB_URL \
+  OPENCLI_PLUGINS_E2E_CLAWHUB \
+  OPENCLI_PLUGINS_E2E_CLAWHUB_SPEC \
+  OPENCLI_PLUGINS_E2E_CLAWHUB_ID \
+  OPENCLI_CLAWHUB_URL \
   CLAWHUB_URL \
-  OPENCLAW_CLAWHUB_TOKEN \
+  OPENCLI_CLAWHUB_TOKEN \
   CLAWHUB_TOKEN \
   CLAWHUB_AUTH_TOKEN; do
   env_value="${!env_name:-}"

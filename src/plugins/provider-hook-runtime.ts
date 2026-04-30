@@ -1,5 +1,5 @@
 import { normalizeProviderId } from "../agents/provider-id.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { normalizeLowercaseStringOrEmpty } from "../shared/string-coerce.js";
 import { resolveProviderConfigApiOwnerHint } from "./provider-config-owner.js";
 import { isPluginProvidersLoadInFlight, resolvePluginProviders } from "./providers.runtime.js";
@@ -33,7 +33,7 @@ function matchesProviderLiteralId(provider: ProviderPlugin, providerId: string):
 }
 
 export function resolveProviderPluginsForHooks(params: {
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   onlyPluginIds?: string[];
@@ -76,7 +76,7 @@ export function resolveProviderPluginsForHooks(params: {
 
 export function resolveProviderRuntimePlugin(params: {
   provider: string;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   applyAutoEnable?: boolean;
@@ -109,7 +109,7 @@ export function resolveProviderRuntimePlugin(params: {
 
 export function resolveProviderHookPlugin(params: {
   provider: string;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
 }): ProviderPlugin | undefined {
@@ -125,7 +125,7 @@ export function resolveProviderHookPlugin(params: {
 
 export function prepareProviderExtraParams(params: {
   provider: string;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   context: ProviderPrepareExtraParamsContext;
@@ -135,7 +135,7 @@ export function prepareProviderExtraParams(params: {
 
 export function resolveProviderExtraParamsForTransport(params: {
   provider: string;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   context: ProviderExtraParamsForTransportContext;
@@ -145,7 +145,7 @@ export function resolveProviderExtraParamsForTransport(params: {
 
 export function resolveProviderAuthProfileId(params: {
   provider: string;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   context: ProviderResolveAuthProfileIdContext;
@@ -156,7 +156,7 @@ export function resolveProviderAuthProfileId(params: {
 
 export function resolveProviderFollowupFallbackRoute(params: {
   provider: string;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   context: ProviderFollowupFallbackRouteContext;
@@ -166,7 +166,7 @@ export function resolveProviderFollowupFallbackRoute(params: {
 
 export function wrapProviderStreamFn(params: {
   provider: string;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   context: ProviderWrapStreamFnContext;

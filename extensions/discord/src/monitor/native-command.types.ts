@@ -1,7 +1,7 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
-import type { CommandArgValues } from "openclaw/plugin-sdk/native-command-registry";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
+import type { CommandArgValues } from "opencli/plugin-sdk/native-command-registry";
 
-export type DiscordConfig = NonNullable<OpenClawConfig["channels"]>["discord"];
+export type DiscordConfig = NonNullable<OpenCLIConfig["channels"]>["discord"];
 
 export type DiscordCommandArgs = {
   raw?: string;

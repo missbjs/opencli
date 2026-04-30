@@ -1,6 +1,6 @@
 import CoreLocation
 import Testing
-@testable import OpenClaw
+@testable import OpenCLI
 
 struct PermissionManagerLocationTests {
     @Test

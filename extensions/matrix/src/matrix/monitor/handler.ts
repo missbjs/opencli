@@ -1,14 +1,14 @@
-import { resolveControlCommandGate } from "openclaw/plugin-sdk/command-gating";
+import { resolveControlCommandGate } from "opencli/plugin-sdk/command-gating";
 import {
   evaluateSupplementalContextVisibility,
   resolveChannelContextVisibilityMode,
-} from "openclaw/plugin-sdk/context-visibility-runtime";
-import type { GetReplyOptions } from "openclaw/plugin-sdk/reply-runtime";
+} from "opencli/plugin-sdk/context-visibility-runtime";
+import type { GetReplyOptions } from "opencli/plugin-sdk/reply-runtime";
 import {
   loadSessionStore,
   resolveSessionStoreEntry,
-} from "openclaw/plugin-sdk/session-store-runtime";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+} from "opencli/plugin-sdk/session-store-runtime";
+import { normalizeOptionalString } from "opencli/plugin-sdk/string-coerce-runtime";
 import type {
   CoreConfig,
   MatrixRoomConfig,
@@ -33,7 +33,7 @@ import {
   parsePollStartContent,
 } from "../poll-types.js";
 import type { LocationMessageEventContent, MatrixClient } from "../sdk.js";
-import { MATRIX_OPENCLAW_FINALIZED_PREVIEW_KEY } from "../send/types.js";
+import { MATRIX_OPENCLI_FINALIZED_PREVIEW_KEY } from "../send/types.js";
 import { resolveMatrixStoredSessionMeta } from "../session-store-metadata.js";
 import { resolveMatrixMonitorAccessState } from "./access-state.js";
 import { resolveMatrixAckReactionConfig } from "./ack-config.js";
@@ -80,10 +80,10 @@ const PAIRING_REPLY_COOLDOWN_MS = 5 * 60_000;
 const MATRIX_TOOL_PROGRESS_MAX_CHARS = 300;
 let matrixSendModulePromise: Promise<typeof import("../send.js")> | undefined;
 let acpBindingRuntimePromise:
-  | Promise<typeof import("openclaw/plugin-sdk/acp-binding-runtime")>
+  | Promise<typeof import("opencli/plugin-sdk/acp-binding-runtime")>
   | undefined;
 let sessionBindingRuntimePromise:
-  | Promise<typeof import("openclaw/plugin-sdk/session-binding-runtime")>
+  | Promise<typeof import("opencli/plugin-sdk/session-binding-runtime")>
   | undefined;
 let matrixReactionEventsPromise: Promise<typeof import("./reaction-events.js")> | undefined;
 let matrixDraftStreamPromise: Promise<typeof import("../draft-stream.js")> | undefined;
@@ -93,17 +93,15 @@ function loadMatrixSendModule(): Promise<typeof import("../send.js")> {
   return matrixSendModulePromise;
 }
 
-function loadAcpBindingRuntime(): Promise<
-  typeof import("openclaw/plugin-sdk/acp-binding-runtime")
-> {
-  acpBindingRuntimePromise ??= import("openclaw/plugin-sdk/acp-binding-runtime");
+function loadAcpBindingRuntime(): Promise<typeof import("opencli/plugin-sdk/acp-binding-runtime")> {
+  acpBindingRuntimePromise ??= import("opencli/plugin-sdk/acp-binding-runtime");
   return acpBindingRuntimePromise;
 }
 
 function loadSessionBindingRuntime(): Promise<
-  typeof import("openclaw/plugin-sdk/session-binding-runtime")
+  typeof import("opencli/plugin-sdk/session-binding-runtime")
 > {
-  sessionBindingRuntimePromise ??= import("openclaw/plugin-sdk/session-binding-runtime");
+  sessionBindingRuntimePromise ??= import("opencli/plugin-sdk/session-binding-runtime");
   return sessionBindingRuntimePromise;
 }
 
@@ -147,7 +145,7 @@ async function redactMatrixDraftEvent(
 }
 
 function buildMatrixFinalizedPreviewContent(): Record<string, unknown> {
-  return { [MATRIX_OPENCLAW_FINALIZED_PREVIEW_KEY]: true };
+  return { [MATRIX_OPENCLI_FINALIZED_PREVIEW_KEY]: true };
 }
 
 export type MatrixMonitorHandlerParams = {

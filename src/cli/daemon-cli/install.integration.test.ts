@@ -44,16 +44,16 @@ describe("runDaemonInstall integration", () => {
   beforeAll(async () => {
     envSnapshot = captureEnv([
       "HOME",
-      "OPENCLAW_STATE_DIR",
-      "OPENCLAW_CONFIG_PATH",
-      "OPENCLAW_GATEWAY_TOKEN",
-      "OPENCLAW_GATEWAY_PASSWORD",
+      "OPENCLI_STATE_DIR",
+      "OPENCLI_CONFIG_PATH",
+      "OPENCLI_GATEWAY_TOKEN",
+      "OPENCLI_GATEWAY_PASSWORD",
     ]);
-    tempHome = await makeTempWorkspace("openclaw-daemon-install-int-");
-    configPath = path.join(tempHome, "openclaw.json");
+    tempHome = await makeTempWorkspace("opencli-daemon-install-int-");
+    configPath = path.join(tempHome, "opencli.json");
     process.env.HOME = tempHome;
-    process.env.OPENCLAW_STATE_DIR = tempHome;
-    process.env.OPENCLAW_CONFIG_PATH = configPath;
+    process.env.OPENCLI_STATE_DIR = tempHome;
+    process.env.OPENCLI_CONFIG_PATH = configPath;
   });
 
   afterAll(async () => {
@@ -66,8 +66,8 @@ describe("runDaemonInstall integration", () => {
     resetRuntimeCapture();
     clearRuntimeConfigSnapshot();
     // Keep these defined-but-empty so dotenv won't repopulate from local .env.
-    process.env.OPENCLAW_GATEWAY_TOKEN = "";
-    process.env.OPENCLAW_GATEWAY_PASSWORD = "";
+    process.env.OPENCLI_GATEWAY_TOKEN = "";
+    process.env.OPENCLI_GATEWAY_PASSWORD = "";
     serviceMock.isLoaded.mockResolvedValue(false);
     await fs.writeFile(configPath, JSON.stringify({}, null, 2));
     clearConfigCache();
@@ -107,7 +107,7 @@ describe("runDaemonInstall integration", () => {
     expect(joined).toContain("MISSING_GATEWAY_TOKEN");
   });
 
-  it("refuses service install when config was written by a newer OpenClaw", async () => {
+  it("refuses service install when config was written by a newer OpenCLI", async () => {
     await fs.writeFile(
       configPath,
       JSON.stringify(
@@ -160,6 +160,6 @@ describe("runDaemonInstall integration", () => {
     expect((persistedToken ?? "").length).toBeGreaterThan(0);
 
     const installEnv = serviceMock.install.mock.calls[0]?.[0]?.environment;
-    expect(installEnv?.OPENCLAW_GATEWAY_TOKEN).toBeUndefined();
+    expect(installEnv?.OPENCLI_GATEWAY_TOKEN).toBeUndefined();
   });
 });

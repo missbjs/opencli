@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import { Module } from "node:module";
 import path from "node:path";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { beginBundledRuntimeDepsInstall } from "./bundled-runtime-deps-activity.js";
 import {
   installBundledRuntimeDeps,
@@ -113,7 +113,7 @@ export type BundledRuntimeDepsPlan = {
 // dependencies and fail with `EUNSUPPORTEDPROTOCOL`. To avoid that, stage the
 // install inside this sub-directory and move the produced `node_modules/` back
 // to the plugin root.
-const PLUGIN_ROOT_INSTALL_STAGE_DIR = ".openclaw-install-stage";
+const PLUGIN_ROOT_INSTALL_STAGE_DIR = ".opencli-install-stage";
 
 const registeredBundledRuntimeDepNodePaths = new Set<string>();
 
@@ -206,7 +206,7 @@ function createBundledRuntimeDepsPlan(params: {
 
 export function scanBundledPluginRuntimeDeps(params: {
   packageRoot: string;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   pluginIds?: readonly string[];
   selectedPluginIds?: readonly string[];
   includeConfiguredChannels?: boolean;
@@ -287,7 +287,7 @@ export function ensureBundledPluginRuntimeDeps(params: {
   pluginId: string;
   pluginRoot: string;
   env: NodeJS.ProcessEnv;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   installDeps?: (params: BundledRuntimeDepsInstallParams) => void;
 }): BundledRuntimeDepsEnsureResult {
   const extensionsDir = path.dirname(params.pluginRoot);

@@ -184,7 +184,7 @@ describe("applyPluginAutoEnable core", () => {
     expect(result.changes).toEqual([]);
     expect(
       readFileSync.mock.calls.some(
-        ([filePath]) => typeof filePath === "string" && filePath.endsWith("openclaw.plugin.json"),
+        ([filePath]) => typeof filePath === "string" && filePath.endsWith("opencli.plugin.json"),
       ),
     ).toBe(false);
   });
@@ -212,7 +212,7 @@ describe("applyPluginAutoEnable core", () => {
     expect(result.changes).toEqual([]);
     expect(
       readFileSync.mock.calls.some(
-        ([filePath]) => typeof filePath === "string" && filePath.endsWith("openclaw.plugin.json"),
+        ([filePath]) => typeof filePath === "string" && filePath.endsWith("opencli.plugin.json"),
       ),
     ).toBe(false);
   });
@@ -499,7 +499,7 @@ describe("applyPluginAutoEnable core", () => {
   it("auto-enables an opt-in plugin when an agent harness runtime is forced by env", () => {
     const result = applyPluginAutoEnable({
       config: {},
-      env: makeIsolatedEnv({ OPENCLAW_AGENT_RUNTIME: "codex" }),
+      env: makeIsolatedEnv({ OPENCLI_AGENT_RUNTIME: "codex" }),
       manifestRegistry: makeRegistry([
         {
           id: "codex",
@@ -603,7 +603,7 @@ describe("applyPluginAutoEnable core", () => {
   it("does not auto-enable WhatsApp from persisted auth state alone", () => {
     const persistedEnv = makeIsolatedEnv();
     const authDir = path.join(
-      persistedEnv.OPENCLAW_STATE_DIR ?? "",
+      persistedEnv.OPENCLI_STATE_DIR ?? "",
       "credentials",
       "whatsapp",
       "default",
@@ -741,7 +741,7 @@ describe("applyPluginAutoEnable core", () => {
       env: {
         ...makeIsolatedEnv(),
         IRC_HOST: "irc.libera.chat",
-        IRC_NICK: "openclaw-bot",
+        IRC_NICK: "opencli-bot",
       },
     });
 

@@ -1,13 +1,13 @@
-import { DEFAULT_ACCOUNT_ID } from "openclaw/plugin-sdk/account-id";
-import type { ChannelDoctorConfigMutation } from "openclaw/plugin-sdk/channel-contract";
-import { readChannelAllowFromStore } from "openclaw/plugin-sdk/channel-pairing";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
+import { DEFAULT_ACCOUNT_ID } from "opencli/plugin-sdk/account-id";
+import type { ChannelDoctorConfigMutation } from "opencli/plugin-sdk/channel-contract";
+import { readChannelAllowFromStore } from "opencli/plugin-sdk/channel-pairing";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
 
 function applyGroupAllowFromFromStore(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   storeAllowFrom: string[];
   changes: string[];
-}): OpenClawConfig {
+}): OpenCLIConfig {
   const next = structuredClone(params.cfg ?? {});
   const section = next.channels?.whatsapp as Record<string, unknown> | undefined;
   if (!section || typeof section !== "object" || params.storeAllowFrom.length === 0) {
@@ -48,7 +48,7 @@ function applyGroupAllowFromFromStore(params: {
 }
 
 export async function applyWhatsAppSecurityConfigFixes(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   env: NodeJS.ProcessEnv;
 }): Promise<ChannelDoctorConfigMutation> {
   const fromStore = await readChannelAllowFromStore(

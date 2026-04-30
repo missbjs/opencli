@@ -1,4 +1,4 @@
-import { resolveHumanDelayConfig } from "openclaw/plugin-sdk/agent-runtime";
+import { resolveHumanDelayConfig } from "opencli/plugin-sdk/agent-runtime";
 import {
   createStatusReactionController,
   DEFAULT_TIMING,
@@ -6,26 +6,26 @@ import {
   logTypingFailure,
   removeAckReactionAfterReply,
   type StatusReactionAdapter,
-} from "openclaw/plugin-sdk/channel-feedback";
-import { deliverFinalizableDraftPreview } from "openclaw/plugin-sdk/channel-lifecycle";
+} from "opencli/plugin-sdk/channel-feedback";
+import { deliverFinalizableDraftPreview } from "opencli/plugin-sdk/channel-lifecycle";
 import {
   createChannelReplyPipeline,
   resolveChannelSourceReplyDeliveryMode,
-} from "openclaw/plugin-sdk/channel-reply-pipeline";
+} from "opencli/plugin-sdk/channel-reply-pipeline";
 import {
   resolveChannelStreamingBlockEnabled,
   resolveChannelStreamingNativeTransport,
   resolveChannelStreamingPreviewToolProgress,
-} from "openclaw/plugin-sdk/channel-streaming";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { runPreparedInboundReplyTurn } from "openclaw/plugin-sdk/inbound-reply-dispatch";
-import { resolveAgentOutboundIdentity } from "openclaw/plugin-sdk/outbound-runtime";
-import { clearHistoryEntriesIfEnabled } from "openclaw/plugin-sdk/reply-history";
-import { resolveSendableOutboundReplyParts } from "openclaw/plugin-sdk/reply-payload";
-import type { ReplyDispatchKind, ReplyPayload } from "openclaw/plugin-sdk/reply-runtime";
-import { danger, logVerbose, shouldLogVerbose } from "openclaw/plugin-sdk/runtime-env";
-import { resolvePinnedMainDmOwnerFromAllowlist } from "openclaw/plugin-sdk/security-runtime";
-import { normalizeOptionalLowercaseString } from "openclaw/plugin-sdk/text-runtime";
+} from "opencli/plugin-sdk/channel-streaming";
+import { formatErrorMessage } from "opencli/plugin-sdk/error-runtime";
+import { runPreparedInboundReplyTurn } from "opencli/plugin-sdk/inbound-reply-dispatch";
+import { resolveAgentOutboundIdentity } from "opencli/plugin-sdk/outbound-runtime";
+import { clearHistoryEntriesIfEnabled } from "opencli/plugin-sdk/reply-history";
+import { resolveSendableOutboundReplyParts } from "opencli/plugin-sdk/reply-payload";
+import type { ReplyDispatchKind, ReplyPayload } from "opencli/plugin-sdk/reply-runtime";
+import { danger, logVerbose, shouldLogVerbose } from "opencli/plugin-sdk/runtime-env";
+import { resolvePinnedMainDmOwnerFromAllowlist } from "opencli/plugin-sdk/security-runtime";
+import { normalizeOptionalLowercaseString } from "opencli/plugin-sdk/text-runtime";
 import { reactSlackMessage, removeSlackReaction } from "../../actions.js";
 import { createSlackDraftStream } from "../../draft-stream.js";
 import { normalizeSlackOutboundText } from "../../format.js";

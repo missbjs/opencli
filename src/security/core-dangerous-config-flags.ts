@@ -1,6 +1,6 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 
-export function collectCoreInsecureOrDangerousFlags(cfg: OpenClawConfig): string[] {
+export function collectCoreInsecureOrDangerousFlags(cfg: OpenCLIConfig): string[] {
   const enabledFlags: string[] = [];
   if (cfg.gateway?.controlUi?.allowInsecureAuth === true) {
     enabledFlags.push("gateway.controlUi.allowInsecureAuth=true");

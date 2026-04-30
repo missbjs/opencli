@@ -1,12 +1,12 @@
 ---
 summary: "Infer-first CLI for provider-backed model, image, audio, TTS, video, web, and embedding workflows"
 read_when:
-  - Adding or modifying `openclaw infer` commands
+  - Adding or modifying `opencli infer` commands
   - Designing stable headless capability automation
 title: "Inference CLI"
 ---
 
-`openclaw infer` is the canonical headless surface for provider-backed inference workflows.
+`opencli infer` is the canonical headless surface for provider-backed inference workflows.
 
 It intentionally exposes capability families, not raw gateway RPC names and not raw agent tool ids.
 
@@ -15,7 +15,7 @@ It intentionally exposes capability families, not raw gateway RPC names and not 
 Copy and paste this to an agent:
 
 ```text
-Read https://docs.openclaw.ai/cli/infer, then create a skill that routes my common workflows to `openclaw infer`.
+Read https://docs.opencli.ai/cli/infer, then create a skill that routes my common workflows to `opencli infer`.
 Focus on model runs, image generation, video generation, audio transcription, TTS, web search, and embeddings.
 ```
 
@@ -23,31 +23,31 @@ A good infer-based skill should:
 
 - map common user intents to the correct infer subcommand
 - include a few canonical infer examples for the workflows it covers
-- prefer `openclaw infer ...` in examples and suggestions
+- prefer `opencli infer ...` in examples and suggestions
 - avoid re-documenting the entire infer surface inside the skill body
 
 Typical infer-focused skill coverage:
 
-- `openclaw infer model run`
-- `openclaw infer image generate`
-- `openclaw infer audio transcribe`
-- `openclaw infer tts convert`
-- `openclaw infer web search`
-- `openclaw infer embedding create`
+- `opencli infer model run`
+- `opencli infer image generate`
+- `opencli infer audio transcribe`
+- `opencli infer tts convert`
+- `opencli infer web search`
+- `opencli infer embedding create`
 
 ## Why use infer
 
-`openclaw infer` provides one consistent CLI for provider-backed inference tasks inside OpenClaw.
+`opencli infer` provides one consistent CLI for provider-backed inference tasks inside OpenCLI.
 
 Benefits:
 
-- Use the providers and models already configured in OpenClaw instead of wiring up one-off wrappers for each backend.
+- Use the providers and models already configured in OpenCLI instead of wiring up one-off wrappers for each backend.
 - Keep model, image, audio transcription, TTS, video, web, and embedding workflows under one command tree.
 - Use a stable `--json` output shape for scripts, automation, and agent-driven workflows.
-- Prefer a first-party OpenClaw surface when the task is fundamentally "run inference."
+- Prefer a first-party OpenCLI surface when the task is fundamentally "run inference."
 - Use the normal local path without requiring the gateway for most infer commands.
 
-For end-to-end provider checks, prefer `openclaw infer ...` once lower-level
+For end-to-end provider checks, prefer `opencli infer ...` once lower-level
 provider tests are green. It exercises the shipped CLI, config loading,
 default-agent resolution, bundled plugin activation, runtime-dependency repair,
 and the shared capability runtime before the provider request is made.
@@ -55,7 +55,7 @@ and the shared capability runtime before the provider request is made.
 ## Command tree
 
 ```text
- openclaw infer
+ opencli infer
   list
   inspect
 
@@ -107,23 +107,23 @@ and the shared capability runtime before the provider request is made.
 
 This table maps common inference tasks to the corresponding infer command.
 
-| Task                         | Command                                                                                       | Notes                                                 |
-| ---------------------------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| Run a text/model prompt      | `openclaw infer model run --prompt "..." --json`                                              | Uses the normal local path by default                 |
-| Run a model prompt on images | `openclaw infer model run --prompt "Describe this" --file ./image.png --model provider/model` | Repeat `--file` for multiple image inputs             |
-| Generate an image            | `openclaw infer image generate --prompt "..." --json`                                         | Use `image edit` when starting from an existing file  |
-| Describe an image file       | `openclaw infer image describe --file ./image.png --prompt "..." --json`                      | `--model` must be an image-capable `<provider/model>` |
-| Transcribe audio             | `openclaw infer audio transcribe --file ./memo.m4a --json`                                    | `--model` must be `<provider/model>`                  |
-| Synthesize speech            | `openclaw infer tts convert --text "..." --output ./speech.mp3 --json`                        | `tts status` is gateway-oriented                      |
-| Generate a video             | `openclaw infer video generate --prompt "..." --json`                                         | Supports provider hints such as `--resolution`        |
-| Describe a video file        | `openclaw infer video describe --file ./clip.mp4 --json`                                      | `--model` must be `<provider/model>`                  |
-| Search the web               | `openclaw infer web search --query "..." --json`                                              |                                                       |
-| Fetch a web page             | `openclaw infer web fetch --url https://example.com --json`                                   |                                                       |
-| Create embeddings            | `openclaw infer embedding create --text "..." --json`                                         |                                                       |
+| Task                         | Command                                                                                      | Notes                                                 |
+| ---------------------------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| Run a text/model prompt      | `opencli infer model run --prompt "..." --json`                                              | Uses the normal local path by default                 |
+| Run a model prompt on images | `opencli infer model run --prompt "Describe this" --file ./image.png --model provider/model` | Repeat `--file` for multiple image inputs             |
+| Generate an image            | `opencli infer image generate --prompt "..." --json`                                         | Use `image edit` when starting from an existing file  |
+| Describe an image file       | `opencli infer image describe --file ./image.png --prompt "..." --json`                      | `--model` must be an image-capable `<provider/model>` |
+| Transcribe audio             | `opencli infer audio transcribe --file ./memo.m4a --json`                                    | `--model` must be `<provider/model>`                  |
+| Synthesize speech            | `opencli infer tts convert --text "..." --output ./speech.mp3 --json`                        | `tts status` is gateway-oriented                      |
+| Generate a video             | `opencli infer video generate --prompt "..." --json`                                         | Supports provider hints such as `--resolution`        |
+| Describe a video file        | `opencli infer video describe --file ./clip.mp4 --json`                                      | `--model` must be `<provider/model>`                  |
+| Search the web               | `opencli infer web search --query "..." --json`                                              |                                                       |
+| Fetch a web page             | `opencli infer web fetch --url https://example.com --json`                                   |                                                       |
+| Create embeddings            | `opencli infer embedding create --text "..." --json`                                         |                                                       |
 
 ## Behavior
 
-- `openclaw infer ...` is the primary CLI surface for these workflows.
+- `opencli infer ...` is the primary CLI surface for these workflows.
 - Use `--json` when the output will be consumed by another command or script.
 - Use `--provider` or `--model provider/model` when a specific backend is required.
 - For `image describe`, `audio transcribe`, and `video describe`, `--model` must use the form `<provider/model>`.
@@ -142,35 +142,35 @@ This table maps common inference tasks to the corresponding infer command.
 Use `model` for provider-backed text inference and model/provider inspection.
 
 ```bash
-openclaw infer model run --prompt "Reply with exactly: smoke-ok" --json
-openclaw infer model run --prompt "Summarize this changelog entry" --model openai/gpt-5.4 --json
-openclaw infer model run --prompt "Describe this image in one sentence" --file ./photo.jpg --model google/gemini-2.5-flash --json
-openclaw infer model providers --json
-openclaw infer model inspect --name gpt-5.5 --json
+opencli infer model run --prompt "Reply with exactly: smoke-ok" --json
+opencli infer model run --prompt "Summarize this changelog entry" --model openai/gpt-5.4 --json
+opencli infer model run --prompt "Describe this image in one sentence" --file ./photo.jpg --model google/gemini-2.5-flash --json
+opencli infer model providers --json
+opencli infer model inspect --name gpt-5.5 --json
 ```
 
 Use full `<provider/model>` refs to smoke-test a specific provider without
 starting the Gateway or loading the full agent tool surface:
 
 ```bash
-openclaw infer model run --local --model anthropic/claude-sonnet-4-6 --prompt "Reply with exactly: pong" --json
-openclaw infer model run --local --model cerebras/zai-glm-4.7 --prompt "Reply with exactly: pong" --json
-openclaw infer model run --local --model google/gemini-2.5-flash --prompt "Reply with exactly: pong" --json
-openclaw infer model run --local --model groq/llama-3.1-8b-instant --prompt "Reply with exactly: pong" --json
-openclaw infer model run --local --model mistral/mistral-small-latest --prompt "Reply with exactly: pong" --json
-openclaw infer model run --local --model openai/gpt-4.1 --prompt "Reply with exactly: pong" --json
-openclaw infer model run --local --model ollama/qwen2.5vl:7b --prompt "Describe this image." --file ./photo.jpg --json
+opencli infer model run --local --model anthropic/claude-sonnet-4-6 --prompt "Reply with exactly: pong" --json
+opencli infer model run --local --model cerebras/zai-glm-4.7 --prompt "Reply with exactly: pong" --json
+opencli infer model run --local --model google/gemini-2.5-flash --prompt "Reply with exactly: pong" --json
+opencli infer model run --local --model groq/llama-3.1-8b-instant --prompt "Reply with exactly: pong" --json
+opencli infer model run --local --model mistral/mistral-small-latest --prompt "Reply with exactly: pong" --json
+opencli infer model run --local --model openai/gpt-4.1 --prompt "Reply with exactly: pong" --json
+opencli infer model run --local --model ollama/qwen2.5vl:7b --prompt "Describe this image." --file ./photo.jpg --json
 ```
 
 Notes:
 
 - Local `model run` is the narrowest CLI smoke for provider/model/auth health because it sends only the supplied prompt to the selected model.
 - Local `model run --file` keeps that lean path and attaches image content directly to the single user message. Common image files such as PNG, JPEG, and WebP work when their MIME type is detected as `image/*`; unsupported or unrecognized files fail before the provider is called.
-- `model run --file` is best when you want to test the selected multimodal text model directly. Use `infer image describe` when you want OpenClaw's image-understanding provider selection and default image-model routing.
+- `model run --file` is best when you want to test the selected multimodal text model directly. Use `infer image describe` when you want OpenCLI's image-understanding provider selection and default image-model routing.
 - The selected model must support image input; text-only models may reject the request at the provider layer.
 - `model run --prompt` must contain non-whitespace text; empty prompts are rejected before local providers or the Gateway are called.
 - Local `model run` exits non-zero when the provider returns no text output, so unreachable local providers and empty completions do not look like successful probes.
-- Use `model run --gateway` when you need to test Gateway routing, agent-runtime setup, or Gateway-managed provider state while keeping the model input raw. Use `openclaw agent` or chat surfaces when you want the full agent context, tools, memory, and session transcript.
+- Use `model run --gateway` when you need to test Gateway routing, agent-runtime setup, or Gateway-managed provider state while keeping the model input raw. Use `opencli agent` or chat surfaces when you want the full agent context, tools, memory, and session transcript.
 - `model auth login`, `model auth logout`, and `model auth status` manage saved provider auth state.
 
 ## Image
@@ -178,17 +178,17 @@ Notes:
 Use `image` for generation, edit, and description.
 
 ```bash
-openclaw infer image generate --prompt "friendly lobster illustration" --json
-openclaw infer image generate --prompt "cinematic product photo of headphones" --json
-openclaw infer image generate --model openai/gpt-image-1.5 --output-format png --background transparent --prompt "simple red circle sticker on a transparent background" --json
-openclaw infer image generate --prompt "slow image backend" --timeout-ms 180000 --json
-openclaw infer image edit --file ./logo.png --model openai/gpt-image-1.5 --output-format png --background transparent --prompt "keep the logo, remove the background" --json
-openclaw infer image edit --file ./poster.png --prompt "make this a vertical story ad" --size 2160x3840 --aspect-ratio 9:16 --resolution 4K --json
-openclaw infer image describe --file ./photo.jpg --json
-openclaw infer image describe --file ./receipt.jpg --prompt "Extract the merchant, date, and total" --json
-openclaw infer image describe-many --file ./before.png --file ./after.png --prompt "Compare the screenshots and list visible UI changes" --json
-openclaw infer image describe --file ./ui-screenshot.png --model openai/gpt-4.1-mini --json
-openclaw infer image describe --file ./photo.jpg --model ollama/qwen2.5vl:7b --prompt "Describe the image in one sentence" --timeout-ms 300000 --json
+opencli infer image generate --prompt "friendly lobster illustration" --json
+opencli infer image generate --prompt "cinematic product photo of headphones" --json
+opencli infer image generate --model openai/gpt-image-1.5 --output-format png --background transparent --prompt "simple red circle sticker on a transparent background" --json
+opencli infer image generate --prompt "slow image backend" --timeout-ms 180000 --json
+opencli infer image edit --file ./logo.png --model openai/gpt-image-1.5 --output-format png --background transparent --prompt "keep the logo, remove the background" --json
+opencli infer image edit --file ./poster.png --prompt "make this a vertical story ad" --size 2160x3840 --aspect-ratio 9:16 --resolution 4K --json
+opencli infer image describe --file ./photo.jpg --json
+opencli infer image describe --file ./receipt.jpg --prompt "Extract the merchant, date, and total" --json
+opencli infer image describe-many --file ./before.png --file ./after.png --prompt "Compare the screenshots and list visible UI changes" --json
+opencli infer image describe --file ./ui-screenshot.png --model openai/gpt-4.1-mini --json
+opencli infer image describe --file ./photo.jpg --model ollama/qwen2.5vl:7b --prompt "Describe the image in one sentence" --timeout-ms 300000 --json
 ```
 
 Notes:
@@ -207,11 +207,11 @@ Notes:
   CLI smoke for image generation changes. Example:
 
   ```bash
-  openclaw infer image providers --json
-  openclaw infer image generate \
+  opencli infer image providers --json
+  opencli infer image generate \
     --model google/gemini-3.1-flash-image-preview \
     --prompt "Minimal flat test image: one blue square on a white background, no text." \
-    --output ./openclaw-infer-image-smoke.png \
+    --output ./opencli-infer-image-smoke.png \
     --json
   ```
 
@@ -229,9 +229,9 @@ Notes:
 Use `audio` for file transcription.
 
 ```bash
-openclaw infer audio transcribe --file ./memo.m4a --json
-openclaw infer audio transcribe --file ./team-sync.m4a --language en --prompt "Focus on names and action items" --json
-openclaw infer audio transcribe --file ./memo.m4a --model openai/whisper-1 --json
+opencli infer audio transcribe --file ./memo.m4a --json
+opencli infer audio transcribe --file ./team-sync.m4a --language en --prompt "Focus on names and action items" --json
+opencli infer audio transcribe --file ./memo.m4a --model openai/whisper-1 --json
 ```
 
 Notes:
@@ -244,10 +244,10 @@ Notes:
 Use `tts` for speech synthesis and TTS provider state.
 
 ```bash
-openclaw infer tts convert --text "hello from openclaw" --output ./hello.mp3 --json
-openclaw infer tts convert --text "Your build is complete" --output ./build-complete.mp3 --json
-openclaw infer tts providers --json
-openclaw infer tts status --json
+opencli infer tts convert --text "hello from opencli" --output ./hello.mp3 --json
+opencli infer tts convert --text "Your build is complete" --output ./build-complete.mp3 --json
+opencli infer tts providers --json
+opencli infer tts status --json
 ```
 
 Notes:
@@ -260,10 +260,10 @@ Notes:
 Use `video` for generation and description.
 
 ```bash
-openclaw infer video generate --prompt "cinematic sunset over the ocean" --json
-openclaw infer video generate --prompt "slow drone shot over a forest lake" --resolution 768P --duration 6 --json
-openclaw infer video describe --file ./clip.mp4 --json
-openclaw infer video describe --file ./clip.mp4 --model openai/gpt-4.1-mini --json
+opencli infer video generate --prompt "cinematic sunset over the ocean" --json
+opencli infer video generate --prompt "slow drone shot over a forest lake" --resolution 768P --duration 6 --json
+opencli infer video describe --file ./clip.mp4 --json
+opencli infer video describe --file ./clip.mp4 --model openai/gpt-4.1-mini --json
 ```
 
 Notes:
@@ -276,10 +276,10 @@ Notes:
 Use `web` for search and fetch workflows.
 
 ```bash
-openclaw infer web search --query "OpenClaw docs" --json
-openclaw infer web search --query "OpenClaw infer web providers" --json
-openclaw infer web fetch --url https://docs.openclaw.ai/cli/infer --json
-openclaw infer web providers --json
+opencli infer web search --query "OpenCLI docs" --json
+opencli infer web search --query "OpenCLI infer web providers" --json
+opencli infer web fetch --url https://docs.opencli.ai/cli/infer --json
+opencli infer web providers --json
 ```
 
 Notes:
@@ -291,9 +291,9 @@ Notes:
 Use `embedding` for vector creation and embedding provider inspection.
 
 ```bash
-openclaw infer embedding create --text "friendly lobster" --json
-openclaw infer embedding create --text "customer support ticket: delayed shipment" --model openai/text-embedding-3-large --json
-openclaw infer embedding providers --json
+opencli infer embedding create --text "friendly lobster" --json
+opencli infer embedding create --text "customer support ticket: delayed shipment" --model openai/text-embedding-3-large --json
+opencli infer embedding providers --json
 ```
 
 ## JSON output
@@ -323,7 +323,7 @@ Top-level fields are stable:
 - `outputs`
 - `error`
 
-For generated media commands, `outputs` contains files written by OpenClaw. Use
+For generated media commands, `outputs` contains files written by OpenCLI. Use
 the `path`, `mimeType`, `size`, and any media-specific dimensions in that array
 for automation instead of parsing human-readable stdout.
 
@@ -331,23 +331,23 @@ for automation instead of parsing human-readable stdout.
 
 ```bash
 # Bad
-openclaw infer media image generate --prompt "friendly lobster"
+opencli infer media image generate --prompt "friendly lobster"
 
 # Good
-openclaw infer image generate --prompt "friendly lobster"
+opencli infer image generate --prompt "friendly lobster"
 ```
 
 ```bash
 # Bad
-openclaw infer audio transcribe --file ./memo.m4a --model whisper-1 --json
+opencli infer audio transcribe --file ./memo.m4a --model whisper-1 --json
 
 # Good
-openclaw infer audio transcribe --file ./memo.m4a --model openai/whisper-1 --json
+opencli infer audio transcribe --file ./memo.m4a --model openai/whisper-1 --json
 ```
 
 ## Notes
 
-- `openclaw capability ...` is an alias for `openclaw infer ...`.
+- `opencli capability ...` is an alias for `opencli infer ...`.
 
 ## Related
 

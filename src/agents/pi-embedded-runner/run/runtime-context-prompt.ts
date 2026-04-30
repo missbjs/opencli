@@ -1,10 +1,10 @@
 import {
-  OPENCLAW_NEXT_TURN_RUNTIME_CONTEXT_HEADER,
-  OPENCLAW_RUNTIME_CONTEXT_CUSTOM_TYPE,
-  OPENCLAW_RUNTIME_CONTEXT_NOTICE,
-  OPENCLAW_RUNTIME_EVENT_HEADER,
+  OPENCLI_NEXT_TURN_RUNTIME_CONTEXT_HEADER,
+  OPENCLI_RUNTIME_CONTEXT_CUSTOM_TYPE,
+  OPENCLI_RUNTIME_CONTEXT_NOTICE,
+  OPENCLI_RUNTIME_EVENT_HEADER,
 } from "../../internal-runtime-context.js";
-export { OPENCLAW_RUNTIME_CONTEXT_CUSTOM_TYPE };
+export { OPENCLI_RUNTIME_CONTEXT_CUSTOM_TYPE };
 
 type RuntimeContextSession = {
   sendCustomMessage: (
@@ -71,9 +71,9 @@ function buildRuntimeContextMessageContent(params: {
 }): string {
   return [
     params.kind === "runtime-event"
-      ? OPENCLAW_RUNTIME_EVENT_HEADER
-      : OPENCLAW_NEXT_TURN_RUNTIME_CONTEXT_HEADER,
-    OPENCLAW_RUNTIME_CONTEXT_NOTICE,
+      ? OPENCLI_RUNTIME_EVENT_HEADER
+      : OPENCLI_NEXT_TURN_RUNTIME_CONTEXT_HEADER,
+    OPENCLI_RUNTIME_CONTEXT_NOTICE,
     "",
     params.runtimeContext,
   ].join("\n");
@@ -97,10 +97,10 @@ export async function queueRuntimeContextForNextTurn(params: {
   }
   await params.session.sendCustomMessage(
     {
-      customType: OPENCLAW_RUNTIME_CONTEXT_CUSTOM_TYPE,
+      customType: OPENCLI_RUNTIME_CONTEXT_CUSTOM_TYPE,
       content: runtimeContext,
       display: false,
-      details: { source: "openclaw-runtime-context" },
+      details: { source: "opencli-runtime-context" },
     },
     { deliverAs: "nextTurn" },
   );

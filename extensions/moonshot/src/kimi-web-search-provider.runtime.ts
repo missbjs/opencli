@@ -1,5 +1,5 @@
-import { createProviderHttpError } from "openclaw/plugin-sdk/provider-http";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/provider-onboard";
+import { createProviderHttpError } from "opencli/plugin-sdk/provider-http";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/provider-onboard";
 import {
   buildSearchCacheKey,
   buildUnsupportedSearchFilterResponse,
@@ -20,8 +20,8 @@ import {
   withTrustedWebSearchEndpoint,
   wrapWebContent,
   writeCachedSearchPayload,
-} from "openclaw/plugin-sdk/provider-web-search";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/text-runtime";
+} from "opencli/plugin-sdk/provider-web-search";
+import { normalizeOptionalString } from "opencli/plugin-sdk/text-runtime";
 import {
   isNativeMoonshotBaseUrl,
   MOONSHOT_BASE_URL,
@@ -96,7 +96,7 @@ function trimTrailingSlashes(url: string): string {
   return url.replace(/\/+$/, "");
 }
 
-function resolveKimiBaseUrl(kimi?: KimiConfig, openClawConfig?: OpenClawConfig): string {
+function resolveKimiBaseUrl(kimi?: KimiConfig, openClawConfig?: OpenCLIConfig): string {
   const explicitBaseUrl = normalizeOptionalString(kimi?.baseUrl) ?? "";
   if (explicitBaseUrl) {
     return trimTrailingSlashes(explicitBaseUrl) || DEFAULT_KIMI_BASE_URL;
@@ -255,7 +255,7 @@ async function runKimiSearch(params: {
 }
 
 export async function executeKimiWebSearchProviderTool(
-  ctx: { config?: OpenClawConfig; searchConfig?: SearchConfigRecord },
+  ctx: { config?: OpenCLIConfig; searchConfig?: SearchConfigRecord },
   args: Record<string, unknown>,
 ): Promise<Record<string, unknown>> {
   const searchConfig = mergeScopedSearchConfig(
@@ -275,7 +275,7 @@ export async function executeKimiWebSearchProviderTool(
       error: "missing_kimi_api_key",
       message:
         "web_search (kimi) needs a Moonshot API key. Set KIMI_API_KEY or MOONSHOT_API_KEY in the Gateway environment, or configure tools.web.search.kimi.apiKey.",
-      docs: "https://docs.openclaw.ai/tools/web",
+      docs: "https://docs.opencli.ai/tools/web",
     };
   }
 

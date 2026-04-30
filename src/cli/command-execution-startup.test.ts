@@ -28,13 +28,13 @@ describe("command-execution-startup", () => {
   it("resolves startup context from argv and mode", () => {
     expect(
       mod.resolveCliExecutionStartupContext({
-        argv: ["node", "openclaw", "status", "--json"],
+        argv: ["node", "opencli", "status", "--json"],
         jsonOutputMode: true,
         routeMode: true,
       }),
     ).toEqual({
       invocation: {
-        argv: ["node", "openclaw", "status", "--json"],
+        argv: ["node", "opencli", "status", "--json"],
         commandPath: ["status"],
         primary: "status",
         hasHelpOrVersion: false,
@@ -53,7 +53,7 @@ describe("command-execution-startup", () => {
   it("skips local plugin bootstrap for JSON gateway agent calls", () => {
     expect(
       mod.resolveCliExecutionStartupContext({
-        argv: ["node", "openclaw", "agent", "--agent", "main", "--message", "hi", "--json"],
+        argv: ["node", "opencli", "agent", "--agent", "main", "--message", "hi", "--json"],
         jsonOutputMode: true,
       }).startupPolicy.loadPlugins,
     ).toBe(false);
@@ -61,7 +61,7 @@ describe("command-execution-startup", () => {
       mod.resolveCliExecutionStartupContext({
         argv: [
           "node",
-          "openclaw",
+          "opencli",
           "agent",
           "--agent",
           "main",
@@ -75,7 +75,7 @@ describe("command-execution-startup", () => {
     ).toBe(true);
     expect(
       mod.resolveCliExecutionStartupContext({
-        argv: ["node", "openclaw", "agent", "--agent", "main", "--message", "hi"],
+        argv: ["node", "opencli", "agent", "--agent", "main", "--message", "hi"],
         jsonOutputMode: false,
       }).startupPolicy.loadPlugins,
     ).toBe(true);
@@ -90,12 +90,12 @@ describe("command-execution-startup", () => {
         loadPlugins: true,
       },
       version: "1.2.3",
-      argv: ["node", "openclaw", "status"],
+      argv: ["node", "opencli", "status"],
     });
 
     expect(routeLogsToStderrMock).toHaveBeenCalledTimes(1);
     expect(emitCliBannerMock).toHaveBeenCalledWith("1.2.3", {
-      argv: ["node", "openclaw", "status"],
+      argv: ["node", "opencli", "status"],
     });
 
     await mod.applyCliExecutionStartupPresentation({

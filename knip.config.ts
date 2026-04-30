@@ -5,7 +5,7 @@ function bundledPluginFile(pluginId: string, relativePath: string, suffix = ""):
 }
 
 const rootEntries = [
-  "openclaw.mjs!",
+  "opencli.mjs!",
   "src/index.ts!",
   "src/entry.ts!",
   "src/cli/daemon-cli.ts!",
@@ -41,7 +41,7 @@ const bundledPluginIgnoredRuntimeDependencies = [
   "@zed-industries/codex-acp",
   "jiti",
   "linkedom",
-  "openclaw",
+  "opencli",
   "pdfjs-dist",
 ] as const;
 
@@ -111,7 +111,7 @@ const config = {
   workspaces: {
     ".": {
       entry: rootEntries,
-      ignoreDependencies: ["@openclaw/*", "sqlite-vec"],
+      ignoreDependencies: ["@opencli/*", "sqlite-vec"],
       project: [
         "src/**/*.ts!",
         "scripts/**/*.{js,mjs,cjs,ts,mts,cts}!",

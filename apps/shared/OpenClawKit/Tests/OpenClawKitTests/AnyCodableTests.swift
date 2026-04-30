@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-import OpenClawProtocol
+import OpenCLIProtocol
 
 struct AnyCodableTests {
     @Test

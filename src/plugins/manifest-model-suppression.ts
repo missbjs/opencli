@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import {
   buildModelCatalogMergeKey,
   planManifestModelCatalogSuppressions,
@@ -8,7 +8,7 @@ import { normalizeLowercaseStringOrEmpty } from "../shared/string-coerce.js";
 import { loadPluginManifestRegistryForPluginRegistry } from "./plugin-registry.js";
 
 function listManifestModelCatalogSuppressions(params: {
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
 }): readonly ManifestModelCatalogSuppressionEntry[] {
@@ -48,7 +48,7 @@ function normalizeSuppressionHost(host: string): string {
 
 function resolveConfiguredProviderValue(params: {
   provider: string;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
 }): { api?: string; baseUrl?: string } | undefined {
   const providers = params.config?.models?.providers;
   if (!providers) {
@@ -70,7 +70,7 @@ function manifestSuppressionMatchesConditions(params: {
   suppression: ManifestModelCatalogSuppressionEntry;
   provider: string;
   baseUrl?: string | null;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
 }): boolean {
   const when = params.suppression.when;
   if (!when) {
@@ -104,7 +104,7 @@ export function clearManifestModelSuppressionCacheForTest(): void {
 }
 
 export function buildManifestBuiltInModelSuppressionResolver(params: {
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
 }) {
@@ -114,11 +114,7 @@ export function buildManifestBuiltInModelSuppressionResolver(params: {
     env: params.env ?? process.env,
   });
 
-  return (input: {
-    provider?: string | null;
-    id?: string | null;
-    baseUrl?: string | null;
-  }) => {
+  return (input: { provider?: string | null; id?: string | null; baseUrl?: string | null }) => {
     const provider = normalizeLowercaseStringOrEmpty(input.provider);
     const modelId = normalizeLowercaseStringOrEmpty(input.id);
     if (!provider || !modelId) {
@@ -159,7 +155,7 @@ export function buildManifestBuiltInModelSuppressionResolver(params: {
 export function resolveManifestBuiltInModelSuppression(params: {
   provider?: string | null;
   id?: string | null;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   baseUrl?: string | null;

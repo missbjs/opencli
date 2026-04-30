@@ -2,9 +2,9 @@ import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../agents/agent
 import { initSubagentRegistry } from "../agents/subagent-registry.js";
 import { runChannelPluginStartupMaintenance } from "../channels/plugins/lifecycle-startup.js";
 import { applyPluginAutoEnable } from "../config/plugin-auto-enable.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { measureDiagnosticsTimelineSpan } from "../infra/diagnostics-timeline.js";
-import { resolveOpenClawPackageRootSync } from "../infra/openclaw-root.js";
+import { resolveOpenCLIPackageRootSync } from "../infra/opencli-root.js";
 import {
   pruneUnknownBundledRuntimeDepsRoots,
   repairBundledRuntimeDepsInstallRootAsync,
@@ -28,9 +28,9 @@ type GatewayPluginBootstrapLog = {
 };
 
 export function resolveGatewayStartupMaintenanceConfig(params: {
-  cfgAtStart: OpenClawConfig;
-  startupRuntimeConfig: OpenClawConfig;
-}): OpenClawConfig {
+  cfgAtStart: OpenCLIConfig;
+  startupRuntimeConfig: OpenCLIConfig;
+}): OpenCLIConfig {
   return params.cfgAtStart.channels === undefined &&
     params.startupRuntimeConfig.channels !== undefined
     ? {
@@ -41,7 +41,7 @@ export function resolveGatewayStartupMaintenanceConfig(params: {
 }
 
 async function prestageGatewayBundledRuntimeDeps(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   pluginIds: readonly string[];
   log: GatewayPluginBootstrapLog;
 }): Promise<void> {
@@ -59,14 +59,14 @@ async function prestageGatewayBundledRuntimeDeps(params: {
 }
 
 async function prestageGatewayBundledRuntimeDepsImpl(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   pluginIds: readonly string[];
   log: GatewayPluginBootstrapLog;
 }): Promise<void> {
   if (params.pluginIds.length === 0) {
     return;
   }
-  const packageRoot = resolveOpenClawPackageRootSync({
+  const packageRoot = resolveOpenCLIPackageRootSync({
     argv1: process.argv[1],
     cwd: process.cwd(),
     moduleUrl: import.meta.url,
@@ -134,9 +134,9 @@ async function prestageGatewayBundledRuntimeDepsImpl(params: {
 }
 
 export async function prepareGatewayPluginBootstrap(params: {
-  cfgAtStart: OpenClawConfig;
-  activationSourceConfig?: OpenClawConfig;
-  startupRuntimeConfig: OpenClawConfig;
+  cfgAtStart: OpenCLIConfig;
+  activationSourceConfig?: OpenCLIConfig;
+  startupRuntimeConfig: OpenCLIConfig;
   pluginMetadataSnapshot?: PluginMetadataSnapshot;
   minimalTestGateway: boolean;
   log: GatewayPluginBootstrapLog;

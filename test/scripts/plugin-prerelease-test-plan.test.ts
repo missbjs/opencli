@@ -92,19 +92,19 @@ describe("scripts/lib/plugin-prerelease-test-plan.mjs", () => {
 
     expect(lane).toEqual(
       expect.objectContaining({
-        command: "OPENCLAW_SKIP_DOCKER_BUILD=1 pnpm test:docker:kitchen-sink-plugin",
+        command: "OPENCLI_SKIP_DOCKER_BUILD=1 pnpm test:docker:kitchen-sink-plugin",
         e2eImageKind: "functional",
         name: "kitchen-sink-plugin",
         resources: expect.arrayContaining(["npm"]),
         stateScenario: "empty",
       }),
     );
-    expect(script).toContain("npm:@openclaw/kitchen-sink@latest");
+    expect(script).toContain("npm:@opencli/kitchen-sink@latest");
     expect(script).toContain("npm-latest-conformance");
     expect(script).toContain("npm-latest-adversarial");
-    expect(script).toContain("npm:@openclaw/kitchen-sink@beta");
-    expect(script).toContain("clawhub:openclaw-kitchen-sink@latest");
-    expect(script).toContain("clawhub:openclaw-kitchen-sink@beta");
+    expect(script).toContain("npm:@opencli/kitchen-sink@beta");
+    expect(script).toContain("clawhub:opencli-kitchen-sink@latest");
+    expect(script).toContain("clawhub:opencli-kitchen-sink@beta");
     expect(script).toContain("scripts/e2e/lib/kitchen-sink-plugin/sweep.sh");
     expect(sweepScript).toContain('plugins install "$KITCHEN_SINK_SPEC"');
     expect(sweepScript).toContain("KITCHEN_SINK_PERSONALITY");
@@ -125,7 +125,7 @@ describe("scripts/lib/plugin-prerelease-test-plan.mjs", () => {
     expect(assertionsScript).toContain("assertClawHubExternalInstallContract");
     expect(assertionsScript).toContain("expectedErrorMessages");
     expect(readFileSync("scripts/e2e/lib/clawhub-fixture-server.cjs", "utf8")).toContain(
-      'from "openclaw/plugin-sdk/plugin-entry"',
+      'from "opencli/plugin-sdk/plugin-entry"',
     );
     expect(script).toContain("docker stats --no-stream");
     expect(sweepScript).toContain("scan_logs_for_unexpected_errors");
@@ -141,7 +141,7 @@ describe("scripts/lib/plugin-prerelease-test-plan.mjs", () => {
 
     expect(lane).toEqual(
       expect.objectContaining({
-        command: "OPENCLAW_SKIP_DOCKER_BUILD=1 pnpm test:docker:plugins",
+        command: "OPENCLI_SKIP_DOCKER_BUILD=1 pnpm test:docker:plugins",
         name: "plugins",
         resources: expect.arrayContaining(["npm"]),
         stateScenario: "empty",
@@ -151,10 +151,10 @@ describe("scripts/lib/plugin-prerelease-test-plan.mjs", () => {
     expect(sweepScript).toContain("run_plugins_clawhub_scenario");
     expect(clawhubScript).toContain('plugins install "$CLAWHUB_PLUGIN_SPEC"');
     expect(assertionsScript).toContain("assertClawHubExternalInstallContract");
-    expect(assertionsScript).toContain('node_modules", "openclaw');
+    expect(assertionsScript).toContain('node_modules", "opencli');
     expect(assertionsScript).toContain('node_modules", "is-number');
     expect(fixtureServer).toContain('"is-number": "7.0.0"');
-    expect(fixtureServer).toContain('openclaw: ">=2026.4.11"');
+    expect(fixtureServer).toContain('opencli: ">=2026.4.11"');
   });
 
   it("wires the full plugin prerelease plan into its release workflow", () => {
@@ -199,10 +199,10 @@ describe("scripts/lib/plugin-prerelease-test-plan.mjs", () => {
       type: "boolean",
     });
     expect(manifestEnv).toMatchObject({
-      OPENCLAW_CI_RUN_ANDROID:
+      OPENCLI_CI_RUN_ANDROID:
         "${{ github.event_name == 'workflow_dispatch' && inputs.include_android && 'true' || steps.changed_scope.outputs.run_android || 'false' }}",
     });
-    expect(manifestEnv).not.toHaveProperty("OPENCLAW_CI_FULL_RELEASE_VALIDATION");
+    expect(manifestEnv).not.toHaveProperty("OPENCLI_CI_FULL_RELEASE_VALIDATION");
     expect(manifestScript).toContain("includeReleaseOnlyPluginShards: false");
     expect(manifestScript).not.toContain("plugin-prerelease-test-plan.mjs");
     expect(workflow.jobs["check-shard"].strategy.matrix.include).toContainEqual({
@@ -279,7 +279,7 @@ describe("scripts/lib/plugin-prerelease-test-plan.mjs", () => {
     expect(dockerSuite).toMatchObject({
       if: "${{ inputs.full_release_validation && needs.preflight.outputs.run_plugin_prerelease_docker == 'true' }}",
       needs: ["preflight"],
-      uses: "./.github/workflows/openclaw-live-and-e2e-checks-reusable.yml",
+      uses: "./.github/workflows/opencli-live-and-e2e-checks-reusable.yml",
       with: {
         docker_lanes: "${{ needs.preflight.outputs.plugin_prerelease_docker_lanes }}",
         include_live_suites: false,
@@ -302,13 +302,13 @@ describe("scripts/lib/plugin-prerelease-test-plan.mjs", () => {
 
   it("keeps release-check reruns independent while cancelling superseded umbrella runs", () => {
     const releaseChecksWorkflow = parse(
-      readFileSync(".github/workflows/openclaw-release-checks.yml", "utf8"),
+      readFileSync(".github/workflows/opencli-release-checks.yml", "utf8"),
     );
     const fullReleaseWorkflow = readFullReleaseValidationWorkflow();
 
     expect(releaseChecksWorkflow.concurrency).toEqual({
       group:
-        "openclaw-release-checks-${{ inputs.expected_sha || inputs.ref }}-${{ inputs.rerun_group }}",
+        "opencli-release-checks-${{ inputs.expected_sha || inputs.ref }}-${{ inputs.rerun_group }}",
       "cancel-in-progress": false,
     });
     expect(fullReleaseWorkflow.concurrency).toEqual({
@@ -344,7 +344,7 @@ describe("scripts/lib/plugin-prerelease-test-plan.mjs", () => {
     );
 
     expect(output).toContain("provider-openai: present (OPENAI_API_KEY, OPENAI_BASE_URL)");
-    expect(output).toContain("channel-discord: present (DISCORD_TOKEN, OPENCLAW_DISCORD_TOKEN)");
+    expect(output).toContain("channel-discord: present (DISCORD_TOKEN, OPENCLI_DISCORD_TOKEN)");
     expect(output).not.toContain("openai-token-should-not-print");
     expect(output).not.toContain("discord-token-should-not-print");
   });

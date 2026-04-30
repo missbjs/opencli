@@ -6,8 +6,8 @@ import type {
   AgentRunParams,
   GatewayEvent,
   GatewayRequestOptions,
-  OpenClawEvent,
-  OpenClawTransport,
+  OpenCLIEvent,
+  OpenCLITransport,
   RunCreateParams,
   RunResult,
   RunTimestamp,
@@ -20,16 +20,16 @@ const MAX_REPLAY_RUNS = 100;
 const MAX_REPLAY_EVENTS_PER_RUN = 500;
 const MAX_NORMALIZED_REPLAY_EVENTS = 2000;
 
-export type OpenClawOptions = {
+export type OpenCLIOptions = {
   gateway?: "auto" | (string & {});
   url?: string;
   token?: string;
   password?: string;
   requestTimeoutMs?: number;
-  transport?: OpenClawTransport;
+  transport?: OpenCLITransport;
 };
 
-function resolveGatewayUrl(options: OpenClawOptions): string | undefined {
+function resolveGatewayUrl(options: OpenCLIOptions): string | undefined {
   if (options.url) {
     return options.url;
   }
@@ -133,7 +133,7 @@ function assertNoUnsupportedRunOptions(params: AgentRunParams): void {
     return;
   }
   throw new Error(
-    `OpenClaw Gateway does not support per-run SDK option${
+    `OpenCLI Gateway does not support per-run SDK option${
       unsupported.length === 1 ? "" : "s"
     } yet: ${unsupported.join(", ")}`,
   );
@@ -160,10 +160,10 @@ function buildAgentParams(params: AgentRunParams): Record<string, unknown> {
 }
 
 function unsupportedGatewayApi(api: string): never {
-  throw new Error(`${api} is not supported by the current OpenClaw Gateway yet`);
+  throw new Error(`${api} is not supported by the current OpenCLI Gateway yet`);
 }
 
-export class OpenClaw {
+export class OpenCLI {
   readonly agents: AgentsNamespace;
   readonly sessions: SessionsNamespace;
   readonly runs: RunsNamespace;
@@ -174,16 +174,16 @@ export class OpenClaw {
   readonly approvals: ApprovalsNamespace;
   readonly environments: EnvironmentsNamespace;
 
-  private readonly transport: OpenClawTransport;
-  private readonly normalizedEvents = new EventHub<OpenClawEvent>({
+  private readonly transport: OpenCLITransport;
+  private readonly normalizedEvents = new EventHub<OpenCLIEvent>({
     replayLimit: MAX_NORMALIZED_REPLAY_EVENTS,
   });
-  private readonly replayByRunId = new Map<string, OpenClawEvent[]>();
+  private readonly replayByRunId = new Map<string, OpenCLIEvent[]>();
   private connected = false;
   private eventPumpPromise: Promise<void> | null = null;
   private eventPumpReady: Promise<void> | null = null;
 
-  constructor(options: OpenClawOptions = {}) {
+  constructor(options: OpenCLIOptions = {}) {
     this.transport =
       options.transport ??
       new GatewayClientTransport({
@@ -233,14 +233,11 @@ export class OpenClaw {
     return await this.transport.request<T>(method, params, options);
   }
 
-  events(filter?: (event: OpenClawEvent) => boolean): AsyncIterable<OpenClawEvent> {
+  events(filter?: (event: OpenCLIEvent) => boolean): AsyncIterable<OpenCLIEvent> {
     return this.iterateEvents(filter);
   }
 
-  runEvents(
-    runId: string,
-    filter?: (event: OpenClawEvent) => boolean,
-  ): AsyncIterable<OpenClawEvent> {
+  runEvents(runId: string, filter?: (event: OpenCLIEvent) => boolean): AsyncIterable<OpenCLIEvent> {
     return this.iterateRunEvents(runId, filter);
   }
 
@@ -249,8 +246,8 @@ export class OpenClaw {
   }
 
   private async *iterateEvents(
-    filter?: (event: OpenClawEvent) => boolean,
-  ): AsyncIterable<OpenClawEvent> {
+    filter?: (event: OpenCLIEvent) => boolean,
+  ): AsyncIterable<OpenCLIEvent> {
     await this.connect();
     for await (const event of this.normalizedEvents.stream(filter)) {
       yield event;
@@ -259,10 +256,10 @@ export class OpenClaw {
 
   private async *iterateRunEvents(
     runId: string,
-    filter?: (event: OpenClawEvent) => boolean,
-  ): AsyncIterable<OpenClawEvent> {
+    filter?: (event: OpenCLIEvent) => boolean,
+  ): AsyncIterable<OpenCLIEvent> {
     await this.connect();
-    const matches = (event: OpenClawEvent) => {
+    const matches = (event: OpenCLIEvent) => {
       if (event.runId !== runId) {
         return false;
       }
@@ -339,7 +336,7 @@ export class OpenClaw {
     return this.eventPumpReady;
   }
 
-  private recordReplayEvent(event: OpenClawEvent): void {
+  private recordReplayEvent(event: OpenCLIEvent): void {
     if (!event.runId) {
       return;
     }
@@ -360,14 +357,14 @@ export class OpenClaw {
     }
   }
 
-  private replaySnapshot(runId: string): OpenClawEvent[] {
+  private replaySnapshot(runId: string): OpenCLIEvent[] {
     return [...(this.replayByRunId.get(runId) ?? [])];
   }
 }
 
 export class Agent {
   constructor(
-    private readonly client: OpenClaw,
+    private readonly client: OpenCLI,
     readonly id: string,
   ) {}
 
@@ -387,12 +384,12 @@ export class Agent {
 
 export class Run {
   constructor(
-    private readonly client: OpenClaw,
+    private readonly client: OpenCLI,
     readonly id: string,
     readonly sessionKey?: string,
   ) {}
 
-  events(filter?: (event: OpenClawEvent) => boolean): AsyncIterable<OpenClawEvent> {
+  events(filter?: (event: OpenCLIEvent) => boolean): AsyncIterable<OpenCLIEvent> {
     return this.client.runEvents(this.id, filter);
   }
 
@@ -433,7 +430,7 @@ export class Run {
 
 export class Session {
   constructor(
-    private readonly client: OpenClaw,
+    private readonly client: OpenCLI,
     readonly key: string,
     readonly info?: unknown,
   ) {}
@@ -467,7 +464,7 @@ export class Session {
 }
 
 export class AgentsNamespace {
-  constructor(private readonly client: OpenClaw) {}
+  constructor(private readonly client: OpenCLI) {}
 
   async list(params?: Record<string, unknown>): Promise<unknown> {
     return await this.client.request("agents.list", params);
@@ -491,7 +488,7 @@ export class AgentsNamespace {
 }
 
 export class SessionsNamespace {
-  constructor(private readonly client: OpenClaw) {}
+  constructor(private readonly client: OpenCLI) {}
 
   async list(params?: Record<string, unknown>): Promise<unknown> {
     return await this.client.request("sessions.list", params);
@@ -523,7 +520,7 @@ export class SessionsNamespace {
 }
 
 export class RunsNamespace {
-  constructor(private readonly client: OpenClaw) {}
+  constructor(private readonly client: OpenCLI) {}
 
   async create(params: RunCreateParams): Promise<Run> {
     const raw = await this.client.request("agent", buildAgentParams(params), {
@@ -542,7 +539,7 @@ export class RunsNamespace {
     return new Run(this.client, runId);
   }
 
-  events(runId: string): AsyncIterable<OpenClawEvent> {
+  events(runId: string): AsyncIterable<OpenCLIEvent> {
     return new Run(this.client, runId).events();
   }
 
@@ -557,7 +554,7 @@ export class RunsNamespace {
 
 class RpcNamespace {
   constructor(
-    protected readonly client: OpenClaw,
+    protected readonly client: OpenCLI,
     private readonly prefix: string,
   ) {}
 
@@ -571,7 +568,7 @@ class RpcNamespace {
 }
 
 export class TasksNamespace extends RpcNamespace {
-  constructor(client: OpenClaw) {
+  constructor(client: OpenCLI) {
     super(client, "tasks");
   }
 
@@ -592,7 +589,7 @@ export class TasksNamespace extends RpcNamespace {
 }
 
 export class ModelsNamespace extends RpcNamespace {
-  constructor(client: OpenClaw) {
+  constructor(client: OpenCLI) {
     super(client, "models");
   }
 
@@ -606,7 +603,7 @@ export class ModelsNamespace extends RpcNamespace {
 }
 
 export class ToolsNamespace extends RpcNamespace {
-  constructor(client: OpenClaw) {
+  constructor(client: OpenCLI) {
     super(client, "tools");
   }
 
@@ -626,7 +623,7 @@ export class ToolsNamespace extends RpcNamespace {
 }
 
 export class ArtifactsNamespace extends RpcNamespace {
-  constructor(client: OpenClaw) {
+  constructor(client: OpenCLI) {
     super(client, "artifacts");
   }
 
@@ -647,7 +644,7 @@ export class ArtifactsNamespace extends RpcNamespace {
 }
 
 export class ApprovalsNamespace {
-  constructor(private readonly client: OpenClaw) {}
+  constructor(private readonly client: OpenCLI) {}
 
   async list(params?: unknown): Promise<unknown> {
     return await this.client.request("exec.approval.list", params);
@@ -659,7 +656,7 @@ export class ApprovalsNamespace {
 }
 
 export class EnvironmentsNamespace extends RpcNamespace {
-  constructor(client: OpenClaw) {
+  constructor(client: OpenCLI) {
     super(client, "environments");
   }
 

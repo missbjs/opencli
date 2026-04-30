@@ -3,8 +3,8 @@ import os from "node:os";
 import path from "node:path";
 import type {
   MemorySearchConfig,
-  OpenClawConfig,
-} from "openclaw/plugin-sdk/memory-core-host-engine-foundation";
+  OpenCLIConfig,
+} from "opencli/plugin-sdk/memory-core-host-engine-foundation";
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 type WatchIgnoredFn = (watchPath: string, stats?: { isDirectory?: () => boolean }) => boolean;
@@ -37,7 +37,7 @@ const { createdWatchers, watchMock } = vi.hoisted(() => {
       return watcher;
     }),
   };
-  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("openclaw.test.memoryWatchFactory")] =
+  (globalThis as Record<PropertyKey, unknown>)[Symbol.for("opencli.test.memoryWatchFactory")] =
     result.watchMock;
   return result;
 });
@@ -61,7 +61,7 @@ vi.mock("./embeddings.js", () => ({
 import {
   clearMemoryEmbeddingProviders as clearRegistry,
   registerMemoryEmbeddingProvider as registerAdapter,
-} from "openclaw/plugin-sdk/memory-core-host-engine-embeddings";
+} from "opencli/plugin-sdk/memory-core-host-engine-embeddings";
 import {
   closeAllMemorySearchManagers,
   getMemorySearchManager,
@@ -81,7 +81,7 @@ describe("memory watcher config", () => {
   });
 
   afterAll(() => {
-    Reflect.deleteProperty(globalThis, Symbol.for("openclaw.test.memoryWatchFactory"));
+    Reflect.deleteProperty(globalThis, Symbol.for("opencli.test.memoryWatchFactory"));
   });
 
   afterEach(async () => {
@@ -102,15 +102,15 @@ describe("memory watcher config", () => {
   });
 
   async function setupWatcherWorkspace(seedFile: { name: string; contents: string }) {
-    workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-memory-watch-"));
+    workspaceDir = await fs.mkdtemp(path.join(os.tmpdir(), "opencli-memory-watch-"));
     extraDir = path.join(workspaceDir, "extra");
     await fs.mkdir(path.join(workspaceDir, "memory"), { recursive: true });
     await fs.mkdir(extraDir, { recursive: true });
     await fs.writeFile(path.join(extraDir, seedFile.name), seedFile.contents);
   }
 
-  function createWatcherConfig(overrides?: Partial<MemorySearchConfig>): OpenClawConfig {
-    const defaults: NonNullable<NonNullable<OpenClawConfig["agents"]>["defaults"]> = {
+  function createWatcherConfig(overrides?: Partial<MemorySearchConfig>): OpenCLIConfig {
+    const defaults: NonNullable<NonNullable<OpenCLIConfig["agents"]>["defaults"]> = {
       workspace: workspaceDir,
       memorySearch: {
         provider: "openai",
@@ -128,10 +128,10 @@ describe("memory watcher config", () => {
         defaults,
         list: [{ id: "main", default: true }],
       },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
   }
 
-  async function expectWatcherManager(cfg: OpenClawConfig) {
+  async function expectWatcherManager(cfg: OpenCLIConfig) {
     const result = await getMemorySearchManager({ cfg, agentId: "main" });
     expect(result.manager).not.toBeNull();
     if (!result.manager) {

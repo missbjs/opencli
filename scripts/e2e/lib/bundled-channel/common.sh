@@ -1,23 +1,23 @@
 #!/usr/bin/env bash
 #
 # Container-side helpers shared by bundled channel Docker E2E scenarios.
-# These functions assume the OpenClaw package is installed globally inside the
+# These functions assume the OpenCLI package is installed globally inside the
 # test container and the scenario has exported HOME/OPENAI_API_KEY as needed.
 
 bundled_channel_package_root() {
-  printf "%s/openclaw" "$(npm root -g)"
+  printf "%s/opencli" "$(npm root -g)"
 }
 
 bundled_channel_stage_root() {
-  printf "%s/.openclaw/plugin-runtime-deps" "$HOME"
+  printf "%s/.opencli/plugin-runtime-deps" "$HOME"
 }
 
 bundled_channel_stage_dir() {
-  printf "%s" "${OPENCLAW_PLUGIN_STAGE_DIR:-$(bundled_channel_stage_root)}"
+  printf "%s" "${OPENCLI_PLUGIN_STAGE_DIR:-$(bundled_channel_stage_root)}"
 }
 
 bundled_channel_install_package() {
-  openclaw_e2e_install_package "$@"
+  opencli_e2e_install_package "$@"
 }
 
 bundled_channel_find_external_dep_package() {

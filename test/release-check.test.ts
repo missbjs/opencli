@@ -1,7 +1,7 @@
 import { mkdtempSync, mkdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
-import { bundledDistPluginFile, bundledPluginFile } from "openclaw/plugin-sdk/test-fixtures";
+import { bundledDistPluginFile, bundledPluginFile } from "opencli/plugin-sdk/test-fixtures";
 import { describe, expect, it } from "vitest";
 import { listBundledPluginPackArtifacts } from "../scripts/lib/bundled-plugin-build-entries.mjs";
 import { listPluginSdkDistArtifacts } from "../scripts/lib/plugin-sdk-entries.mjs";
@@ -9,7 +9,7 @@ import {
   WORKSPACE_TEMPLATE_PACK_PATHS,
   createWorkspaceBootstrapSmokeEnv,
 } from "../scripts/lib/workspace-bootstrap-smoke.mjs";
-import { collectInstalledRootDependencyManifestErrors } from "../scripts/openclaw-npm-postpublish-verify.ts";
+import { collectInstalledRootDependencyManifestErrors } from "../scripts/opencli-npm-postpublish-verify.ts";
 import {
   collectAppcastSparkleVersionErrors,
   collectBundledExtensionManifestErrors,
@@ -98,9 +98,9 @@ describe("packed CLI smoke", () => {
           SystemRoot: "C:\\Windows",
           GITHUB_TOKEN: "redacted",
           OPENAI_API_KEY: "real-secret",
-          OPENCLAW_CONFIG_PATH: "/tmp/leaky-config.json",
+          OPENCLI_CONFIG_PATH: "/tmp/leaky-config.json",
         },
-        { HOME: "/tmp/smoke-home", OPENCLAW_STATE_DIR: "/tmp/smoke-state" },
+        { HOME: "/tmp/smoke-home", OPENCLI_STATE_DIR: "/tmp/smoke-state" },
       ),
     ).toEqual({
       PATH:
@@ -117,10 +117,10 @@ describe("packed CLI smoke", () => {
       AWS_CONFIG_FILE: "/tmp/smoke-home/.aws/config",
       TMPDIR: "/tmp/original-tmp",
       SystemRoot: "C:\\Windows",
-      OPENCLAW_DISABLE_BUNDLED_ENTRY_SOURCE_FALLBACK: "1",
-      OPENCLAW_NO_ONBOARD: "1",
-      OPENCLAW_SUPPRESS_NOTES: "1",
-      OPENCLAW_STATE_DIR: "/tmp/smoke-state",
+      OPENCLI_DISABLE_BUNDLED_ENTRY_SOURCE_FALLBACK: "1",
+      OPENCLI_NO_ONBOARD: "1",
+      OPENCLI_SUPPRESS_NOTES: "1",
+      OPENCLI_STATE_DIR: "/tmp/smoke-state",
     });
   });
 
@@ -129,19 +129,19 @@ describe("packed CLI smoke", () => {
       createPackedCompletionSmokeEnv(
         {
           PATH: "/usr/bin",
-          OPENCLAW_COMPLETION_SKIP_PLUGIN_COMMANDS: "0",
+          OPENCLI_COMPLETION_SKIP_PLUGIN_COMMANDS: "0",
         },
         {
           HOME: "/tmp/smoke-home",
-          OPENCLAW_STATE_DIR: "/tmp/smoke-state",
+          OPENCLI_STATE_DIR: "/tmp/smoke-state",
         },
       ),
     ).toMatchObject({
       PATH: "/usr/bin",
       HOME: "/tmp/smoke-home",
-      OPENCLAW_STATE_DIR: "/tmp/smoke-state",
-      OPENCLAW_SUPPRESS_NOTES: "1",
-      OPENCLAW_DISABLE_BUNDLED_ENTRY_SOURCE_FALLBACK: "1",
+      OPENCLI_STATE_DIR: "/tmp/smoke-state",
+      OPENCLI_SUPPRESS_NOTES: "1",
+      OPENCLI_DISABLE_BUNDLED_ENTRY_SOURCE_FALLBACK: "1",
       [COMPLETION_SKIP_PLUGIN_COMMANDS_ENV]: "1",
     });
   });
@@ -157,7 +157,7 @@ describe("workspace bootstrap smoke", () => {
           TMPDIR: "/tmp/original-tmp",
           OPENAI_API_KEY: "real-secret",
           ANTHROPIC_API_KEY: "real-secret",
-          OPENCLAW_CONFIG_PATH: "/tmp/leaky-config.json",
+          OPENCLI_CONFIG_PATH: "/tmp/leaky-config.json",
         },
         "/tmp/bootstrap-home",
       ),
@@ -168,11 +168,11 @@ describe("workspace bootstrap smoke", () => {
           : `${dirname(process.execPath)}:/usr/bin:/bin`,
       HOME: "/tmp/bootstrap-home",
       USERPROFILE: "/tmp/bootstrap-home",
-      OPENCLAW_HOME: "/tmp/bootstrap-home",
+      OPENCLI_HOME: "/tmp/bootstrap-home",
       TMPDIR: "/tmp/original-tmp",
-      OPENCLAW_NO_ONBOARD: "1",
-      OPENCLAW_SUPPRESS_NOTES: "1",
-      OPENCLAW_DISABLE_BUNDLED_ENTRY_SOURCE_FALLBACK: "1",
+      OPENCLI_NO_ONBOARD: "1",
+      OPENCLI_SUPPRESS_NOTES: "1",
+      OPENCLI_DISABLE_BUNDLED_ENTRY_SOURCE_FALLBACK: "1",
       AWS_EC2_METADATA_DISABLED: "true",
       AWS_SHARED_CREDENTIALS_FILE: "/tmp/bootstrap-home/.aws/credentials",
       AWS_CONFIG_FILE: "/tmp/bootstrap-home/.aws/config",
@@ -187,14 +187,14 @@ describe("collectBundledExtensionManifestErrors", () => {
         {
           id: "broken",
           packageJson: {
-            openclaw: {
+            opencli: {
               install: { npmSpec: "   " },
             },
           },
         },
       ]),
     ).toEqual([
-      "bundled extension 'broken' manifest invalid | openclaw.install.npmSpec must be a non-empty string",
+      "bundled extension 'broken' manifest invalid | opencli.install.npmSpec must be a non-empty string",
     ]);
   });
 
@@ -204,14 +204,14 @@ describe("collectBundledExtensionManifestErrors", () => {
         {
           id: "broken",
           packageJson: {
-            openclaw: {
-              install: { npmSpec: "@openclaw/broken", minHostVersion: "2026.3.14" },
+            opencli: {
+              install: { npmSpec: "@opencli/broken", minHostVersion: "2026.3.14" },
             },
           },
         },
       ]),
     ).toEqual([
-      "bundled extension 'broken' manifest invalid | openclaw.install.minHostVersion must use a semver floor in the form \">=x.y.z\"",
+      "bundled extension 'broken' manifest invalid | opencli.install.minHostVersion must use a semver floor in the form \">=x.y.z\"",
     ]);
   });
 
@@ -221,7 +221,7 @@ describe("collectBundledExtensionManifestErrors", () => {
         {
           id: "irc",
           packageJson: {
-            openclaw: {
+            opencli: {
               install: { minHostVersion: ">=2026.3.14" },
             },
           },
@@ -236,13 +236,13 @@ describe("collectBundledExtensionManifestErrors", () => {
         {
           id: "broken",
           packageJson: {
-            openclaw: {
+            opencli: {
               install: 123,
             },
           },
         },
       ]),
-    ).toEqual(["bundled extension 'broken' manifest invalid | openclaw.install must be an object"]);
+    ).toEqual(["bundled extension 'broken' manifest invalid | opencli.install must be an object"]);
   });
 });
 
@@ -271,7 +271,7 @@ describe("bundled plugin root runtime mirrors", () => {
   });
 
   it("derives required root mirrors from built root dist imports", () => {
-    const tempRoot = mkdtempSync(join(tmpdir(), "openclaw-root-mirror-"));
+    const tempRoot = mkdtempSync(join(tmpdir(), "opencli-root-mirror-"));
 
     try {
       const distDir = join(tempRoot, "dist");
@@ -334,14 +334,14 @@ describe("bundled plugin root runtime mirrors", () => {
     expect(
       collectDeclaredRootRuntimeDependencyMetadataErrors({
         dependencies: { semver: "7.7.4" },
-        openclaw: {
+        opencli: {
           bundle: {
             mirroredRootRuntimeDependencies: ["json5", "semver"],
           },
         },
       }),
     ).toEqual([
-      "package.json openclaw.bundle.mirroredRootRuntimeDependencies declares 'json5' but package.json dependencies/optionalDependencies do not include it.",
+      "package.json opencli.bundle.mirroredRootRuntimeDependencies declares 'json5' but package.json dependencies/optionalDependencies do not include it.",
     ]);
   });
 
@@ -349,7 +349,7 @@ describe("bundled plugin root runtime mirrors", () => {
     expect(
       collectDeclaredRootRuntimeDependencyMetadataErrors({
         dependencies: { json5: "^2.2.3", semver: "7.7.4" },
-        openclaw: {
+        opencli: {
           bundle: {
             mirroredRootRuntimeDependencies: ["json5", "semver"],
           },
@@ -359,7 +359,7 @@ describe("bundled plugin root runtime mirrors", () => {
   });
 
   it("does not derive root mirrors for root chunks sourced from the owning plugin", () => {
-    const tempRoot = mkdtempSync(join(tmpdir(), "openclaw-root-mirror-owned-"));
+    const tempRoot = mkdtempSync(join(tmpdir(), "opencli-root-mirror-owned-"));
 
     try {
       const distDir = join(tempRoot, "dist");
@@ -382,18 +382,18 @@ describe("bundled plugin root runtime mirrors", () => {
   });
 
   it("does not require root deps for root chunks sourced from the owning installed plugin", () => {
-    const tempRoot = mkdtempSync(join(tmpdir(), "openclaw-root-owned-installed-"));
+    const tempRoot = mkdtempSync(join(tmpdir(), "opencli-root-owned-installed-"));
 
     try {
       mkdirSync(join(tempRoot, "dist", "extensions", "memory-lancedb"), { recursive: true });
       writeFileSync(
         join(tempRoot, "package.json"),
-        `{"name":"openclaw","dependencies":{}}\n`,
+        `{"name":"opencli","dependencies":{}}\n`,
         "utf8",
       );
       writeFileSync(
         join(tempRoot, "dist", "extensions", "memory-lancedb", "package.json"),
-        `{"name":"@openclaw/memory-lancedb","dependencies":{"@lancedb/lancedb":"^0.27.2"}}\n`,
+        `{"name":"@opencli/memory-lancedb","dependencies":{"@lancedb/lancedb":"^0.27.2"}}\n`,
         "utf8",
       );
       writeFileSync(
@@ -409,18 +409,18 @@ describe("bundled plugin root runtime mirrors", () => {
   });
 
   it("still requires root deps for root-owned installed chunks", () => {
-    const tempRoot = mkdtempSync(join(tmpdir(), "openclaw-root-owned-installed-missing-"));
+    const tempRoot = mkdtempSync(join(tmpdir(), "opencli-root-owned-installed-missing-"));
 
     try {
       mkdirSync(join(tempRoot, "dist", "extensions", "memory-lancedb"), { recursive: true });
       writeFileSync(
         join(tempRoot, "package.json"),
-        `{"name":"openclaw","dependencies":{}}\n`,
+        `{"name":"opencli","dependencies":{}}\n`,
         "utf8",
       );
       writeFileSync(
         join(tempRoot, "dist", "extensions", "memory-lancedb", "package.json"),
-        `{"name":"@openclaw/memory-lancedb","dependencies":{"@lancedb/lancedb":"^0.27.2"}}\n`,
+        `{"name":"@opencli/memory-lancedb","dependencies":{"@lancedb/lancedb":"^0.27.2"}}\n`,
         "utf8",
       );
       writeFileSync(
@@ -453,7 +453,7 @@ describe("bundled plugin root runtime mirrors", () => {
         ]),
         rootPackageJson: {
           dependencies: { "@larksuiteoapi/node-sdk": "^1.61.0" },
-          openclaw: {
+          opencli: {
             bundle: {
               mirroredRootRuntimeDependencies: ["@larksuiteoapi/node-sdk"],
             },
@@ -480,7 +480,7 @@ describe("bundled plugin root runtime mirrors", () => {
         rootPackageJson: { dependencies: { "@larksuiteoapi/node-sdk": "^1.60.0" } },
       }),
     ).toEqual([
-      "installed package root mirror '@larksuiteoapi/node-sdk' for dist importers: probe-Cz2PiFtC.js is missing from package.json openclaw.bundle.mirroredRootRuntimeDependencies. Add it there so packaged runtime installs the mirrored dependency, or keep imports under dist/extensions/feishu/.",
+      "installed package root mirror '@larksuiteoapi/node-sdk' for dist importers: probe-Cz2PiFtC.js is missing from package.json opencli.bundle.mirroredRootRuntimeDependencies. Add it there so packaged runtime installs the mirrored dependency, or keep imports under dist/extensions/feishu/.",
     ]);
   });
 
@@ -500,7 +500,7 @@ describe("bundled plugin root runtime mirrors", () => {
         ]),
         rootPackageJson: {
           dependencies: { "@larksuiteoapi/node-sdk": "^1.60.0" },
-          openclaw: {
+          opencli: {
             bundle: {
               mirroredRootRuntimeDependencies: ["@larksuiteoapi/node-sdk"],
             },
@@ -539,12 +539,12 @@ describe("collectForbiddenPackPaths", () => {
         "dist/index.js",
         bundledDistPluginFile("discord", "node_modules/@discordjs/voice/index.js"),
         bundledPluginFile("tlon", "node_modules/.bin/tlon"),
-        "node_modules/.bin/openclaw",
+        "node_modules/.bin/opencli",
       ]),
     ).toEqual([
       bundledDistPluginFile("discord", "node_modules/@discordjs/voice/index.js"),
       bundledPluginFile("tlon", "node_modules/.bin/tlon"),
-      "node_modules/.bin/openclaw",
+      "node_modules/.bin/opencli",
     ]);
   });
 
@@ -584,14 +584,14 @@ describe("collectForbiddenPackPaths", () => {
     expect(
       collectForbiddenPackPaths([
         "dist/index.js",
-        "dist/extensions/browser/.OpenClaw-Install-Stage/package.json",
-        "dist/extensions/codex/.openclaw-runtime-deps-backup-node_modules-old/zod/index.js",
-        "dist/extensions/discord/.openclaw-runtime-deps-stamp.json",
+        "dist/extensions/browser/.OpenCLI-Install-Stage/package.json",
+        "dist/extensions/codex/.opencli-runtime-deps-backup-node_modules-old/zod/index.js",
+        "dist/extensions/discord/.opencli-runtime-deps-stamp.json",
       ]),
     ).toEqual([
-      "dist/extensions/browser/.OpenClaw-Install-Stage/package.json",
-      "dist/extensions/codex/.openclaw-runtime-deps-backup-node_modules-old/zod/index.js",
-      "dist/extensions/discord/.openclaw-runtime-deps-stamp.json",
+      "dist/extensions/browser/.OpenCLI-Install-Stage/package.json",
+      "dist/extensions/codex/.opencli-runtime-deps-backup-node_modules-old/zod/index.js",
+      "dist/extensions/discord/.opencli-runtime-deps-stamp.json",
     ]);
   });
 
@@ -627,7 +627,7 @@ describe("collectForbiddenPackPaths", () => {
   });
 
   it("blocks root dist chunks that still reference private qa lab sources", () => {
-    const tempRoot = mkdtempSync(join(tmpdir(), "openclaw-release-private-qa-"));
+    const tempRoot = mkdtempSync(join(tmpdir(), "opencli-release-private-qa-"));
 
     try {
       mkdirSync(join(tempRoot, "dist"), { recursive: true });
@@ -647,7 +647,7 @@ describe("collectForbiddenPackPaths", () => {
   });
 
   it("blocks private QA paths in the generated dist inventory", () => {
-    const tempRoot = mkdtempSync(join(tmpdir(), "openclaw-release-inventory-"));
+    const tempRoot = mkdtempSync(join(tmpdir(), "opencli-release-inventory-"));
 
     try {
       mkdirSync(join(tempRoot, "dist"), { recursive: true });
@@ -693,11 +693,11 @@ describe("collectMissingPackPaths", () => {
         bundledDistPluginFile("matrix", "helper-api.js"),
         bundledDistPluginFile("matrix", "runtime-api.js"),
         bundledDistPluginFile("matrix", "thread-bindings-runtime.js"),
-        bundledDistPluginFile("matrix", "openclaw.plugin.json"),
+        bundledDistPluginFile("matrix", "opencli.plugin.json"),
         bundledDistPluginFile("matrix", "package.json"),
         bundledDistPluginFile("whatsapp", "light-runtime-api.js"),
         bundledDistPluginFile("whatsapp", "runtime-api.js"),
-        bundledDistPluginFile("whatsapp", "openclaw.plugin.json"),
+        bundledDistPluginFile("whatsapp", "opencli.plugin.json"),
         bundledDistPluginFile("whatsapp", "package.json"),
       ]),
     );
@@ -772,23 +772,23 @@ describe("resolveMissingPackBuildHint", () => {
 describe("collectPackUnpackedSizeErrors", () => {
   it("accepts pack results within the unpacked size budget", () => {
     expect(
-      collectPackUnpackedSizeErrors([makePackResult("openclaw-2026.3.14.tgz", 120_354_302)]),
+      collectPackUnpackedSizeErrors([makePackResult("opencli-2026.3.14.tgz", 120_354_302)]),
     ).toEqual([]);
   });
 
   it("flags oversized pack results that risk low-memory startup failures", () => {
     expect(
-      collectPackUnpackedSizeErrors([makePackResult("openclaw-2026.3.12.tgz", 224_002_564)]),
+      collectPackUnpackedSizeErrors([makePackResult("opencli-2026.3.12.tgz", 224_002_564)]),
     ).toEqual([
-      "openclaw-2026.3.12.tgz unpackedSize 224002564 bytes (213.6 MiB) exceeds budget 211812352 bytes (202.0 MiB). Investigate duplicate channel shims, copied extension trees, or other accidental pack bloat before release.",
+      "opencli-2026.3.12.tgz unpackedSize 224002564 bytes (213.6 MiB) exceeds budget 211812352 bytes (202.0 MiB). Investigate duplicate channel shims, copied extension trees, or other accidental pack bloat before release.",
     ]);
   });
 
   it("fails closed when npm pack output omits unpackedSize for every result", () => {
     expect(
       collectPackUnpackedSizeErrors([
-        { filename: "openclaw-2026.3.14.tgz" },
-        { filename: "openclaw-extra.tgz", unpackedSize: Number.NaN },
+        { filename: "opencli-2026.3.14.tgz" },
+        { filename: "opencli-extra.tgz", unpackedSize: Number.NaN },
       ]),
     ).toEqual([
       "npm pack --dry-run produced no unpackedSize data; pack size budget was not verified.",
@@ -824,7 +824,7 @@ describe("createPackedBundledPluginPostinstallEnv", () => {
   it("keeps packed postinstall on the lazy bundled dependency path", () => {
     expect(createPackedBundledPluginPostinstallEnv({ PATH: "/usr/bin" })).toEqual({
       PATH: "/usr/bin",
-      OPENCLAW_DISABLE_BUNDLED_ENTRY_SOURCE_FALLBACK: "1",
+      OPENCLI_DISABLE_BUNDLED_ENTRY_SOURCE_FALLBACK: "1",
     });
   });
 });
@@ -859,13 +859,13 @@ describe("collectInstalledBundledPluginRuntimeDepErrors", () => {
     );
   }
 
-  it("returns no errors when declared deps are installed at the openclaw package root", () => {
+  it("returns no errors when declared deps are installed at the opencli package root", () => {
     const packageRoot = createPackageRoot();
     try {
       writeBundledPluginPackageJson(packageRoot, "whatsapp", {
-        name: "@openclaw/whatsapp",
+        name: "@opencli/whatsapp",
         dependencies: { "@whiskeysockets/baileys": "7.0.0-rc.9" },
-        openclaw: { bundle: { stageRuntimeDependencies: true } },
+        opencli: { bundle: { stageRuntimeDependencies: true } },
       });
       installRuntimeDependencyAtPackageRoot(packageRoot, "@whiskeysockets/baileys", "7.0.0-rc.9");
 
@@ -879,9 +879,9 @@ describe("collectInstalledBundledPluginRuntimeDepErrors", () => {
     const packageRoot = createPackageRoot();
     try {
       writeBundledPluginPackageJson(packageRoot, "whatsapp", {
-        name: "@openclaw/whatsapp",
+        name: "@opencli/whatsapp",
         dependencies: { "@whiskeysockets/baileys": "7.0.0-rc.9" },
-        openclaw: { bundle: { stageRuntimeDependencies: true } },
+        opencli: { bundle: { stageRuntimeDependencies: true } },
       });
 
       expect(collectInstalledBundledPluginRuntimeDepErrors(packageRoot)).toEqual([
@@ -903,7 +903,7 @@ describe("bundledRuntimeDependencySentinelCandidates", () => {
       mkdirSync(join(packageRoot, "dist", "extensions", "browser"), { recursive: true });
       writeFileSync(
         join(packageRoot, "package.json"),
-        JSON.stringify({ name: "openclaw", version: "2026.4.25-beta.1" }, null, 2),
+        JSON.stringify({ name: "opencli", version: "2026.4.25-beta.1" }, null, 2),
       );
       symlinkSync(packageRoot, aliasRoot, "dir");
 
@@ -915,7 +915,7 @@ describe("bundledRuntimeDependencySentinelCandidates", () => {
       );
       const externalCandidates = candidates.filter(
         (candidate) =>
-          candidate.startsWith(join(homeRoot, ".openclaw", "plugin-runtime-deps")) &&
+          candidate.startsWith(join(homeRoot, ".opencli", "plugin-runtime-deps")) &&
           candidate.endsWith(join("node_modules", "playwright-core", "package.json")),
       );
 

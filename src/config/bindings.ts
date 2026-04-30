@@ -1,5 +1,5 @@
 import type { AgentAcpBinding, AgentBinding, AgentRouteBinding } from "./types.agents.js";
-import type { OpenClawConfig } from "./types.openclaw.js";
+import type { OpenCLIConfig } from "./types.opencli.js";
 
 export type ConfiguredBindingRule = AgentBinding;
 
@@ -15,14 +15,14 @@ export function isAcpBinding(binding: AgentBinding): binding is AgentAcpBinding 
   return normalizeBindingType(binding) === "acp";
 }
 
-export function listConfiguredBindings(cfg: OpenClawConfig): AgentBinding[] {
+export function listConfiguredBindings(cfg: OpenCLIConfig): AgentBinding[] {
   return Array.isArray(cfg.bindings) ? cfg.bindings : [];
 }
 
-export function listRouteBindings(cfg: OpenClawConfig): AgentRouteBinding[] {
+export function listRouteBindings(cfg: OpenCLIConfig): AgentRouteBinding[] {
   return listConfiguredBindings(cfg).filter(isRouteBinding);
 }
 
-export function listAcpBindings(cfg: OpenClawConfig): AgentAcpBinding[] {
+export function listAcpBindings(cfg: OpenCLIConfig): AgentAcpBinding[] {
   return listConfiguredBindings(cfg).filter(isAcpBinding);
 }

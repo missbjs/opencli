@@ -153,7 +153,7 @@ export function resolveBundledRuntimeDepsPackageManagerRunner(params: {
   const pnpmRunner = resolveBundledRuntimeDepsPnpmRunner({
     env: params.env,
     pnpmArgs: createBundledRuntimeDepsPnpmInstallArgs({
-      storeDir: path.join(params.installExecutionRoot, ".openclaw-pnpm-store"),
+      storeDir: path.join(params.installExecutionRoot, ".opencli-pnpm-store"),
     }),
   });
   if (pnpmRunner) {

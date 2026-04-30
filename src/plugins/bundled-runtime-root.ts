@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import {
   ensureBundledPluginRuntimeDeps,
   resolveBundledRuntimeDependencyInstallRootPlan,
@@ -20,7 +20,7 @@ import {
   type PrecomputedBundledRuntimeMirrorMetadata,
 } from "./bundled-runtime-mirror.js";
 
-const BUNDLED_RUNTIME_MIRROR_LOCK_DIR = ".openclaw-runtime-mirror.lock";
+const BUNDLED_RUNTIME_MIRROR_LOCK_DIR = ".opencli-runtime-mirror.lock";
 
 export type PreparedBundledPluginRuntimeLoadRoot = {
   pluginRoot: string;
@@ -53,7 +53,7 @@ export function prepareBundledPluginRuntimeLoadRoot(params: {
   modulePath: string;
   setupModulePath?: string;
   env?: NodeJS.ProcessEnv;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   installDeps?: (params: BundledRuntimeDepsInstallParams) => void;
   registerRuntimeAliasRoot?: (rootDir: string) => void;
   logInstalled?: (installedSpecs: readonly string[]) => void;
@@ -74,7 +74,7 @@ export function prepareBundledPluginRuntimeLoadRoot(params: {
     params.logInstalled?.(depsInstallResult.installedSpecs);
   }
   if (path.resolve(installRoot) === path.resolve(params.pluginRoot)) {
-    ensureOpenClawPluginSdkAlias(path.dirname(path.dirname(params.pluginRoot)));
+    ensureOpenCLIPluginSdkAlias(path.dirname(path.dirname(params.pluginRoot)));
     return {
       pluginRoot: params.pluginRoot,
       modulePath: params.modulePath,
@@ -210,7 +210,7 @@ function prepareBundledPluginRuntimeDistMirror(params: {
       precomputedSourceMetadata: params.precomputedCanonicalPluginRootMetadata,
     });
   }
-  ensureOpenClawPluginSdkAlias(mirrorDistRoot);
+  ensureOpenCLIPluginSdkAlias(mirrorDistRoot);
   return mirrorExtensionsRoot;
 }
 
@@ -259,7 +259,7 @@ function mirrorBundledRuntimeDistRootEntries(params: {
         continue;
       }
       refreshBundledPluginRuntimeMirrorRoot({
-        pluginId: `openclaw-dist:${entry.name}`,
+        pluginId: `opencli-dist:${entry.name}`,
         sourceRoot: sourcePath,
         targetRoot: targetPath,
         tempDirParent: params.mirrorDistRoot,
@@ -302,7 +302,7 @@ function mirrorCanonicalBundledRuntimeDistRoot(params: {
       mirrorDistRoot: targetCanonicalDistRoot,
     });
   }
-  ensureOpenClawPluginSdkAlias(targetCanonicalDistRoot);
+  ensureOpenCLIPluginSdkAlias(targetCanonicalDistRoot);
 
   const pluginId = path.basename(params.pluginRoot);
   const sourceCanonicalPluginRoot = path.join(sourceCanonicalDistRoot, "extensions", pluginId);
@@ -392,16 +392,16 @@ function writeRuntimeModuleWrapper(sourcePath: string, targetPath: string): void
   fs.writeFileSync(targetPath, content, "utf8");
 }
 
-export function ensureOpenClawPluginSdkAlias(distRoot: string): void {
+export function ensureOpenCLIPluginSdkAlias(distRoot: string): void {
   const pluginSdkDir = path.join(distRoot, "plugin-sdk");
   if (!fs.existsSync(pluginSdkDir)) {
     return;
   }
 
-  const aliasDir = path.join(distRoot, "extensions", "node_modules", "openclaw");
+  const aliasDir = path.join(distRoot, "extensions", "node_modules", "opencli");
   const pluginSdkAliasDir = path.join(aliasDir, "plugin-sdk");
   writeRuntimeJsonFile(path.join(aliasDir, "package.json"), {
-    name: "openclaw",
+    name: "opencli",
     type: "module",
     exports: {
       "./plugin-sdk": "./plugin-sdk/index.js",

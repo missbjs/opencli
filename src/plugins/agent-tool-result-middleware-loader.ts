@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import type {
   AgentToolResultMiddleware,
@@ -8,12 +8,12 @@ import {
   listAgentToolResultMiddlewares,
   normalizeAgentToolResultMiddlewareRuntimeIds,
 } from "./agent-tool-result-middleware.js";
-import { loadOpenClawPlugins } from "./loader.js";
+import { loadOpenCLIPlugins } from "./loader.js";
 import { loadPluginManifestRegistry, type PluginManifestRegistry } from "./manifest-registry.js";
 
 const log = createSubsystemLogger("plugins/agent-tool-result-middleware");
 
-async function resolveRuntimeConfig(): Promise<OpenClawConfig> {
+async function resolveRuntimeConfig(): Promise<OpenCLIConfig> {
   const { getRuntimeConfig } = await import("../config/config.js");
   return getRuntimeConfig();
 }
@@ -39,7 +39,7 @@ function listMiddlewareOwnerPluginIds(params: {
 
 export async function loadAgentToolResultMiddlewaresForRuntime(params: {
   runtime: AgentToolResultMiddlewareRuntime;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   manifestRegistry?: PluginManifestRegistry;
@@ -67,7 +67,7 @@ export async function loadAgentToolResultMiddlewaresForRuntime(params: {
       return [];
     }
 
-    const registry = loadOpenClawPlugins({
+    const registry = loadOpenCLIPlugins({
       config,
       workspaceDir: params.workspaceDir,
       env,

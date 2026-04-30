@@ -6,7 +6,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { prepareRestartScript, runRestartScript } from "./restart-helper.js";
 
 vi.mock("node:child_process", async () => {
-  const { mockNodeBuiltinModule } = await import("openclaw/plugin-sdk/test-node-mocks");
+  const { mockNodeBuiltinModule } = await import("opencli/plugin-sdk/test-node-mocks");
   return mockNodeBuiltinModule(
     () => vi.importActual<typeof import("node:child_process")>("node:child_process"),
     {
@@ -69,17 +69,17 @@ exit 0
   }
 
   function expectWindowsRestartWaitOrdering(content: string, port = 18789) {
-    const stateCheck = "$taskState = Get-OpenClawScheduledTaskState -TaskName $taskName";
+    const stateCheck = "$taskState = Get-OpenCLIScheduledTaskState -TaskName $taskName";
     const runningGuard = 'if ($taskState -eq "Running")';
     const endCommand =
-      'Invoke-OpenClawSchtasksWithTimeout -Arguments @("/End", "/TN", $taskName) -TimeoutSeconds 10';
-    const skipEndLog = "openclaw restart skipped schtasks end";
+      'Invoke-OpenCLISchtasksWithTimeout -Arguments @("/End", "/TN", $taskName) -TimeoutSeconds 10';
+    const skipEndLog = "opencli restart skipped schtasks end";
     const pollLoop = "for ($attempt = 1; $attempt -le 10; $attempt++)";
-    const pollCall = `Get-OpenClawListenerPids -Port $port`;
+    const pollCall = `Get-OpenCLIListenerPids -Port $port`;
     const forceKillBranch = "if ($attempt -eq 10)";
     const forceKillCommand = "Stop-Process -Id $listenerPid -Force";
     const runCommand =
-      'Invoke-OpenClawSchtasksWithTimeout -Arguments @("/Run", "/TN", $taskName) -TimeoutSeconds 30';
+      'Invoke-OpenCLISchtasksWithTimeout -Arguments @("/Run", "/TN", $taskName) -TimeoutSeconds 30';
     const portAssignment = `$port = ${port}`;
     const stateCheckIndex = content.indexOf(stateCheck);
     const runningGuardIndex = content.indexOf(runningGuard, stateCheckIndex);
@@ -122,21 +122,21 @@ exit 0
     it("creates a systemd restart script on Linux", async () => {
       Object.defineProperty(process, "platform", { value: "linux" });
       const { scriptPath, content } = await prepareAndReadScript({
-        OPENCLAW_PROFILE: "default",
+        OPENCLI_PROFILE: "default",
       });
       expect(scriptPath.endsWith(".sh")).toBe(true);
       expect(content).toContain("#!/bin/sh");
-      expect(content).toContain("systemctl --user restart 'openclaw-gateway.service'");
+      expect(content).toContain("systemctl --user restart 'opencli-gateway.service'");
       // Script should self-cleanup
       expect(content).toContain('rm -f "$0"');
       await cleanupScript(scriptPath);
     });
 
-    it("uses OPENCLAW_SYSTEMD_UNIT override for systemd scripts", async () => {
+    it("uses OPENCLI_SYSTEMD_UNIT override for systemd scripts", async () => {
       Object.defineProperty(process, "platform", { value: "linux" });
       const { scriptPath, content } = await prepareAndReadScript({
-        OPENCLAW_PROFILE: "default",
-        OPENCLAW_SYSTEMD_UNIT: "custom-gateway",
+        OPENCLI_PROFILE: "default",
+        OPENCLI_SYSTEMD_UNIT: "custom-gateway",
       });
       expect(content).toContain("systemctl --user restart 'custom-gateway.service'");
       await cleanupScript(scriptPath);
@@ -147,19 +147,19 @@ exit 0
       process.getuid = () => 501;
 
       const { scriptPath, content } = await prepareAndReadScript({
-        OPENCLAW_PROFILE: "default",
+        OPENCLI_PROFILE: "default",
       });
       expect(scriptPath.endsWith(".sh")).toBe(true);
       expect(content).toContain("#!/bin/sh");
-      expect(content).toContain("launchctl kickstart -k 'gui/501/ai.openclaw.gateway'");
+      expect(content).toContain("launchctl kickstart -k 'gui/501/ai.opencli.gateway'");
       // Should clear disabled state and fall back to bootstrap when kickstart fails.
-      expect(content).toContain("launchctl enable 'gui/501/ai.openclaw.gateway'");
+      expect(content).toContain("launchctl enable 'gui/501/ai.opencli.gateway'");
       expect(content).toContain("launchctl bootstrap 'gui/501'");
       expect(content).toContain('rm -f "$0"');
       await cleanupScript(scriptPath);
     });
 
-    it("captures macOS launchctl stderr to ~/.openclaw/logs/gateway-restart.log (#68486)", async () => {
+    it("captures macOS launchctl stderr to ~/.opencli/logs/gateway-restart.log (#68486)", async () => {
       // Silent failure in macOS update restart helper: previously every
       // launchctl call redirected stderr to /dev/null and the final kickstart
       // was chained with `|| true`, so bootstrap/kickstart failures were
@@ -170,10 +170,10 @@ exit 0
       process.getuid = () => 501;
 
       const { scriptPath, content } = await prepareAndReadScript({
-        OPENCLAW_PROFILE: "default",
+        OPENCLI_PROFILE: "default",
         HOME: "/Users/testuser",
       });
-      expect(content).toContain("exec >>'/Users/testuser/.openclaw/logs/gateway-restart.log' 2>&1");
+      expect(content).toContain("exec >>'/Users/testuser/.opencli/logs/gateway-restart.log' 2>&1");
       // Every launchctl call should allow output through now (no `2>/dev/null`)
       // and the final kickstart must not swallow its exit code.
       expect(content).not.toMatch(/launchctl[^\n]*2>\/dev\/null/);
@@ -181,27 +181,27 @@ exit 0
       await cleanupScript(scriptPath);
     });
 
-    it("uses OPENCLAW_STATE_DIR for the macOS update restart log", async () => {
+    it("uses OPENCLI_STATE_DIR for the macOS update restart log", async () => {
       Object.defineProperty(process, "platform", { value: "darwin" });
       process.getuid = () => 501;
 
       const { scriptPath, content } = await prepareAndReadScript({
-        OPENCLAW_PROFILE: "default",
+        OPENCLI_PROFILE: "default",
         HOME: "/Users/testuser",
-        OPENCLAW_STATE_DIR: "/tmp/openclaw-state",
+        OPENCLI_STATE_DIR: "/tmp/opencli-state",
       });
 
       expect(content).toContain(
-        "if mkdir -p '/tmp/openclaw-state/logs' 2>/dev/null && : >>'/tmp/openclaw-state/logs/gateway-restart.log' 2>/dev/null; then",
+        "if mkdir -p '/tmp/opencli-state/logs' 2>/dev/null && : >>'/tmp/opencli-state/logs/gateway-restart.log' 2>/dev/null; then",
       );
-      expect(content).toContain("exec >>'/tmp/openclaw-state/logs/gateway-restart.log' 2>&1");
+      expect(content).toContain("exec >>'/tmp/opencli-state/logs/gateway-restart.log' 2>&1");
       await cleanupScript(scriptPath);
     });
 
     it("returns the final macOS launchctl kickstart failure after logging cleanup", async () => {
       Object.defineProperty(process, "platform", { value: "darwin" });
       process.getuid = () => 501;
-      const tmpDir = await makeTempDir("openclaw-restart-helper-");
+      const tmpDir = await makeTempDir("opencli-restart-helper-");
       const fakeBinDir = path.join(tmpDir, "bin");
       const stateDir = path.join(tmpDir, "state");
       await fs.mkdir(fakeBinDir, { recursive: true });
@@ -218,9 +218,9 @@ exit 0
       );
 
       const { scriptPath } = await prepareAndReadScript({
-        OPENCLAW_PROFILE: "default",
+        OPENCLI_PROFILE: "default",
         HOME: path.join(tmpDir, "home"),
-        OPENCLAW_STATE_DIR: stateDir,
+        OPENCLI_STATE_DIR: stateDir,
       });
 
       const result = await executeScript(scriptPath, {
@@ -229,16 +229,16 @@ exit 0
       const log = await fs.readFile(path.join(stateDir, "logs", "gateway-restart.log"), "utf-8");
 
       expect(result.code).toBe(42);
-      expect(log).toContain("openclaw restart attempt source=update target=ai.openclaw.gateway");
-      expect(log).toContain("launchctl kickstart -k gui/501/ai.openclaw.gateway");
-      expect(log).toContain("openclaw restart failed source=update status=42");
-      expect(log).not.toContain("openclaw restart done source=update");
+      expect(log).toContain("opencli restart attempt source=update target=ai.opencli.gateway");
+      expect(log).toContain("launchctl kickstart -k gui/501/ai.opencli.gateway");
+      expect(log).toContain("opencli restart failed source=update status=42");
+      expect(log).not.toContain("opencli restart done source=update");
     });
 
     it("continues the macOS restart path when log setup fails", async () => {
       Object.defineProperty(process, "platform", { value: "darwin" });
       process.getuid = () => 501;
-      const tmpDir = await makeTempDir("openclaw-restart-helper-");
+      const tmpDir = await makeTempDir("opencli-restart-helper-");
       const fakeBinDir = path.join(tmpDir, "bin");
       const stateFile = path.join(tmpDir, "state-file");
       const markerPath = path.join(tmpDir, "launchctl-ran");
@@ -253,9 +253,9 @@ exit 0
       );
 
       const { scriptPath } = await prepareAndReadScript({
-        OPENCLAW_PROFILE: "default",
+        OPENCLI_PROFILE: "default",
         HOME: path.join(tmpDir, "home"),
-        OPENCLAW_STATE_DIR: stateFile,
+        OPENCLI_STATE_DIR: stateFile,
       });
 
       const result = await executeScript(scriptPath, {
@@ -270,16 +270,16 @@ exit 0
     it("logs custom macOS launchd labels without shell expansion", async () => {
       Object.defineProperty(process, "platform", { value: "darwin" });
       process.getuid = () => 501;
-      const tmpDir = await makeTempDir("openclaw-restart-helper-");
+      const tmpDir = await makeTempDir("opencli-restart-helper-");
       const fakeBinDir = path.join(tmpDir, "bin");
       const stateDir = path.join(tmpDir, "state");
       await fs.mkdir(fakeBinDir, { recursive: true });
       await writeFakeLaunchctl(fakeBinDir);
 
       const { scriptPath } = await prepareAndReadScript({
-        OPENCLAW_LAUNCHD_LABEL: "ai.openclaw.$(echo injected)",
+        OPENCLI_LAUNCHD_LABEL: "ai.opencli.$(echo injected)",
         HOME: path.join(tmpDir, "home"),
-        OPENCLAW_STATE_DIR: stateDir,
+        OPENCLI_STATE_DIR: stateDir,
       });
 
       const result = await executeScript(scriptPath, {
@@ -288,19 +288,19 @@ exit 0
       const log = await fs.readFile(path.join(stateDir, "logs", "gateway-restart.log"), "utf-8");
 
       expect(result.code).toBeNull();
-      expect(log).toContain("target=ai.openclaw.$(echo injected)");
-      expect(log).not.toContain("target=ai.openclaw.injected");
+      expect(log).toContain("target=ai.opencli.$(echo injected)");
+      expect(log).not.toContain("target=ai.opencli.injected");
     });
 
-    it("uses OPENCLAW_LAUNCHD_LABEL override on macOS", async () => {
+    it("uses OPENCLI_LAUNCHD_LABEL override on macOS", async () => {
       Object.defineProperty(process, "platform", { value: "darwin" });
       process.getuid = () => 501;
 
       const { scriptPath, content } = await prepareAndReadScript({
-        OPENCLAW_PROFILE: "default",
-        OPENCLAW_LAUNCHD_LABEL: "com.custom.openclaw",
+        OPENCLI_PROFILE: "default",
+        OPENCLI_LAUNCHD_LABEL: "com.custom.opencli",
       });
-      expect(content).toContain("launchctl kickstart -k 'gui/501/com.custom.openclaw'");
+      expect(content).toContain("launchctl kickstart -k 'gui/501/com.custom.opencli'");
       await cleanupScript(scriptPath);
     });
 
@@ -308,7 +308,7 @@ exit 0
       Object.defineProperty(process, "platform", { value: "win32" });
 
       const { scriptPath, content } = await prepareAndReadScript({
-        OPENCLAW_PROFILE: "default",
+        OPENCLI_PROFILE: "default",
       });
       expect(scriptPath.endsWith(".cmd")).toBe(true);
       expect(content).toContain("@echo off");
@@ -316,34 +316,34 @@ exit 0
       expect(content).not.toContain("powershell -NoProfile -ExecutionPolicy Bypass -File");
       expect(content).toContain('$ErrorActionPreference = "Continue"');
       expect(content).toContain("gateway-restart.log");
-      expect(content).toContain("$taskName = 'OpenClaw Gateway'");
-      expect(content).toContain("function Invoke-OpenClawSchtasksWithTimeout");
-      expect(content).toContain("function Get-OpenClawScheduledTaskState");
-      expect(content).toContain("function Invoke-OpenClawStartupLauncher");
+      expect(content).toContain("$taskName = 'OpenCLI Gateway'");
+      expect(content).toContain("function Invoke-OpenCLISchtasksWithTimeout");
+      expect(content).toContain("function Get-OpenCLIScheduledTaskState");
+      expect(content).toContain("function Invoke-OpenCLIStartupLauncher");
       expect(content).toContain("Get-ScheduledTask -TaskName $TaskName");
-      expect(content).toContain("openclaw restart skipped schtasks end");
+      expect(content).toContain("opencli restart skipped schtasks end");
       expect(content).toContain(
-        '$launcherPath = Join-Path $env:USERPROFILE ".openclaw\\gateway.cmd"',
+        '$launcherPath = Join-Path $env:USERPROFILE ".opencli\\gateway.cmd"',
       );
-      expect(content).toContain("openclaw restart launched startup fallback");
+      expect(content).toContain("opencli restart launched startup fallback");
       expectWindowsRestartWaitOrdering(content);
       expect(content).toContain('del "%~f0" >nul 2>&1');
       await cleanupScript(scriptPath);
     });
 
-    it("uses OPENCLAW_WINDOWS_TASK_NAME override on Windows", async () => {
+    it("uses OPENCLI_WINDOWS_TASK_NAME override on Windows", async () => {
       Object.defineProperty(process, "platform", { value: "win32" });
 
       const { scriptPath, content } = await prepareAndReadScript({
-        OPENCLAW_PROFILE: "default",
-        OPENCLAW_WINDOWS_TASK_NAME: "OpenClaw Gateway (custom)",
+        OPENCLI_PROFILE: "default",
+        OPENCLI_WINDOWS_TASK_NAME: "OpenCLI Gateway (custom)",
       });
-      expect(content).toContain("$taskName = 'OpenClaw Gateway (custom)'");
-      expect(content).toContain("Get-OpenClawScheduledTaskState -TaskName $taskName");
+      expect(content).toContain("$taskName = 'OpenCLI Gateway (custom)'");
+      expect(content).toContain("Get-OpenCLIScheduledTaskState -TaskName $taskName");
       expect(content).toContain(
-        'Invoke-OpenClawSchtasksWithTimeout -Arguments @("/End", "/TN", $taskName) -TimeoutSeconds 10',
+        'Invoke-OpenCLISchtasksWithTimeout -Arguments @("/End", "/TN", $taskName) -TimeoutSeconds 10',
       );
-      expect(content).toContain("$status = Invoke-OpenClawStartupLauncher");
+      expect(content).toContain("$status = Invoke-OpenCLIStartupLauncher");
       expectWindowsRestartWaitOrdering(content);
       await cleanupScript(scriptPath);
     });
@@ -354,7 +354,7 @@ exit 0
 
       const { scriptPath, content } = await prepareAndReadScript(
         {
-          OPENCLAW_PROFILE: "default",
+          OPENCLI_PROFILE: "default",
         },
         customPort,
       );
@@ -369,9 +369,9 @@ exit 0
     it("uses custom profile in service names", async () => {
       Object.defineProperty(process, "platform", { value: "linux" });
       const { scriptPath, content } = await prepareAndReadScript({
-        OPENCLAW_PROFILE: "production",
+        OPENCLI_PROFILE: "production",
       });
-      expect(content).toContain("openclaw-gateway-production.service");
+      expect(content).toContain("opencli-gateway-production.service");
       await cleanupScript(scriptPath);
     });
 
@@ -380,9 +380,9 @@ exit 0
       process.getuid = () => 502;
 
       const { scriptPath, content } = await prepareAndReadScript({
-        OPENCLAW_PROFILE: "staging",
+        OPENCLI_PROFILE: "staging",
       });
-      expect(content).toContain("gui/502/ai.openclaw.staging");
+      expect(content).toContain("gui/502/ai.opencli.staging");
       await cleanupScript(scriptPath);
     });
 
@@ -390,9 +390,9 @@ exit 0
       Object.defineProperty(process, "platform", { value: "win32" });
 
       const { scriptPath, content } = await prepareAndReadScript({
-        OPENCLAW_PROFILE: "production",
+        OPENCLI_PROFILE: "production",
       });
-      expect(content).toContain("$taskName = 'OpenClaw Gateway (production)'");
+      expect(content).toContain("$taskName = 'OpenCLI Gateway (production)'");
       expectWindowsRestartWaitOrdering(content);
       await cleanupScript(scriptPath);
     });
@@ -410,7 +410,7 @@ exit 0
         .mockRejectedValueOnce(new Error("simulated write failure"));
 
       const scriptPath = await prepareRestartScript({
-        OPENCLAW_PROFILE: "default",
+        OPENCLI_PROFILE: "default",
       });
 
       expect(scriptPath).toBeNull();
@@ -420,7 +420,7 @@ exit 0
     it("escapes single quotes in profile names for shell scripts", async () => {
       Object.defineProperty(process, "platform", { value: "linux" });
       const { scriptPath, content } = await prepareAndReadScript({
-        OPENCLAW_PROFILE: "it's-a-test",
+        OPENCLI_PROFILE: "it's-a-test",
       });
       // Single quotes should be escaped with '\'' pattern
       expect(content).not.toContain("it's");
@@ -434,7 +434,7 @@ exit 0
 
       const { scriptPath, content } = await prepareAndReadScript({
         HOME: "/Users/testuser",
-        OPENCLAW_PROFILE: "default",
+        OPENCLI_PROFILE: "default",
       });
       // The plist path must contain the resolved home dir, not literal $HOME
       expect(content).toMatch(/[\\/]Users[\\/]testuser[\\/]Library[\\/]LaunchAgents[\\/]/);
@@ -448,7 +448,7 @@ exit 0
 
       const { scriptPath, content } = await prepareAndReadScript({
         HOME: "/Users/envhome",
-        OPENCLAW_PROFILE: "default",
+        OPENCLI_PROFILE: "default",
       });
       expect(content).toMatch(/[\\/]Users[\\/]envhome[\\/]Library[\\/]LaunchAgents[\\/]/);
       await cleanupScript(scriptPath);
@@ -460,17 +460,17 @@ exit 0
 
       const { scriptPath, content } = await prepareAndReadScript({
         HOME: "/Users/testuser",
-        OPENCLAW_LAUNCHD_LABEL: "ai.openclaw.it's-a-test",
+        OPENCLI_LAUNCHD_LABEL: "ai.opencli.it's-a-test",
       });
       // The plist path must also shell-escape the label to prevent injection
-      expect(content).toContain("ai.openclaw.it'\\''s-a-test.plist");
+      expect(content).toContain("ai.opencli.it'\\''s-a-test.plist");
       await cleanupScript(scriptPath);
     });
 
     it("rejects unsafe batch profile names on Windows", async () => {
       Object.defineProperty(process, "platform", { value: "win32" });
       const scriptPath = await prepareRestartScript({
-        OPENCLAW_PROFILE: "test&whoami",
+        OPENCLI_PROFILE: "test&whoami",
       });
 
       expect(scriptPath).toBeNull();

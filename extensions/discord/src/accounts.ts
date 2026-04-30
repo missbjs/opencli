@@ -2,18 +2,18 @@ import {
   createAccountActionGate,
   createAccountListHelpers,
   resolveMergedAccountConfig,
-} from "openclaw/plugin-sdk/account-helpers";
-import { normalizeAccountId } from "openclaw/plugin-sdk/account-id";
+} from "opencli/plugin-sdk/account-helpers";
+import { normalizeAccountId } from "opencli/plugin-sdk/account-id";
 import {
   mapAllowFromEntries,
   normalizeChannelDmPolicy,
   resolveChannelDmAllowFrom,
   resolveChannelDmPolicy,
   type ChannelDmPolicy,
-} from "openclaw/plugin-sdk/channel-config-helpers";
-import { resolveAccountEntry } from "openclaw/plugin-sdk/routing";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/text-runtime";
-import type { DiscordAccountConfig, DiscordActionConfig, OpenClawConfig } from "./runtime-api.js";
+} from "opencli/plugin-sdk/channel-config-helpers";
+import { resolveAccountEntry } from "opencli/plugin-sdk/routing";
+import { normalizeOptionalString } from "opencli/plugin-sdk/text-runtime";
+import type { DiscordAccountConfig, DiscordActionConfig, OpenCLIConfig } from "./runtime-api.js";
 import { resolveDiscordToken } from "./token.js";
 
 export type ResolvedDiscordAccount = {
@@ -30,14 +30,14 @@ export const listDiscordAccountIds = listAccountIds;
 export const resolveDefaultDiscordAccountId = resolveDefaultAccountId;
 
 export function resolveDiscordAccountConfig(
-  cfg: OpenClawConfig,
+  cfg: OpenCLIConfig,
   accountId: string,
 ): DiscordAccountConfig | undefined {
   return resolveAccountEntry(cfg.channels?.discord?.accounts, accountId);
 }
 
 export function mergeDiscordAccountConfig(
-  cfg: OpenClawConfig,
+  cfg: OpenCLIConfig,
   accountId: string,
 ): DiscordAccountConfig {
   return resolveMergedAccountConfig<DiscordAccountConfig>({
@@ -50,7 +50,7 @@ export function mergeDiscordAccountConfig(
 }
 
 export function resolveDiscordAccountAllowFrom(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   accountId?: string | null;
 }): string[] | undefined {
   const accountId = normalizeAccountId(
@@ -67,7 +67,7 @@ export function resolveDiscordAccountAllowFrom(params: {
 }
 
 export function resolveDiscordAccountDmPolicy(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   accountId?: string | null;
 }): ChannelDmPolicy | undefined {
   const accountId = normalizeAccountId(
@@ -84,7 +84,7 @@ export function resolveDiscordAccountDmPolicy(params: {
 }
 
 export function createDiscordActionGate(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   accountId?: string | null;
 }): (key: keyof DiscordActionConfig, defaultValue?: boolean) => boolean {
   const accountId = normalizeAccountId(
@@ -97,7 +97,7 @@ export function createDiscordActionGate(params: {
 }
 
 export function resolveDiscordAccount(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   accountId?: string | null;
 }): ResolvedDiscordAccount {
   const accountId = normalizeAccountId(
@@ -119,7 +119,7 @@ export function resolveDiscordAccount(params: {
 }
 
 export function resolveDiscordMaxLinesPerMessage(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   discordConfig?: DiscordAccountConfig | null;
   accountId?: string | null;
 }): number | undefined {
@@ -133,7 +133,7 @@ export function resolveDiscordMaxLinesPerMessage(params: {
 }
 
 function resolveDiscordAccountTokenOwner(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   token: string;
 }): string | undefined {
   const token = params.token.trim();
@@ -161,7 +161,7 @@ function resolveDiscordAccountTokenOwner(params: {
 }
 
 export function resolveDiscordDuplicateTokenOwner(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   account: ResolvedDiscordAccount;
 }): string | undefined {
   const owner = resolveDiscordAccountTokenOwner({
@@ -173,14 +173,14 @@ export function resolveDiscordDuplicateTokenOwner(params: {
 
 export function isDiscordAccountEnabledForRuntime(
   account: ResolvedDiscordAccount,
-  cfg: OpenClawConfig,
+  cfg: OpenCLIConfig,
 ): boolean {
   return account.enabled && !resolveDiscordDuplicateTokenOwner({ cfg, account });
 }
 
 export function resolveDiscordAccountDisabledReason(
   account: ResolvedDiscordAccount,
-  cfg: OpenClawConfig,
+  cfg: OpenCLIConfig,
 ): string {
   if (!account.enabled) {
     return "disabled";
@@ -189,7 +189,7 @@ export function resolveDiscordAccountDisabledReason(
   return owner ? `duplicate bot token; using account "${owner}"` : "disabled";
 }
 
-export function listEnabledDiscordAccounts(cfg: OpenClawConfig): ResolvedDiscordAccount[] {
+export function listEnabledDiscordAccounts(cfg: OpenCLIConfig): ResolvedDiscordAccount[] {
   return listDiscordAccountIds(cfg)
     .map((accountId) => resolveDiscordAccount({ cfg, accountId }))
     .filter((account) => isDiscordAccountEnabledForRuntime(account, cfg));

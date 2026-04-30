@@ -3,17 +3,17 @@ import {
   type ListFoundationModelsCommandOutput,
   type ListInferenceProfilesCommandOutput,
 } from "@aws-sdk/client-bedrock";
-import { createSubsystemLogger } from "openclaw/plugin-sdk/core";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+import { createSubsystemLogger } from "opencli/plugin-sdk/core";
+import { formatErrorMessage } from "opencli/plugin-sdk/error-runtime";
 import type {
   BedrockDiscoveryConfig,
   ModelDefinitionConfig,
   ModelProviderConfig,
-} from "openclaw/plugin-sdk/provider-model-shared";
+} from "opencli/plugin-sdk/provider-model-shared";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalLowercaseString,
-} from "openclaw/plugin-sdk/text-runtime";
+} from "opencli/plugin-sdk/text-runtime";
 import { resolveBedrockConfigApiKey } from "./discovery-shared.js";
 
 const log = createSubsystemLogger("bedrock-discovery");

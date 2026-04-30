@@ -1,9 +1,9 @@
 import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
-import { type ClaimableDedupe, createClaimableDedupe } from "openclaw/plugin-sdk/persistent-dedupe";
-import { resolveStateDir } from "openclaw/plugin-sdk/state-paths";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
+import { type ClaimableDedupe, createClaimableDedupe } from "opencli/plugin-sdk/persistent-dedupe";
+import { resolveStateDir } from "opencli/plugin-sdk/state-paths";
+import { resolvePreferredOpenCLITmpDir } from "opencli/plugin-sdk/temp-path";
 import type { NormalizedWebhookMessage } from "./monitor-normalize.js";
 
 // BlueBubbles has no sequence/ack in its webhook protocol, and its
@@ -23,14 +23,14 @@ const MAX_GUID_CHARS = 512;
 
 function resolveStateDirFromEnv(env: NodeJS.ProcessEnv = process.env): string {
   if (env.VITEST || env.NODE_ENV === "test") {
-    // Isolate tests from real ~/.openclaw state without sharing across tests.
+    // Isolate tests from real ~/.opencli state without sharing across tests.
     // Stable-per-pid so the scoped dedupe test can observe persistence.
-    const name = "openclaw-vitest-" + process.pid;
-    return path.join(resolvePreferredOpenClawTmpDir(), name);
+    const name = "opencli-vitest-" + process.pid;
+    return path.join(resolvePreferredOpenCLITmpDir(), name);
   }
-  // Canonical OpenClaw state dir: honors OPENCLAW_STATE_DIR (with `~` expansion
+  // Canonical OpenCLI state dir: honors OPENCLI_STATE_DIR (with `~` expansion
   // via resolveUserPath), plus legacy/new fallback. Using the shared helper
-  // keeps this plugin's persistence aligned with the rest of OpenClaw state.
+  // keeps this plugin's persistence aligned with the rest of OpenCLI state.
   return resolveStateDir(env);
 }
 

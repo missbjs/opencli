@@ -2,11 +2,11 @@ import { randomUUID } from "node:crypto";
 import { appendFileSync, mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 import { performance } from "node:perf_hooks";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { isDiagnosticFlagEnabled } from "./diagnostic-flags.js";
 import { isTruthyEnvValue } from "./env.js";
 
-export const OPENCLAW_DIAGNOSTICS_TIMELINE_SCHEMA_VERSION = "openclaw.diagnostics.v1";
+export const OPENCLI_DIAGNOSTICS_TIMELINE_SCHEMA_VERSION = "opencli.diagnostics.v1";
 
 export type DiagnosticsTimelineEventType =
   | "span.start"
@@ -50,12 +50,12 @@ type DiagnosticsTimelineSpanOptions = {
   phase?: string;
   parentSpanId?: string;
   attributes?: DiagnosticsTimelineAttributes;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   env?: NodeJS.ProcessEnv;
 };
 
 type DiagnosticsTimelineOptions = {
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   env?: NodeJS.ProcessEnv;
 };
 
@@ -76,9 +76,9 @@ export function isDiagnosticsTimelineEnabled(options: DiagnosticsTimelineOptions
   return (
     (isDiagnosticFlagEnabled("timeline", config, env) ||
       isDiagnosticFlagEnabled("diagnostics.timeline", config, env) ||
-      isTruthyEnvValue(env.OPENCLAW_DIAGNOSTICS)) &&
-    typeof env.OPENCLAW_DIAGNOSTICS_TIMELINE_PATH === "string" &&
-    env.OPENCLAW_DIAGNOSTICS_TIMELINE_PATH.trim().length > 0
+      isTruthyEnvValue(env.OPENCLI_DIAGNOSTICS)) &&
+    typeof env.OPENCLI_DIAGNOSTICS_TIMELINE_PATH === "string" &&
+    env.OPENCLI_DIAGNOSTICS_TIMELINE_PATH.trim().length > 0
   );
 }
 
@@ -112,12 +112,12 @@ function normalizeAttributes(
 
 function serializeTimelineEvent(event: DiagnosticsTimelineEvent, env: NodeJS.ProcessEnv): string {
   const normalized = {
-    schemaVersion: OPENCLAW_DIAGNOSTICS_TIMELINE_SCHEMA_VERSION,
+    schemaVersion: OPENCLI_DIAGNOSTICS_TIMELINE_SCHEMA_VERSION,
     type: event.type,
     timestamp: event.timestamp ?? new Date().toISOString(),
     name: event.name,
-    ...(env.OPENCLAW_DIAGNOSTICS_RUN_ID ? { runId: env.OPENCLAW_DIAGNOSTICS_RUN_ID } : {}),
-    ...(env.OPENCLAW_DIAGNOSTICS_ENV ? { envName: env.OPENCLAW_DIAGNOSTICS_ENV } : {}),
+    ...(env.OPENCLI_DIAGNOSTICS_RUN_ID ? { runId: env.OPENCLI_DIAGNOSTICS_RUN_ID } : {}),
+    ...(env.OPENCLI_DIAGNOSTICS_ENV ? { envName: env.OPENCLI_DIAGNOSTICS_ENV } : {}),
     pid: process.pid,
     ...(event.runId ? { runId: event.runId } : {}),
     ...(event.envName ? { envName: event.envName } : {}),
@@ -156,7 +156,7 @@ export function emitDiagnosticsTimelineEvent(
   if (!isDiagnosticsTimelineEnabled(options)) {
     return;
   }
-  const path = env.OPENCLAW_DIAGNOSTICS_TIMELINE_PATH?.trim();
+  const path = env.OPENCLI_DIAGNOSTICS_TIMELINE_PATH?.trim();
   if (!path) {
     return;
   }

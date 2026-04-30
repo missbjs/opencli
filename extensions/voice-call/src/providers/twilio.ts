@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
-import { safeEqualSecret } from "openclaw/plugin-sdk/security-runtime";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/text-runtime";
+import { safeEqualSecret } from "opencli/plugin-sdk/security-runtime";
+import { normalizeOptionalString } from "opencli/plugin-sdk/text-runtime";
 import type { TwilioConfig } from "../config.js";
 import { getHeader } from "../http-headers.js";
 import type { MediaStreamHandler } from "../media-stream.js";

@@ -13,14 +13,14 @@ run_load_failure_scenario() {
     -i "$IMAGE_NAME" bash -s <<'EOF'
 set -euo pipefail
 
-source scripts/lib/openclaw-e2e-instance.sh
+source scripts/lib/opencli-e2e-instance.sh
 source scripts/e2e/lib/bundled-channel/common.sh
-openclaw_e2e_eval_test_state_from_b64 "${OPENCLAW_TEST_STATE_SCRIPT_B64:?missing OPENCLAW_TEST_STATE_SCRIPT_B64}"
+opencli_e2e_eval_test_state_from_b64 "${OPENCLI_TEST_STATE_SCRIPT_B64:?missing OPENCLI_TEST_STATE_SCRIPT_B64}"
 export NPM_CONFIG_PREFIX="$HOME/.npm-global"
 export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
-export OPENCLAW_NO_ONBOARD=1
+export OPENCLI_NO_ONBOARD=1
 
-bundled_channel_install_package /tmp/openclaw-load-failure-install.log
+bundled_channel_install_package /tmp/opencli-load-failure-install.log
 
 root="$(bundled_channel_package_root)"
 plugin_dir="$root/dist/extensions/load-failure-alpha"

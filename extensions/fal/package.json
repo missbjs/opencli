@@ -1,13 +1,13 @@
 {
-  "name": "@openclaw/fal-provider",
+  "name": "@opencli/fal-provider",
   "version": "2026.4.25",
   "private": true,
-  "description": "OpenClaw fal provider plugin",
+  "description": "OpenCLI fal provider plugin",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@opencli/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "opencli": {
     "extensions": [
       "./index.ts"
     ]

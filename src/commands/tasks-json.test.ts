@@ -9,7 +9,7 @@ import {
   resetTaskRegistryDeliveryRuntimeForTests,
   resetTaskRegistryForTests,
 } from "../tasks/task-registry.js";
-import { withOpenClawTestState } from "../test-utils/openclaw-test-state.js";
+import { withOpenCLITestState } from "../test-utils/opencli-test-state.js";
 import { tasksAuditJsonCommand, tasksListJsonCommand } from "./tasks-json.js";
 
 function createRuntime(): RuntimeEnv {
@@ -25,8 +25,8 @@ function readJsonLog(runtime: RuntimeEnv): unknown {
 }
 
 async function withTaskJsonStateDir(run: () => Promise<void>): Promise<void> {
-  await withOpenClawTestState(
-    { layout: "state-only", prefix: "openclaw-tasks-json-command-" },
+  await withOpenCLITestState(
+    { layout: "state-only", prefix: "opencli-tasks-json-command-" },
     async () => {
       resetTaskRegistryDeliveryRuntimeForTests();
       resetTaskRegistryForTests({ persist: false });

@@ -121,7 +121,7 @@ describe("current plugin metadata snapshot", () => {
   });
 
   it("clears the current snapshot when the persisted installed index changes", () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-plugin-metadata-"));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "opencli-plugin-metadata-"));
     try {
       setCurrentPluginMetadataSnapshot(createSnapshot());
 

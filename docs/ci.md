@@ -14,7 +14,7 @@ The `check-dependencies` shard runs `pnpm deadcode:dependencies`, a production K
 before release." It accepts a branch, tag, or full commit SHA, dispatches the
 manual `CI` workflow with that target, dispatches `Plugin Prerelease` for
 release-only plugin/package/static/Docker proof, and dispatches
-`OpenClaw Release Checks` for install smoke, package acceptance, Docker
+`OpenCLI Release Checks` for install smoke, package acceptance, Docker
 release-path suites, live/E2E, OpenWebUI, QA Lab parity, Matrix, and Telegram
 lanes. It can also run the post-publish `NPM Telegram Beta E2E` workflow when a
 published package spec is provided. `release_profile=minimum|stable|full` controls the live/provider
@@ -26,7 +26,7 @@ the current child run conclusions and appends slowest-job tables for each child
 run. If a child workflow is rerun and turns green, rerun only the parent
 verifier job to refresh the umbrella result and timing summary.
 
-For recovery, `Full Release Validation` and `OpenClaw Release Checks` both
+For recovery, `Full Release Validation` and `OpenCLI Release Checks` both
 accept `rerun_group`. Use `all` for a release candidate, `ci` for only the
 normal full CI child, `release-checks` for every release child, or a narrower
 release group: `install-smoke`, `cross-os`, `live-e2e`, `package`, `qa`,
@@ -49,21 +49,21 @@ provider failures easier to rerun and diagnose. The aggregate
 one-shot reruns.
 
 The native live media shards run in
-`ghcr.io/openclaw/openclaw-live-media-runner:ubuntu-24.04`, built by the
+`ghcr.io/opencli/opencli-live-media-runner:ubuntu-24.04`, built by the
 `Live Media Runner Image` workflow. That image preinstalls `ffmpeg` and
 `ffprobe`; media jobs only verify the binaries before setup. Keep Docker-backed
 live suites on normal Blacksmith runners, because container jobs are the wrong
 place to launch nested Docker tests.
 
 Docker-backed live model/backend shards use a separate shared
-`ghcr.io/openclaw/openclaw-live-test:<sha>` image per selected commit. The live
+`ghcr.io/opencli/opencli-live-test:<sha>` image per selected commit. The live
 release workflow builds and pushes that image once, then the Docker live model,
 gateway, CLI backend, ACP bind, and Codex harness shards run with
-`OPENCLAW_SKIP_DOCKER_BUILD=1`. If those shards rebuild the full source Docker
+`OPENCLI_SKIP_DOCKER_BUILD=1`. If those shards rebuild the full source Docker
 target independently, the release run is misconfigured and will waste the wall
 clock on duplicate image builds.
 
-`OpenClaw Release Checks` uses the trusted workflow ref to resolve the selected
+`OpenCLI Release Checks` uses the trusted workflow ref to resolve the selected
 ref once into a `release-package-under-test` tarball, then passes that artifact
 to both the live/E2E release-path Docker workflow and the package acceptance
 shard. That keeps the package bytes consistent across release boxes and avoids
@@ -84,7 +84,7 @@ published npm spec path kept for standalone dispatches.
 
 ## Package acceptance
 
-Use `Package Acceptance` when the question is "does this installable OpenClaw
+Use `Package Acceptance` when the question is "does this installable OpenCLI
 package work as a product?" It is different from normal CI: normal CI validates
 the source tree, while package acceptance validates a single tarball through the
 same Docker E2E harness users exercise after install or update.
@@ -92,12 +92,12 @@ same Docker E2E harness users exercise after install or update.
 The workflow has four jobs:
 
 1. `resolve_package` checks out `workflow_ref`, resolves one package candidate,
-   writes `.artifacts/docker-e2e-package/openclaw-current.tgz`, writes
+   writes `.artifacts/docker-e2e-package/opencli-current.tgz`, writes
    `.artifacts/docker-e2e-package/package-candidate.json`, uploads both as the
    `package-under-test` artifact, and prints the source, workflow ref, package
    ref, version, SHA-256, and profile in the GitHub step summary.
 2. `docker_acceptance` calls
-   `openclaw-live-and-e2e-checks-reusable.yml` with `ref=workflow_ref` and
+   `opencli-live-and-e2e-checks-reusable.yml` with `ref=workflow_ref` and
    `package_artifact_name=package-under-test`. The reusable workflow downloads
    that artifact, validates the tarball inventory, prepares package-digest
    Docker images when needed, and runs the selected Docker lanes against that
@@ -114,13 +114,13 @@ The workflow has four jobs:
 
 Candidate sources:
 
-- `source=npm`: accepts only `openclaw@beta`, `openclaw@latest`, or an exact
-  OpenClaw release version such as `openclaw@2026.4.27-beta.2`. Use this for
+- `source=npm`: accepts only `opencli@beta`, `opencli@latest`, or an exact
+  OpenCLI release version such as `opencli@2026.4.27-beta.2`. Use this for
   published beta/stable acceptance.
 - `source=ref`: packs a trusted `package_ref` branch, tag, or full commit SHA.
-  The resolver fetches OpenClaw branches/tags, verifies the selected commit is
+  The resolver fetches OpenCLI branches/tags, verifies the selected commit is
   reachable from repository branch history or a release tag, installs deps in a
-  detached worktree, and packs it with `scripts/package-openclaw-for-docker.mjs`.
+  detached worktree, and packs it with `scripts/package-opencli-for-docker.mjs`.
 - `source=url`: downloads an HTTPS `.tgz`; `package_sha256` is required.
 - `source=artifact`: downloads one `.tgz` from `artifact_run_id` and
   `artifact_name`; `package_sha256` is optional but should be supplied for
@@ -155,7 +155,7 @@ platform behavior; package/update product validation should start with Package
 Acceptance. The Windows packaged and installer fresh lanes also verify that an
 installed package can import a browser-control override from a raw absolute
 Windows path. The OpenAI cross-OS agent-turn smoke defaults to
-`OPENCLAW_CROSS_OS_OPENAI_MODEL` when set, otherwise `openai/gpt-5.4-mini`, so
+`OPENCLI_CROSS_OS_OPENAI_MODEL` when set, otherwise `openai/gpt-5.4-mini`, so
 the install and gateway proof stays fast and deterministic. Dedicated live
 provider/model lanes still cover broader model routing, including slower
 frontier defaults.
@@ -183,7 +183,7 @@ gh workflow run package-acceptance.yml \
   --ref main \
   -f workflow_ref=main \
   -f source=npm \
-  -f package_spec=openclaw@beta \
+  -f package_spec=opencli@beta \
   -f suite_profile=product \
   -f telegram_mode=mock-openai
 
@@ -201,7 +201,7 @@ gh workflow run package-acceptance.yml \
   --ref main \
   -f workflow_ref=main \
   -f source=url \
-  -f package_url=https://example.com/openclaw-current.tgz \
+  -f package_url=https://example.com/opencli-current.tgz \
   -f package_sha256=<64-char-sha256> \
   -f suite_profile=smoke
 
@@ -240,7 +240,7 @@ and Docker provider suites. Matrix uses `--profile fast` for scheduled and relea
 adding `--fail-fast` only when the checked-out CLI supports it. The CLI default
 and manual workflow input remain `all`; manual `matrix_profile=all`
 dispatch always shards full Matrix coverage into `transport`, `media`,
-`e2ee-smoke`, `e2ee-deep`, and `e2ee-cli` jobs. `OpenClaw Release Checks` also
+`e2ee-smoke`, `e2ee-deep`, and `e2ee-cli` jobs. `OpenCLI Release Checks` also
 runs the release-critical QA Lab lanes before release approval; its QA parity
 gate runs the candidate and baseline packs as parallel lane jobs, then downloads
 both artifacts into a small report job for the final parity comparison.
@@ -438,7 +438,7 @@ act as if every scoped area changed.
 CI workflow edits validate the Node CI graph plus workflow linting, but do not force Windows, Android, or macOS native builds by themselves; those platform lanes stay scoped to platform source changes.
 CI routing-only edits, selected cheap core-test fixture edits, and narrow plugin contract helper/test-routing edits use a fast Node-only manifest path: preflight, security, and a single `checks-fast-core` task. That path avoids build artifacts, Node 22 compatibility, channel contracts, full core shards, bundled-plugin shards, and additional guard matrices when the changed files are limited to the routing or helper surfaces that the fast task exercises directly.
 Windows Node checks are scoped to Windows-specific process/path wrappers, npm/pnpm/UI runner helpers, package manager config, and the CI workflow surfaces that execute that lane; unrelated source, plugin, install-smoke, and test-only changes stay on the Linux Node lanes so they do not reserve a 16-vCPU Windows worker for coverage that is already exercised by the normal test shards.
-The separate `install-smoke` workflow reuses the same scope script through its own `preflight` job. It splits smoke coverage into `run_fast_install_smoke` and `run_full_install_smoke`. Pull requests run the fast path for Docker/package surfaces, bundled plugin package/manifest changes, and core plugin/channel/gateway/Plugin SDK surfaces that the Docker smoke jobs exercise. Source-only bundled plugin changes, test-only edits, and docs-only edits do not reserve Docker workers. The fast path builds the root Dockerfile image once, checks the CLI, runs the agents delete shared-workspace CLI smoke, runs the container gateway-network e2e, verifies a bundled extension build arg, and runs the bounded bundled-plugin Docker profile under a 240-second aggregate command timeout with each scenario's Docker run capped separately. The full path keeps QR package install and installer Docker/update coverage for nightly scheduled runs, manual dispatches, workflow-call release checks, and pull requests that truly touch installer/package/Docker surfaces. In full mode, install-smoke prepares or reuses one target-SHA GHCR root Dockerfile smoke image, then runs QR package install, root Dockerfile/gateway smokes, installer/update smokes, and the fast bundled-plugin Docker E2E as separate jobs so installer work does not wait behind the root image smokes. `main` pushes, including merge commits, do not force the full path; when changed-scope logic would request full coverage on a push, the workflow keeps the fast Docker smoke and leaves the full install smoke to nightly or release validation. The slow Bun global install image-provider smoke is separately gated by `run_bun_global_install_smoke`; it runs on the nightly schedule and from the release checks workflow, and manual `install-smoke` dispatches can opt into it, but pull requests and `main` pushes do not run it. QR and installer Docker tests keep their own install-focused Dockerfiles. Local `test:docker:all` prebuilds one shared live-test image, packs OpenClaw once as an npm tarball, and builds two shared `scripts/e2e/Dockerfile` images: a bare Node/Git runner for installer/update/plugin-dependency lanes and a functional image that installs the same tarball into `/app` for normal functionality lanes. Docker lane definitions live in `scripts/lib/docker-e2e-scenarios.mjs`, planner logic lives in `scripts/lib/docker-e2e-plan.mjs`, and the runner only executes the selected plan. The scheduler selects the image per lane with `OPENCLAW_DOCKER_E2E_BARE_IMAGE` and `OPENCLAW_DOCKER_E2E_FUNCTIONAL_IMAGE`, then runs lanes with `OPENCLAW_SKIP_DOCKER_BUILD=1`; tune the default main-pool slot count of 10 with `OPENCLAW_DOCKER_ALL_PARALLELISM` and the provider-sensitive tail-pool slot count of 10 with `OPENCLAW_DOCKER_ALL_TAIL_PARALLELISM`. Heavy lane caps default to `OPENCLAW_DOCKER_ALL_LIVE_LIMIT=9`, `OPENCLAW_DOCKER_ALL_NPM_LIMIT=10`, and `OPENCLAW_DOCKER_ALL_SERVICE_LIMIT=7` so npm install and multi-service lanes do not overcommit Docker while lighter lanes still fill available slots. A single lane heavier than the effective caps can still start from an empty pool, then runs alone until it releases capacity. Lane starts are staggered by 2 seconds by default to avoid local Docker daemon create storms; override with `OPENCLAW_DOCKER_ALL_START_STAGGER_MS=0` or another millisecond value. The local aggregate preflights Docker, removes stale OpenClaw E2E containers, emits active-lane status, persists lane timings for longest-first ordering, and supports `OPENCLAW_DOCKER_ALL_DRY_RUN=1` for scheduler inspection. It stops scheduling new pooled lanes after the first failure by default, and each lane has a 120-minute fallback timeout overrideable with `OPENCLAW_DOCKER_ALL_LANE_TIMEOUT_MS`; selected live/tail lanes use tighter per-lane caps. `OPENCLAW_DOCKER_ALL_LANES=<lane[,lane]>` runs exact scheduler lanes, including release-only lanes such as `install-e2e` and split bundled update lanes such as `bundled-channel-update-acpx`, while skipping the cleanup smoke so agents can reproduce one failed lane. The reusable live/E2E workflow asks `scripts/test-docker-all.mjs --plan-json` which package, image kind, live image, lane, and credential coverage is required, then `scripts/docker-e2e.mjs` converts that plan into GitHub outputs and summaries. It either packs OpenClaw through `scripts/package-openclaw-for-docker.mjs`, downloads a current-run package artifact, or downloads a package artifact from `package_artifact_run_id`; validates the tarball inventory; builds and pushes package-digest-tagged bare/functional GHCR Docker E2E images through Blacksmith's Docker layer cache when the plan needs package-installed lanes; and reuses provided `docker_e2e_bare_image`/`docker_e2e_functional_image` inputs or existing package-digest images instead of rebuilding. Docker image pulls are retried with a bounded 180-second per-attempt timeout so a stuck registry/cache stream retries quickly instead of consuming most of the CI critical path. The `Package Acceptance` workflow is the high-level package gate: it resolves a candidate from npm, a trusted `package_ref`, an HTTPS tarball plus SHA-256, or a prior workflow artifact, then passes that single `package-under-test` artifact into the reusable Docker E2E workflow. It keeps `workflow_ref` separate from `package_ref` so current acceptance logic can validate older trusted commits without checking out old workflow code. Release checks run a custom Package Acceptance delta for the target ref: bundled-channel compat, offline plugin fixtures, and Telegram package QA against the resolved tarball. The release-path Docker suite runs smaller chunked jobs with `OPENCLAW_SKIP_DOCKER_BUILD=1` so each chunk pulls only the image kind it needs and executes multiple lanes through the same weighted scheduler (`OPENCLAW_DOCKER_ALL_PROFILE=release-path`, `OPENCLAW_DOCKER_ALL_CHUNK=core|package-update-openai|package-update-anthropic|package-update-core|plugins-runtime-plugins|plugins-runtime-services|plugins-runtime-install-a|plugins-runtime-install-b|plugins-runtime-install-c|plugins-runtime-install-d|plugins-runtime-install-e|plugins-runtime-install-f|plugins-runtime-install-g|plugins-runtime-install-h|bundled-channels`). OpenWebUI is folded into `plugins-runtime-services` when full release-path coverage requests it, and keeps a standalone `openwebui` chunk only for OpenWebUI-only dispatches. The legacy aggregate chunk names `package-update`, `plugins-runtime-core`, `plugins-runtime`, and `plugins-integrations` still work for manual reruns, but the release workflow uses the split chunks so installer E2E and bundled plugin install/uninstall sweeps do not dominate the critical path. The `install-e2e` lane alias remains the aggregate manual rerun alias for both provider installer lanes. The `bundled-channels` chunk runs split `bundled-channel-*` and `bundled-channel-update-*` lanes rather than the serial all-in-one `bundled-channel-deps` lane. Each chunk uploads `.artifacts/docker-tests/` with lane logs, timings, `summary.json`, `failures.json`, phase timings, scheduler plan JSON, slow-lane tables, and per-lane rerun commands. The workflow `docker_lanes` input runs selected lanes against the prepared images instead of the chunk jobs, which keeps failed-lane debugging bounded to one targeted Docker job and prepares, downloads, or reuses the package artifact for that run; if a selected lane is a live Docker lane, the targeted job builds the live-test image locally for that rerun. Generated per-lane GitHub rerun commands include `package_artifact_run_id`, `package_artifact_name`, and prepared image inputs when those values exist, so a failed lane can reuse the exact package and images from the failed run. Use `pnpm test:docker:rerun <run-id>` to download Docker artifacts from a GitHub run and print combined/per-lane targeted rerun commands; use `pnpm test:docker:timings <summary.json>` for slow-lane and phase critical-path summaries. The scheduled live/E2E workflow runs the full release-path Docker suite daily. The bundled update matrix is split by update target so repeated npm update and doctor repair passes can shard with other bundled checks.
+The separate `install-smoke` workflow reuses the same scope script through its own `preflight` job. It splits smoke coverage into `run_fast_install_smoke` and `run_full_install_smoke`. Pull requests run the fast path for Docker/package surfaces, bundled plugin package/manifest changes, and core plugin/channel/gateway/Plugin SDK surfaces that the Docker smoke jobs exercise. Source-only bundled plugin changes, test-only edits, and docs-only edits do not reserve Docker workers. The fast path builds the root Dockerfile image once, checks the CLI, runs the agents delete shared-workspace CLI smoke, runs the container gateway-network e2e, verifies a bundled extension build arg, and runs the bounded bundled-plugin Docker profile under a 240-second aggregate command timeout with each scenario's Docker run capped separately. The full path keeps QR package install and installer Docker/update coverage for nightly scheduled runs, manual dispatches, workflow-call release checks, and pull requests that truly touch installer/package/Docker surfaces. In full mode, install-smoke prepares or reuses one target-SHA GHCR root Dockerfile smoke image, then runs QR package install, root Dockerfile/gateway smokes, installer/update smokes, and the fast bundled-plugin Docker E2E as separate jobs so installer work does not wait behind the root image smokes. `main` pushes, including merge commits, do not force the full path; when changed-scope logic would request full coverage on a push, the workflow keeps the fast Docker smoke and leaves the full install smoke to nightly or release validation. The slow Bun global install image-provider smoke is separately gated by `run_bun_global_install_smoke`; it runs on the nightly schedule and from the release checks workflow, and manual `install-smoke` dispatches can opt into it, but pull requests and `main` pushes do not run it. QR and installer Docker tests keep their own install-focused Dockerfiles. Local `test:docker:all` prebuilds one shared live-test image, packs OpenCLI once as an npm tarball, and builds two shared `scripts/e2e/Dockerfile` images: a bare Node/Git runner for installer/update/plugin-dependency lanes and a functional image that installs the same tarball into `/app` for normal functionality lanes. Docker lane definitions live in `scripts/lib/docker-e2e-scenarios.mjs`, planner logic lives in `scripts/lib/docker-e2e-plan.mjs`, and the runner only executes the selected plan. The scheduler selects the image per lane with `OPENCLI_DOCKER_E2E_BARE_IMAGE` and `OPENCLI_DOCKER_E2E_FUNCTIONAL_IMAGE`, then runs lanes with `OPENCLI_SKIP_DOCKER_BUILD=1`; tune the default main-pool slot count of 10 with `OPENCLI_DOCKER_ALL_PARALLELISM` and the provider-sensitive tail-pool slot count of 10 with `OPENCLI_DOCKER_ALL_TAIL_PARALLELISM`. Heavy lane caps default to `OPENCLI_DOCKER_ALL_LIVE_LIMIT=9`, `OPENCLI_DOCKER_ALL_NPM_LIMIT=10`, and `OPENCLI_DOCKER_ALL_SERVICE_LIMIT=7` so npm install and multi-service lanes do not overcommit Docker while lighter lanes still fill available slots. A single lane heavier than the effective caps can still start from an empty pool, then runs alone until it releases capacity. Lane starts are staggered by 2 seconds by default to avoid local Docker daemon create storms; override with `OPENCLI_DOCKER_ALL_START_STAGGER_MS=0` or another millisecond value. The local aggregate preflights Docker, removes stale OpenCLI E2E containers, emits active-lane status, persists lane timings for longest-first ordering, and supports `OPENCLI_DOCKER_ALL_DRY_RUN=1` for scheduler inspection. It stops scheduling new pooled lanes after the first failure by default, and each lane has a 120-minute fallback timeout overrideable with `OPENCLI_DOCKER_ALL_LANE_TIMEOUT_MS`; selected live/tail lanes use tighter per-lane caps. `OPENCLI_DOCKER_ALL_LANES=<lane[,lane]>` runs exact scheduler lanes, including release-only lanes such as `install-e2e` and split bundled update lanes such as `bundled-channel-update-acpx`, while skipping the cleanup smoke so agents can reproduce one failed lane. The reusable live/E2E workflow asks `scripts/test-docker-all.mjs --plan-json` which package, image kind, live image, lane, and credential coverage is required, then `scripts/docker-e2e.mjs` converts that plan into GitHub outputs and summaries. It either packs OpenCLI through `scripts/package-opencli-for-docker.mjs`, downloads a current-run package artifact, or downloads a package artifact from `package_artifact_run_id`; validates the tarball inventory; builds and pushes package-digest-tagged bare/functional GHCR Docker E2E images through Blacksmith's Docker layer cache when the plan needs package-installed lanes; and reuses provided `docker_e2e_bare_image`/`docker_e2e_functional_image` inputs or existing package-digest images instead of rebuilding. Docker image pulls are retried with a bounded 180-second per-attempt timeout so a stuck registry/cache stream retries quickly instead of consuming most of the CI critical path. The `Package Acceptance` workflow is the high-level package gate: it resolves a candidate from npm, a trusted `package_ref`, an HTTPS tarball plus SHA-256, or a prior workflow artifact, then passes that single `package-under-test` artifact into the reusable Docker E2E workflow. It keeps `workflow_ref` separate from `package_ref` so current acceptance logic can validate older trusted commits without checking out old workflow code. Release checks run a custom Package Acceptance delta for the target ref: bundled-channel compat, offline plugin fixtures, and Telegram package QA against the resolved tarball. The release-path Docker suite runs smaller chunked jobs with `OPENCLI_SKIP_DOCKER_BUILD=1` so each chunk pulls only the image kind it needs and executes multiple lanes through the same weighted scheduler (`OPENCLI_DOCKER_ALL_PROFILE=release-path`, `OPENCLI_DOCKER_ALL_CHUNK=core|package-update-openai|package-update-anthropic|package-update-core|plugins-runtime-plugins|plugins-runtime-services|plugins-runtime-install-a|plugins-runtime-install-b|plugins-runtime-install-c|plugins-runtime-install-d|plugins-runtime-install-e|plugins-runtime-install-f|plugins-runtime-install-g|plugins-runtime-install-h|bundled-channels`). OpenWebUI is folded into `plugins-runtime-services` when full release-path coverage requests it, and keeps a standalone `openwebui` chunk only for OpenWebUI-only dispatches. The legacy aggregate chunk names `package-update`, `plugins-runtime-core`, `plugins-runtime`, and `plugins-integrations` still work for manual reruns, but the release workflow uses the split chunks so installer E2E and bundled plugin install/uninstall sweeps do not dominate the critical path. The `install-e2e` lane alias remains the aggregate manual rerun alias for both provider installer lanes. The `bundled-channels` chunk runs split `bundled-channel-*` and `bundled-channel-update-*` lanes rather than the serial all-in-one `bundled-channel-deps` lane. Each chunk uploads `.artifacts/docker-tests/` with lane logs, timings, `summary.json`, `failures.json`, phase timings, scheduler plan JSON, slow-lane tables, and per-lane rerun commands. The workflow `docker_lanes` input runs selected lanes against the prepared images instead of the chunk jobs, which keeps failed-lane debugging bounded to one targeted Docker job and prepares, downloads, or reuses the package artifact for that run; if a selected lane is a live Docker lane, the targeted job builds the live-test image locally for that rerun. Generated per-lane GitHub rerun commands include `package_artifact_run_id`, `package_artifact_name`, and prepared image inputs when those values exist, so a failed lane can reuse the exact package and images from the failed run. Use `pnpm test:docker:rerun <run-id>` to download Docker artifacts from a GitHub run and print combined/per-lane targeted rerun commands; use `pnpm test:docker:timings <summary.json>` for slow-lane and phase critical-path summaries. The scheduled live/E2E workflow runs the full release-path Docker suite daily. The bundled update matrix is split by update target so repeated npm update and doctor repair passes can shard with other bundled checks.
 
 Current release Docker chunks are `core`, `package-update-openai`, `package-update-anthropic`, `package-update-core`, `plugins-runtime-plugins`, `plugins-runtime-services`, `plugins-runtime-install-a`, `plugins-runtime-install-b`, `plugins-runtime-install-c`, `plugins-runtime-install-d`, `plugins-runtime-install-e`, `plugins-runtime-install-f`, `plugins-runtime-install-g`, `plugins-runtime-install-h`, `bundled-channels-core`, `bundled-channels-update-a`, `bundled-channels-update-discord`, `bundled-channels-update-b`, and `bundled-channels-contracts`. The aggregate `bundled-channels` chunk remains available for manual one-shot reruns, and `plugins-runtime-core`, `plugins-runtime`, and `plugins-integrations` remain aggregate plugin/runtime aliases, but the release workflow uses the split chunks so channel smokes, update targets, plugin runtime checks, and bundled plugin install/uninstall sweeps can run in parallel. Targeted `docker_lanes` dispatches also split multiple selected lanes into parallel jobs after one shared package/image preparation step, and bundled-channel update lanes retry once for transient npm network failures.
 
@@ -450,7 +450,7 @@ dependents. Shared group-room delivery config is one of the explicit mappings:
 changes to the group visible-reply config, source reply delivery mode, or the
 message-tool system prompt route through the core reply tests plus Discord and
 Slack delivery regressions so a shared default change fails before the first PR
-push. Use `OPENCLAW_TEST_CHANGED_BROAD=1 pnpm test:changed` only when the change
+push. Use `OPENCLI_TEST_CHANGED_BROAD=1 pnpm test:changed` only when the change
 is harness-wide enough that the cheap mapped set is not a trustworthy proxy.
 
 For Testbox validation, run from the repo root and prefer a fresh warmed box for
@@ -461,10 +461,10 @@ box first. The sanity check fails fast when required root files such as
 tracked deletions. That usually means the remote sync state is not a trustworthy
 copy of the PR. Stop that box and warm a fresh one instead of debugging the
 product test failure. For intentional large deletion PRs, set
-`OPENCLAW_TESTBOX_ALLOW_MASS_DELETIONS=1` for that sanity run. `pnpm
+`OPENCLI_TESTBOX_ALLOW_MASS_DELETIONS=1` for that sanity run. `pnpm
 testbox:run` also terminates a local Blacksmith CLI invocation that stays in the
 sync phase for more than five minutes without post-sync output. Set
-`OPENCLAW_TESTBOX_SYNC_TIMEOUT_MS=0` to disable that guard, or use a larger
+`OPENCLI_TESTBOX_SYNC_TIMEOUT_MS=0` to disable that guard, or use a larger
 millisecond value for unusually large local diffs.
 
 Manual CI dispatches run `checks-node-compat-node22` as broad compatibility coverage. Android is opt-in for standalone manual CI through `include_android=true` and always enabled for `Full Release Validation`. `Plugin Prerelease` is more expensive product/package coverage, so it is a separate workflow dispatched by `Full Release Validation` or by an explicit operator. Normal pull requests, `main` pushes, and standalone manual CI dispatches keep that suite off.
@@ -483,8 +483,8 @@ The automatic CI concurrency key is versioned (`CI-v7-*`) so a GitHub-side zombi
 | `blacksmith-8vcpu-ubuntu-2404`   | `build-artifacts`, build-smoke, Linux Node test shards, bundled plugin test shards, `android`                                                                                                                                                                                                                                                                                                                                                                           |
 | `blacksmith-16vcpu-ubuntu-2404`  | `check-lint`, which remains CPU-sensitive enough that 8 vCPU cost more than it saved; install-smoke Docker builds, where 32-vCPU queue time cost more than it saved                                                                                                                                                                                                                                                                                                     |
 | `blacksmith-16vcpu-windows-2025` | `checks-windows`                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| `blacksmith-6vcpu-macos-latest`  | `macos-node` on `openclaw/openclaw`; forks fall back to `macos-latest`                                                                                                                                                                                                                                                                                                                                                                                                  |
-| `blacksmith-12vcpu-macos-latest` | `macos-swift` on `openclaw/openclaw`; forks fall back to `macos-latest`                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `blacksmith-6vcpu-macos-latest`  | `macos-node` on `opencli/opencli`; forks fall back to `macos-latest`                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `blacksmith-12vcpu-macos-latest` | `macos-swift` on `opencli/opencli`; forks fall back to `macos-latest`                                                                                                                                                                                                                                                                                                                                                                                                   |
 
 ## Local equivalents
 

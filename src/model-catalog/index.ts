@@ -12,10 +12,7 @@ export {
   normalizeModelCatalogProviderRows,
   normalizeModelCatalogRows,
 } from "./normalize.js";
-export {
-  loadOpenClawProviderIndex,
-  normalizeOpenClawProviderIndex,
-} from "./provider-index/index.js";
+export { loadOpenCLIProviderIndex, normalizeOpenCLIProviderIndex } from "./provider-index/index.js";
 export {
   planManifestModelCatalogRows,
   planManifestModelCatalogSuppressions,
@@ -49,9 +46,9 @@ export type {
   NormalizedModelCatalogRow,
 } from "./types.js";
 export type {
-  OpenClawProviderIndex,
-  OpenClawProviderIndexPluginInstall,
-  OpenClawProviderIndexPlugin,
-  OpenClawProviderIndexProviderAuthChoice,
-  OpenClawProviderIndexProvider,
+  OpenCLIProviderIndex,
+  OpenCLIProviderIndexPluginInstall,
+  OpenCLIProviderIndexPlugin,
+  OpenCLIProviderIndexProviderAuthChoice,
+  OpenCLIProviderIndexProvider,
 } from "./provider-index/index.js";

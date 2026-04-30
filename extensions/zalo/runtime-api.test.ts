@@ -1,5 +1,5 @@
 import path from "node:path";
-import { loadRuntimeApiExportTypesViaJiti } from "openclaw/plugin-sdk/plugin-test-contracts";
+import { loadRuntimeApiExportTypesViaJiti } from "opencli/plugin-sdk/plugin-test-contracts";
 import { describe, expect, it } from "vitest";
 
 describe("zalo runtime api", () => {
@@ -10,7 +10,7 @@ describe("zalo runtime api", () => {
       loadRuntimeApiExportTypesViaJiti({
         modulePath: runtimeApiPath,
         exportNames: ["setZaloRuntime"],
-        realPluginSdkSpecifiers: ["openclaw/plugin-sdk/runtime-store"],
+        realPluginSdkSpecifiers: ["opencli/plugin-sdk/runtime-store"],
       }),
     ).toEqual({
       setZaloRuntime: "function",

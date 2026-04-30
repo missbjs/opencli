@@ -1,6 +1,6 @@
 import { fileURLToPath } from "node:url";
 import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../../agents/agent-scope.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../../config/types.opencli.js";
 import { isBlockedObjectKey } from "../../infra/prototype-keys.js";
 import {
   hasExplicitChannelConfig,
@@ -32,9 +32,9 @@ const LOADER_MODULE_CANDIDATES = [
 const jitiLoaders: PluginJitiLoaderCache = new Map();
 
 type PluginLoaderModule = {
-  loadOpenClawPlugins: (params: {
-    config: OpenClawConfig;
-    activationSourceConfig?: OpenClawConfig;
+  loadOpenCLIPlugins: (params: {
+    config: OpenCLIConfig;
+    activationSourceConfig?: OpenCLIConfig;
     env?: NodeJS.ProcessEnv;
     workspaceDir?: string;
     cache?: boolean;
@@ -80,7 +80,7 @@ type ReadOnlyChannelPluginOptions = {
   env?: NodeJS.ProcessEnv;
   stateDir?: string;
   workspaceDir?: string;
-  activationSourceConfig?: OpenClawConfig;
+  activationSourceConfig?: OpenCLIConfig;
   includePersistedAuthState?: boolean;
   includeSetupRuntimeFallback?: boolean;
 };
@@ -134,10 +134,10 @@ function normalizeManifestText(value: string | undefined, fallback: string): str
 }
 
 function rebindChannelConfig(
-  cfg: OpenClawConfig,
+  cfg: OpenCLIConfig,
   sourceChannelId: string,
   targetChannelId: string,
-): OpenClawConfig {
+): OpenCLIConfig {
   if (sourceChannelId === targetChannelId || !cfg.channels) {
     return cfg;
   }
@@ -151,11 +151,11 @@ function rebindChannelConfig(
 }
 
 function restoreReboundChannelConfig(params: {
-  original: OpenClawConfig;
-  updated: OpenClawConfig;
+  original: OpenCLIConfig;
+  updated: OpenCLIConfig;
   sourceChannelId: string;
   targetChannelId: string;
-}): OpenClawConfig {
+}): OpenCLIConfig {
   if (params.sourceChannelId === params.targetChannelId || !params.updated.channels) {
     return params.updated;
   }
@@ -179,7 +179,7 @@ function restoreReboundChannelConfig(params: {
   };
 }
 
-function getChannelConfigRecord(cfg: OpenClawConfig, channelId: string): Record<string, unknown> {
+function getChannelConfigRecord(cfg: OpenCLIConfig, channelId: string): Record<string, unknown> {
   if (!isSafeManifestChannelId(channelId)) {
     return {};
   }
@@ -193,7 +193,7 @@ function getChannelConfigRecord(cfg: OpenClawConfig, channelId: string): Record<
     : {};
 }
 
-function listManifestChannelAccountIds(cfg: OpenClawConfig, channelId: string): string[] {
+function listManifestChannelAccountIds(cfg: OpenCLIConfig, channelId: string): string[] {
   const channelConfig = getChannelConfigRecord(cfg, channelId);
   const accounts = channelConfig.accounts;
   if (accounts && typeof accounts === "object" && !Array.isArray(accounts)) {
@@ -210,7 +210,7 @@ function listManifestChannelAccountIds(cfg: OpenClawConfig, channelId: string): 
 }
 
 function resolveManifestChannelAccountConfig(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   channelId: string;
   accountId?: string | null;
 }): Record<string, unknown> {
@@ -337,8 +337,7 @@ function rebindChannelPluginConfig(
   sourceChannelId: string,
   targetChannelId: string,
 ): ChannelPlugin["config"] {
-  const rebind = (cfg: OpenClawConfig) =>
-    rebindChannelConfig(cfg, sourceChannelId, targetChannelId);
+  const rebind = (cfg: OpenCLIConfig) => rebindChannelConfig(cfg, sourceChannelId, targetChannelId);
   return {
     ...config,
     listAccountIds: (cfg) => config.listAccountIds(rebind(cfg)),
@@ -541,7 +540,7 @@ function addManifestChannelPlugins(
 }
 
 function resolveReadOnlyWorkspaceDir(
-  cfg: OpenClawConfig,
+  cfg: OpenCLIConfig,
   options: ReadOnlyChannelPluginOptions,
 ): string | undefined {
   return options.workspaceDir ?? resolveAgentWorkspaceDir(cfg, resolveDefaultAgentId(cfg));
@@ -571,8 +570,8 @@ function listPluginIdsForChannels(
 }
 
 function resolveExternalReadOnlyChannelPluginIds(params: {
-  cfg: OpenClawConfig;
-  activationSourceConfig?: OpenClawConfig;
+  cfg: OpenCLIConfig;
+  activationSourceConfig?: OpenCLIConfig;
   channelIds: readonly string[];
   records: readonly PluginManifestRecord[];
   workspaceDir?: string;
@@ -606,14 +605,14 @@ function resolveExternalReadOnlyChannelPluginIds(params: {
 }
 
 export function listReadOnlyChannelPluginsForConfig(
-  cfg: OpenClawConfig,
+  cfg: OpenCLIConfig,
   options?: ReadOnlyChannelPluginOptions,
 ): ChannelPlugin[] {
   return resolveReadOnlyChannelPluginsForConfig(cfg, options).plugins;
 }
 
 export function resolveReadOnlyChannelPluginsForConfig(
-  cfg: OpenClawConfig,
+  cfg: OpenCLIConfig,
   options: ReadOnlyChannelPluginOptions = {},
 ): ReadOnlyChannelPluginResolution {
   const env = options.env ?? process.env;
@@ -691,7 +690,7 @@ export function resolveReadOnlyChannelPluginsForConfig(
             ] as const,
         ),
       );
-      const registry = loadPluginLoaderModule().loadOpenClawPlugins({
+      const registry = loadPluginLoaderModule().loadOpenCLIPlugins({
         config: cfg,
         activationSourceConfig: options.activationSourceConfig ?? cfg,
         env,

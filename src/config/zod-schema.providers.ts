@@ -17,7 +17,7 @@ const ChannelModelByChannelSchema = z
   .record(z.string(), z.record(z.string(), z.string()))
   .optional();
 
-const OPENCLAW_PACKAGE_ROOT =
+const OPENCLI_PACKAGE_ROOT =
   resolveLoaderPackageRoot({
     modulePath: fileURLToPath(import.meta.url),
     moduleUrl: import.meta.url,
@@ -36,7 +36,7 @@ function getDirectChannelRuntimeSchema(channelId: string): ChannelConfigRuntimeS
       continue;
     }
     const collectedChannelConfigs = collectBundledChannelConfigs({
-      pluginDir: path.resolve(OPENCLAW_PACKAGE_ROOT, "extensions", entry.dirName),
+      pluginDir: path.resolve(OPENCLI_PACKAGE_ROOT, "extensions", entry.dirName),
       manifest: entry.manifest,
       ...(entry.packageManifest ? { packageManifest: entry.packageManifest } : {}),
     });

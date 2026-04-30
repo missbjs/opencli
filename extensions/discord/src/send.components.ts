@@ -1,8 +1,8 @@
 import { ChannelType } from "discord-api-types/v10";
-import { recordChannelActivity } from "openclaw/plugin-sdk/channel-activity-runtime";
-import type { MarkdownTableMode, OpenClawConfig } from "openclaw/plugin-sdk/config-types";
-import { requireRuntimeConfig } from "openclaw/plugin-sdk/plugin-config-runtime";
-import type { ChunkMode } from "openclaw/plugin-sdk/reply-chunking";
+import { recordChannelActivity } from "opencli/plugin-sdk/channel-activity-runtime";
+import type { MarkdownTableMode, OpenCLIConfig } from "opencli/plugin-sdk/config-types";
+import { requireRuntimeConfig } from "opencli/plugin-sdk/plugin-config-runtime";
+import type { ChunkMode } from "opencli/plugin-sdk/reply-chunking";
 import { resolveDiscordAccount } from "./accounts.js";
 import { registerDiscordComponentEntries } from "./components-registry.js";
 import {
@@ -145,7 +145,7 @@ function collapseClassicComponentText(spec: DiscordComponentMessageSpec): string
 }
 
 type DiscordComponentSendOpts = {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   accountId?: string;
   token?: string;
   rest?: RequestClient;

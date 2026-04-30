@@ -1,5 +1,5 @@
 import Foundation
-import OpenClawKit
+import OpenCLIKit
 import Speech
 
 enum TalkSpeechLocale {

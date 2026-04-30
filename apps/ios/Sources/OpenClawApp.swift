@@ -1,6 +1,6 @@
 import BackgroundTasks
 import Foundation
-import OpenClawKit
+import OpenCLIKit
 import os
 import SwiftUI
 import UIKit
@@ -16,15 +16,15 @@ private struct PendingWatchPromptAction {
 private typealias PendingExecApprovalPrompt = ExecApprovalNotificationPrompt
 
 @MainActor
-enum OpenClawAppModelRegistry {
+enum OpenCLIAppModelRegistry {
     static var appModel: NodeAppModel?
 }
 
 @MainActor
-final class OpenClawAppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotificationCenterDelegate {
-    private let logger = Logger(subsystem: "ai.openclaw.ios", category: "Push")
-    private let backgroundWakeLogger = Logger(subsystem: "ai.openclaw.ios", category: "BackgroundWake")
-    private static let wakeRefreshTaskIdentifier = "ai.openclaw.ios.bgrefresh"
+final class OpenCLIAppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotificationCenterDelegate {
+    private let logger = Logger(subsystem: "ai.opencli.ios", category: "Push")
+    private let backgroundWakeLogger = Logger(subsystem: "ai.opencli.ios", category: "BackgroundWake")
+    private static let wakeRefreshTaskIdentifier = "ai.opencli.ios.bgrefresh"
     private var backgroundWakeTask: Task<Bool, Never>?
     private var pendingAPNsDeviceToken: Data?
     private var pendingWatchPromptActions: [PendingWatchPromptAction] = []
@@ -85,7 +85,7 @@ final class OpenClawAppDelegate: NSObject, UIApplicationDelegate, @preconcurrenc
     }
 
     private func resolvedAppModel() -> NodeAppModel? {
-        self.appModel ?? OpenClawAppModelRegistry.appModel
+        self.appModel ?? OpenCLIAppModelRegistry.appModel
     }
 
     #if DEBUG
@@ -100,7 +100,7 @@ final class OpenClawAppDelegate: NSObject, UIApplicationDelegate, @preconcurrenc
     {
         GatewayDiagnostics.log("app delegate: didFinishLaunching")
         if self.appModel == nil {
-            self.appModel = OpenClawAppModelRegistry.appModel
+            self.appModel = OpenCLIAppModelRegistry.appModel
         }
         self.registerBackgroundWakeRefreshTask()
         let notificationCenter = UNUserNotificationCenter.current()
@@ -366,25 +366,25 @@ final class OpenClawAppDelegate: NSObject, UIApplicationDelegate, @preconcurrenc
 }
 
 enum WatchPromptNotificationBridge {
-    static let typeKey = "openclaw.type"
+    static let typeKey = "opencli.type"
     static let typeValue = "watch.prompt"
-    static let promptIDKey = "openclaw.watch.promptId"
-    static let sessionKeyKey = "openclaw.watch.sessionKey"
-    static let actionPrimaryIDKey = "openclaw.watch.action.primary.id"
-    static let actionPrimaryLabelKey = "openclaw.watch.action.primary.label"
-    static let actionSecondaryIDKey = "openclaw.watch.action.secondary.id"
-    static let actionSecondaryLabelKey = "openclaw.watch.action.secondary.label"
-    static let actionPrimaryIdentifier = "openclaw.watch.action.primary"
-    static let actionSecondaryIdentifier = "openclaw.watch.action.secondary"
-    static let actionIdentifierPrefix = "openclaw.watch.action."
-    static let actionIDKeyPrefix = "openclaw.watch.action.id."
-    static let actionLabelKeyPrefix = "openclaw.watch.action.label."
-    static let categoryPrefix = "openclaw.watch.prompt.category."
+    static let promptIDKey = "opencli.watch.promptId"
+    static let sessionKeyKey = "opencli.watch.sessionKey"
+    static let actionPrimaryIDKey = "opencli.watch.action.primary.id"
+    static let actionPrimaryLabelKey = "opencli.watch.action.primary.label"
+    static let actionSecondaryIDKey = "opencli.watch.action.secondary.id"
+    static let actionSecondaryLabelKey = "opencli.watch.action.secondary.label"
+    static let actionPrimaryIdentifier = "opencli.watch.action.primary"
+    static let actionSecondaryIdentifier = "opencli.watch.action.secondary"
+    static let actionIdentifierPrefix = "opencli.watch.action."
+    static let actionIDKeyPrefix = "opencli.watch.action.id."
+    static let actionLabelKeyPrefix = "opencli.watch.action.label."
+    static let categoryPrefix = "opencli.watch.prompt.category."
 
     @MainActor
     static func scheduleMirroredWatchPromptNotificationIfNeeded(
         invokeID: String,
-        params: OpenClawWatchNotifyParams,
+        params: OpenCLIWatchNotifyParams,
         sendResult: WatchNotificationSendResult) async
     {
         guard sendResult.queuedForDelivery || !sendResult.deliveredImmediately else { return }
@@ -394,11 +394,11 @@ enum WatchPromptNotificationBridge {
         guard !title.isEmpty || !body.isEmpty else { return }
         guard await self.requestNotificationAuthorizationIfNeeded() else { return }
 
-        let normalizedActions = (params.actions ?? []).compactMap { action -> OpenClawWatchAction? in
+        let normalizedActions = (params.actions ?? []).compactMap { action -> OpenCLIWatchAction? in
             let id = action.id.trimmingCharacters(in: .whitespacesAndNewlines)
             let label = action.label.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !id.isEmpty, !label.isEmpty else { return nil }
-            return OpenClawWatchAction(id: id, label: label, style: action.style)
+            return OpenCLIWatchAction(id: id, label: label, style: action.style)
         }
         let displayedActions = Array(normalizedActions.prefix(4))
 
@@ -437,7 +437,7 @@ enum WatchPromptNotificationBridge {
         }
 
         let content = UNMutableNotificationContent()
-        content.title = title.isEmpty ? "OpenClaw" : title
+        content.title = title.isEmpty ? "OpenCLI" : title
         content.body = body
         content.sound = .default
         content.userInfo = userInfo
@@ -470,7 +470,7 @@ enum WatchPromptNotificationBridge {
         "\(self.actionLabelKeyPrefix)\(index)"
     }
 
-    private static func categoryActions(_ actions: [OpenClawWatchAction]) -> [UNNotificationAction] {
+    private static func categoryActions(_ actions: [OpenCLIWatchAction]) -> [UNNotificationAction] {
         actions.enumerated().map { index, action in
             let identifier: String = switch index {
             case 0:
@@ -599,17 +599,17 @@ extension NodeAppModel {
 }
 
 @main
-struct OpenClawApp: App {
+struct OpenCLIApp: App {
     @State private var appModel: NodeAppModel
     @State private var gatewayController: GatewayConnectionController
-    @UIApplicationDelegateAdaptor(OpenClawAppDelegate.self) private var appDelegate
+    @UIApplicationDelegateAdaptor(OpenCLIAppDelegate.self) private var appDelegate
     @Environment(\.scenePhase) private var scenePhase
 
     init() {
         Self.installUncaughtExceptionLogger()
         GatewaySettingsStore.bootstrapPersistence()
         let appModel = NodeAppModel()
-        OpenClawAppModelRegistry.appModel = appModel
+        OpenCLIAppModelRegistry.appModel = appModel
         _appModel = State(initialValue: appModel)
         _gatewayController = State(initialValue: GatewayConnectionController(appModel: appModel))
     }
@@ -635,9 +635,9 @@ struct OpenClawApp: App {
     }
 }
 
-extension OpenClawApp {
+extension OpenCLIApp {
     private static func installUncaughtExceptionLogger() {
-        NSLog("OpenClaw: installing uncaught exception handler")
+        NSLog("OpenCLI: installing uncaught exception handler")
         NSSetUncaughtExceptionHandler { exception in
             // Useful when the app hits NSExceptions from SwiftUI/WebKit internals; these do not
             // produce a normal Swift error backtrace.

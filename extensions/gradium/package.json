@@ -1,13 +1,13 @@
 {
-  "name": "@openclaw/gradium-speech",
+  "name": "@opencli/gradium-speech",
   "version": "2026.4.25",
   "private": true,
-  "description": "OpenClaw Gradium speech plugin",
+  "description": "OpenCLI Gradium speech plugin",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@opencli/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "opencli": {
     "extensions": [
       "./index.ts"
     ]

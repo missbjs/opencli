@@ -18,7 +18,7 @@ import {
   resolveAttemptSpawnWorkspaceDir,
   resolveAgentHarnessBeforePromptBuildResult,
   resolveModelAuthMode,
-  resolveOpenClawAgentDir,
+  resolveOpenCLIAgentDir,
   resolveSandboxContext,
   resolveSessionAgentIds,
   resolveUserPath,
@@ -35,7 +35,7 @@ import {
   type EmbeddedRunAttemptResult,
   type NativeHookRelayEvent,
   type NativeHookRelayRegistrationHandle,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "opencli/plugin-sdk/agent-harness-runtime";
 import { handleCodexAppServerApprovalRequest } from "./approval-bridge.js";
 import { refreshCodexAppServerAuthTokens } from "./auth-bridge.js";
 import {
@@ -89,8 +89,8 @@ const CODEX_DYNAMIC_TOOL_TIMEOUT_MS = 30_000;
 const CODEX_TURN_COMPLETION_IDLE_TIMEOUT_MS = 60_000;
 const CODEX_STEER_ALL_DEBOUNCE_MS = 500;
 
-type OpenClawCodingToolsOptions = NonNullable<
-  Parameters<(typeof import("openclaw/plugin-sdk/agent-harness"))["createOpenClawCodingTools"]>[0]
+type OpenCLICodingToolsOptions = NonNullable<
+  Parameters<(typeof import("opencli/plugin-sdk/agent-harness"))["createOpenCLICodingTools"]>[0]
 >;
 
 let clientFactory = defaultCodexAppServerClientFactory;
@@ -257,7 +257,7 @@ export async function runCodexAppServerAttempt(
     config: params.config,
     agentId: params.agentId,
   });
-  const agentDir = params.agentDir ?? resolveOpenClawAgentDir();
+  const agentDir = params.agentDir ?? resolveOpenCLIAgentDir();
   const runtimeParams = { ...params, sessionKey: sandboxSessionKey };
   const activeContextEngine = isActiveHarnessContextEngine(params.contextEngine)
     ? params.contextEngine
@@ -573,7 +573,7 @@ export async function runCodexAppServerAttempt(
     }
     // Determine terminal-turn status before invoking the projector so a throw
     // inside projector.handleNotification still releases the session lane.
-    // See openclaw/openclaw#67996.
+    // See opencli/opencli#67996.
     const isTurnCompletion =
       notification.method === "turn/completed" &&
       isTurnNotification(notification.params, thread.threadId, turnId);
@@ -1012,7 +1012,7 @@ async function handleDynamicToolCallWithTimeout(params: {
   onTimeout?: () => void;
 }): Promise<CodexDynamicToolCallResponse> {
   if (params.signal.aborted) {
-    return failedDynamicToolResponse("OpenClaw dynamic tool call aborted before execution.");
+    return failedDynamicToolResponse("OpenCLI dynamic tool call aborted before execution.");
   }
 
   const controller = new AbortController();
@@ -1020,7 +1020,7 @@ async function handleDynamicToolCallWithTimeout(params: {
   let timedOut = false;
   let resolveAbort: ((response: CodexDynamicToolCallResponse) => void) | undefined;
   const abortFromRun = () => {
-    const message = "OpenClaw dynamic tool call aborted.";
+    const message = "OpenCLI dynamic tool call aborted.";
     controller.abort(params.signal.reason ?? new Error(message));
     resolveAbort?.(failedDynamicToolResponse(message));
   };
@@ -1031,7 +1031,7 @@ async function handleDynamicToolCallWithTimeout(params: {
     const timeoutMs = Math.max(1, Math.min(CODEX_DYNAMIC_TOOL_TIMEOUT_MS, params.timeoutMs));
     timeout = setTimeout(() => {
       timedOut = true;
-      const message = `OpenClaw dynamic tool call timed out after ${timeoutMs}ms.`;
+      const message = `OpenCLI dynamic tool call timed out after ${timeoutMs}ms.`;
       controller.abort(new Error(message));
       params.onTimeout?.();
       embeddedAgentLog.warn("codex dynamic tool call timed out", {
@@ -1065,7 +1065,7 @@ async function handleDynamicToolCallWithTimeout(params: {
     params.signal.removeEventListener("abort", abortFromRun);
     resolveAbort = undefined;
     if (!timedOut && !controller.signal.aborted) {
-      controller.abort(new Error("OpenClaw dynamic tool call finished."));
+      controller.abort(new Error("OpenCLI dynamic tool call finished."));
     }
   }
 }
@@ -1121,7 +1121,7 @@ function buildCodexNativeHookRelayId(params: {
   sessionKey: string | undefined;
 }): string {
   const hash = createHash("sha256");
-  hash.update("openclaw:codex:native-hook-relay:v1");
+  hash.update("opencli:codex:native-hook-relay:v1");
   hash.update("\0");
   hash.update(params.agentId?.trim() || "");
   hash.update("\0");
@@ -1160,9 +1160,9 @@ async function buildDynamicTools(input: DynamicToolBuildParams) {
     return [];
   }
   const modelHasVision = params.model.input?.includes("image") ?? false;
-  const agentDir = params.agentDir ?? resolveOpenClawAgentDir();
-  const { createOpenClawCodingTools } = await import("openclaw/plugin-sdk/agent-harness");
-  const allTools = createOpenClawCodingTools({
+  const agentDir = params.agentDir ?? resolveOpenCLIAgentDir();
+  const { createOpenCLICodingTools } = await import("opencli/plugin-sdk/agent-harness");
+  const allTools = createOpenCLICodingTools({
     agentId: input.sessionAgentId,
     ...buildEmbeddedAttemptToolRunContext(params),
     exec: {
@@ -1199,7 +1199,7 @@ async function buildDynamicTools(input: DynamicToolBuildParams) {
     modelId: params.modelId,
     modelCompat:
       params.model.compat && typeof params.model.compat === "object"
-        ? (params.model.compat as OpenClawCodingToolsOptions["modelCompat"])
+        ? (params.model.compat as OpenCLICodingToolsOptions["modelCompat"])
         : undefined,
     modelApi: params.model.api,
     modelContextWindowTokens: params.model.contextWindow,

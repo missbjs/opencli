@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { isVitestRuntimeEnv } from "../infra/env.js";
 import { startHeartbeatRunner, type HeartbeatRunner } from "../infra/heartbeat-runner.js";
 import type { PluginLookUpTable } from "../plugins/plugin-lookup-table.js";
@@ -22,12 +22,12 @@ export type GatewayChannelManager = Parameters<
 function createNoopHeartbeatRunner(): HeartbeatRunner {
   return {
     stop: () => {},
-    updateConfig: (_cfg: OpenClawConfig) => {},
+    updateConfig: (_cfg: OpenCLIConfig) => {},
   };
 }
 
 export function startGatewayChannelHealthMonitor(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   channelManager: GatewayChannelManager;
 }): ChannelHealthMonitor | null {
   const healthCheckMinutes = params.cfg.gateway?.channelHealthCheckMinutes;
@@ -54,7 +54,7 @@ export function startGatewayCronWithLogging(params: {
 }
 
 function recoverPendingOutboundDeliveries(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   log: GatewayRuntimeServiceLogger;
 }): void {
   void (async () => {
@@ -90,7 +90,7 @@ function recoverPendingSessionDeliveries(params: {
 }
 
 function startGatewayModelPricingRefreshOnDemand(params: {
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   pluginLookUpTable?: Pick<PluginLookUpTable, "index" | "manifestRegistry">;
   log: GatewayRuntimeServiceLogger;
 }): () => void {
@@ -122,7 +122,7 @@ function startGatewayModelPricingRefreshOnDemand(params: {
 
 export function startGatewayRuntimeServices(params: {
   minimalTestGateway: boolean;
-  cfgAtStart: OpenClawConfig;
+  cfgAtStart: OpenCLIConfig;
   channelManager: GatewayChannelManager;
   log: GatewayRuntimeServiceLogger;
   pluginLookUpTable?: Pick<PluginLookUpTable, "index" | "manifestRegistry">;
@@ -152,7 +152,7 @@ export function startGatewayRuntimeServices(params: {
 
 export function activateGatewayScheduledServices(params: {
   minimalTestGateway: boolean;
-  cfgAtStart: OpenClawConfig;
+  cfgAtStart: OpenCLIConfig;
   deps: import("../cli/deps.types.js").CliDeps;
   sessionDeliveryRecoveryMaxEnqueuedAt: number;
   cron: { start: () => Promise<void> };

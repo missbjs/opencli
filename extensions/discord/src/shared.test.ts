@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createDiscordPluginBase, discordConfigAdapter } from "./shared.js";
 
@@ -71,7 +71,7 @@ describe("discordConfigAdapter", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
 
     expect(discordConfigAdapter.resolveAllowFrom?.({ cfg, accountId: "default" })).toEqual(["123"]);
   });
@@ -87,7 +87,7 @@ describe("discordConfigAdapter", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
 
     expect(discordConfigAdapter.resolveAllowFrom?.({ cfg, accountId: "default" })).toEqual(["456"]);
   });
@@ -104,7 +104,7 @@ describe("discordConfigAdapter", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
 
     expect(discordConfigAdapter.resolveAllowFrom?.({ cfg, accountId: "work" })).toEqual([
       "account-legacy",
@@ -122,7 +122,7 @@ describe("discordConfigAdapter", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     expect(discordConfigAdapter.resolveAllowFrom?.({ cfg, accountId: "default" })).toEqual([
       "123456789",

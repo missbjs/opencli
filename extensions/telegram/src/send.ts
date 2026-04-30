@@ -1,13 +1,13 @@
 import type { ReactionType, ReactionTypeEmoji } from "@grammyjs/types";
 import * as grammy from "grammy";
 import { type ApiClientOptions, Bot, HttpError } from "grammy";
-import { recordChannelActivity } from "openclaw/plugin-sdk/channel-activity-runtime";
-import { isDiagnosticFlagEnabled } from "openclaw/plugin-sdk/diagnostic-runtime";
-import { formatUncaughtError } from "openclaw/plugin-sdk/error-runtime";
-import { createTelegramRetryRunner, type RetryConfig } from "openclaw/plugin-sdk/retry-runtime";
-import { createSubsystemLogger, logVerbose } from "openclaw/plugin-sdk/runtime-env";
-import { formatErrorMessage } from "openclaw/plugin-sdk/ssrf-runtime";
-import { normalizeOptionalString, redactSensitiveText } from "openclaw/plugin-sdk/text-runtime";
+import { recordChannelActivity } from "opencli/plugin-sdk/channel-activity-runtime";
+import { isDiagnosticFlagEnabled } from "opencli/plugin-sdk/diagnostic-runtime";
+import { formatUncaughtError } from "opencli/plugin-sdk/error-runtime";
+import { createTelegramRetryRunner, type RetryConfig } from "opencli/plugin-sdk/retry-runtime";
+import { createSubsystemLogger, logVerbose } from "opencli/plugin-sdk/runtime-env";
+import { formatErrorMessage } from "opencli/plugin-sdk/ssrf-runtime";
+import { normalizeOptionalString, redactSensitiveText } from "opencli/plugin-sdk/text-runtime";
 import { type ResolvedTelegramAccount, resolveTelegramAccount } from "./accounts.js";
 import { withTelegramApiErrorLogging } from "./api-logging.js";
 import { normalizeTelegramApiRoot } from "./api-root.js";
@@ -37,7 +37,7 @@ import {
   type MediaKind,
   normalizePollInput,
   probeVideoDimensions,
-  type OpenClawConfig,
+  type OpenCLIConfig,
   type PollInput,
   requireRuntimeConfig,
   resolveMarkdownTableMode,
@@ -67,7 +67,7 @@ const MAX_TELEGRAM_PHOTO_DIMENSION_SUM = 10_000;
 const MAX_TELEGRAM_PHOTO_ASPECT_RATIO = 20;
 
 type TelegramSendOpts = {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   token?: string;
   accountId?: string;
   verbose?: boolean;
@@ -109,7 +109,7 @@ type TelegramMessageLike = {
 };
 
 type TelegramReactionOpts = {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   token?: string;
   accountId?: string;
   api?: TelegramApiOverride;
@@ -119,7 +119,7 @@ type TelegramReactionOpts = {
 };
 
 type TelegramTypingOpts = {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   token?: string;
   accountId?: string;
   verbose?: boolean;
@@ -194,7 +194,7 @@ export function resetTelegramClientOptionsCacheForTests(): void {
   telegramClientOptionsCache.clear();
 }
 
-function createTelegramHttpLogger(cfg: OpenClawConfig) {
+function createTelegramHttpLogger(cfg: OpenCLIConfig) {
   const enabled = isDiagnosticFlagEnabled("telegram.http", cfg);
   if (!enabled) {
     return () => {};
@@ -327,7 +327,7 @@ async function resolveChatId(
 }
 
 async function resolveAndPersistChatId(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   api: TelegramApiOverride;
   lookupTarget: string;
   persistTarget: string;
@@ -423,7 +423,7 @@ async function withTelegramHtmlParseFallback<T>(params: {
 }
 
 type TelegramApiContext = {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   account: ResolvedTelegramAccount;
   api: TelegramApi;
 };
@@ -432,7 +432,7 @@ function resolveTelegramApiContext(opts: {
   token?: string;
   accountId?: string;
   api?: TelegramApiOverride;
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
 }): TelegramApiContext {
   const cfg = requireRuntimeConfig(opts.cfg, "Telegram API context");
   const account = resolveTelegramAccount({
@@ -452,7 +452,7 @@ type TelegramRequestWithDiag = <T>(
 ) => Promise<T>;
 
 function createTelegramRequestWithDiag(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   account: ResolvedTelegramAccount;
   retry?: RetryConfig;
   verbose?: boolean;
@@ -559,7 +559,7 @@ function createRequestWithChatNotFound(params: {
 }
 
 function createTelegramNonIdempotentRequestWithDiag(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   account: ResolvedTelegramAccount;
   retry?: RetryConfig;
   verbose?: boolean;
@@ -1059,7 +1059,7 @@ export async function reactMessageTelegram(
 }
 
 type TelegramDeleteOpts = {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   token?: string;
   accountId?: string;
   notify?: boolean;
@@ -1257,7 +1257,7 @@ type TelegramEditOpts = {
   /** Inline keyboard buttons (reply markup). Pass empty array to remove buttons. */
   buttons?: TelegramInlineButtons;
   /** Resolved runtime config from the command or gateway boundary. */
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
 };
 
 type TelegramEditReplyMarkupOpts = {
@@ -1269,7 +1269,7 @@ type TelegramEditReplyMarkupOpts = {
   /** Inline keyboard buttons (reply markup). Pass empty array to remove buttons. */
   buttons?: TelegramInlineButtons;
   /** Resolved runtime config from the command or gateway boundary. */
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
 };
 
 export async function editMessageReplyMarkupTelegram(
@@ -1428,7 +1428,7 @@ function inferFilename(kind: MediaKind) {
 }
 
 type TelegramStickerOpts = {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   token?: string;
   accountId?: string;
   verbose?: boolean;
@@ -1511,7 +1511,7 @@ export async function sendStickerTelegram(
 }
 
 type TelegramPollOpts = {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   token?: string;
   accountId?: string;
   verbose?: boolean;
@@ -1627,7 +1627,7 @@ export async function sendPollTelegram(
 // ---------------------------------------------------------------------------
 
 type TelegramCreateForumTopicOpts = {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   token?: string;
   accountId?: string;
   api?: TelegramApiOverride;

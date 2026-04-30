@@ -10,8 +10,8 @@ import type { MigrateApplyOptions } from "./types.js";
 function shouldTreatMissingBackupAsEmptyState(error: unknown): boolean {
   const message = error instanceof Error ? error.message : String(error);
   return (
-    message.includes("No local OpenClaw state was found to back up") ||
-    message.includes("No OpenClaw config file was found to back up")
+    message.includes("No local OpenCLI state was found to back up") ||
+    message.includes("No OpenCLI config file was found to back up")
   );
 }
 

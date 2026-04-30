@@ -2,10 +2,10 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type {
-  OpenClawPluginCommandDefinition,
+  OpenCLIPluginCommandDefinition,
   PluginCommandContext,
   PluginConversationBinding,
-} from "openclaw/plugin-sdk/plugin-entry";
+} from "opencli/plugin-sdk/plugin-entry";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { createBindingData } from "./binding-data.js";
 import { handleTuiCommand } from "./commands.js";
@@ -218,13 +218,15 @@ describe("handleTuiCommand integration", () => {
     });
     const ctx1 = makeContext("start echo hello", {
       sessionKey,
-      getCurrentConversationBinding: async () => makeBinding(bindingData as Record<string, unknown>),
+      getCurrentConversationBinding: async () =>
+        makeBinding(bindingData as Record<string, unknown>),
     });
     await handleTuiCommand(ctx1, makeOptions({ logDir: logRoot }));
 
     const ctx2 = makeContext("restart", {
       sessionKey,
-      getCurrentConversationBinding: async () => makeBinding(bindingData as Record<string, unknown>),
+      getCurrentConversationBinding: async () =>
+        makeBinding(bindingData as Record<string, unknown>),
     });
     const result = await handleTuiCommand(ctx2, makeOptions({ logDir: logRoot }));
 

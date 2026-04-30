@@ -12,8 +12,8 @@ import {
 
 export { DEFAULT_LIVE_RETRIES };
 
-export const DEFAULT_E2E_BARE_IMAGE = "openclaw-docker-e2e-bare:local";
-export const DEFAULT_E2E_FUNCTIONAL_IMAGE = "openclaw-docker-e2e-functional:local";
+export const DEFAULT_E2E_BARE_IMAGE = "opencli-docker-e2e-bare:local";
+export const DEFAULT_E2E_FUNCTIONAL_IMAGE = "opencli-docker-e2e-functional:local";
 export const DEFAULT_E2E_IMAGE = DEFAULT_E2E_FUNCTIONAL_IMAGE;
 export const DEFAULT_PARALLELISM = 10;
 export const DEFAULT_PROFILE = "all";
@@ -86,7 +86,7 @@ export function parseLiveMode(raw) {
     return mode;
   }
   throw new Error(
-    `OPENCLAW_DOCKER_ALL_LIVE_MODE must be one of: all, skip, only. Got: ${JSON.stringify(raw)}`,
+    `OPENCLI_DOCKER_ALL_LIVE_MODE must be one of: all, skip, only. Got: ${JSON.stringify(raw)}`,
   );
 }
 
@@ -96,7 +96,7 @@ export function parseProfile(raw) {
     return profile;
   }
   throw new Error(
-    `OPENCLAW_DOCKER_ALL_PROFILE must be one of: ${DEFAULT_PROFILE}, ${RELEASE_PATH_PROFILE}. Got: ${JSON.stringify(raw)}`,
+    `OPENCLI_DOCKER_ALL_PROFILE must be one of: ${DEFAULT_PROFILE}, ${RELEASE_PATH_PROFILE}. Got: ${JSON.stringify(raw)}`,
   );
 }
 
@@ -136,7 +136,7 @@ export function lanesNeedE2eImageKind(poolLanes, kind) {
   return poolLanes.some((poolLane) => poolLane.e2eImageKind === kind);
 }
 
-export function lanesNeedOpenClawPackage(poolLanes) {
+export function lanesNeedOpenCLIPackage(poolLanes) {
   return poolLanes.some((poolLane) => poolLane.e2eImageKind);
 }
 
@@ -195,7 +195,7 @@ export function buildPlanJson(params) {
       e2eImage: imageKinds.length > 0,
       functionalImage: imageKinds.includes("functional"),
       liveImage: scheduledLanes.some((poolLane) => poolLane.live),
-      package: lanesNeedOpenClawPackage(scheduledLanes),
+      package: lanesNeedOpenCLIPackage(scheduledLanes),
     },
     profile: params.profile,
     selectedLanes: params.selectedLaneNames,
@@ -224,7 +224,7 @@ export function resolveDockerE2ePlan(options) {
             ...retriedTailLanes,
           ]),
           options.selectedLaneNames,
-          "OPENCLAW_DOCKER_ALL_LANES",
+          "OPENCLI_DOCKER_ALL_LANES",
         )
       : undefined;
   const configuredLanes = selectedLanes

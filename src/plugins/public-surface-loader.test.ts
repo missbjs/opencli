@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { importFreshModule } from "openclaw/plugin-sdk/test-fixtures";
+import { importFreshModule } from "opencli/plugin-sdk/test-fixtures";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   clearBundledRuntimeDependencyNodePaths,
@@ -9,11 +9,11 @@ import {
 } from "./bundled-runtime-deps.js";
 
 const tempDirs: string[] = [];
-const originalBundledPluginsDir = process.env.OPENCLAW_BUNDLED_PLUGINS_DIR;
-const originalPluginStageDir = process.env.OPENCLAW_PLUGIN_STAGE_DIR;
+const originalBundledPluginsDir = process.env.OPENCLI_BUNDLED_PLUGINS_DIR;
+const originalPluginStageDir = process.env.OPENCLI_PLUGIN_STAGE_DIR;
 
 function createTempDir(): string {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-public-surface-loader-"));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "opencli-public-surface-loader-"));
   tempDirs.push(tempDir);
   return tempDir;
 }
@@ -29,14 +29,14 @@ function createPackagedPublicArtifactWithStagedRuntimeDep(): {
   fs.mkdirSync(pluginRoot, { recursive: true });
   fs.writeFileSync(
     path.join(packageRoot, "package.json"),
-    JSON.stringify({ name: "openclaw", version: "0.0.0", type: "module" }, null, 2),
+    JSON.stringify({ name: "opencli", version: "0.0.0", type: "module" }, null, 2),
     "utf8",
   );
   fs.writeFileSync(
     path.join(pluginRoot, "package.json"),
     JSON.stringify(
       {
-        name: "@openclaw/plugin-demo",
+        name: "@opencli/plugin-demo",
         version: "0.0.0",
         type: "module",
         dependencies: {
@@ -61,7 +61,7 @@ function createPackagedPublicArtifactWithStagedRuntimeDep(): {
   const installRoot = resolveBundledRuntimeDependencyInstallRoot(pluginRoot, {
     env: {
       ...process.env,
-      OPENCLAW_PLUGIN_STAGE_DIR: stageRoot,
+      OPENCLI_PLUGIN_STAGE_DIR: stageRoot,
     },
   });
   const depRoot = path.join(installRoot, "node_modules", "public-artifact-runtime-dep");
@@ -99,14 +99,14 @@ afterEach(() => {
   vi.doUnmock("node:module");
   clearBundledRuntimeDependencyNodePaths();
   if (originalBundledPluginsDir === undefined) {
-    delete process.env.OPENCLAW_BUNDLED_PLUGINS_DIR;
+    delete process.env.OPENCLI_BUNDLED_PLUGINS_DIR;
   } else {
-    process.env.OPENCLAW_BUNDLED_PLUGINS_DIR = originalBundledPluginsDir;
+    process.env.OPENCLI_BUNDLED_PLUGINS_DIR = originalBundledPluginsDir;
   }
   if (originalPluginStageDir === undefined) {
-    delete process.env.OPENCLAW_PLUGIN_STAGE_DIR;
+    delete process.env.OPENCLI_PLUGIN_STAGE_DIR;
   } else {
-    process.env.OPENCLAW_PLUGIN_STAGE_DIR = originalPluginStageDir;
+    process.env.OPENCLI_PLUGIN_STAGE_DIR = originalPluginStageDir;
   }
 });
 
@@ -125,7 +125,7 @@ describe("bundled plugin public surface loader", () => {
       >(import.meta.url, "./public-surface-loader.js?scope=windows-dist-jiti");
       const tempRoot = createTempDir();
       const bundledPluginsDir = path.join(tempRoot, "dist");
-      process.env.OPENCLAW_BUNDLED_PLUGINS_DIR = bundledPluginsDir;
+      process.env.OPENCLI_BUNDLED_PLUGINS_DIR = bundledPluginsDir;
 
       const modulePath = path.join(bundledPluginsDir, "demo", "provider-policy-api.js");
       fs.mkdirSync(path.dirname(modulePath), { recursive: true });
@@ -174,7 +174,7 @@ describe("bundled plugin public surface loader", () => {
     >(import.meta.url, "./public-surface-loader.js?scope=source-require-fast-path");
     const tempRoot = createTempDir();
     const bundledPluginsDir = path.join(tempRoot, "extensions");
-    process.env.OPENCLAW_BUNDLED_PLUGINS_DIR = bundledPluginsDir;
+    process.env.OPENCLI_BUNDLED_PLUGINS_DIR = bundledPluginsDir;
 
     const modulePath = path.join(bundledPluginsDir, "demo", "secret-contract-api.ts");
     fs.mkdirSync(path.dirname(modulePath), { recursive: true });
@@ -202,7 +202,7 @@ describe("bundled plugin public surface loader", () => {
     >(import.meta.url, "./public-surface-loader.js?scope=shared-bundled-jiti");
     const tempRoot = createTempDir();
     const bundledPluginsDir = path.join(tempRoot, "dist");
-    process.env.OPENCLAW_BUNDLED_PLUGINS_DIR = bundledPluginsDir;
+    process.env.OPENCLI_BUNDLED_PLUGINS_DIR = bundledPluginsDir;
 
     const firstPath = path.join(bundledPluginsDir, "demo-a", "api.js");
     const secondPath = path.join(bundledPluginsDir, "demo-b", "api.js");
@@ -228,8 +228,8 @@ describe("bundled plugin public surface loader", () => {
       typeof import("./public-surface-loader.js")
     >(import.meta.url, "./public-surface-loader.js?scope=runtime-deps");
     const fixture = createPackagedPublicArtifactWithStagedRuntimeDep();
-    process.env.OPENCLAW_BUNDLED_PLUGINS_DIR = fixture.bundledPluginsDir;
-    process.env.OPENCLAW_PLUGIN_STAGE_DIR = fixture.stageRoot;
+    process.env.OPENCLI_BUNDLED_PLUGINS_DIR = fixture.bundledPluginsDir;
+    process.env.OPENCLI_PLUGIN_STAGE_DIR = fixture.stageRoot;
 
     const loaded = publicSurfaceLoader.loadBundledPluginPublicArtifactModuleSync<{
       marker: string;
@@ -254,7 +254,7 @@ describe("bundled plugin public surface loader", () => {
     >(import.meta.url, "./public-surface-loader.js?scope=post-validation-identity");
     const tempRoot = createTempDir();
     const bundledPluginsDir = path.join(tempRoot, "dist");
-    process.env.OPENCLAW_BUNDLED_PLUGINS_DIR = bundledPluginsDir;
+    process.env.OPENCLI_BUNDLED_PLUGINS_DIR = bundledPluginsDir;
 
     const modulePath = path.join(bundledPluginsDir, "demo", "api.js");
     fs.mkdirSync(path.dirname(modulePath), { recursive: true });

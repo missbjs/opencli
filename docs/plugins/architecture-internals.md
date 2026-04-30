@@ -14,7 +14,7 @@ Gateway HTTP routes, import paths, and schema tables.
 
 ## Load pipeline
 
-At startup, OpenClaw does roughly this:
+At startup, OpenCLI does roughly this:
 
 1. discover candidate plugin roots
 2. read native or compatible bundle manifests and package metadata
@@ -37,7 +37,7 @@ ownership looks suspicious for non-bundled plugins.
 
 ### Manifest-first behavior
 
-The manifest is the control-plane source of truth. OpenClaw uses it to:
+The manifest is the control-plane source of truth. OpenCLI uses it to:
 
 - identify the plugin
 - discover declared channels/skills/config schema or bundle capabilities
@@ -61,7 +61,7 @@ to narrow plugin loading before broader registry materialization:
 - explicit provider setup/runtime resolution narrows to plugins that own the
   requested provider id
 - Gateway startup planning uses `activation.onStartup` for explicit startup
-  imports and startup opt-outs; every plugin should declare it as OpenClaw
+  imports and startup opt-outs; every plugin should declare it as OpenCLI
   moves away from implicit startup imports, while plugins without static
   capability metadata and without `activation.onStartup` still use the
   deprecated implicit startup sidecar fallback for compatibility
@@ -89,7 +89,7 @@ backends registered by setup-api without blocking legacy plugins.
 
 ### Plugin cache boundary
 
-OpenClaw does not cache plugin discovery results or direct manifest registry
+OpenCLI does not cache plugin discovery results or direct manifest registry
 data behind wall-clock windows. Installs, manifest edits, and load-path changes
 must become visible on the next explicit metadata read or snapshot rebuild.
 The manifest file parser may keep a bounded file-signature cache keyed by the
@@ -217,7 +217,7 @@ Provider plugins have three layers:
   stream wrapping, thinking levels, replay policy, and usage endpoints. See
   the full list under [Hook order and usage](#hook-order-and-usage).
 
-OpenClaw still owns the generic agent loop, failover, transcript handling, and
+OpenCLI still owns the generic agent loop, failover, transcript handling, and
 tool policy. These hooks are the extension surface for provider-specific
 behavior without needing a whole custom inference transport.
 
@@ -240,9 +240,9 @@ without loading channel runtime.
 
 ### Hook order and usage
 
-For model/provider plugins, OpenClaw calls hooks in this rough order.
+For model/provider plugins, OpenCLI calls hooks in this rough order.
 The "When to use" column is the quick decision guide.
-Compatibility-only provider fields that OpenClaw no longer calls, such as
+Compatibility-only provider fields that OpenCLI no longer calls, such as
 `ProviderPlugin.capabilities` and `suppressBuiltInModel`, are intentionally not
 listed here.
 
@@ -250,7 +250,7 @@ listed here.
 | --- | --------------------------------- | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1   | `catalog`                         | Publish provider config into `models.providers` during `models.json` generation                                | Provider owns a catalog or base URL defaults                                                                                                  |
 | 2   | `applyConfigDefaults`             | Apply provider-owned global config defaults during config materialization                                      | Defaults depend on auth mode, env, or provider model-family semantics                                                                         |
-| --  | _(built-in model lookup)_         | OpenClaw tries the normal registry/catalog path first                                                          | _(not a plugin hook)_                                                                                                                         |
+| --  | _(built-in model lookup)_         | OpenCLI tries the normal registry/catalog path first                                                           | _(not a plugin hook)_                                                                                                                         |
 | 3   | `normalizeModelId`                | Normalize legacy or preview model-id aliases before lookup                                                     | Provider owns alias cleanup before canonical model resolution                                                                                 |
 | 4   | `normalizeTransport`              | Normalize provider-family `api` / `baseUrl` before generic model assembly                                      | Provider owns transport cleanup for custom provider ids in the same transport family                                                          |
 | 5   | `normalizeConfig`                 | Normalize `models.providers.<id>` before runtime/provider resolution                                           | Provider needs config cleanup that should live with the plugin; bundled Google-family helpers also backstop supported Google config entries   |
@@ -303,7 +303,7 @@ that compatibility cleanup.
 
 If the provider needs a fully custom wire protocol or custom request executor,
 that is a different class of extension. These hooks are for provider behavior
-that still runs on OpenClaw's normal inference loop.
+that still runs on OpenCLI's normal inference loop.
 
 ### Provider example
 
@@ -370,7 +370,7 @@ mirroring the list.
   <Accordion title="Pass-through catalog providers">
     OpenRouter, Kilocode, Z.AI, xAI register `catalog` plus
     `resolveDynamicModel` / `prepareDynamicModel` so they can surface upstream
-    model ids ahead of OpenClaw's static catalog.
+    model ids ahead of OpenCLI's static catalog.
   </Accordion>
   <Accordion title="OAuth and usage endpoint providers">
     GitHub Copilot, Gemini CLI, ChatGPT Codex, MiniMax, Xiaomi, z.ai pair
@@ -403,12 +403,12 @@ Plugins can access selected core helpers via `api.runtime`. For TTS:
 
 ```ts
 const clip = await api.runtime.tts.textToSpeech({
-  text: "Hello from OpenClaw",
+  text: "Hello from OpenCLI",
   cfg: api.config,
 });
 
 const result = await api.runtime.tts.textToSpeechTelephony({
-  text: "Hello from OpenClaw",
+  text: "Hello from OpenCLI",
   cfg: api.config,
 });
 
@@ -451,7 +451,7 @@ Notes:
 - Use speech providers for vendor-owned synthesis behavior.
 - Legacy Microsoft `edge` input is normalized to the `microsoft` provider id.
 - The preferred ownership model is company-oriented: one vendor plugin can own
-  text, speech, image, and future media providers as OpenClaw adds those
+  text, speech, image, and future media providers as OpenCLI adds those
   capability contracts.
 
 For image/audio/video understanding, plugins register one typed
@@ -528,7 +528,7 @@ const result = await api.runtime.subagent.run({
 Notes:
 
 - `provider` and `model` are optional per-run overrides, not persistent session changes.
-- OpenClaw only honors those override fields for trusted callers.
+- OpenCLI only honors those override fields for trusted callers.
 - For plugin-owned fallback runs, operators must opt in with `plugins.entries.<id>.subagent.allowModelOverride: true`.
 - Use `plugins.entries.<id>.subagent.allowedModels` to restrict trusted plugins to specific canonical `provider/model` targets, or `"*"` to allow any target explicitly.
 - Untrusted plugin subagent runs still work, but override requests are rejected instead of silently falling back.
@@ -545,7 +545,7 @@ const providers = api.runtime.webSearch.listProviders({
 const result = await api.runtime.webSearch.search({
   config: api.config,
   args: {
-    query: "OpenClaw plugin runtime helpers",
+    query: "OpenCLI plugin runtime helpers",
     count: 5,
   },
 });
@@ -609,22 +609,22 @@ Notes:
 - Overlapping routes with different `auth` levels are rejected. Keep `exact`/`prefix` fallthrough chains on the same auth level only.
 - `auth: "plugin"` routes do **not** receive operator runtime scopes automatically. They are for plugin-managed webhooks/signature verification, not privileged Gateway helper calls.
 - `auth: "gateway"` routes run inside a Gateway request runtime scope, but that scope is intentionally conservative:
-  - shared-secret bearer auth (`gateway.auth.mode = "token"` / `"password"`) keeps plugin-route runtime scopes pinned to `operator.write`, even if the caller sends `x-openclaw-scopes`
-  - trusted identity-bearing HTTP modes (for example `trusted-proxy` or `gateway.auth.mode = "none"` on a private ingress) honor `x-openclaw-scopes` only when the header is explicitly present
-  - if `x-openclaw-scopes` is absent on those identity-bearing plugin-route requests, runtime scope falls back to `operator.write`
-- Practical rule: do not assume a gateway-auth plugin route is an implicit admin surface. If your route needs admin-only behavior, require an identity-bearing auth mode and document the explicit `x-openclaw-scopes` header contract.
+  - shared-secret bearer auth (`gateway.auth.mode = "token"` / `"password"`) keeps plugin-route runtime scopes pinned to `operator.write`, even if the caller sends `x-opencli-scopes`
+  - trusted identity-bearing HTTP modes (for example `trusted-proxy` or `gateway.auth.mode = "none"` on a private ingress) honor `x-opencli-scopes` only when the header is explicitly present
+  - if `x-opencli-scopes` is absent on those identity-bearing plugin-route requests, runtime scope falls back to `operator.write`
+- Practical rule: do not assume a gateway-auth plugin route is an implicit admin surface. If your route needs admin-only behavior, require an identity-bearing auth mode and document the explicit `x-opencli-scopes` header contract.
 
 ## Plugin SDK import paths
 
-Use narrow SDK subpaths instead of the monolithic `openclaw/plugin-sdk` root
+Use narrow SDK subpaths instead of the monolithic `opencli/plugin-sdk` root
 barrel when authoring new plugins. Core subpaths:
 
-| Subpath                             | Purpose                                            |
-| ----------------------------------- | -------------------------------------------------- |
-| `openclaw/plugin-sdk/plugin-entry`  | Plugin registration primitives                     |
-| `openclaw/plugin-sdk/channel-core`  | Channel entry/build helpers                        |
-| `openclaw/plugin-sdk/core`          | Generic shared helpers and umbrella contract       |
-| `openclaw/plugin-sdk/config-schema` | Root `openclaw.json` Zod schema (`OpenClawSchema`) |
+| Subpath                            | Purpose                                          |
+| ---------------------------------- | ------------------------------------------------ |
+| `opencli/plugin-sdk/plugin-entry`  | Plugin registration primitives                   |
+| `opencli/plugin-sdk/channel-core`  | Channel entry/build helpers                      |
+| `opencli/plugin-sdk/core`          | Generic shared helpers and umbrella contract     |
+| `opencli/plugin-sdk/config-schema` | Root `opencli.json` Zod schema (`OpenCLISchema`) |
 
 Channel plugins pick from a family of narrow seams — `channel-setup`,
 `setup-runtime`, `setup-adapter-runtime`, `setup-tools`, `channel-pairing`,
@@ -642,8 +642,8 @@ Runtime and config helpers live under matching focused `*-runtime` subpaths
 instead of the broad `config-runtime` compatibility barrel.
 
 <Info>
-`openclaw/plugin-sdk/channel-runtime`, `openclaw/plugin-sdk/config-runtime`,
-and `openclaw/plugin-sdk/infra-runtime` are deprecated compatibility shims for
+`opencli/plugin-sdk/channel-runtime`, `opencli/plugin-sdk/config-runtime`,
+and `opencli/plugin-sdk/infra-runtime` are deprecated compatibility shims for
 older plugins. New code should import narrower generic primitives instead.
 </Info>
 
@@ -654,7 +654,7 @@ Repo-internal entry points (per bundled plugin package root):
 - `runtime-api.js` — runtime-only barrel
 - `setup-entry.js` — setup plugin entry
 
-External plugins should only import `openclaw/plugin-sdk/*` subpaths. Never
+External plugins should only import `opencli/plugin-sdk/*` subpaths. Never
 import another plugin package's `src/*` from core or from another plugin.
 Facade-loaded entry points prefer the active runtime config snapshot when one
 exists, then fall back to the resolved config file on disk.
@@ -713,7 +713,7 @@ Recommended split:
 
 Plugins that derive directory entries from config should keep that logic in the
 plugin and reuse the shared helpers from
-`openclaw/plugin-sdk/directory-runtime`.
+`opencli/plugin-sdk/directory-runtime`.
 
 Use this when a channel needs config-backed peers/groups such as:
 
@@ -736,7 +736,7 @@ plugin implementation.
 Provider plugins can define model catalogs for inference with
 `registerProvider({ catalog: { run(...) { ... } } })`.
 
-`catalog.run(...)` returns the same shape OpenClaw writes into
+`catalog.run(...)` returns the same shape OpenCLI writes into
 `models.providers`:
 
 - `{ provider }` for one provider entry
@@ -745,7 +745,7 @@ Provider plugins can define model catalogs for inference with
 Use `catalog` when the plugin owns provider-specific model ids, base URL
 defaults, or auth-gated model metadata.
 
-`catalog.order` controls when a plugin's catalog merges relative to OpenClaw's
+`catalog.order` controls when a plugin's catalog merges relative to OpenCLI's
 built-in implicit providers:
 
 - `simple`: plain API-key or env-driven providers
@@ -759,7 +759,7 @@ built-in provider entry with the same provider id.
 Compatibility:
 
 - `discovery` still works as a legacy alias
-- if both `catalog` and `discovery` are registered, OpenClaw uses `catalog`
+- if both `catalog` and `discovery` are registered, OpenCLI uses `catalog`
 
 ## Read-only channel inspection
 
@@ -770,8 +770,8 @@ Why:
 
 - `resolveAccount(...)` is the runtime path. It is allowed to assume credentials
   are fully materialized and can fail fast when required secrets are missing.
-- Read-only command paths such as `openclaw status`, `openclaw status --all`,
-  `openclaw channels status`, `openclaw channels resolve`, and doctor/config
+- Read-only command paths such as `opencli status`, `opencli status --all`,
+  `opencli channels status`, `opencli channels resolve`, and doctor/config
   repair flows should not need to materialize runtime credentials just to
   describe configuration.
 
@@ -795,12 +795,12 @@ path" instead of crashing or misreporting the account as not configured.
 
 ## Package packs
 
-A plugin directory may include a `package.json` with `openclaw.extensions`:
+A plugin directory may include a `package.json` with `opencli.extensions`:
 
 ```json
 {
   "name": "my-pack",
-  "openclaw": {
+  "opencli": {
     "extensions": ["./src/safety.ts", "./src/tools.ts"],
     "setupEntry": "./src/setup-entry.ts"
   }
@@ -813,24 +813,24 @@ becomes `name/<fileBase>`.
 If your plugin imports npm deps, install them in that directory so
 `node_modules` is available (`npm install` / `pnpm install`).
 
-Security guardrail: every `openclaw.extensions` entry must stay inside the plugin
+Security guardrail: every `opencli.extensions` entry must stay inside the plugin
 directory after symlink resolution. Entries that escape the package directory are
 rejected.
 
-Security note: `openclaw plugins install` installs plugin dependencies with a
+Security note: `opencli plugins install` installs plugin dependencies with a
 project-local `npm install --omit=dev --ignore-scripts` (no lifecycle scripts,
 no dev dependencies at runtime), ignoring inherited global npm install settings.
 Keep plugin dependency trees "pure JS/TS" and avoid packages that require
 `postinstall` builds.
 
-Optional: `openclaw.setupEntry` can point at a lightweight setup-only module.
-When OpenClaw needs setup surfaces for a disabled channel plugin, or
+Optional: `opencli.setupEntry` can point at a lightweight setup-only module.
+When OpenCLI needs setup surfaces for a disabled channel plugin, or
 when a channel plugin is enabled but still unconfigured, it loads `setupEntry`
 instead of the full plugin entry. This keeps startup and setup lighter
 when your main plugin entry also wires tools, hooks, or other runtime-only
 code.
 
-Optional: `openclaw.startup.deferConfiguredChannelFullLoadUntilAfterListen`
+Optional: `opencli.startup.deferConfiguredChannelFullLoadUntilAfterListen`
 can opt a channel plugin into the same `setupEntry` path during the gateway's
 pre-listen startup phase, even when the channel is already configured.
 
@@ -843,7 +843,7 @@ must register every channel-owned capability that startup depends on, such as:
 - any gateway methods, tools, or services that must exist during that same window
 
 If your full entry still owns any required startup capability, do not enable
-this flag. Keep the plugin on the default behavior and let OpenClaw load the
+this flag. Keep the plugin on the default behavior and let OpenCLI load the
 full entry during startup.
 
 Bundled channels can also publish setup-only contract-surface helpers that core
@@ -875,7 +875,7 @@ Example:
 ```json
 {
   "name": "@scope/my-channel",
-  "openclaw": {
+  "opencli": {
     "extensions": ["./index.ts"],
     "setupEntry": "./setup-entry.ts",
     "startup": {
@@ -887,15 +887,15 @@ Example:
 
 ### Channel catalog metadata
 
-Channel plugins can advertise setup/discovery metadata via `openclaw.channel` and
-install hints via `openclaw.install`. This keeps the core catalog data-free.
+Channel plugins can advertise setup/discovery metadata via `opencli.channel` and
+install hints via `opencli.install`. This keeps the core catalog data-free.
 
 Example:
 
 ```json
 {
-  "name": "@openclaw/nextcloud-talk",
-  "openclaw": {
+  "name": "@opencli/nextcloud-talk",
+  "opencli": {
     "extensions": ["./index.ts"],
     "channel": {
       "id": "nextcloud-talk",
@@ -908,7 +908,7 @@ Example:
       "aliases": ["nc-talk", "nc"]
     },
     "install": {
-      "npmSpec": "@openclaw/nextcloud-talk",
+      "npmSpec": "@opencli/nextcloud-talk",
       "localPath": "<bundled-plugin-local-path>",
       "defaultChoice": "npm"
     }
@@ -916,7 +916,7 @@ Example:
 }
 ```
 
-Useful `openclaw.channel` fields beyond the minimal example:
+Useful `opencli.channel` fields beyond the minimal example:
 
 - `detailLabel`: secondary label for richer catalog/status surfaces
 - `docsLabel`: override link text for the docs link
@@ -931,19 +931,19 @@ Useful `openclaw.channel` fields beyond the minimal example:
 - `forceAccountBinding`: require explicit account binding even when only one account exists
 - `preferSessionLookupForAnnounceTarget`: prefer session lookup when resolving announce targets
 
-OpenClaw can also merge **external channel catalogs** (for example, an MPM
+OpenCLI can also merge **external channel catalogs** (for example, an MPM
 registry export). Drop a JSON file at one of:
 
-- `~/.openclaw/mpm/plugins.json`
-- `~/.openclaw/mpm/catalog.json`
-- `~/.openclaw/plugins/catalog.json`
+- `~/.opencli/mpm/plugins.json`
+- `~/.opencli/mpm/catalog.json`
+- `~/.opencli/plugins/catalog.json`
 
-Or point `OPENCLAW_PLUGIN_CATALOG_PATHS` (or `OPENCLAW_MPM_CATALOG_PATHS`) at
+Or point `OPENCLI_PLUGIN_CATALOG_PATHS` (or `OPENCLI_MPM_CATALOG_PATHS`) at
 one or more JSON files (comma/semicolon/`PATH`-delimited). Each file should
-contain `{ "entries": [ { "name": "@scope/pkg", "openclaw": { "channel": {...}, "install": {...} } } ] }`. The parser also accepts `"packages"` or `"plugins"` as legacy aliases for the `"entries"` key.
+contain `{ "entries": [ { "name": "@scope/pkg", "opencli": { "channel": {...}, "install": {...} } } ] }`. The parser also accepts `"packages"` or `"plugins"` as legacy aliases for the `"entries"` key.
 
 Generated channel catalog entries and provider install catalog entries expose
-normalized install-source facts next to the raw `openclaw.install` block. The
+normalized install-source facts next to the raw `opencli.install` block. The
 normalized facts identify whether the npm spec is an exact version or floating
 selector, whether expected integrity metadata is present, and whether a local
 source path is also available. When the catalog/package identity is known, the
@@ -981,7 +981,7 @@ Use this when your plugin needs to replace or extend the default context
 pipeline rather than just add memory search or hooks.
 
 ```ts
-import { buildMemorySystemPromptAddition } from "openclaw/plugin-sdk/core";
+import { buildMemorySystemPromptAddition } from "opencli/plugin-sdk/core";
 
 export default function (api) {
   api.registerContextEngine("lossless-claw", (ctx) => ({
@@ -1016,7 +1016,7 @@ implemented and delegate it explicitly:
 import {
   buildMemorySystemPromptAddition,
   delegateCompactionToRuntime,
-} from "openclaw/plugin-sdk/core";
+} from "opencli/plugin-sdk/core";
 
 export default function (api) {
   api.registerContextEngine("my-memory-engine", (ctx) => ({
@@ -1056,7 +1056,7 @@ Recommended sequence:
    Decide what shared behavior core should own: policy, fallback, config merge,
    lifecycle, channel-facing semantics, and runtime helper shape.
 2. add typed plugin registration/runtime surfaces
-   Extend `OpenClawPluginApi` and/or `api.runtime` with the smallest useful
+   Extend `OpenCLIPluginApi` and/or `api.runtime` with the smallest useful
    typed capability surface.
 3. wire core + channel/feature consumers
    Channels and feature plugins should consume the new capability through core,
@@ -1066,7 +1066,7 @@ Recommended sequence:
 5. add contract coverage
    Add tests so ownership and registration shape stay explicit over time.
 
-This is how OpenClaw stays opinionated without becoming hardcoded to one
+This is how OpenCLI stays opinionated without becoming hardcoded to one
 provider's worldview. See the [Capability Cookbook](/tools/capability-cookbook)
 for a concrete file checklist and worked example.
 

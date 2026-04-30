@@ -1,4 +1,4 @@
-import { describePluginRegistrationContract } from "openclaw/plugin-sdk/plugin-test-contracts";
+import { describePluginRegistrationContract } from "opencli/plugin-sdk/plugin-test-contracts";
 
 describePluginRegistrationContract({
   pluginId: "opencode",

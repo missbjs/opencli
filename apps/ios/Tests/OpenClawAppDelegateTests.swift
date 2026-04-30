@@ -1,13 +1,13 @@
 import Testing
-@testable import OpenClaw
+@testable import OpenCLI
 
-@Suite(.serialized) struct OpenClawAppDelegateTests {
+@Suite(.serialized) struct OpenCLIAppDelegateTests {
     @Test @MainActor func resolvesRegistryModelBeforeViewTaskAssignsDelegateModel() {
         let registryModel = NodeAppModel()
-        OpenClawAppModelRegistry.appModel = registryModel
-        defer { OpenClawAppModelRegistry.appModel = nil }
+        OpenCLIAppModelRegistry.appModel = registryModel
+        defer { OpenCLIAppModelRegistry.appModel = nil }
 
-        let delegate = OpenClawAppDelegate()
+        let delegate = OpenCLIAppDelegate()
 
         #expect(delegate._test_resolvedAppModel() === registryModel)
     }
@@ -15,10 +15,10 @@ import Testing
     @Test @MainActor func prefersExplicitDelegateModelOverRegistryFallback() {
         let registryModel = NodeAppModel()
         let explicitModel = NodeAppModel()
-        OpenClawAppModelRegistry.appModel = registryModel
-        defer { OpenClawAppModelRegistry.appModel = nil }
+        OpenCLIAppModelRegistry.appModel = registryModel
+        defer { OpenCLIAppModelRegistry.appModel = nil }
 
-        let delegate = OpenClawAppDelegate()
+        let delegate = OpenCLIAppDelegate()
         delegate.appModel = explicitModel
 
         #expect(delegate._test_resolvedAppModel() === explicitModel)

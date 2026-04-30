@@ -540,7 +540,7 @@ export function buildBuiltinChatCommands(): ChatCommandDefinition[] {
     defineChatCommand({
       key: "mcp",
       nativeName: "mcp",
-      description: "Show or set OpenClaw MCP servers.",
+      description: "Show or set OpenCLI MCP servers.",
       textAlias: "/mcp",
       category: "management",
       tier: "power",
@@ -646,7 +646,7 @@ export function buildBuiltinChatCommands(): ChatCommandDefinition[] {
     defineChatCommand({
       key: "restart",
       nativeName: "restart",
-      description: "Restart OpenClaw.",
+      description: "Restart OpenCLI.",
       textAlias: "/restart",
       category: "tools",
       tier: "power",

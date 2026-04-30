@@ -17,10 +17,10 @@ public struct GatewayTLSParams: Sendable {
 }
 
 public enum GatewayTLSStore {
-    private static let keychainService = "ai.openclaw.tls-pinning"
+    private static let keychainService = "ai.opencli.tls-pinning"
 
     // Legacy UserDefaults location used before Keychain migration.
-    private static let legacySuiteName = "ai.openclaw.shared"
+    private static let legacySuiteName = "ai.opencli.shared"
     private static let legacyKeyPrefix = "gateway.tls."
 
     public static func loadFingerprint(stableID: String) -> String? {

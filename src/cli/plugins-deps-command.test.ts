@@ -34,7 +34,7 @@ const mocks = vi.hoisted(() => {
     pruneUnknownBundledRuntimeDepsRoots: vi.fn(),
     repairBundledRuntimeDepsInstallRootAsync: vi.fn(),
     resolveBundledRuntimeDependencyPackageInstallRootPlan: vi.fn(),
-    resolveOpenClawPackageRootSync: vi.fn(),
+    resolveOpenCLIPackageRootSync: vi.fn(),
     scanBundledPluginRuntimeDeps: vi.fn(),
   };
 });
@@ -43,8 +43,8 @@ vi.mock("../runtime.js", () => ({
   defaultRuntime: mocks.defaultRuntime,
 }));
 
-vi.mock("../infra/openclaw-root.js", () => ({
-  resolveOpenClawPackageRootSync: mocks.resolveOpenClawPackageRootSync,
+vi.mock("../infra/opencli-root.js", () => ({
+  resolveOpenCLIPackageRootSync: mocks.resolveOpenCLIPackageRootSync,
 }));
 
 vi.mock("../plugins/bundled-runtime-deps.js", () => ({
@@ -70,7 +70,7 @@ describe("plugins deps command", () => {
     mocks.pruneUnknownBundledRuntimeDepsRoots.mockReset();
     mocks.repairBundledRuntimeDepsInstallRootAsync.mockReset();
     mocks.resolveBundledRuntimeDependencyPackageInstallRootPlan.mockReset();
-    mocks.resolveOpenClawPackageRootSync.mockReset();
+    mocks.resolveOpenCLIPackageRootSync.mockReset();
     mocks.scanBundledPluginRuntimeDeps.mockReset();
     mocks.resolveBundledRuntimeDependencyPackageInstallRootPlan.mockReturnValue({
       installRoot: "/runtime-deps",
@@ -81,7 +81,7 @@ describe("plugins deps command", () => {
 
   it("does not reinstall already materialized bundled runtime deps", async () => {
     mocks.scanBundledPluginRuntimeDeps.mockReturnValue({
-      deps: [{ name: "zod", version: "4.0.0", pluginIds: ["openclaw-demo"] }],
+      deps: [{ name: "zod", version: "4.0.0", pluginIds: ["opencli-demo"] }],
       missing: [],
       conflicts: [],
     });
@@ -90,7 +90,7 @@ describe("plugins deps command", () => {
       config: {},
       options: {
         json: true,
-        packageRoot: "/openclaw-package",
+        packageRoot: "/opencli-package",
         repair: true,
       },
     });
@@ -98,7 +98,7 @@ describe("plugins deps command", () => {
     expect(mocks.repairBundledRuntimeDepsInstallRootAsync).not.toHaveBeenCalled();
     expect(JSON.parse(mocks.runtimeLogs[0] ?? "null")).toEqual(
       expect.objectContaining({
-        packageRoot: "/openclaw-package",
+        packageRoot: "/opencli-package",
         installSpecs: ["zod@4.0.0"],
         missingSpecs: [],
         repairedSpecs: [],
@@ -107,7 +107,7 @@ describe("plugins deps command", () => {
   });
 
   it("repairs only when bundled runtime deps are missing", async () => {
-    const dep = { name: "zod", version: "4.0.0", pluginIds: ["openclaw-demo"] };
+    const dep = { name: "zod", version: "4.0.0", pluginIds: ["opencli-demo"] };
     mocks.scanBundledPluginRuntimeDeps
       .mockReturnValueOnce({
         deps: [dep],
@@ -128,7 +128,7 @@ describe("plugins deps command", () => {
       config: {},
       options: {
         json: true,
-        packageRoot: "/openclaw-package",
+        packageRoot: "/opencli-package",
         repair: true,
       },
     });
@@ -151,7 +151,7 @@ describe("plugins deps command", () => {
   });
 
   it("keeps repair warnings inside JSON output", async () => {
-    const dep = { name: "zod", version: "4.0.0", pluginIds: ["openclaw-demo"] };
+    const dep = { name: "zod", version: "4.0.0", pluginIds: ["opencli-demo"] };
     mocks.scanBundledPluginRuntimeDeps
       .mockReturnValueOnce({
         deps: [dep],
@@ -175,7 +175,7 @@ describe("plugins deps command", () => {
       config: {},
       options: {
         json: true,
-        packageRoot: "/openclaw-package",
+        packageRoot: "/opencli-package",
         repair: true,
       },
     });
@@ -191,13 +191,13 @@ describe("plugins deps command", () => {
   });
 
   it("repairs missing deps even when separate deps have version conflicts", async () => {
-    const dep = { name: "zod", version: "4.0.0", pluginIds: ["openclaw-demo"] };
+    const dep = { name: "zod", version: "4.0.0", pluginIds: ["opencli-demo"] };
     const conflict = {
       name: "shared-conflict",
       versions: ["1.0.0", "2.0.0"],
       pluginIdsByVersion: new Map([
-        ["1.0.0", ["openclaw-one"]],
-        ["2.0.0", ["openclaw-two"]],
+        ["1.0.0", ["opencli-one"]],
+        ["2.0.0", ["opencli-two"]],
       ]),
     };
     mocks.scanBundledPluginRuntimeDeps
@@ -220,7 +220,7 @@ describe("plugins deps command", () => {
       config: {},
       options: {
         json: true,
-        packageRoot: "/openclaw-package",
+        packageRoot: "/opencli-package",
         repair: true,
       },
     });
@@ -239,8 +239,8 @@ describe("plugins deps command", () => {
             name: "shared-conflict",
             versions: ["1.0.0", "2.0.0"],
             pluginIdsByVersion: {
-              "1.0.0": ["openclaw-one"],
-              "2.0.0": ["openclaw-two"],
+              "1.0.0": ["opencli-one"],
+              "2.0.0": ["opencli-two"],
             },
           },
         ],

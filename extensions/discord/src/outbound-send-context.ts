@@ -1,10 +1,10 @@
-import type { OpenClawConfig, ReplyToMode } from "openclaw/plugin-sdk/config-types";
-import { createReplyToFanout, type ReplyToResolution } from "openclaw/plugin-sdk/outbound-runtime";
+import type { OpenCLIConfig, ReplyToMode } from "opencli/plugin-sdk/config-types";
+import { createReplyToFanout, type ReplyToResolution } from "opencli/plugin-sdk/outbound-runtime";
 import {
   resolveOutboundSendDep,
   type OutboundSendDeps,
-} from "openclaw/plugin-sdk/outbound-send-deps";
-import { normalizeOptionalStringifiedId } from "openclaw/plugin-sdk/text-runtime";
+} from "opencli/plugin-sdk/outbound-send-deps";
+import { normalizeOptionalStringifiedId } from "opencli/plugin-sdk/text-runtime";
 import { withDiscordDeliveryRetry } from "./delivery-retry.js";
 
 type DiscordSendRuntime = typeof import("./send.js");
@@ -52,7 +52,7 @@ export function resolveDiscordFormattingOptions(ctx: {
 }
 
 export async function createDiscordPayloadSendContext(ctx: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   to: string;
   accountId?: string | null;
   deps?: OutboundSendDeps;

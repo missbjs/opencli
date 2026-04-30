@@ -1,7 +1,7 @@
-import type { ProviderPrepareRuntimeAuthContext } from "openclaw/plugin-sdk/core";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { ensureAuthProfileStore } from "openclaw/plugin-sdk/provider-auth";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/text-runtime";
+import type { ProviderPrepareRuntimeAuthContext } from "opencli/plugin-sdk/core";
+import { formatErrorMessage } from "opencli/plugin-sdk/error-runtime";
+import { ensureAuthProfileStore } from "opencli/plugin-sdk/provider-auth";
+import { normalizeOptionalString } from "opencli/plugin-sdk/text-runtime";
 import { getAccessTokenResultAsync } from "./cli.js";
 import {
   type CachedTokenEntry,

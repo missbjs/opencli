@@ -6,7 +6,7 @@ import {
   die,
   ensureValue,
   makeTempDir,
-  packOpenClaw,
+  packOpenCLI,
   parsePlatformList,
   parseProvider,
   repoRoot,
@@ -59,14 +59,14 @@ interface NpmUpdateSummary {
 const macosVm = "macOS Tahoe";
 const windowsVm = "Windows 11";
 const linuxVmDefault = "Ubuntu 24.04.3 ARM64";
-const updateTimeoutSeconds = Number(process.env.OPENCLAW_PARALLELS_NPM_UPDATE_TIMEOUT_S || 1200);
+const updateTimeoutSeconds = Number(process.env.OPENCLI_PARALLELS_NPM_UPDATE_TIMEOUT_S || 1200);
 
 function usage(): string {
   return `Usage: bash scripts/e2e/parallels-npm-update-smoke.sh [options]
 
 Options:
-  --package-spec <npm-spec>  Baseline npm package spec. Default: openclaw@latest
-  --update-target <target>    Target passed to guest 'openclaw update --tag'.
+  --package-spec <npm-spec>  Baseline npm package spec. Default: opencli@latest
+  --update-target <target>    Target passed to guest 'opencli update --tag'.
                              Default: host-served tgz packed from current checkout.
   --platform <list>           Comma-separated platforms to run: all, macos, windows, linux.
                              Default: all
@@ -166,11 +166,11 @@ class NpmUpdateSmoke {
   }
 
   async run(): Promise<void> {
-    this.runDir = await makeTempDir("openclaw-parallels-npm-update.");
-    this.tgzDir = await makeTempDir("openclaw-parallels-npm-update-tgz.");
+    this.runDir = await makeTempDir("opencli-parallels-npm-update.");
+    this.tgzDir = await makeTempDir("opencli-parallels-npm-update-tgz.");
     try {
       this.latestVersion = resolveLatestVersion();
-      this.packageSpec = this.options.packageSpec || `openclaw@${this.latestVersion}`;
+      this.packageSpec = this.options.packageSpec || `opencli@${this.latestVersion}`;
       this.currentHead = run("git", ["rev-parse", "HEAD"], { quiet: true }).stdout.trim();
       this.currentHeadShort = run("git", ["rev-parse", "--short=7", "HEAD"], {
         quiet: true,
@@ -188,7 +188,7 @@ class NpmUpdateSmoke {
       await this.runFreshBaselines();
 
       await this.prepareUpdateTarget();
-      say(`Run same-guest openclaw update to ${this.updateTargetEffective}`);
+      say(`Run same-guest opencli update to ${this.updateTargetEffective}`);
       await this.runSameGuestUpdates();
 
       const summaryPath = await this.writeSummary();
@@ -215,7 +215,7 @@ class NpmUpdateSmoke {
     if (this.options.platforms.has("linux")) {
       jobs.push(
         this.spawnFresh("Linux", "linux", ["--vm", this.linuxVm], {
-          OPENCLAW_PARALLELS_LINUX_DISABLE_BONJOUR: "1",
+          OPENCLI_PARALLELS_LINUX_DISABLE_BONJOUR: "1",
         }),
       );
     }
@@ -269,7 +269,7 @@ class NpmUpdateSmoke {
 
   private async prepareUpdateTarget(): Promise<void> {
     if (!this.options.updateTarget || this.options.updateTarget === "local-main") {
-      this.artifact = await packOpenClaw({
+      this.artifact = await packOpenCLI({
         destination: this.tgzDir,
         requireControlUi: true,
         stageRuntimeDeps: true,
@@ -477,7 +477,7 @@ class NpmUpdateSmoke {
   }
 
   private resolveRegistryTargetVersion(target: string): string {
-    const spec = target.startsWith("openclaw@") ? target : `openclaw@${target}`;
+    const spec = target.startsWith("opencli@") ? target : `opencli@${target}`;
     return (
       run("npm", ["view", spec, "version"], { check: false, quiet: true })
         .stdout.trim()
@@ -506,7 +506,7 @@ class NpmUpdateSmoke {
     const target = this.resolveRegistryTargetVersion(this.options.updateTarget);
     if (baseline && target && baseline === target) {
       die(
-        `--update-target ${this.options.updateTarget} resolves to openclaw@${target}, same as baseline ${this.packageSpec}; publish or choose a newer --update-target before running VM update coverage`,
+        `--update-target ${this.options.updateTarget} resolves to opencli@${target}, same as baseline ${this.packageSpec}; publish or choose a newer --update-target before running VM update coverage`,
       );
     }
   }
@@ -520,7 +520,7 @@ class NpmUpdateSmoke {
 
   private async extractLastVersion(logPath: string): Promise<string> {
     const log = await readFile(logPath, "utf8").catch(() => "");
-    const matches = [...log.matchAll(/openclaw\s+([0-9][^\s]*)/g)];
+    const matches = [...log.matchAll(/opencli\s+([0-9][^\s]*)/g)];
     return matches.at(-1)?.[1] ?? "";
   }
 

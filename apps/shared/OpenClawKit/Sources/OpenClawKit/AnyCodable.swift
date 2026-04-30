@@ -1,3 +1,3 @@
-import OpenClawProtocol
+import OpenCLIProtocol
 
-public typealias AnyCodable = OpenClawProtocol.AnyCodable
+public typealias AnyCodable = OpenCLIProtocol.AnyCodable

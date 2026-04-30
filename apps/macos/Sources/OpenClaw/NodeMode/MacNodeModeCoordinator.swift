@@ -1,12 +1,12 @@
 import Foundation
-import OpenClawKit
+import OpenCLIKit
 import OSLog
 
 @MainActor
 final class MacNodeModeCoordinator {
     static let shared = MacNodeModeCoordinator()
 
-    private let logger = Logger(subsystem: "ai.openclaw", category: "mac-node")
+    private let logger = Logger(subsystem: "ai.opencli", category: "mac-node")
     private var task: Task<Void, Never>?
     private let runtime = MacNodeRuntime()
     private let session = GatewayNodeSession()
@@ -49,7 +49,7 @@ final class MacNodeModeCoordinator {
                 await self.session.disconnect()
                 try? await Task.sleep(nanoseconds: 200_000_000)
             }
-            let browserControlEnabled = OpenClawConfigFile.browserControlEnabled()
+            let browserControlEnabled = OpenCLIConfigFile.browserControlEnabled()
             if lastBrowserControlEnabled == nil {
                 lastBrowserControlEnabled = browserControlEnabled
             } else if lastBrowserControlEnabled != browserControlEnabled {
@@ -69,7 +69,7 @@ final class MacNodeModeCoordinator {
                     caps: caps,
                     commands: commands,
                     permissions: permissions,
-                    clientId: "openclaw-macos",
+                    clientId: "opencli-macos",
                     clientMode: "node",
                     clientDisplayName: InstanceIdentity.displayName)
                 let sessionBox = self.buildSessionBox(url: config.url)
@@ -101,7 +101,7 @@ final class MacNodeModeCoordinator {
                             return BridgeInvokeResponse(
                                 id: req.id,
                                 ok: false,
-                                error: OpenClawNodeError(code: .unavailable, message: "UNAVAILABLE: node not ready"))
+                                error: OpenCLINodeError(code: .unavailable, message: "UNAVAILABLE: node not ready"))
                         }
                         return await self.runtime.handleInvoke(req)
                     })
@@ -119,18 +119,18 @@ final class MacNodeModeCoordinator {
     nonisolated static func resolvedCaps(
         browserControlEnabled: Bool,
         cameraEnabled: Bool,
-        locationMode: OpenClawLocationMode,
+        locationMode: OpenCLILocationMode,
         connectionMode: AppState.ConnectionMode) -> [String]
     {
-        var caps: [String] = [OpenClawCapability.canvas.rawValue, OpenClawCapability.screen.rawValue]
+        var caps: [String] = [OpenCLICapability.canvas.rawValue, OpenCLICapability.screen.rawValue]
         if browserControlEnabled, connectionMode == .local {
-            caps.append(OpenClawCapability.browser.rawValue)
+            caps.append(OpenCLICapability.browser.rawValue)
         }
         if cameraEnabled {
-            caps.append(OpenClawCapability.camera.rawValue)
+            caps.append(OpenCLICapability.camera.rawValue)
         }
         if locationMode != .off {
-            caps.append(OpenClawCapability.location.rawValue)
+            caps.append(OpenCLICapability.location.rawValue)
         }
         return caps
     }
@@ -138,9 +138,9 @@ final class MacNodeModeCoordinator {
     private func currentCaps() -> [String] {
         let rawLocationMode = UserDefaults.standard.string(forKey: locationModeKey) ?? "off"
         return Self.resolvedCaps(
-            browserControlEnabled: OpenClawConfigFile.browserControlEnabled(),
+            browserControlEnabled: OpenCLIConfigFile.browserControlEnabled(),
             cameraEnabled: UserDefaults.standard.object(forKey: cameraEnabledKey) as? Bool ?? false,
-            locationMode: OpenClawLocationMode(rawValue: rawLocationMode) ?? .off,
+            locationMode: OpenCLILocationMode(rawValue: rawLocationMode) ?? .off,
             connectionMode: AppStateStore.shared.connectionMode)
     }
 
@@ -151,34 +151,34 @@ final class MacNodeModeCoordinator {
 
     nonisolated static func resolvedCommands(caps: [String]) -> [String] {
         var commands: [String] = [
-            OpenClawCanvasCommand.present.rawValue,
-            OpenClawCanvasCommand.hide.rawValue,
-            OpenClawCanvasCommand.navigate.rawValue,
-            OpenClawCanvasCommand.evalJS.rawValue,
-            OpenClawCanvasCommand.snapshot.rawValue,
-            OpenClawCanvasA2UICommand.push.rawValue,
-            OpenClawCanvasA2UICommand.pushJSONL.rawValue,
-            OpenClawCanvasA2UICommand.reset.rawValue,
+            OpenCLICanvasCommand.present.rawValue,
+            OpenCLICanvasCommand.hide.rawValue,
+            OpenCLICanvasCommand.navigate.rawValue,
+            OpenCLICanvasCommand.evalJS.rawValue,
+            OpenCLICanvasCommand.snapshot.rawValue,
+            OpenCLICanvasA2UICommand.push.rawValue,
+            OpenCLICanvasA2UICommand.pushJSONL.rawValue,
+            OpenCLICanvasA2UICommand.reset.rawValue,
             MacNodeScreenCommand.snapshot.rawValue,
             MacNodeScreenCommand.record.rawValue,
-            OpenClawSystemCommand.notify.rawValue,
-            OpenClawSystemCommand.which.rawValue,
-            OpenClawSystemCommand.run.rawValue,
-            OpenClawSystemCommand.execApprovalsGet.rawValue,
-            OpenClawSystemCommand.execApprovalsSet.rawValue,
+            OpenCLISystemCommand.notify.rawValue,
+            OpenCLISystemCommand.which.rawValue,
+            OpenCLISystemCommand.run.rawValue,
+            OpenCLISystemCommand.execApprovalsGet.rawValue,
+            OpenCLISystemCommand.execApprovalsSet.rawValue,
         ]
 
         let capsSet = Set(caps)
-        if capsSet.contains(OpenClawCapability.browser.rawValue) {
-            commands.append(OpenClawBrowserCommand.proxy.rawValue)
+        if capsSet.contains(OpenCLICapability.browser.rawValue) {
+            commands.append(OpenCLIBrowserCommand.proxy.rawValue)
         }
-        if capsSet.contains(OpenClawCapability.camera.rawValue) {
-            commands.append(OpenClawCameraCommand.list.rawValue)
-            commands.append(OpenClawCameraCommand.snap.rawValue)
-            commands.append(OpenClawCameraCommand.clip.rawValue)
+        if capsSet.contains(OpenCLICapability.camera.rawValue) {
+            commands.append(OpenCLICameraCommand.list.rawValue)
+            commands.append(OpenCLICameraCommand.snap.rawValue)
+            commands.append(OpenCLICameraCommand.clip.rawValue)
         }
-        if capsSet.contains(OpenClawCapability.location.rawValue) {
-            commands.append(OpenClawLocationCommand.get.rawValue)
+        if capsSet.contains(OpenCLICapability.location.rawValue) {
+            commands.append(OpenCLILocationCommand.get.rawValue)
         }
 
         return commands

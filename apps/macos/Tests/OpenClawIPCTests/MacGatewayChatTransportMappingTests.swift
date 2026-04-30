@@ -1,13 +1,13 @@
-import OpenClawChatUI
-import OpenClawProtocol
+import OpenCLIChatUI
+import OpenCLIProtocol
 import Testing
-@testable import OpenClaw
+@testable import OpenCLI
 
 struct MacGatewayChatTransportMappingTests {
     @Test func `snapshot maps to health`() {
         let snapshot = Snapshot(
             presence: [],
-            health: OpenClawProtocol.AnyCodable(["ok": OpenClawProtocol.AnyCodable(false)]),
+            health: OpenCLIProtocol.AnyCodable(["ok": OpenCLIProtocol.AnyCodable(false)]),
             stateversion: StateVersion(presence: 1, health: 1),
             uptimems: 123,
             configpath: nil,
@@ -39,7 +39,7 @@ struct MacGatewayChatTransportMappingTests {
         let frame = EventFrame(
             type: "event",
             event: "health",
-            payload: OpenClawProtocol.AnyCodable(["ok": OpenClawProtocol.AnyCodable(true)]),
+            payload: OpenCLIProtocol.AnyCodable(["ok": OpenCLIProtocol.AnyCodable(true)]),
             seq: 1,
             stateversion: nil)
 
@@ -62,10 +62,10 @@ struct MacGatewayChatTransportMappingTests {
     }
 
     @Test func `chat event maps to chat`() {
-        let payload = OpenClawProtocol.AnyCodable([
-            "runId": OpenClawProtocol.AnyCodable("run-1"),
-            "sessionKey": OpenClawProtocol.AnyCodable("main"),
-            "state": OpenClawProtocol.AnyCodable("final"),
+        let payload = OpenCLIProtocol.AnyCodable([
+            "runId": OpenCLIProtocol.AnyCodable("run-1"),
+            "sessionKey": OpenCLIProtocol.AnyCodable("main"),
+            "state": OpenCLIProtocol.AnyCodable("final"),
         ])
         let frame = EventFrame(type: "event", event: "chat", payload: payload, seq: 1, stateversion: nil)
         let mapped = MacGatewayChatTransport.mapPushToTransportEvent(.event(frame))
@@ -84,7 +84,7 @@ struct MacGatewayChatTransportMappingTests {
         let frame = EventFrame(
             type: "event",
             event: "unknown",
-            payload: OpenClawProtocol.AnyCodable(["a": OpenClawProtocol.AnyCodable(1)]),
+            payload: OpenCLIProtocol.AnyCodable(["a": OpenCLIProtocol.AnyCodable(1)]),
             seq: 1,
             stateversion: nil)
         let mapped = MacGatewayChatTransport.mapPushToTransportEvent(.event(frame))

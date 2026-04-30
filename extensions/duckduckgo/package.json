@@ -1,13 +1,13 @@
 {
-  "name": "@openclaw/duckduckgo-plugin",
+  "name": "@opencli/duckduckgo-plugin",
   "version": "2026.4.25",
   "private": true,
-  "description": "OpenClaw DuckDuckGo plugin",
+  "description": "OpenCLI DuckDuckGo plugin",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@opencli/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "opencli": {
     "extensions": [
       "./index.ts"
     ]

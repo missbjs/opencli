@@ -2,9 +2,9 @@ import {
   createAckReactionHandle,
   shouldAckReactionForWhatsApp,
   type AckReactionHandle,
-} from "openclaw/plugin-sdk/channel-feedback";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
-import { logVerbose } from "openclaw/plugin-sdk/runtime-env";
+} from "opencli/plugin-sdk/channel-feedback";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
+import { logVerbose } from "opencli/plugin-sdk/runtime-env";
 import { getSenderIdentity } from "../../identity.js";
 import { resolveWhatsAppReactionLevel } from "../../reaction-level.js";
 import { sendReactionWhatsApp } from "../../send.js";
@@ -13,7 +13,7 @@ import type { WebInboundMsg } from "../types.js";
 import { resolveGroupActivationFor } from "./group-activation.js";
 
 export async function maybeSendAckReaction(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   msg: WebInboundMsg;
   agentId: string;
   sessionKey: string;

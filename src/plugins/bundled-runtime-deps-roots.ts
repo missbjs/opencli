@@ -69,7 +69,7 @@ function readPackageVersion(packageRoot: string): string {
 export function isWritableDirectory(dir: string): boolean {
   let probeDir: string | null = null;
   try {
-    probeDir = fs.mkdtempSync(path.join(dir, ".openclaw-write-probe-"));
+    probeDir = fs.mkdtempSync(path.join(dir, ".opencli-write-probe-"));
     fs.writeFileSync(path.join(probeDir, "probe"), "", "utf8");
     return true;
   } catch {
@@ -96,7 +96,7 @@ function resolveSystemdStateDirectory(env: NodeJS.ProcessEnv): string | null {
 }
 
 function resolveBundledRuntimeDepsExternalBaseDirs(env: NodeJS.ProcessEnv): string[] {
-  const explicit = env.OPENCLAW_PLUGIN_STAGE_DIR?.trim();
+  const explicit = env.OPENCLI_PLUGIN_STAGE_DIR?.trim();
   if (explicit) {
     const roots = explicit
       .split(path.delimiter)
@@ -152,7 +152,7 @@ export function pruneUnknownBundledRuntimeDepsRoots(
       continue;
     }
     const unknownRoots = entries
-      .filter((entry) => entry.isDirectory() && entry.name.startsWith("openclaw-unknown-"))
+      .filter((entry) => entry.isDirectory() && entry.name.startsWith("opencli-unknown-"))
       .map((entry) => {
         const root = path.join(baseDir, entry.name);
         try {
@@ -209,7 +209,7 @@ function resolveExternalBundledRuntimeDepsInstallRoots(params: {
     return existingExternalRoots;
   }
   const version = sanitizePathSegment(readPackageVersion(packageRoot));
-  const packageKey = `openclaw-${version}-${createPathHash(packageRoot)}`;
+  const packageKey = `opencli-${version}-${createPathHash(packageRoot)}`;
   return resolveBundledRuntimeDepsExternalBaseDirs(params.env).map((baseDir) =>
     path.join(baseDir, packageKey),
   );
@@ -227,7 +227,7 @@ function resolveExistingExternalBundledRuntimeDepsRoots(params: {
       continue;
     }
     const packageKey = relative.split(path.sep)[0];
-    if (!packageKey || !packageKey.startsWith("openclaw-")) {
+    if (!packageKey || !packageKey.startsWith("opencli-")) {
       continue;
     }
     return externalBaseDirs.map((baseDir) => path.join(baseDir, packageKey));
@@ -276,7 +276,7 @@ export function resolveBundledRuntimeDependencyPackageInstallRootPlan(
   });
   if (
     options.forceExternal ||
-    env.OPENCLAW_PLUGIN_STAGE_DIR?.trim() ||
+    env.OPENCLI_PLUGIN_STAGE_DIR?.trim() ||
     env.STATE_DIRECTORY?.trim() ||
     !isSourceCheckoutRoot(packageRoot)
   ) {
@@ -325,7 +325,7 @@ export function resolveBundledRuntimeDependencyInstallRootPlan(
   const externalRoots = resolveExternalBundledRuntimeDepsInstallRoots({ pluginRoot, env });
   if (
     options.forceExternal ||
-    env.OPENCLAW_PLUGIN_STAGE_DIR?.trim() ||
+    env.OPENCLI_PLUGIN_STAGE_DIR?.trim() ||
     env.STATE_DIRECTORY?.trim() ||
     isPackagedBundledPluginRoot(pluginRoot)
   ) {

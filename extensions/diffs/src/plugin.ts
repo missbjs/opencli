@@ -1,9 +1,9 @@
 import path from "node:path";
-import { resolveLivePluginConfigObject } from "openclaw/plugin-sdk/plugin-config-runtime";
+import { resolveLivePluginConfigObject } from "opencli/plugin-sdk/plugin-config-runtime";
 import {
-  resolvePreferredOpenClawTmpDir,
-  type OpenClawConfig,
-  type OpenClawPluginApi,
+  resolvePreferredOpenCLITmpDir,
+  type OpenCLIConfig,
+  type OpenCLIPluginApi,
 } from "../api.js";
 import {
   resolveDiffsPluginDefaults,
@@ -15,21 +15,19 @@ import { DIFFS_AGENT_GUIDANCE } from "./prompt-guidance.js";
 import { DiffArtifactStore } from "./store.js";
 import { createDiffsTool } from "./tool.js";
 
-export function registerDiffsPlugin(api: OpenClawPluginApi): void {
+export function registerDiffsPlugin(api: OpenCLIPluginApi): void {
   const store = new DiffArtifactStore({
-    rootDir: path.join(resolvePreferredOpenClawTmpDir(), "openclaw-diffs"),
+    rootDir: path.join(resolvePreferredOpenCLITmpDir(), "opencli-diffs"),
     logger: api.logger,
   });
   const resolveCurrentPluginConfig = () =>
     resolveLivePluginConfigObject(
-      api.runtime.config?.current
-        ? () => api.runtime.config.current() as OpenClawConfig
-        : undefined,
+      api.runtime.config?.current ? () => api.runtime.config.current() as OpenCLIConfig : undefined,
       "diffs",
       api.pluginConfig as Record<string, unknown>,
     ) ?? {};
   const resolveCurrentAccessConfig = () => {
-    const currentConfig = (api.runtime.config?.current?.() ?? api.config) as OpenClawConfig;
+    const currentConfig = (api.runtime.config?.current?.() ?? api.config) as OpenCLIConfig;
     const pluginConfig = resolveCurrentPluginConfig();
     return {
       allowRemoteViewer: resolveDiffsPluginSecurity(pluginConfig).allowRemoteViewer,

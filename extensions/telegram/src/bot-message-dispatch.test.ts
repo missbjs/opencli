@@ -1,5 +1,5 @@
 import type { Bot } from "grammy";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { resolveAutoTopicLabelConfig as resolveAutoTopicLabelConfigRuntime } from "./auto-topic-label-config.js";
 import type { TelegramBotDeps } from "./bot-deps.js";
@@ -65,7 +65,7 @@ const resolveDefaultModelForAgent = vi.hoisted(() =>
   vi.fn(() => ({ provider: "openai", model: "gpt-test" })),
 );
 const getAgentScopedMediaLocalRoots = vi.hoisted(() =>
-  vi.fn((_cfg: unknown, agentId: string) => [`/tmp/.openclaw/workspace-${agentId}`]),
+  vi.fn((_cfg: unknown, agentId: string) => [`/tmp/.opencli/workspace-${agentId}`]),
 );
 const resolveChunkMode = vi.hoisted(() => vi.fn(() => undefined));
 const resolveMarkdownTableMode = vi.hoisted(() => vi.fn(() => "preserve"));
@@ -291,7 +291,7 @@ describe("dispatchTelegramMessage draft streaming", () => {
       removeAckAfterReply: false,
     } as unknown as TelegramMessageContext;
     base.turn = {
-      storePath: "/tmp/openclaw/telegram-sessions.json",
+      storePath: "/tmp/opencli/telegram-sessions.json",
       recordInboundSession: vi.fn(async () => undefined),
       record: {
         onRecordError: vi.fn(),
@@ -429,7 +429,7 @@ describe("dispatchTelegramMessage draft streaming", () => {
       expect.objectContaining({
         thread: { id: 777, scope: "dm" },
         mediaLocalRoots: expect.arrayContaining([
-          expect.stringMatching(/[\\/]\.openclaw[\\/]workspace-work$/u),
+          expect.stringMatching(/[\\/]\.opencli[\\/]workspace-work$/u),
         ]),
       }),
     );
@@ -3014,7 +3014,7 @@ describe("dispatchTelegramMessage draft streaming", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as OpenCLIConfig,
     });
 
     expect(deliverReplies).toHaveBeenCalledTimes(1);
@@ -3052,7 +3052,7 @@ describe("dispatchTelegramMessage draft streaming", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as OpenCLIConfig,
     });
 
     expect(deliverReplies).toHaveBeenCalledTimes(1);
@@ -3099,7 +3099,7 @@ describe("dispatchTelegramMessage draft streaming", () => {
             },
           },
         },
-      } as unknown as OpenClawConfig,
+      } as unknown as OpenCLIConfig,
     });
 
     expect(deliverReplies).not.toHaveBeenCalled();

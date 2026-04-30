@@ -33,7 +33,7 @@ describe("doctor health contributions", () => {
   it("skips doctor config writes under legacy update parents", () => {
     expect(
       shouldSkipLegacyUpdateDoctorConfigWrite({
-        env: { OPENCLAW_UPDATE_IN_PROGRESS: "1" },
+        env: { OPENCLI_UPDATE_IN_PROGRESS: "1" },
       }),
     ).toBe(true);
   });
@@ -50,8 +50,8 @@ describe("doctor health contributions", () => {
     expect(
       shouldSkipLegacyUpdateDoctorConfigWrite({
         env: {
-          OPENCLAW_UPDATE_IN_PROGRESS: "1",
-          OPENCLAW_UPDATE_PARENT_SUPPORTS_DOCTOR_CONFIG_WRITE: "1",
+          OPENCLI_UPDATE_IN_PROGRESS: "1",
+          OPENCLI_UPDATE_PARENT_SUPPORTS_DOCTOR_CONFIG_WRITE: "1",
         },
       }),
     ).toBe(false);
@@ -61,7 +61,7 @@ describe("doctor health contributions", () => {
     expect(
       shouldSkipLegacyUpdateDoctorConfigWrite({
         env: {
-          OPENCLAW_UPDATE_IN_PROGRESS: "0",
+          OPENCLI_UPDATE_IN_PROGRESS: "0",
         },
       }),
     ).toBe(false);

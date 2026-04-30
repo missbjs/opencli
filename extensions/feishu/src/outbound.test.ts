@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import type { MessagePresentation } from "openclaw/plugin-sdk/interactive-runtime";
+import type { MessagePresentation } from "opencli/plugin-sdk/interactive-runtime";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { ClawdbotConfig } from "../runtime-api.js";
 
@@ -105,7 +105,7 @@ describe("feishuOutbound.sendText local-image auto-convert", () => {
   });
 
   async function createTmpImage(ext = ".png"): Promise<{ dir: string; file: string }> {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-feishu-outbound-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "opencli-feishu-outbound-"));
     const file = path.join(dir, `sample${ext}`);
     await fs.writeFile(file, "image-data");
     return { dir, file };
@@ -246,7 +246,7 @@ describe("feishuOutbound.sendPayload native cards", () => {
   });
 
   async function createTmpImage(ext = ".png"): Promise<{ dir: string; file: string }> {
-    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-feishu-payload-"));
+    const dir = await fs.mkdtemp(path.join(os.tmpdir(), "opencli-feishu-payload-"));
     const file = path.join(dir, `sample${ext}`);
     await fs.writeFile(file, "image-data");
     return { dir, file };
@@ -406,13 +406,13 @@ describe("feishuOutbound.sendPayload native cards", () => {
     await feishuOutbound.sendPayload?.({
       cfg: emptyConfig,
       to: "chat_1",
-      text: "Choose <at id=\"ou_1\">",
+      text: 'Choose <at id="ou_1">',
       accountId: "main",
       payload: {
-        text: "Choose <at id=\"ou_1\">",
+        text: 'Choose <at id="ou_1">',
         presentation: {
           blocks: [
-            { type: "context", text: "</font><at id=\"ou_2\">Injected</at>" },
+            { type: "context", text: '</font><at id="ou_2">Injected</at>' },
             {
               type: "buttons",
               buttons: [
@@ -428,10 +428,11 @@ describe("feishuOutbound.sendPayload native cards", () => {
     const card = sendCardFeishuMock.mock.calls[0][0].card;
     expect(card.body.elements).toEqual(
       expect.arrayContaining([
-        { tag: "markdown", content: "Choose &lt;at id=\"ou_1\"&gt;" },
+        { tag: "markdown", content: 'Choose &lt;at id="ou_1"&gt;' },
         {
           tag: "markdown",
-          content: "<font color='grey'>&lt;/font&gt;&lt;at id=\"ou_2\"&gt;Injected&lt;/at&gt;</font>",
+          content:
+            "<font color='grey'>&lt;/font&gt;&lt;at id=\"ou_2\"&gt;Injected&lt;/at&gt;</font>",
         },
         {
           tag: "action",
@@ -466,7 +467,7 @@ describe("feishuOutbound.sendPayload native cards", () => {
               body: {
                 elements: [
                   { tag: "img", img_key: "image-secret" },
-                  { tag: "markdown", content: "<at id=\"ou_1\">ping</at>" },
+                  { tag: "markdown", content: '<at id="ou_1">ping</at>' },
                   {
                     tag: "action",
                     actions: [
@@ -493,7 +494,7 @@ describe("feishuOutbound.sendPayload native cards", () => {
     const card = sendCardFeishuMock.mock.calls[0][0].card;
     expect(card.header.template).toBe("blue");
     expect(card.body.elements).toEqual([
-      { tag: "markdown", content: "&lt;at id=\"ou_1\"&gt;ping&lt;/at&gt;" },
+      { tag: "markdown", content: '&lt;at id="ou_1"&gt;ping&lt;/at&gt;' },
       {
         tag: "action",
         actions: [

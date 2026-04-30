@@ -11,45 +11,45 @@ export type {
   ChannelOutboundAdapter,
   ChannelPlugin,
   HistoryEntry,
-  OpenClawConfig,
-  OpenClawPluginApi,
+  OpenCLIConfig,
+  OpenCLIPluginApi,
   OutboundIdentity,
   PluginRuntime,
   ReplyPayload,
-} from "openclaw/plugin-sdk/core";
-export type { OpenClawConfig as ClawdbotConfig } from "openclaw/plugin-sdk/core";
-export type { RuntimeEnv } from "openclaw/plugin-sdk/runtime";
-export type { GroupToolPolicyConfig } from "openclaw/plugin-sdk/config-types";
+} from "opencli/plugin-sdk/core";
+export type { OpenCLIConfig as ClawdbotConfig } from "opencli/plugin-sdk/core";
+export type { RuntimeEnv } from "opencli/plugin-sdk/runtime";
+export type { GroupToolPolicyConfig } from "opencli/plugin-sdk/config-types";
 export {
   DEFAULT_ACCOUNT_ID,
   buildChannelConfigSchema,
   createActionGate,
   createDedupeCache,
-} from "openclaw/plugin-sdk/core";
+} from "opencli/plugin-sdk/core";
 export {
   PAIRING_APPROVED_MESSAGE,
   buildProbeChannelStatusSummary,
   createDefaultChannelRuntimeState,
-} from "openclaw/plugin-sdk/channel-status";
-export { buildAgentMediaPayload } from "openclaw/plugin-sdk/agent-media-payload";
-export { createChannelPairingController } from "openclaw/plugin-sdk/channel-pairing";
-export { createReplyPrefixContext } from "openclaw/plugin-sdk/channel-reply-pipeline";
+} from "opencli/plugin-sdk/channel-status";
+export { buildAgentMediaPayload } from "opencli/plugin-sdk/agent-media-payload";
+export { createChannelPairingController } from "opencli/plugin-sdk/channel-pairing";
+export { createReplyPrefixContext } from "opencli/plugin-sdk/channel-reply-pipeline";
 export {
   evaluateSupplementalContextVisibility,
   filterSupplementalContextItems,
   resolveChannelContextVisibilityMode,
-} from "openclaw/plugin-sdk/context-visibility-runtime";
+} from "opencli/plugin-sdk/context-visibility-runtime";
 export {
   loadSessionStore,
   resolveSessionStoreEntry,
-} from "openclaw/plugin-sdk/session-store-runtime";
-export { readJsonFileWithFallback } from "openclaw/plugin-sdk/json-store";
-export { createPersistentDedupe } from "openclaw/plugin-sdk/persistent-dedupe";
-export { normalizeAgentId } from "openclaw/plugin-sdk/routing";
-export { chunkTextForOutbound } from "openclaw/plugin-sdk/text-chunking";
+} from "opencli/plugin-sdk/session-store-runtime";
+export { readJsonFileWithFallback } from "opencli/plugin-sdk/json-store";
+export { createPersistentDedupe } from "opencli/plugin-sdk/persistent-dedupe";
+export { normalizeAgentId } from "opencli/plugin-sdk/routing";
+export { chunkTextForOutbound } from "opencli/plugin-sdk/text-chunking";
 export {
   isRequestBodyLimitError,
   readRequestBodyWithLimit,
   requestBodyErrorToText,
-} from "openclaw/plugin-sdk/webhook-ingress";
+} from "opencli/plugin-sdk/webhook-ingress";
 export { setFeishuRuntime } from "./src/runtime.js";

@@ -103,7 +103,7 @@ struct DebugSettings: View {
                     }
 
                 Text(
-                    "When enabled, OpenClaw won't install or manage \(gatewayLaunchdLabel). " +
+                    "When enabled, OpenCLI won't install or manage \(gatewayLaunchdLabel). " +
                         "It will only attach to an existing Gateway.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -203,7 +203,7 @@ struct DebugSettings: View {
                     Button("Copy sample URL") {
                         let msg = "Hello from deep link"
                         let encoded = msg.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? msg
-                        let url = "openclaw://agent?message=\(encoded)&key=\(key)"
+                        let url = "opencli://agent?message=\(encoded)&key=\(key)"
                         NSPasteboard.general.clearContents()
                         NSPasteboard.general.setString(url, forType: .string)
                     }
@@ -211,7 +211,7 @@ struct DebugSettings: View {
                     Spacer(minLength: 0)
                 }
 
-                Text("Deep links (openclaw://…) are always enabled; the key controls unattended runs.")
+                Text("Deep links (opencli://…) are always enabled; the key controls unattended runs.")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
 
@@ -274,7 +274,7 @@ struct DebugSettings: View {
                         Toggle("Write rolling diagnostics log (JSONL)", isOn: self.$diagnosticsFileLogEnabled)
                             .toggleStyle(.checkbox)
                             .help(
-                                "Writes a rotating, local-only log under ~/Library/Logs/OpenClaw/. " +
+                                "Writes a rotating, local-only log under ~/Library/Logs/OpenCLI/. " +
                                     "Enable only while actively debugging.")
 
                         HStack(spacing: 8) {
@@ -382,10 +382,10 @@ struct DebugSettings: View {
         GroupBox("Paths") {
             VStack(alignment: .leading, spacing: 12) {
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("OpenClaw project root")
+                    Text("OpenCLI project root")
                         .font(.caption.weight(.semibold))
                     HStack(spacing: 8) {
-                        TextField("Path to openclaw repo", text: self.$gatewayRootInput)
+                        TextField("Path to opencli repo", text: self.$gatewayRootInput)
                             .textFieldStyle(.roundedBorder)
                             .font(.caption.monospaced())
                             .onSubmit { self.saveRelayRoot() }
@@ -393,7 +393,7 @@ struct DebugSettings: View {
                             .buttonStyle(.borderedProminent)
                         Button("Reset") {
                             let def = FileManager().homeDirectoryForCurrentUser
-                                .appendingPathComponent("Projects/openclaw").path
+                                .appendingPathComponent("Projects/opencli").path
                             self.gatewayRootInput = def
                             self.saveRelayRoot()
                         }
@@ -423,7 +423,7 @@ struct DebugSettings: View {
                                     .font(.footnote)
                                     .foregroundStyle(.secondary)
                             } else {
-                                Text("Used by the CLI session loader; stored in ~/.openclaw/openclaw.json.")
+                                Text("Used by the CLI session loader; stored in ~/.opencli/opencli.json.")
                                     .font(.footnote)
                                     .foregroundStyle(.secondary)
                             }
@@ -524,15 +524,15 @@ struct DebugSettings: View {
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text(
-                        "Note: macOS may require restarting OpenClaw after enabling Accessibility or Screen Recording.")
+                        "Note: macOS may require restarting OpenCLI after enabling Accessibility or Screen Recording.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
 
                     Button {
-                        LaunchdManager.startOpenClaw()
+                        LaunchdManager.startOpenCLI()
                     } label: {
-                        Label("Restart OpenClaw", systemImage: "arrow.counterclockwise")
+                        Label("Restart OpenCLI", systemImage: "arrow.counterclockwise")
                     }
                     .buttonStyle(.bordered)
                     .controlSize(.small)
@@ -768,7 +768,7 @@ struct DebugSettings: View {
     }
 
     private func loadSessionStorePath() {
-        let parsed = OpenClawConfigFile.loadDict()
+        let parsed = OpenCLIConfigFile.loadDict()
         guard
             let session = parsed["session"] as? [String: Any],
             let path = session["store"] as? String
@@ -781,13 +781,13 @@ struct DebugSettings: View {
 
     private func saveSessionStorePath() {
         let trimmed = self.sessionStorePath.trimmingCharacters(in: .whitespacesAndNewlines)
-        var root = OpenClawConfigFile.loadDict()
+        var root = OpenCLIConfigFile.loadDict()
 
         var session = root["session"] as? [String: Any] ?? [:]
         session["store"] = trimmed.isEmpty ? SessionLoader.defaultStorePath : trimmed
         root["session"] = session
 
-        OpenClawConfigFile.saveDict(root)
+        OpenCLIConfigFile.saveDict(root)
         self.sessionStoreSaveError = nil
     }
 
@@ -959,7 +959,7 @@ extension DebugSettings {
         view.modelsCount = 3
         view.modelsLoading = false
         view.modelsError = "Failed to load models"
-        view.gatewayRootInput = "/tmp/openclaw"
+        view.gatewayRootInput = "/tmp/opencli"
         view.sessionStorePath = "/tmp/sessions.json"
         view.sessionStoreSaveError = "Save failed"
         view.debugSendInFlight = true

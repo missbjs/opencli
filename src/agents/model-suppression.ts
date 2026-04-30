@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import {
   buildManifestBuiltInModelSuppressionResolver,
   resolveManifestBuiltInModelSuppression,
@@ -10,7 +10,7 @@ function resolveBuiltInModelSuppressionFromManifest(params: {
   provider?: string | null;
   id?: string | null;
   baseUrl?: string | null;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
 }) {
   const provider = normalizeProviderId(params.provider ?? "");
   const modelId = normalizeLowercaseStringOrEmpty(params.id);
@@ -30,7 +30,7 @@ function resolveBuiltInModelSuppression(params: {
   provider?: string | null;
   id?: string | null;
   baseUrl?: string | null;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
 }) {
   const manifestResult = resolveBuiltInModelSuppressionFromManifest(params);
   if (manifestResult?.suppress) {
@@ -47,7 +47,7 @@ function resolveBuiltInModelSuppression(params: {
 export function shouldSuppressBuiltInModelFromManifest(params: {
   provider?: string | null;
   id?: string | null;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
 }) {
   return resolveBuiltInModelSuppressionFromManifest(params)?.suppress ?? false;
 }
@@ -56,7 +56,7 @@ export function shouldSuppressBuiltInModel(params: {
   provider?: string | null;
   id?: string | null;
   baseUrl?: string | null;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
 }) {
   return resolveBuiltInModelSuppression(params)?.suppress ?? false;
 }
@@ -65,13 +65,13 @@ export function buildSuppressedBuiltInModelError(params: {
   provider?: string | null;
   id?: string | null;
   baseUrl?: string | null;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
 }): string | undefined {
   return resolveBuiltInModelSuppression(params)?.errorMessage;
 }
 
 export function buildShouldSuppressBuiltInModel(params: {
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
 }): (input: { provider?: string | null; id?: string | null; baseUrl?: string | null }) => boolean {
   const resolver = buildManifestBuiltInModelSuppressionResolver({
     config: params.config,

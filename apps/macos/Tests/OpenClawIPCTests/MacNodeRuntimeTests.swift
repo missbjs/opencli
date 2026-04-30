@@ -1,8 +1,8 @@
 import CoreLocation
 import Foundation
-import OpenClawKit
+import OpenCLIKit
 import Testing
-@testable import OpenClaw
+@testable import OpenCLI
 
 struct MacNodeRuntimeTests {
     @Test func `handle invoke rejects unknown command`() async {
@@ -14,21 +14,21 @@ struct MacNodeRuntimeTests {
 
     @Test func `handle invoke rejects empty system run`() async throws {
         let runtime = MacNodeRuntime()
-        let params = OpenClawSystemRunParams(command: [])
+        let params = OpenCLISystemRunParams(command: [])
         let json = try String(data: JSONEncoder().encode(params), encoding: .utf8)
         let response = await runtime.handleInvoke(
-            BridgeInvokeRequest(id: "req-2", command: OpenClawSystemCommand.run.rawValue, paramsJSON: json))
+            BridgeInvokeRequest(id: "req-2", command: OpenCLISystemCommand.run.rawValue, paramsJSON: json))
         #expect(response.ok == false)
     }
 
     @Test func `handle invoke rejects blocked system run env override before execution`() async throws {
         let runtime = MacNodeRuntime()
-        let params = OpenClawSystemRunParams(
+        let params = OpenCLISystemRunParams(
             command: ["/bin/sh", "-lc", "echo ok"],
             env: ["CLASSPATH": "/tmp/evil-classpath"])
         let json = try String(data: JSONEncoder().encode(params), encoding: .utf8)
         let response = await runtime.handleInvoke(
-            BridgeInvokeRequest(id: "req-2c", command: OpenClawSystemCommand.run.rawValue, paramsJSON: json))
+            BridgeInvokeRequest(id: "req-2c", command: OpenCLISystemCommand.run.rawValue, paramsJSON: json))
         #expect(response.ok == false)
         #expect(response.error?.message.contains("SYSTEM_RUN_DENIED: environment override rejected") == true)
         #expect(response.error?.message.contains("CLASSPATH") == true)
@@ -36,12 +36,12 @@ struct MacNodeRuntimeTests {
 
     @Test func `handle invoke rejects invalid system run env override key before execution`() async throws {
         let runtime = MacNodeRuntime()
-        let params = OpenClawSystemRunParams(
+        let params = OpenCLISystemRunParams(
             command: ["/bin/sh", "-lc", "echo ok"],
             env: ["BAD-KEY": "x"])
         let json = try String(data: JSONEncoder().encode(params), encoding: .utf8)
         let response = await runtime.handleInvoke(
-            BridgeInvokeRequest(id: "req-2d", command: OpenClawSystemCommand.run.rawValue, paramsJSON: json))
+            BridgeInvokeRequest(id: "req-2d", command: OpenCLISystemCommand.run.rawValue, paramsJSON: json))
         #expect(response.ok == false)
         #expect(response.error?.message.contains("SYSTEM_RUN_DENIED: environment override rejected") == true)
         #expect(response.error?.message.contains("BAD-KEY") == true)
@@ -49,19 +49,19 @@ struct MacNodeRuntimeTests {
 
     @Test func `handle invoke rejects empty system which`() async throws {
         let runtime = MacNodeRuntime()
-        let params = OpenClawSystemWhichParams(bins: [])
+        let params = OpenCLISystemWhichParams(bins: [])
         let json = try String(data: JSONEncoder().encode(params), encoding: .utf8)
         let response = await runtime.handleInvoke(
-            BridgeInvokeRequest(id: "req-2b", command: OpenClawSystemCommand.which.rawValue, paramsJSON: json))
+            BridgeInvokeRequest(id: "req-2b", command: OpenCLISystemCommand.which.rawValue, paramsJSON: json))
         #expect(response.ok == false)
     }
 
     @Test func `handle invoke rejects empty notification`() async throws {
         let runtime = MacNodeRuntime()
-        let params = OpenClawSystemNotifyParams(title: "", body: "")
+        let params = OpenCLISystemNotifyParams(title: "", body: "")
         let json = try String(data: JSONEncoder().encode(params), encoding: .utf8)
         let response = await runtime.handleInvoke(
-            BridgeInvokeRequest(id: "req-3", command: OpenClawSystemCommand.notify.rawValue, paramsJSON: json))
+            BridgeInvokeRequest(id: "req-3", command: OpenCLISystemCommand.notify.rawValue, paramsJSON: json))
         #expect(response.ok == false)
     }
 
@@ -69,7 +69,7 @@ struct MacNodeRuntimeTests {
         await TestIsolation.withUserDefaultsValues([cameraEnabledKey: false]) {
             let runtime = MacNodeRuntime()
             let response = await runtime.handleInvoke(
-                BridgeInvokeRequest(id: "req-4", command: OpenClawCameraCommand.list.rawValue))
+                BridgeInvokeRequest(id: "req-4", command: OpenCLICameraCommand.list.rawValue))
             #expect(response.ok == false)
             #expect(response.error?.message.contains("CAMERA_DISABLED") == true)
         }
@@ -82,8 +82,8 @@ struct MacNodeRuntimeTests {
                 screenIndex: Int?,
                 maxWidth: Int?,
                 quality: Double?,
-                format: OpenClawScreenSnapshotFormat?) async throws
-                -> (data: Data, format: OpenClawScreenSnapshotFormat, width: Int, height: Int)
+                format: OpenCLIScreenSnapshotFormat?) async throws
+                -> (data: Data, format: OpenCLIScreenSnapshotFormat, width: Int, height: Int)
             {
                 _ = screenIndex
                 _ = maxWidth
@@ -99,7 +99,7 @@ struct MacNodeRuntimeTests {
                 outPath: String?) async throws -> (path: String, hasAudio: Bool)
             {
                 let url = FileManager().temporaryDirectory
-                    .appendingPathComponent("openclaw-test-screen-record-\(UUID().uuidString).mp4")
+                    .appendingPathComponent("opencli-test-screen-record-\(UUID().uuidString).mp4")
                 try Data("ok".utf8).write(to: url)
                 return (path: url.path, hasAudio: false)
             }
@@ -113,7 +113,7 @@ struct MacNodeRuntimeTests {
             }
 
             func currentLocation(
-                desiredAccuracy: OpenClawLocationAccuracy,
+                desiredAccuracy: OpenCLILocationAccuracy,
                 maxAgeMs: Int?,
                 timeoutMs: Int?) async throws -> CLLocation
             {
@@ -149,8 +149,8 @@ struct MacNodeRuntimeTests {
                 screenIndex: Int?,
                 maxWidth: Int?,
                 quality: Double?,
-                format: OpenClawScreenSnapshotFormat?) async throws
-                -> (data: Data, format: OpenClawScreenSnapshotFormat, width: Int, height: Int)
+                format: OpenCLIScreenSnapshotFormat?) async throws
+                -> (data: Data, format: OpenCLIScreenSnapshotFormat, width: Int, height: Int)
             {
                 self.snapshotCalledAtMs = Int64(Date().timeIntervalSince1970 * 1000)
                 #expect(screenIndex == 0)
@@ -167,7 +167,7 @@ struct MacNodeRuntimeTests {
                 outPath: String?) async throws -> (path: String, hasAudio: Bool)
             {
                 let url = FileManager().temporaryDirectory
-                    .appendingPathComponent("openclaw-test-screen-record-\(UUID().uuidString).mp4")
+                    .appendingPathComponent("opencli-test-screen-record-\(UUID().uuidString).mp4")
                 try Data("ok".utf8).write(to: url)
                 return (path: url.path, hasAudio: false)
             }
@@ -181,7 +181,7 @@ struct MacNodeRuntimeTests {
             }
 
             func currentLocation(
-                desiredAccuracy: OpenClawLocationAccuracy,
+                desiredAccuracy: OpenCLILocationAccuracy,
                 maxAgeMs: Int?,
                 timeoutMs: Int?) async throws -> CLLocation
             {
@@ -237,7 +237,7 @@ struct MacNodeRuntimeTests {
         let response = await runtime.handleInvoke(
             BridgeInvokeRequest(
                 id: "req-browser",
-                command: OpenClawBrowserCommand.proxy.rawValue,
+                command: OpenCLIBrowserCommand.proxy.rawValue,
                 paramsJSON: paramsJSON))
 
         #expect(response.ok == true)
@@ -246,7 +246,7 @@ struct MacNodeRuntimeTests {
 
     @Test func `handle invoke browser proxy rejects disabled browser control`() async throws {
         let override = TestIsolation.tempConfigPath()
-        try await TestIsolation.withEnvValues(["OPENCLAW_CONFIG_PATH": override]) {
+        try await TestIsolation.withEnvValues(["OPENCLI_CONFIG_PATH": override]) {
             try JSONSerialization.data(withJSONObject: ["browser": ["enabled": false]])
                 .write(to: URL(fileURLWithPath: override))
 
@@ -257,7 +257,7 @@ struct MacNodeRuntimeTests {
             let response = await runtime.handleInvoke(
                 BridgeInvokeRequest(
                     id: "req-browser-disabled",
-                    command: OpenClawBrowserCommand.proxy.rawValue,
+                    command: OpenCLIBrowserCommand.proxy.rawValue,
                     paramsJSON: #"{"method":"GET","path":"/tabs"}"#))
 
             #expect(response.ok == false)

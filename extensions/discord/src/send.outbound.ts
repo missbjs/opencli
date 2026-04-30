@@ -1,12 +1,12 @@
 import { ChannelType } from "discord-api-types/v10";
-import { recordChannelActivity } from "openclaw/plugin-sdk/channel-activity-runtime";
-import type { MarkdownTableMode, OpenClawConfig } from "openclaw/plugin-sdk/config-types";
-import { resolveMarkdownTableMode } from "openclaw/plugin-sdk/markdown-table-runtime";
-import type { PollInput } from "openclaw/plugin-sdk/media-runtime";
-import { requireRuntimeConfig } from "openclaw/plugin-sdk/plugin-config-runtime";
-import { resolveChunkMode, type ChunkMode } from "openclaw/plugin-sdk/reply-chunking";
-import type { RetryConfig } from "openclaw/plugin-sdk/retry-runtime";
-import { convertMarkdownTables, normalizeOptionalString } from "openclaw/plugin-sdk/text-runtime";
+import { recordChannelActivity } from "opencli/plugin-sdk/channel-activity-runtime";
+import type { MarkdownTableMode, OpenCLIConfig } from "opencli/plugin-sdk/config-types";
+import { resolveMarkdownTableMode } from "opencli/plugin-sdk/markdown-table-runtime";
+import type { PollInput } from "opencli/plugin-sdk/media-runtime";
+import { requireRuntimeConfig } from "opencli/plugin-sdk/plugin-config-runtime";
+import { resolveChunkMode, type ChunkMode } from "opencli/plugin-sdk/reply-chunking";
+import type { RetryConfig } from "opencli/plugin-sdk/retry-runtime";
+import { convertMarkdownTables, normalizeOptionalString } from "opencli/plugin-sdk/text-runtime";
 import { resolveDiscordAccount } from "./accounts.js";
 import { createChannelMessage, createThread, type RequestClient } from "./internal/discord.js";
 import { rewriteDiscordKnownMentions } from "./mentions.js";
@@ -30,7 +30,7 @@ import {
 } from "./send.shared.js";
 import type { DiscordSendResult } from "./send.types.js";
 type DiscordSendOpts = {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   token?: string;
   accountId?: string;
   mediaUrl?: string;

@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import {
   resolveManifestCommandAliasOwnerInRegistry,
   type PluginManifestCommandAliasRegistry,
@@ -8,7 +8,7 @@ import { loadPluginManifestRegistryForPluginRegistry } from "./plugin-registry.j
 
 export function resolveManifestCommandAliasOwner(params: {
   command: string | undefined;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   registry?: PluginManifestCommandAliasRegistry;

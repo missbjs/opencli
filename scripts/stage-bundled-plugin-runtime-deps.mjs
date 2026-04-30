@@ -59,7 +59,7 @@ function hasRuntimeDeps(packageJson) {
 }
 
 function shouldStageRuntimeDeps(packageJson) {
-  return packageJson.openclaw?.bundle?.stageRuntimeDependencies === true;
+  return packageJson.opencli?.bundle?.stageRuntimeDependencies === true;
 }
 
 function sanitizeBundledManifestForRuntimeInstall(pluginDir) {
@@ -215,7 +215,7 @@ export function collectRuntimeDependencyInstallSpecs(packageJson, params = {}) {
 
 function createRuntimeInstallManifest(pluginId, pinnedGroups) {
   const manifest = {
-    name: `openclaw-runtime-deps-${sanitizeTempPrefixSegment(pluginId)}`,
+    name: `opencli-runtime-deps-${sanitizeTempPrefixSegment(pluginId)}`,
     private: true,
     version: "0.0.0",
   };
@@ -344,8 +344,7 @@ export function stageBundledPluginRuntimeDeps(params = {}) {
     params.installPluginRuntimeDepsImpl ?? installPluginRuntimeDeps;
   const installAttempts = params.installAttempts ?? 3;
   const pruneConfig = resolveRuntimeDepPruneConfig(params);
-  const timingsEnabled =
-    params.timings ?? process.env.OPENCLAW_RUNTIME_DEPS_STAGING_TIMINGS === "1";
+  const timingsEnabled = params.timings ?? process.env.OPENCLI_RUNTIME_DEPS_STAGING_TIMINGS === "1";
   const runPluginPhase = (pluginId, label, action) => {
     const startedAt = performance.now();
     try {

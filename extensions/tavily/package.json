@@ -1,16 +1,16 @@
 {
-  "name": "@openclaw/tavily-plugin",
+  "name": "@opencli/tavily-plugin",
   "version": "2026.4.25",
   "private": true,
-  "description": "OpenClaw Tavily plugin",
+  "description": "OpenCLI Tavily plugin",
   "type": "module",
   "dependencies": {
     "typebox": "1.1.34"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@opencli/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "opencli": {
     "extensions": [
       "./index.ts"
     ]

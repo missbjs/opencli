@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { getProcessStartTime } from "../shared/pid-alive.js";
 
-export const BUNDLED_RUNTIME_DEPS_LOCK_DIR = ".openclaw-runtime-deps.lock";
+export const BUNDLED_RUNTIME_DEPS_LOCK_DIR = ".opencli-runtime-deps.lock";
 
 const BUNDLED_RUNTIME_DEPS_LOCK_OWNER_FILE = "owner.json";
 const BUNDLED_RUNTIME_DEPS_LOCK_WAIT_MS = 100;
@@ -166,7 +166,7 @@ export function formatRuntimeDepsLockTimeoutMessage(params: {
     `Timed out waiting for bundled runtime deps lock at ${params.lockDir} ` +
     `(waited=${formatDurationMs(params.waitedMs)}, ownerFile=${params.owner.ownerFileState}, ownerFileSymlink=${ownerFileSymlink}, ` +
     `${pidDetail}, ownerAge=${formatDurationMs(ownerAgeMs)}, ownerFileAge=${formatDurationMs(ownerFileAgeMs)}, lockAge=${formatDurationMs(lockAgeMs)}, ` +
-    `ownerFilePath=${params.owner.ownerFilePath}). If no OpenClaw/npm install is running, remove the lock directory and retry.`
+    `ownerFilePath=${params.owner.ownerFilePath}). If no OpenCLI/npm install is running, remove the lock directory and retry.`
   );
 }
 

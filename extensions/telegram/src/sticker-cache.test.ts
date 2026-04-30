@@ -12,13 +12,13 @@ const jsonStoreMocks = vi.hoisted(() => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/json-store", () => ({
+vi.mock("opencli/plugin-sdk/json-store", () => ({
   loadJsonFile: jsonStoreMocks.loadJsonFile,
   saveJsonFile: jsonStoreMocks.saveJsonFile,
 }));
 
-vi.mock("openclaw/plugin-sdk/state-paths", () => ({
-  resolveStateDir: () => "/tmp/openclaw-test-sticker-cache",
+vi.mock("opencli/plugin-sdk/state-paths", () => ({
+  resolveStateDir: () => "/tmp/opencli-test-sticker-cache",
 }));
 
 describe("sticker-cache", () => {

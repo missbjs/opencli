@@ -128,7 +128,7 @@ describe("provider flow install catalog contributions", () => {
         label: "OpenAI",
         origin: "bundled",
         install: {
-          npmSpec: "@openclaw/openai",
+          npmSpec: "@opencli/openai",
         },
       },
     ]);
@@ -169,7 +169,7 @@ describe("provider flow install catalog contributions", () => {
         label: "vLLM",
         origin: "bundled",
         install: {
-          npmSpec: "@openclaw/vllm",
+          npmSpec: "@opencli/vllm",
         },
       },
     ]);
@@ -313,7 +313,7 @@ describe("provider flow install catalog contributions", () => {
         label: "OpenAI",
         origin: "bundled",
         install: {
-          npmSpec: "@openclaw/openai",
+          npmSpec: "@opencli/openai",
         },
       },
     ]);

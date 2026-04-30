@@ -1,10 +1,10 @@
-import { ToolAuthorizationError } from "openclaw/plugin-sdk/channel-actions";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
+import { ToolAuthorizationError } from "opencli/plugin-sdk/channel-actions";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
 import { resolveWhatsAppAccount } from "./accounts.js";
 import { resolveWhatsAppOutboundTarget } from "./resolve-outbound-target.js";
 
 export function resolveAuthorizedWhatsAppOutboundTarget(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   chatJid: string;
   accountId?: string;
   actionLabel: string;

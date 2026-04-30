@@ -1,12 +1,12 @@
-import { recordChannelActivity } from "openclaw/plugin-sdk/channel-activity-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/text-runtime";
+import { recordChannelActivity } from "opencli/plugin-sdk/channel-activity-runtime";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
+import { normalizeOptionalString } from "opencli/plugin-sdk/text-runtime";
 import { resolveDiscordClientAccountContext } from "./client.js";
 import { rewriteDiscordKnownMentions } from "./mentions.js";
 import type { DiscordSendResult } from "./send.types.js";
 
 type DiscordWebhookSendOpts = {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   webhookId: string;
   webhookToken: string;
   accountId?: string;

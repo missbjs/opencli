@@ -1,7 +1,7 @@
-import { expectPairingReplyText } from "openclaw/plugin-sdk/channel-test-helpers";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
-import { resolveAgentRoute } from "openclaw/plugin-sdk/routing";
-import { normalizeE164 } from "openclaw/plugin-sdk/text-runtime";
+import { expectPairingReplyText } from "opencli/plugin-sdk/channel-test-helpers";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
+import { resolveAgentRoute } from "opencli/plugin-sdk/routing";
+import { normalizeE164 } from "opencli/plugin-sdk/text-runtime";
 import { describe, expect, it, vi } from "vitest";
 import {
   createSignalToolResultConfig,
@@ -32,7 +32,7 @@ type MonitorSignalProviderOptions = NonNullable<Parameters<typeof monitorSignalP
 
 async function runMonitorWithMocks(opts: MonitorSignalProviderOptions) {
   return monitorSignalProvider({
-    config: config as OpenClawConfig,
+    config: config as OpenCLIConfig,
     waitForTransportReady:
       waitForTransportReadyMock as MonitorSignalProviderOptions["waitForTransportReady"],
     ...opts,
@@ -66,7 +66,7 @@ async function receiveSignalPayloads(params: {
 
 function hasQueuedReactionEventFor(sender: string) {
   const route = resolveAgentRoute({
-    cfg: config as OpenClawConfig,
+    cfg: config as OpenCLIConfig,
     channel: "signal",
     accountId: "default",
     peer: { kind: "direct", id: normalizeE164(sender) },

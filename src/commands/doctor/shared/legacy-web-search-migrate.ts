@@ -1,5 +1,5 @@
 import { mergeMissing } from "../../../config/legacy.shared.js";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../../../config/types.opencli.js";
 import {
   loadPluginManifestRegistryForPluginRegistry,
   resolveManifestContractOwnerPluginId,
@@ -251,7 +251,7 @@ function normalizeLegacyWebSearchConfigRecord<T extends JsonRecord>(
 }
 
 export function resolvePluginWebSearchConfig(
-  config: OpenClawConfig | undefined,
+  config: OpenCLIConfig | undefined,
   pluginId: string,
 ): Record<string, unknown> | undefined {
   const pluginConfig = config?.plugins?.entries?.[pluginId]?.config;

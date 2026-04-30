@@ -1,10 +1,10 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { resolveDefaultAgentId, resolveSessionAgentId } from "openclaw/plugin-sdk/memory-host-core";
-import type { MemorySearchResult } from "openclaw/plugin-sdk/memory-host-files";
-import { getActiveMemorySearchManager } from "openclaw/plugin-sdk/memory-host-search";
-import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/text-runtime";
-import type { OpenClawConfig } from "../api.js";
+import { resolveDefaultAgentId, resolveSessionAgentId } from "opencli/plugin-sdk/memory-host-core";
+import type { MemorySearchResult } from "opencli/plugin-sdk/memory-host-files";
+import { getActiveMemorySearchManager } from "opencli/plugin-sdk/memory-host-search";
+import { normalizeLowercaseStringOrEmpty } from "opencli/plugin-sdk/text-runtime";
+import type { OpenCLIConfig } from "../api.js";
 import { assessClaimFreshness, isClaimContestedStatus } from "./claim-health.js";
 import type { ResolvedMemoryWikiConfig, WikiSearchBackend, WikiSearchCorpus } from "./config.js";
 import {
@@ -17,10 +17,10 @@ import {
 import { initializeMemoryWikiVault } from "./vault.js";
 
 const QUERY_DIRS = ["entities", "concepts", "sources", "syntheses", "reports"] as const;
-const AGENT_DIGEST_PATH = ".openclaw-wiki/cache/agent-digest.json";
-const CLAIMS_DIGEST_PATH = ".openclaw-wiki/cache/claims.jsonl";
+const AGENT_DIGEST_PATH = ".opencli-wiki/cache/agent-digest.json";
+const CLAIMS_DIGEST_PATH = ".opencli-wiki/cache/claims.jsonl";
 const RELATED_BLOCK_PATTERN =
-  /<!-- openclaw:wiki:related:start -->[\s\S]*?<!-- openclaw:wiki:related:end -->/g;
+  /<!-- opencli:wiki:related:start -->[\s\S]*?<!-- opencli:wiki:related:end -->/g;
 const MARKDOWN_FRONTMATTER_PATTERN = /^\s*---\r?\n[\s\S]*?\r?\n---\r?\n?/;
 const ROUTE_QUESTION_STOP_WORDS = new Set([
   "a",
@@ -921,7 +921,7 @@ function shouldSearchWiki(config: ResolvedMemoryWikiConfig): boolean {
 
 function shouldSearchSharedMemory(
   config: ResolvedMemoryWikiConfig,
-  appConfig?: OpenClawConfig,
+  appConfig?: OpenCLIConfig,
 ): boolean {
   return (
     config.search.backend === "shared" &&
@@ -931,7 +931,7 @@ function shouldSearchSharedMemory(
 }
 
 function resolveActiveMemoryAgentId(params: {
-  appConfig?: OpenClawConfig;
+  appConfig?: OpenCLIConfig;
   agentId?: string;
   agentSessionKey?: string;
 }): string | null {
@@ -951,7 +951,7 @@ function resolveActiveMemoryAgentId(params: {
 }
 
 async function resolveActiveMemoryManager(params: {
-  appConfig?: OpenClawConfig;
+  appConfig?: OpenCLIConfig;
   agentId?: string;
   agentSessionKey?: string;
 }) {
@@ -1183,7 +1183,7 @@ export function resolveQueryableWikiPageByLookup(
 
 export async function searchMemoryWiki(params: {
   config: ResolvedMemoryWikiConfig;
-  appConfig?: OpenClawConfig;
+  appConfig?: OpenCLIConfig;
   agentId?: string;
   agentSessionKey?: string;
   query: string;
@@ -1231,7 +1231,7 @@ export async function searchMemoryWiki(params: {
 
 export async function getMemoryWikiPage(params: {
   config: ResolvedMemoryWikiConfig;
-  appConfig?: OpenClawConfig;
+  appConfig?: OpenCLIConfig;
   agentId?: string;
   agentSessionKey?: string;
   lookup: string;

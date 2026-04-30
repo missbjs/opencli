@@ -26,7 +26,7 @@ export { buildDiscordComponentMessage } from "./src/components.js";
 type DiscordMessageActionHandler =
   typeof import("./src/channel-actions.runtime.js").handleDiscordMessageAction;
 
-// Deprecated compatibility surface for existing @openclaw/discord/api.js consumers.
+// Deprecated compatibility surface for existing @opencli/discord/api.js consumers.
 export const handleDiscordMessageAction: DiscordMessageActionHandler = async (...args) =>
   (await import("./src/channel-actions.runtime.js")).handleDiscordMessageAction(...args);
 export {
@@ -42,7 +42,7 @@ export {
   normalizeDiscordMessagingTarget,
   normalizeDiscordOutboundTarget,
 } from "./src/normalize.js";
-export { resolveOpenProviderRuntimeGroupPolicy as resolveDiscordRuntimeGroupPolicy } from "openclaw/plugin-sdk/runtime-group-policy";
+export { resolveOpenProviderRuntimeGroupPolicy as resolveDiscordRuntimeGroupPolicy } from "opencli/plugin-sdk/runtime-group-policy";
 export { collectDiscordStatusIssues } from "./src/status-issues.js";
 
 export {

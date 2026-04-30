@@ -1,7 +1,7 @@
-export { requireRuntimeConfig } from "openclaw/plugin-sdk/plugin-config-runtime";
-export { resolveMarkdownTableMode } from "openclaw/plugin-sdk/markdown-table-runtime";
-export type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
-export type { PollInput, MediaKind } from "openclaw/plugin-sdk/media-runtime";
+export { requireRuntimeConfig } from "opencli/plugin-sdk/plugin-config-runtime";
+export { resolveMarkdownTableMode } from "opencli/plugin-sdk/markdown-table-runtime";
+export type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
+export type { PollInput, MediaKind } from "opencli/plugin-sdk/media-runtime";
 export {
   buildOutboundMediaLoadOptions,
   getImageMetadata,
@@ -9,5 +9,5 @@ export {
   kindFromMime,
   normalizePollInput,
   probeVideoDimensions,
-} from "openclaw/plugin-sdk/media-runtime";
-export { loadWebMedia } from "openclaw/plugin-sdk/web-media";
+} from "opencli/plugin-sdk/media-runtime";
+export { loadWebMedia } from "opencli/plugin-sdk/web-media";

@@ -1,14 +1,14 @@
 ---
-summary: "CLI reference for `openclaw update` (safe-ish source update + gateway auto-restart)"
+summary: "CLI reference for `opencli update` (safe-ish source update + gateway auto-restart)"
 read_when:
   - You want to update a source checkout safely
   - You need to understand `--update` shorthand behavior
 title: "Update"
 ---
 
-# `openclaw update`
+# `opencli update`
 
-Safely update OpenClaw and switch between stable/beta/dev channels.
+Safely update OpenCLI and switch between stable/beta/dev channels.
 
 If you installed via **npm/pnpm/bun** (global install, no git metadata),
 updates happen via the package-manager flow in [Updating](/install/updating).
@@ -16,25 +16,25 @@ updates happen via the package-manager flow in [Updating](/install/updating).
 ## Usage
 
 ```bash
-openclaw update
-openclaw update status
-openclaw update wizard
-openclaw update --channel beta
-openclaw update --channel dev
-openclaw update --tag beta
-openclaw update --tag main
-openclaw update --dry-run
-openclaw update --no-restart
-openclaw update --yes
-openclaw update --json
-openclaw --update
+opencli update
+opencli update status
+opencli update wizard
+opencli update --channel beta
+opencli update --channel dev
+opencli update --tag beta
+opencli update --tag main
+opencli update --dry-run
+opencli update --no-restart
+opencli update --yes
+opencli update --json
+opencli --update
 ```
 
 ## Options
 
 - `--no-restart`: skip restarting the Gateway service after a successful update. Package-manager updates that do restart the Gateway verify the restarted service reports the expected updated version before the command succeeds.
 - `--channel <stable|beta|dev>`: set the update channel (git + npm; persisted in config).
-- `--tag <dist-tag|version|spec>`: override the package target for this update only. For package installs, `main` maps to `github:openclaw/openclaw#main`.
+- `--tag <dist-tag|version|spec>`: override the package target for this update only. For package installs, `main` maps to `github:opencli/opencli#main`.
 - `--dry-run`: preview planned update actions (channel/tag/target/restart flow) without writing config, installing, syncing plugins, or restarting.
 - `--json`: print machine-readable `UpdateRunResult` JSON, including
   `postUpdate.plugins.integrityDrifts` when npm plugin artifact drift is
@@ -51,9 +51,9 @@ Downgrades require confirmation because older versions can break configuration.
 Show the active update channel + git tag/branch/SHA (for source checkouts), plus update availability.
 
 ```bash
-openclaw update status
-openclaw update status --json
-openclaw update status --timeout 10
+opencli update status
+opencli update status --json
+opencli update status --timeout 10
 ```
 
 Options:
@@ -73,10 +73,10 @@ Options:
 
 ## What it does
 
-When you switch channels explicitly (`--channel ...`), OpenClaw also keeps the
+When you switch channels explicitly (`--channel ...`), OpenCLI also keeps the
 install method aligned:
 
-- `dev` → ensures a git checkout (default: `~/openclaw`, override with `OPENCLAW_GIT_DIR`),
+- `dev` → ensures a git checkout (default: `~/opencli`, override with `OPENCLI_GIT_DIR`),
   updates it, and installs the global CLI from that checkout.
 - `stable` → installs from npm using `latest`.
 - `beta` → prefers npm dist-tag `beta`, but falls back to `latest` when beta is
@@ -84,17 +84,17 @@ install method aligned:
 
 The Gateway core auto-updater (when enabled via config) reuses this same update path.
 
-For package-manager installs, `openclaw update` resolves the target package
+For package-manager installs, `opencli update` resolves the target package
 version before invoking the package manager. npm global installs use a staged
-install: OpenClaw installs the new package into a temporary npm prefix, verifies
+install: OpenCLI installs the new package into a temporary npm prefix, verifies
 the packaged `dist` inventory there, then swaps that clean package tree into the
 real global prefix. If verification fails, post-update doctor, plugin sync, and
 restart work do not run from the suspect tree. Even when the installed version
 already matches the target, the command refreshes the global package install,
 then runs plugin sync, a core-command completion refresh, and restart work. This
 keeps packaged sidecars and channel-owned plugin records aligned with the
-installed OpenClaw build while leaving full plugin-command completion rebuilds to
-explicit `openclaw completion --write-state` runs.
+installed OpenCLI build while leaving full plugin-command completion rebuilds to
+explicit `opencli completion --write-state` runs.
 
 When a local managed Gateway service is installed and restart is enabled,
 package-manager updates stop the running service before replacing the package
@@ -137,7 +137,7 @@ it manually.
     Builds the gateway and the Control UI.
   </Step>
   <Step title="Run doctor">
-    `openclaw doctor` runs as the final safe-update check.
+    `opencli doctor` runs as the final safe-update check.
   </Step>
   <Step title="Sync plugins">
     Syncs plugins to the active channel. Dev uses bundled plugins; stable and beta use npm. Updates npm-installed plugins.
@@ -145,11 +145,11 @@ it manually.
 </Steps>
 
 <Warning>
-If an exact pinned npm plugin update resolves to an artifact whose integrity differs from the stored install record, `openclaw update` aborts that plugin artifact update instead of installing it. Reinstall or update the plugin explicitly only after verifying that you trust the new artifact.
+If an exact pinned npm plugin update resolves to an artifact whose integrity differs from the stored install record, `opencli update` aborts that plugin artifact update instead of installing it. Reinstall or update the plugin explicitly only after verifying that you trust the new artifact.
 </Warning>
 
 <Note>
-Post-update plugin sync failures fail the update result and stop restart follow-up work. Fix the plugin install or update error, then rerun `openclaw update`.
+Post-update plugin sync failures fail the update result and stop restart follow-up work. Fix the plugin install or update error, then rerun `opencli update`.
 
 When the updated Gateway starts, enabled bundled plugin runtime dependencies are staged before plugin activation. Update-triggered restarts drain any active runtime-dependency staging before closing the Gateway, so service-manager restarts do not interrupt an in-flight npm install.
 
@@ -158,11 +158,11 @@ If pnpm bootstrap still fails, the updater stops early with a package-manager-sp
 
 ## `--update` shorthand
 
-`openclaw --update` rewrites to `openclaw update` (useful for shells and launcher scripts).
+`opencli --update` rewrites to `opencli update` (useful for shells and launcher scripts).
 
 ## Related
 
-- `openclaw doctor` (offers to run update first on git checkouts)
+- `opencli doctor` (offers to run update first on git checkouts)
 - [Development channels](/install/development-channels)
 - [Updating](/install/updating)
 - [CLI reference](/cli)

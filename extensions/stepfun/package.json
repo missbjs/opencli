@@ -1,13 +1,13 @@
 {
-  "name": "@openclaw/stepfun-provider",
+  "name": "@opencli/stepfun-provider",
   "version": "2026.4.25",
   "private": true,
-  "description": "OpenClaw StepFun provider plugin",
+  "description": "OpenCLI StepFun provider plugin",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@opencli/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "opencli": {
     "extensions": [
       "./index.ts"
     ]

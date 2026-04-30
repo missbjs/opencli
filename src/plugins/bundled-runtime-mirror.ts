@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { tracePluginLifecyclePhase } from "./plugin-lifecycle-trace.js";
 
-const BUNDLED_RUNTIME_MIRROR_METADATA_FILE = ".openclaw-runtime-mirror.json";
+const BUNDLED_RUNTIME_MIRROR_METADATA_FILE = ".opencli-runtime-mirror.json";
 const BUNDLED_RUNTIME_MIRROR_METADATA_VERSION = 1;
 
 type BundledRuntimeMirrorMetadata = {
@@ -171,7 +171,7 @@ function copyBundledRuntimeMirrorFileAtomic(sourcePath: string, targetPath: stri
 function createBundledRuntimeMirrorTempPath(targetPath: string): string {
   return path.join(
     path.dirname(targetPath),
-    `.openclaw-mirror-${process.pid}-${process.hrtime.bigint()}-${path.basename(targetPath)}.tmp`,
+    `.opencli-mirror-${process.pid}-${process.hrtime.bigint()}-${path.basename(targetPath)}.tmp`,
   );
 }
 

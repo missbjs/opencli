@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { parseRegistryNpmSpec } from "../infra/npm-registry-spec.js";
 import { CLAWHUB_INSTALL_ERROR_CODE } from "../plugins/clawhub.js";
 import { applyExclusiveSlotSelection, slotKeysForPluginKind } from "../plugins/slots.js";
@@ -36,9 +36,9 @@ export function resolveFileNpmSpecToLocalPath(
 }
 
 export function applySlotSelectionForPlugin(
-  config: OpenClawConfig,
+  config: OpenCLIConfig,
   pluginId: string,
-): { config: OpenClawConfig; warnings: string[] } {
+): { config: OpenCLIConfig; warnings: string[] } {
   const report = buildPluginSnapshotReport({ config });
   const plugin = report.plugins.find((entry) => entry.id === pluginId);
   if (!plugin) {
@@ -101,9 +101,9 @@ export function createHookPackInstallLogger(): {
 }
 
 export function enableInternalHookEntries(
-  config: OpenClawConfig,
+  config: OpenCLIConfig,
   hookNames: string[],
-): OpenClawConfig {
+): OpenCLIConfig {
   const entries = { ...config.hooks?.internal?.entries } as Record<string, HookInternalEntryLike>;
 
   for (const hookName of hookNames) {
@@ -131,7 +131,7 @@ export function formatPluginInstallWithHookFallbackError(
   hookError: string,
 ): string {
   if (/plugin already exists: .+ \(delete it first\)/.test(pluginError)) {
-    return `${pluginError}\nUse \`openclaw plugins update <id-or-npm-spec>\` to upgrade the tracked plugin, or rerun install with \`--force\` to replace it.`;
+    return `${pluginError}\nUse \`opencli plugins update <id-or-npm-spec>\` to upgrade the tracked plugin, or rerun install with \`--force\` to replace it.`;
   }
   if (
     pluginError.startsWith("Invalid extensions directory:") ||

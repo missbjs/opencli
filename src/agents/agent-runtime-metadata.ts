@@ -1,5 +1,5 @@
 import type { AgentRuntimePolicyConfig } from "../config/types.agents-shared.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { normalizeAgentId } from "../routing/session-key.js";
 import { normalizeLowercaseStringOrEmpty } from "../shared/string-coerce.js";
 import { resolveAgentRuntimePolicy } from "./agent-runtime-policy.js";
@@ -71,12 +71,12 @@ function resolveEffectiveFallback(params: {
 }
 
 export function resolveAgentRuntimeMetadata(
-  cfg: OpenClawConfig,
+  cfg: OpenCLIConfig,
   agentId: string,
   env: NodeJS.ProcessEnv = process.env,
 ): AgentRuntimeMetadata {
   const envFallback = resolveEmbeddedAgentHarnessFallback(env);
-  const envRuntime = normalizeRuntimeValue(env.OPENCLAW_AGENT_RUNTIME);
+  const envRuntime = normalizeRuntimeValue(env.OPENCLI_AGENT_RUNTIME);
   const normalizedAgentId = normalizeAgentId(agentId);
   const agentEntry = listAgentEntries(cfg).find(
     (entry) => normalizeAgentId(entry.id) === normalizedAgentId,

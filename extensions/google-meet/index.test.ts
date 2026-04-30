@@ -3,7 +3,7 @@ import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { PassThrough, Writable } from "node:stream";
-import type { RealtimeVoiceProviderPlugin } from "openclaw/plugin-sdk/realtime-voice";
+import type { RealtimeVoiceProviderPlugin } from "opencli/plugin-sdk/realtime-voice";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import plugin, { __testing as googleMeetPluginTesting } from "./index.js";
 import {
@@ -54,7 +54,7 @@ const fetchGuardMocks = vi.hoisted(() => ({
   ),
 }));
 
-vi.mock("openclaw/plugin-sdk/ssrf-runtime", () => ({
+vi.mock("opencli/plugin-sdk/ssrf-runtime", () => ({
   fetchWithSsrFGuard: fetchGuardMocks.fetchWithSsrFGuard,
 }));
 
@@ -304,7 +304,7 @@ describe("google-meet plugin", () => {
       chrome: {
         audioBackend: "blackhole-2ch",
         launch: true,
-        guestName: "OpenClaw Agent",
+        guestName: "OpenCLI Agent",
         reuseExistingTab: true,
         autoJoin: true,
         waitForInCallMs: 20000,
@@ -357,7 +357,7 @@ describe("google-meet plugin", () => {
       oauth: {},
       auth: { provider: "google-oauth" },
     });
-    expect(resolveGoogleMeetConfig({}).realtime.instructions).toContain("openclaw_agent_consult");
+    expect(resolveGoogleMeetConfig({}).realtime.instructions).toContain("opencli_agent_consult");
   });
 
   it("resolves the realtime consult agent id", () => {
@@ -390,13 +390,13 @@ describe("google-meet plugin", () => {
       resolveGoogleMeetConfigWithEnv(
         {},
         {
-          OPENCLAW_GOOGLE_MEET_CLIENT_ID: "client-id",
+          OPENCLI_GOOGLE_MEET_CLIENT_ID: "client-id",
           GOOGLE_MEET_CLIENT_SECRET: "client-secret",
-          OPENCLAW_GOOGLE_MEET_REFRESH_TOKEN: "refresh-token",
+          OPENCLI_GOOGLE_MEET_REFRESH_TOKEN: "refresh-token",
           GOOGLE_MEET_ACCESS_TOKEN: "access-token",
-          OPENCLAW_GOOGLE_MEET_ACCESS_TOKEN_EXPIRES_AT: "123456",
+          OPENCLI_GOOGLE_MEET_ACCESS_TOKEN_EXPIRES_AT: "123456",
           GOOGLE_MEET_DEFAULT_MEETING: "https://meet.google.com/abc-defg-hij",
-          OPENCLAW_GOOGLE_MEET_PREVIEW_ACK: "true",
+          OPENCLI_GOOGLE_MEET_PREVIEW_ACK: "true",
         },
       ),
     ).toMatchObject({
@@ -990,8 +990,8 @@ describe("google-meet plugin", () => {
     try {
       const { tools } = setup({
         chrome: {
-          audioInputCommand: ["openclaw-audio-bridge", "capture"],
-          audioOutputCommand: ["openclaw-audio-bridge", "play"],
+          audioInputCommand: ["opencli-audio-bridge", "capture"],
+          audioOutputCommand: ["opencli-audio-bridge", "play"],
         },
       });
       const tool = tools[0] as {
@@ -1029,7 +1029,7 @@ describe("google-meet plugin", () => {
 
   it("writes export bundles through the tool", async () => {
     stubMeetArtifactsApi();
-    const tempDir = mkdtempSync(path.join(tmpdir(), "openclaw-google-meet-tool-export-"));
+    const tempDir = mkdtempSync(path.join(tmpdir(), "opencli-google-meet-tool-export-"));
     const { tools } = setup();
     const tool = tools[0] as {
       execute: (
@@ -1073,7 +1073,7 @@ describe("google-meet plugin", () => {
 
   it("dry-runs export bundles through the tool", async () => {
     stubMeetArtifactsApi();
-    const parentDir = mkdtempSync(path.join(tmpdir(), "openclaw-google-meet-tool-dry-run-"));
+    const parentDir = mkdtempSync(path.join(tmpdir(), "opencli-google-meet-tool-dry-run-"));
     const outputDir = path.join(parentDir, "bundle");
     const { tools } = setup();
     const tool = tools[0] as {
@@ -1757,7 +1757,7 @@ describe("google-meet plugin", () => {
                     inCall: false,
                     manualActionRequired: true,
                     manualActionReason: "meet-admission-required",
-                    manualActionMessage: "Admit the OpenClaw browser participant in Google Meet.",
+                    manualActionMessage: "Admit the OpenCLI browser participant in Google Meet.",
                     title: "Meet",
                     url: "https://meet.google.com/abc-defg-hij?authuser=me@example.com",
                   }),
@@ -1833,7 +1833,7 @@ describe("google-meet plugin", () => {
               inCall: false,
               manualActionRequired: true,
               manualActionReason: "meet-admission-required",
-              manualActionMessage: "Admit the OpenClaw browser participant in Google Meet.",
+              manualActionMessage: "Admit the OpenCLI browser participant in Google Meet.",
               title: "Meet",
               url: "https://meet.google.com/abc-defg-hij?authuser=me@example.com",
             }),
@@ -1979,7 +1979,7 @@ describe("google-meet plugin", () => {
           manualActionRequired: true,
           manualActionReason: "google-login-required",
           manualActionMessage:
-            "Sign in to Google in the OpenClaw browser profile, then retry the Meet join.",
+            "Sign in to Google in the OpenCLI browser profile, then retry the Meet join.",
           title: "Sign in - Google Accounts",
           url: "https://accounts.google.com/signin",
         },
@@ -2043,7 +2043,7 @@ describe("google-meet plugin", () => {
     });
 
     expect(result.details.error).toContain("No connected Google Meet-capable node");
-    expect(result.details.error).toContain("openclaw node run");
+    expect(result.details.error).toContain("opencli node run");
   });
 
   it("requires chromeNode.node when multiple capable nodes are connected", async () => {
@@ -2252,7 +2252,7 @@ describe("google-meet plugin", () => {
     callbacks?.onToolCall?.({
       itemId: "item-1",
       callId: "tool-call-1",
-      name: "openclaw_agent_consult",
+      name: "opencli_agent_consult",
       args: { question: "What should I say about launch timing?" },
     });
     expect(bridge.submitToolResult).toHaveBeenNthCalledWith(
@@ -2260,7 +2260,7 @@ describe("google-meet plugin", () => {
       "tool-call-1",
       expect.objectContaining({
         status: "working",
-        tool: "openclaw_agent_consult",
+        tool: "opencli_agent_consult",
       }),
       { willContinue: true },
     );
@@ -2298,7 +2298,7 @@ describe("google-meet plugin", () => {
       },
       tools: [
         expect.objectContaining({
-          name: "openclaw_agent_consult",
+          name: "opencli_agent_consult",
         }),
       ],
     });
@@ -2419,7 +2419,7 @@ describe("google-meet plugin", () => {
     callbacks?.onToolCall?.({
       itemId: "item-1",
       callId: "tool-call-1",
-      name: "openclaw_agent_consult",
+      name: "opencli_agent_consult",
       args: { question: "What should I say?" },
     });
     expect(bridge.submitToolResult).toHaveBeenNthCalledWith(
@@ -2427,7 +2427,7 @@ describe("google-meet plugin", () => {
       "tool-call-1",
       expect.objectContaining({
         status: "working",
-        tool: "openclaw_agent_consult",
+        tool: "opencli_agent_consult",
       }),
       { willContinue: true },
     );
@@ -2481,7 +2481,7 @@ describe("google-meet plugin", () => {
       },
       tools: [
         expect.objectContaining({
-          name: "openclaw_agent_consult",
+          name: "opencli_agent_consult",
         }),
       ],
     });

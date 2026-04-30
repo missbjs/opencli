@@ -20,7 +20,7 @@ vi.mock("../plugins/manifest-registry-installed.js", async () => {
     loadPluginManifestRegistryForInstalledIndex: (params: { workspaceDir?: string }) => {
       const rootDir = path.join(
         params.workspaceDir ?? "",
-        ".openclaw",
+        ".opencli",
         "extensions",
         "claude-bundle",
       );
@@ -49,12 +49,7 @@ vi.mock("../plugins/plugin-registry.js", async () => {
   const fs = await import("node:fs");
   const path = await import("node:path");
   const loadRegistry = (params: { workspaceDir?: string }) => {
-    const rootDir = path.join(
-      params.workspaceDir ?? "",
-      ".openclaw",
-      "extensions",
-      "claude-bundle",
-    );
+    const rootDir = path.join(params.workspaceDir ?? "", ".opencli", "extensions", "claude-bundle");
     if (!fs.existsSync(path.join(rootDir, ".claude-plugin", "plugin.json"))) {
       return { plugins: [], diagnostics: [] };
     }
@@ -87,7 +82,7 @@ vi.mock("./embedded-pi-mcp.js", async () => {
       workspaceDir: string;
       cfg?: { mcp?: { servers?: Record<string, unknown> } };
     }) => {
-      const pluginRoot = path.join(params.workspaceDir, ".openclaw", "extensions", "claude-bundle");
+      const pluginRoot = path.join(params.workspaceDir, ".opencli", "extensions", "claude-bundle");
       const mcpPath = path.join(pluginRoot, ".mcp.json");
       let bundleServers: Record<string, unknown> = {};
       if (fs.existsSync(mcpPath)) {
@@ -132,7 +127,7 @@ async function createWorkspaceBundle(params: {
   pluginId?: string;
 }): Promise<string> {
   const pluginId = params.pluginId ?? "claude-bundle";
-  const pluginRoot = path.join(params.workspaceDir, ".openclaw", "extensions", pluginId);
+  const pluginRoot = path.join(params.workspaceDir, ".opencli", "extensions", pluginId);
   await fs.mkdir(path.join(pluginRoot, ".claude-plugin"), { recursive: true });
   await fs.writeFile(
     path.join(pluginRoot, ".claude-plugin", "plugin.json"),
@@ -146,7 +141,7 @@ async function createWorkspaceBundle(params: {
 
 describe("loadEnabledBundlePiSettingsSnapshot", () => {
   it("loads sanitized settings and MCP defaults from enabled bundle plugins", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-workspace-");
+    const workspaceDir = await tempDirs.make("opencli-workspace-");
     const pluginRoot = await createWorkspaceBundle({ workspaceDir });
     const resolvedPluginRoot = await fs.realpath(pluginRoot);
     await fs.mkdir(path.join(pluginRoot, "servers"), { recursive: true });
@@ -235,7 +230,7 @@ describe("loadEnabledBundlePiSettingsSnapshot", () => {
   });
 
   it("ignores disabled bundle plugins", async () => {
-    const workspaceDir = await tempDirs.make("openclaw-workspace-");
+    const workspaceDir = await tempDirs.make("opencli-workspace-");
     const pluginRoot = await createWorkspaceBundle({ workspaceDir });
     await fs.writeFile(
       path.join(pluginRoot, "settings.json"),

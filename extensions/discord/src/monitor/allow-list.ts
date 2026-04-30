@@ -1,15 +1,15 @@
-import type { AllowlistMatch } from "openclaw/plugin-sdk/allow-from";
+import type { AllowlistMatch } from "opencli/plugin-sdk/allow-from";
 import {
   buildChannelKeyCandidates,
   resolveChannelEntryMatchWithFallback,
   resolveChannelMatchConfig,
   type ChannelMatchSource,
-} from "openclaw/plugin-sdk/channel-targets";
-import { evaluateGroupRouteAccessForPolicy } from "openclaw/plugin-sdk/group-access";
+} from "opencli/plugin-sdk/channel-targets";
+import { evaluateGroupRouteAccessForPolicy } from "opencli/plugin-sdk/group-access";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "openclaw/plugin-sdk/text-runtime";
+} from "opencli/plugin-sdk/text-runtime";
 import type { Guild, User } from "../internal/discord.js";
 import { formatDiscordUserTag } from "./format.js";
 

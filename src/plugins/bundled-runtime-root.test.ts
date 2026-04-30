@@ -9,7 +9,7 @@ import { writeGeneratedRuntimeDepsManifest } from "./test-helpers/bundled-runtim
 const tempRoots: string[] = [];
 
 function makeTempRoot(): string {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-bundled-runtime-root-"));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "opencli-bundled-runtime-root-"));
   tempRoots.push(root);
   return root;
 }
@@ -41,11 +41,11 @@ describe("prepareBundledPluginRuntimeRoot", () => {
     const packageRoot = makeTempRoot();
     const stageDir = makeTempRoot();
     const pluginRoot = path.join(packageRoot, "dist", "extensions", "browser");
-    const env = { ...process.env, OPENCLAW_PLUGIN_STAGE_DIR: stageDir };
+    const env = { ...process.env, OPENCLI_PLUGIN_STAGE_DIR: stageDir };
     fs.mkdirSync(pluginRoot, { recursive: true });
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
-      JSON.stringify({ name: "openclaw", version: "2026.4.24", type: "module" }),
+      JSON.stringify({ name: "opencli", version: "2026.4.24", type: "module" }),
       "utf8",
     );
     fs.writeFileSync(
@@ -83,13 +83,13 @@ describe("prepareBundledPluginRuntimeRoot", () => {
       path.join(pluginRoot, "package.json"),
       JSON.stringify(
         {
-          name: "@openclaw/browser",
+          name: "@opencli/browser",
           version: "1.0.0",
           type: "module",
           dependencies: {
             "playwright-core": "1.0.0",
           },
-          openclaw: { extensions: ["./index.js"] },
+          opencli: { extensions: ["./index.js"] },
         },
         null,
         2,
@@ -153,13 +153,13 @@ describe("prepareBundledPluginRuntimeRoot", () => {
   it("reuses prepared root mirrors across bundled plugins", () => {
     const packageRoot = makeTempRoot();
     const stageDir = makeTempRoot();
-    const env = { ...process.env, OPENCLAW_PLUGIN_STAGE_DIR: stageDir };
+    const env = { ...process.env, OPENCLI_PLUGIN_STAGE_DIR: stageDir };
     const rootChunk = path.join(packageRoot, "dist", "shared-runtime.js");
     const externalChunk = path.join(packageRoot, "dist", "external-runtime.js");
     fs.mkdirSync(path.join(packageRoot, "dist", "extensions"), { recursive: true });
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
-      JSON.stringify({ name: "openclaw", version: "2026.4.27", type: "module" }),
+      JSON.stringify({ name: "opencli", version: "2026.4.27", type: "module" }),
       "utf8",
     );
     fs.writeFileSync(rootChunk, "export const shared = 'root';\n", "utf8");
@@ -181,11 +181,11 @@ describe("prepareBundledPluginRuntimeRoot", () => {
         path.join(pluginRoot, "package.json"),
         JSON.stringify(
           {
-            name: `@openclaw/${pluginId}`,
+            name: `@opencli/${pluginId}`,
             version: "1.0.0",
             type: "module",
             dependencies: { [`${pluginId}-runtime`]: "1.0.0" },
-            openclaw: { extensions: ["./index.js"] },
+            opencli: { extensions: ["./index.js"] },
           },
           null,
           2,
@@ -239,7 +239,7 @@ describe("prepareBundledPluginRuntimeRoot", () => {
   it("does not memoize source-checkout dist mirrors", () => {
     const packageRoot = makeTempRoot();
     const stageDir = makeTempRoot();
-    const env = { ...process.env, OPENCLAW_PLUGIN_STAGE_DIR: stageDir };
+    const env = { ...process.env, OPENCLI_PLUGIN_STAGE_DIR: stageDir };
     fs.mkdirSync(path.join(packageRoot, ".git"), { recursive: true });
     fs.mkdirSync(path.join(packageRoot, "src"), { recursive: true });
     fs.mkdirSync(path.join(packageRoot, "extensions"), { recursive: true });
@@ -247,7 +247,7 @@ describe("prepareBundledPluginRuntimeRoot", () => {
     fs.mkdirSync(pluginRoot, { recursive: true });
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
-      JSON.stringify({ name: "openclaw", version: "2026.4.27", type: "module" }),
+      JSON.stringify({ name: "opencli", version: "2026.4.27", type: "module" }),
       "utf8",
     );
     fs.writeFileSync(path.join(packageRoot, "dist", "shared-runtime.js"), "export {};\n", "utf8");
@@ -260,11 +260,11 @@ describe("prepareBundledPluginRuntimeRoot", () => {
       path.join(pluginRoot, "package.json"),
       JSON.stringify(
         {
-          name: "@openclaw/alpha",
+          name: "@opencli/alpha",
           version: "1.0.0",
           type: "module",
           dependencies: { "alpha-runtime": "1.0.0" },
-          openclaw: { extensions: ["./index.js"] },
+          opencli: { extensions: ["./index.js"] },
         },
         null,
         2,
@@ -307,14 +307,14 @@ describe("prepareBundledPluginRuntimeRoot", () => {
 
   it("does not copy staged runtime mirror dist files onto themselves", () => {
     const stageDir = makeTempRoot();
-    const installRoot = path.join(stageDir, "openclaw-2026.4.26-alpha");
+    const installRoot = path.join(stageDir, "opencli-2026.4.26-alpha");
     const pluginRoot = path.join(installRoot, "dist", "extensions", "qqbot");
     const distChunk = path.join(installRoot, "dist", "accounts-abc123.js");
-    const env = { ...process.env, OPENCLAW_PLUGIN_STAGE_DIR: stageDir };
+    const env = { ...process.env, OPENCLI_PLUGIN_STAGE_DIR: stageDir };
     fs.mkdirSync(pluginRoot, { recursive: true });
     fs.writeFileSync(
       path.join(installRoot, "package.json"),
-      JSON.stringify({ name: "openclaw", version: "2026.4.26", type: "module" }),
+      JSON.stringify({ name: "opencli", version: "2026.4.26", type: "module" }),
       "utf8",
     );
     fs.writeFileSync(distChunk, "export const marker = 'same-root';\n", "utf8");
@@ -327,11 +327,11 @@ describe("prepareBundledPluginRuntimeRoot", () => {
       path.join(pluginRoot, "package.json"),
       JSON.stringify(
         {
-          name: "@openclaw/qqbot",
+          name: "@opencli/qqbot",
           version: "1.0.0",
           type: "module",
           dependencies: { "qqbot-runtime": "1.0.0" },
-          openclaw: { extensions: ["./index.js"] },
+          opencli: { extensions: ["./index.js"] },
         },
         null,
         2,
@@ -363,12 +363,12 @@ describe("prepareBundledPluginRuntimeRoot", () => {
     const stageDir = makeTempRoot();
     const canonicalPluginRoot = path.join(packageRoot, "dist", "extensions", "qqbot");
     const runtimePluginRoot = path.join(packageRoot, "dist-runtime", "extensions", "qqbot");
-    const env = { ...process.env, OPENCLAW_PLUGIN_STAGE_DIR: stageDir };
+    const env = { ...process.env, OPENCLI_PLUGIN_STAGE_DIR: stageDir };
     fs.mkdirSync(canonicalPluginRoot, { recursive: true });
     fs.mkdirSync(runtimePluginRoot, { recursive: true });
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
-      JSON.stringify({ name: "openclaw", version: "2026.4.27", type: "module" }),
+      JSON.stringify({ name: "opencli", version: "2026.4.27", type: "module" }),
       "utf8",
     );
     fs.writeFileSync(
@@ -385,11 +385,11 @@ describe("prepareBundledPluginRuntimeRoot", () => {
       path.join(canonicalPluginRoot, "package.json"),
       JSON.stringify(
         {
-          name: "@openclaw/qqbot",
+          name: "@opencli/qqbot",
           version: "1.0.0",
           type: "module",
           dependencies: { "qqbot-runtime": "1.0.0" },
-          openclaw: { extensions: ["./index.js"] },
+          opencli: { extensions: ["./index.js"] },
         },
         null,
         2,
@@ -410,11 +410,11 @@ describe("prepareBundledPluginRuntimeRoot", () => {
       path.join(runtimePluginRoot, "package.json"),
       JSON.stringify(
         {
-          name: "@openclaw/qqbot",
+          name: "@opencli/qqbot",
           version: "1.0.0",
           type: "module",
           dependencies: { "qqbot-runtime": "1.0.0" },
-          openclaw: { extensions: ["./index.js"] },
+          opencli: { extensions: ["./index.js"] },
         },
         null,
         2,
@@ -449,12 +449,12 @@ describe("prepareBundledPluginRuntimeRoot", () => {
     const stageDir = makeTempRoot();
     const canonicalPluginRoot = path.join(packageRoot, "dist", "extensions", "qqbot");
     const runtimePluginRoot = path.join(packageRoot, "dist-runtime", "extensions", "qqbot");
-    const env = { ...process.env, OPENCLAW_PLUGIN_STAGE_DIR: stageDir };
+    const env = { ...process.env, OPENCLI_PLUGIN_STAGE_DIR: stageDir };
     fs.mkdirSync(canonicalPluginRoot, { recursive: true });
     fs.mkdirSync(runtimePluginRoot, { recursive: true });
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
-      JSON.stringify({ name: "openclaw", version: "2026.4.27", type: "module" }),
+      JSON.stringify({ name: "opencli", version: "2026.4.27", type: "module" }),
       "utf8",
     );
     fs.writeFileSync(
@@ -464,7 +464,7 @@ describe("prepareBundledPluginRuntimeRoot", () => {
     );
     fs.writeFileSync(
       path.join(canonicalPluginRoot, "package.json"),
-      JSON.stringify({ name: "@openclaw/qqbot", version: "1.0.0", type: "module" }, null, 2),
+      JSON.stringify({ name: "@opencli/qqbot", version: "1.0.0", type: "module" }, null, 2),
       "utf8",
     );
     fs.writeFileSync(
@@ -476,11 +476,11 @@ describe("prepareBundledPluginRuntimeRoot", () => {
       path.join(runtimePluginRoot, "package.json"),
       JSON.stringify(
         {
-          name: "@openclaw/qqbot",
+          name: "@opencli/qqbot",
           version: "1.0.0",
           type: "module",
           dependencies: { "qqbot-runtime": "1.0.0" },
-          openclaw: { extensions: ["./index.js"] },
+          opencli: { extensions: ["./index.js"] },
         },
         null,
         2,
@@ -496,7 +496,7 @@ describe("prepareBundledPluginRuntimeRoot", () => {
     );
     writeGeneratedRuntimeDepsManifest(installRoot, ["qqbot-runtime@1.0.0"]);
 
-    const lockPath = path.join(installRoot, ".openclaw-runtime-mirror.lock");
+    const lockPath = path.join(installRoot, ".opencli-runtime-mirror.lock");
     const fingerprintLockStates: Array<{ source: "runtime" | "canonical"; locked: boolean }> = [];
     const realLstatSync = fs.lstatSync.bind(fs) as typeof fs.lstatSync;
     vi.spyOn(fs, "lstatSync").mockImplementation(((target, options) => {
@@ -527,11 +527,11 @@ describe("prepareBundledPluginRuntimeRoot", () => {
     const packageRoot = makeTempRoot();
     const stageDir = makeTempRoot();
     const pluginRoot = path.join(packageRoot, "dist", "extensions", "whatsapp");
-    const env = { ...process.env, OPENCLAW_PLUGIN_STAGE_DIR: stageDir };
+    const env = { ...process.env, OPENCLI_PLUGIN_STAGE_DIR: stageDir };
     fs.mkdirSync(pluginRoot, { recursive: true });
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
-      JSON.stringify({ name: "openclaw", version: "2026.4.27", type: "module" }),
+      JSON.stringify({ name: "opencli", version: "2026.4.27", type: "module" }),
       "utf8",
     );
     fs.writeFileSync(path.join(pluginRoot, "index.js"), "export const marker = 'v1';\n", "utf8");
@@ -539,11 +539,11 @@ describe("prepareBundledPluginRuntimeRoot", () => {
       path.join(pluginRoot, "package.json"),
       JSON.stringify(
         {
-          name: "@openclaw/whatsapp",
+          name: "@opencli/whatsapp",
           version: "1.0.0",
           type: "module",
           dependencies: { "whatsapp-runtime": "1.0.0" },
-          openclaw: { extensions: ["./index.js"] },
+          opencli: { extensions: ["./index.js"] },
         },
         null,
         2,
@@ -587,11 +587,11 @@ describe("prepareBundledPluginRuntimeRoot", () => {
     const packageRoot = makeTempRoot();
     const stageDir = makeTempRoot();
     const pluginRoot = path.join(packageRoot, "dist", "extensions", "whatsapp");
-    const env = { ...process.env, OPENCLAW_PLUGIN_STAGE_DIR: stageDir };
+    const env = { ...process.env, OPENCLI_PLUGIN_STAGE_DIR: stageDir };
     fs.mkdirSync(pluginRoot, { recursive: true });
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
-      JSON.stringify({ name: "openclaw", version: "2026.4.27", type: "module" }),
+      JSON.stringify({ name: "opencli", version: "2026.4.27", type: "module" }),
       "utf8",
     );
     fs.writeFileSync(path.join(pluginRoot, "index.js"), "export const marker = 'v1';\n", "utf8");
@@ -599,11 +599,11 @@ describe("prepareBundledPluginRuntimeRoot", () => {
       path.join(pluginRoot, "package.json"),
       JSON.stringify(
         {
-          name: "@openclaw/whatsapp",
+          name: "@opencli/whatsapp",
           version: "1.0.0",
           type: "module",
           dependencies: { "whatsapp-runtime": "1.0.0" },
-          openclaw: { extensions: ["./index.js"] },
+          opencli: { extensions: ["./index.js"] },
         },
         null,
         2,

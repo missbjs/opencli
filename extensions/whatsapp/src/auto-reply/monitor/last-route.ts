@@ -1,5 +1,5 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
-import type { MsgContext } from "openclaw/plugin-sdk/reply-runtime";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
+import type { MsgContext } from "opencli/plugin-sdk/reply-runtime";
 import { formatError } from "../../session.js";
 import { resolveStorePath, updateLastRoute } from "../config.runtime.js";
 
@@ -15,7 +15,7 @@ export function trackBackgroundTask(
 }
 
 export function updateLastRouteInBackground(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   backgroundTasks: Set<Promise<unknown>>;
   storeAgentId: string;
   sessionKey: string;

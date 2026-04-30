@@ -9,7 +9,7 @@ import type { ChannelPlugin } from "../channels/plugins/types.js";
 import type {
   ConfigFileSnapshot,
   ConfigWriteNotification,
-  OpenClawConfig,
+  OpenCLIConfig,
 } from "../config/config.js";
 import {
   pinActivePluginChannelRegistry,
@@ -484,7 +484,7 @@ function makeSnapshot(partial: Partial<ConfigFileSnapshot> = {}): ConfigFileSnap
     {}) as ConfigFileSnapshot["sourceConfig"];
   const runtimeConfig = partial.runtimeConfig ?? partial.config ?? {};
   return {
-    path: "/tmp/openclaw.json",
+    path: "/tmp/opencli.json",
     exists: true,
     raw: "{}",
     parsed: {},
@@ -520,7 +520,7 @@ function makeZeroDebounceHookSnapshot(hash: string): ConfigFileSnapshot {
 
 function makeZeroDebounceHookWrite(persistedHash: string): ConfigWriteNotification {
   return {
-    configPath: "/tmp/openclaw.json",
+    configPath: "/tmp/opencli.json",
     sourceConfig: { gateway: { reload: { debounceMs: 0 } }, hooks: { enabled: true } },
     runtimeConfig: {
       gateway: { reload: { debounceMs: 0 } },
@@ -537,7 +537,7 @@ function makeZeroDebounceHookWrite(persistedHash: string): ConfigWriteNotificati
 function createReloaderHarness(
   readSnapshot: () => Promise<ConfigFileSnapshot>,
   options: {
-    initialCompareConfig?: OpenClawConfig;
+    initialCompareConfig?: OpenCLIConfig;
     initialInternalWriteHash?: string | null;
     recoverSnapshot?: (snapshot: ConfigFileSnapshot, reason: string) => Promise<boolean>;
     promoteSnapshot?: (snapshot: ConfigFileSnapshot, reason: string) => Promise<boolean>;
@@ -578,7 +578,7 @@ function createReloaderHarness(
     onHotReload,
     onRestart,
     log,
-    watchPath: "/tmp/openclaw.json",
+    watchPath: "/tmp/opencli.json",
   });
   return {
     watcher,
@@ -755,7 +755,7 @@ describe("startGatewayConfigReloader", () => {
   });
 
   it("queues restart in degraded mode for plugin-local invalid reloads", async () => {
-    const activeConfig: OpenClawConfig = {
+    const activeConfig: OpenCLIConfig = {
       gateway: { reload: { debounceMs: 0 } },
       agents: { defaults: { model: "gpt-5.4" } },
       plugins: {
@@ -787,7 +787,7 @@ describe("startGatewayConfigReloader", () => {
       .mockResolvedValueOnce(invalidSnapshot);
     const recoverSnapshot = vi.fn(async () => true);
     const promoteSnapshot = vi.fn(async () => true);
-    const previousConfig: OpenClawConfig = {
+    const previousConfig: OpenCLIConfig = {
       ...activeConfig,
       plugins: {
         entries: {
@@ -1033,7 +1033,7 @@ describe("startGatewayConfigReloader", () => {
       installedAt: "2026-04-22T00:00:00.000Z",
       resolvedAt: "2026-04-22T00:00:00.000Z",
     };
-    const sourceConfig: OpenClawConfig = {
+    const sourceConfig: OpenCLIConfig = {
       gateway: { reload: { debounceMs: 0 }, auth: { mode: "token" } },
       plugins: {
         installs: {
@@ -1061,7 +1061,7 @@ describe("startGatewayConfigReloader", () => {
     const harness = createReloaderHarness(readSnapshot, { initialCompareConfig: sourceConfig });
 
     harness.emitWrite({
-      configPath: "/tmp/openclaw.json",
+      configPath: "/tmp/opencli.json",
       sourceConfig: {
         ...sourceConfig,
         plugins: {
@@ -1113,7 +1113,7 @@ describe("startGatewayConfigReloader", () => {
   });
 
   it("does not suppress functional install changes that collide with timestamp paths", async () => {
-    const sourceConfig: OpenClawConfig = {
+    const sourceConfig: OpenCLIConfig = {
       gateway: { reload: { debounceMs: 0 } },
       plugins: {
         installs: {
@@ -1124,7 +1124,7 @@ describe("startGatewayConfigReloader", () => {
         },
       },
     };
-    const nextSourceConfig: OpenClawConfig = {
+    const nextSourceConfig: OpenCLIConfig = {
       gateway: { reload: { debounceMs: 0 } },
       plugins: {
         installs: {
@@ -1149,7 +1149,7 @@ describe("startGatewayConfigReloader", () => {
     const harness = createReloaderHarness(readSnapshot, { initialCompareConfig: sourceConfig });
 
     harness.emitWrite({
-      configPath: "/tmp/openclaw.json",
+      configPath: "/tmp/opencli.json",
       sourceConfig: nextSourceConfig,
       runtimeConfig: nextSourceConfig,
       persistedHash: "plugin-collision-1",

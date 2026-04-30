@@ -1,5 +1,5 @@
 import { normalizeProviderId } from "../agents/provider-id.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import {
   normalizePluginsConfigWithResolver,
   type NormalizedPluginsConfig,
@@ -183,7 +183,7 @@ function listManifestContributionIds(
 function resolveContributionPluginIds(params: {
   index: PluginRegistrySnapshot;
   includeDisabled?: boolean;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
 }): readonly string[] {
   if (params.includeDisabled) {
     return params.index.plugins.map((plugin) => plugin.pluginId);
@@ -264,7 +264,7 @@ function filterContributionOwnerIds(params: {
   owners: readonly string[];
   index: PluginRegistrySnapshot;
   includeDisabled?: boolean;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
 }): readonly string[] {
   const enabledPluginIds = new Set(
     resolveContributionPluginIds({
@@ -294,7 +294,7 @@ export function loadPluginManifestRegistryForPluginRegistry(
 }
 
 export function normalizePluginsConfigWithRegistry(
-  config: OpenClawConfig["plugins"] | undefined,
+  config: OpenCLIConfig["plugins"] | undefined,
   index: PluginRegistrySnapshot,
   options: PluginRegistryIdNormalizerOptions = {},
 ): NormalizedPluginsConfig {

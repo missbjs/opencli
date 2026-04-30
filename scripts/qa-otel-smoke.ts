@@ -80,18 +80,18 @@ type CapturedSpan = {
 
 const DEFAULT_SCENARIO_ID = "otel-trace-smoke";
 const REQUIRED_SPAN_NAMES = [
-  "openclaw.run",
-  "openclaw.harness.run",
-  "openclaw.model.call",
-  "openclaw.context.assembled",
-  "openclaw.message.delivery",
+  "opencli.run",
+  "opencli.harness.run",
+  "opencli.model.call",
+  "opencli.context.assembled",
+  "opencli.message.delivery",
 ] as const;
 const DISALLOWED_ATTRIBUTE_KEYS = new Set([
-  "openclaw.runId",
-  "openclaw.sessionKey",
-  "openclaw.sessionId",
-  "openclaw.callId",
-  "openclaw.toolCallId",
+  "opencli.runId",
+  "opencli.sessionKey",
+  "opencli.sessionId",
+  "opencli.callId",
+  "opencli.toolCallId",
 ]);
 
 let traceRequestDecoder:
@@ -290,10 +290,10 @@ function openClawEntryArgs(): string[] {
   if (existsSync(path.join(process.cwd(), "scripts", "run-node.mjs"))) {
     return ["scripts/run-node.mjs"];
   }
-  return ["openclaw.mjs"];
+  return ["opencli.mjs"];
 }
 
-function spawnOpenClaw(args: string[], env: NodeJS.ProcessEnv): ChildProcess {
+function spawnOpenCLI(args: string[], env: NodeJS.ProcessEnv): ChildProcess {
   return spawn(process.execPath, [...openClawEntryArgs(), ...args], {
     env,
     stdio: ["ignore", "pipe", "pipe"],
@@ -314,9 +314,9 @@ function buildQaEnv(port: number): NodeJS.ProcessEnv {
   delete env.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT;
   delete env.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT;
   env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = `http://127.0.0.1:${port}/v1/traces`;
-  env.OTEL_SERVICE_NAME = "openclaw-qa-lab-otel-smoke";
+  env.OTEL_SERVICE_NAME = "opencli-qa-lab-otel-smoke";
   env.OTEL_SEMCONV_STABILITY_OPT_IN = "gen_ai_latest_experimental";
-  env.OPENCLAW_QA_SUITE_PROGRESS = env.OPENCLAW_QA_SUITE_PROGRESS ?? "1";
+  env.OPENCLI_QA_SUITE_PROGRESS = env.OPENCLI_QA_SUITE_PROGRESS ?? "1";
   return env;
 }
 
@@ -378,7 +378,7 @@ function assertSmoke(params: {
 
   const attributeKeys = collectAttributeKeys(params.spans);
   const disallowed = [...DISALLOWED_ATTRIBUTE_KEYS].filter((key) => attributeKeys.has(key));
-  const contentKeys = [...attributeKeys].filter((key) => key.startsWith("openclaw.content."));
+  const contentKeys = [...attributeKeys].filter((key) => key.startsWith("opencli.content."));
   if (disallowed.length > 0) {
     failures.push(`raw diagnostic id attributes exported: ${disallowed.join(", ")}`);
   }
@@ -386,17 +386,17 @@ function assertSmoke(params: {
     failures.push(`content attributes exported with capture disabled: ${contentKeys.join(", ")}`);
   }
 
-  const modelSpans = params.spans.filter((span) => span.name === "openclaw.model.call");
+  const modelSpans = params.spans.filter((span) => span.name === "opencli.model.call");
   const modelErrorSpans = modelSpans.filter((span) => {
     const serialized = JSON.stringify(span.attributes);
     return (
       Object.hasOwn(span.attributes, "error.type") ||
-      Object.hasOwn(span.attributes, "openclaw.errorCategory") ||
+      Object.hasOwn(span.attributes, "opencli.errorCategory") ||
       serialized.includes("StreamAbandoned")
     );
   });
   if (modelSpans.length === 0) {
-    failures.push("no openclaw.model.call span was exported");
+    failures.push("no opencli.model.call span was exported");
   }
   if (modelErrorSpans.length > 0) {
     failures.push("successful QA run exported model-call error attributes");
@@ -434,7 +434,7 @@ async function main() {
 
   let childExitCode = 1;
   try {
-    const child = spawnOpenClaw(buildQaArgs(options), buildQaEnv(port));
+    const child = spawnOpenCLI(buildQaArgs(options), buildQaEnv(port));
     child.stdout?.on("data", (chunk) => process.stdout.write(chunk));
     child.stderr?.on("data", (chunk) => process.stderr.write(chunk));
     childExitCode = await waitForChild(child);

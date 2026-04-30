@@ -1,5 +1,5 @@
 import path from "node:path";
-import { withTempHome as withTempHomeBase } from "openclaw/plugin-sdk/test-env";
+import { withTempHome as withTempHomeBase } from "opencli/plugin-sdk/test-env";
 import { afterEach, beforeEach, expect, vi } from "vitest";
 import { clearRuntimeAuthProfileStoreSnapshots } from "../agents/auth-profiles.js";
 import { resetSkillsRefreshForTest } from "../agents/skills/refresh.js";
@@ -132,10 +132,10 @@ export async function withTempHome<T>(fn: (home: string) => Promise<T>): Promise
     },
     {
       env: {
-        OPENCLAW_AGENT_DIR: (home) => path.join(home, ".openclaw", "agent"),
-        PI_CODING_AGENT_DIR: (home) => path.join(home, ".openclaw", "agent"),
+        OPENCLI_AGENT_DIR: (home) => path.join(home, ".opencli", "agent"),
+        PI_CODING_AGENT_DIR: (home) => path.join(home, ".opencli", "agent"),
       },
-      prefix: "openclaw-reply-",
+      prefix: "opencli-reply-",
     },
   );
 }
@@ -152,7 +152,7 @@ export function makeWhatsAppDirectiveConfig(
   return withFastReplyConfig({
     agents: {
       defaults: {
-        workspace: path.join(home, "openclaw"),
+        workspace: path.join(home, "opencli"),
         ...defaults,
       },
     },
@@ -320,7 +320,7 @@ export function makeRestrictedElevatedDisabledConfig(home: string) {
     agents: {
       defaults: {
         model: "anthropic/claude-opus-4-6",
-        workspace: path.join(home, "openclaw"),
+        workspace: path.join(home, "opencli"),
       },
       list: [
         {

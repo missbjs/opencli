@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { resolvePreferredOpenClawTmpDir } from "../../../../infra/tmp-openclaw-dir.js";
+import { resolvePreferredOpenCLITmpDir } from "../../../../infra/tmp-opencli-dir.js";
 import { listChannelPluginCatalogEntries } from "../../catalog.js";
 
 function createCatalogEntry(params: {
@@ -13,7 +13,7 @@ function createCatalogEntry(params: {
 }) {
   return {
     name: params.packageName,
-    openclaw: {
+    opencli: {
       channel: {
         id: params.channelId,
         label: params.label,
@@ -51,7 +51,7 @@ function writeDiscoveredChannelPlugin(params: {
     path.join(pluginDir, "package.json"),
     JSON.stringify({
       name: params.packageName,
-      openclaw: {
+      opencli: {
         extensions: ["./index.js"],
         channel: {
           id: "demo-channel",
@@ -68,7 +68,7 @@ function writeDiscoveredChannelPlugin(params: {
     "utf8",
   );
   fs.writeFileSync(
-    path.join(pluginDir, "openclaw.plugin.json"),
+    path.join(pluginDir, "opencli.plugin.json"),
     JSON.stringify({
       id: params.pluginId,
       configSchema: {},
@@ -123,13 +123,13 @@ export function describeChannelPluginCatalogEntriesContract() {
         name: "includes external catalog entries",
         setup: () => {
           const dir = fs.mkdtempSync(
-            path.join(resolvePreferredOpenClawTmpDir(), "openclaw-catalog-"),
+            path.join(resolvePreferredOpenCLITmpDir(), "opencli-catalog-"),
           );
           const catalogPath = path.join(dir, "catalog.json");
           writeCatalogFile(
             catalogPath,
             createCatalogEntry({
-              packageName: "@openclaw/demo-channel",
+              packageName: "@opencli/demo-channel",
               channelId: "demo-channel",
               label: "Demo Channel",
               blurb: "Demo entry",
@@ -147,7 +147,7 @@ export function describeChannelPluginCatalogEntriesContract() {
         name: "preserves plugin ids when they differ from channel ids",
         setup: () => {
           const stateDir = fs.mkdtempSync(
-            path.join(resolvePreferredOpenClawTmpDir(), "openclaw-channel-catalog-state-"),
+            path.join(resolvePreferredOpenCLITmpDir(), "opencli-channel-catalog-state-"),
           );
           writeDiscoveredChannelPlugin({
             stateDir,
@@ -160,8 +160,8 @@ export function describeChannelPluginCatalogEntriesContract() {
             channelId: "demo-channel",
             env: {
               ...process.env,
-              OPENCLAW_STATE_DIR: stateDir,
-              OPENCLAW_BUNDLED_PLUGINS_DIR: "/nonexistent/bundled/plugins",
+              OPENCLI_STATE_DIR: stateDir,
+              OPENCLI_BUNDLED_PLUGINS_DIR: "/nonexistent/bundled/plugins",
             },
             expected: { pluginId: "@vendor/demo-runtime" },
           };
@@ -171,7 +171,7 @@ export function describeChannelPluginCatalogEntriesContract() {
         name: "keeps discovered plugins ahead of external catalog overrides",
         setup: () => {
           const stateDir = fs.mkdtempSync(
-            path.join(resolvePreferredOpenClawTmpDir(), "openclaw-catalog-state-"),
+            path.join(resolvePreferredOpenCLITmpDir(), "opencli-catalog-state-"),
           );
           const catalogPath = path.join(stateDir, "catalog.json");
           writeDiscoveredChannelPlugin({
@@ -195,9 +195,9 @@ export function describeChannelPluginCatalogEntriesContract() {
             catalogPaths: [catalogPath],
             env: {
               ...process.env,
-              OPENCLAW_STATE_DIR: stateDir,
+              OPENCLI_STATE_DIR: stateDir,
               CLAWDBOT_STATE_DIR: undefined,
-              OPENCLAW_BUNDLED_PLUGINS_DIR: "/nonexistent/bundled/plugins",
+              OPENCLI_BUNDLED_PLUGINS_DIR: "/nonexistent/bundled/plugins",
             },
             expected: {
               install: { npmSpec: "@vendor/demo-channel-plugin" },
@@ -211,7 +211,7 @@ export function describeChannelPluginCatalogEntriesContract() {
         name: "accepts rich external manifest entries with pinned npm metadata",
         setup: () => {
           const dir = fs.mkdtempSync(
-            path.join(resolvePreferredOpenClawTmpDir(), "openclaw-catalog-rich-"),
+            path.join(resolvePreferredOpenCLITmpDir(), "opencli-catalog-rich-"),
           );
           const catalogPath = path.join(dir, "catalog.json");
           fs.writeFileSync(
@@ -220,15 +220,15 @@ export function describeChannelPluginCatalogEntriesContract() {
               $schema: "./manifest.schema.json",
               schemaVersion: 1,
               description:
-                "Extension manifest. Declares plugin packages that OpenClaw can discover during onboarding and install on demand via `openclaw plugins install`.",
+                "Extension manifest. Declares plugin packages that OpenCLI can discover during onboarding and install on demand via `opencli plugins install`.",
               entries: [
                 {
-                  name: "@wecom/wecom-openclaw-plugin",
+                  name: "@wecom/wecom-opencli-plugin",
                   description:
-                    "OpenClaw WeCom (企业微信) channel plugin — community maintained, published on npm.",
+                    "OpenCLI WeCom (企业微信) channel plugin — community maintained, published on npm.",
                   source: "external",
                   kind: "channel",
-                  openclaw: {
+                  opencli: {
                     channel: {
                       id: "wecom",
                       label: "WeCom",
@@ -241,7 +241,7 @@ export function describeChannelPluginCatalogEntriesContract() {
                       order: 45,
                     },
                     install: {
-                      npmSpec: "@wecom/wecom-openclaw-plugin@1.2.3",
+                      npmSpec: "@wecom/wecom-opencli-plugin@1.2.3",
                       defaultChoice: "npm",
                       minHostVersion: ">=2026.4.10",
                       expectedIntegrity: "sha512-wecom",
@@ -265,7 +265,7 @@ export function describeChannelPluginCatalogEntriesContract() {
                 blurb: "企业微信 (WeCom) bot & conversation channel.",
               },
               install: {
-                npmSpec: "@wecom/wecom-openclaw-plugin@1.2.3",
+                npmSpec: "@wecom/wecom-opencli-plugin@1.2.3",
                 defaultChoice: "npm",
                 minHostVersion: ">=2026.4.10",
                 expectedIntegrity: "sha512-wecom",
@@ -273,8 +273,8 @@ export function describeChannelPluginCatalogEntriesContract() {
               installSource: {
                 defaultChoice: "npm",
                 npm: {
-                  spec: "@wecom/wecom-openclaw-plugin@1.2.3",
-                  packageName: "@wecom/wecom-openclaw-plugin",
+                  spec: "@wecom/wecom-opencli-plugin@1.2.3",
+                  packageName: "@wecom/wecom-opencli-plugin",
                   selector: "1.2.3",
                   selectorKind: "exact-version",
                   exactVersion: true,
@@ -291,7 +291,7 @@ export function describeChannelPluginCatalogEntriesContract() {
         name: "accepts rich external manifest entries for yuanbao with pinned npm metadata",
         setup: () => {
           const dir = fs.mkdtempSync(
-            path.join(resolvePreferredOpenClawTmpDir(), "openclaw-catalog-yuanbao-"),
+            path.join(resolvePreferredOpenCLITmpDir(), "opencli-catalog-yuanbao-"),
           );
           const catalogPath = path.join(dir, "catalog.json");
           fs.writeFileSync(
@@ -300,17 +300,17 @@ export function describeChannelPluginCatalogEntriesContract() {
               $schema: "./manifest.schema.json",
               schemaVersion: 1,
               description:
-                "Extension manifest. Declares plugin packages that OpenClaw can discover during onboarding and install on demand via `openclaw plugins install`.",
+                "Extension manifest. Declares plugin packages that OpenCLI can discover during onboarding and install on demand via `opencli plugins install`.",
               entries: [
                 {
-                  name: "openclaw-plugin-yuanbao",
+                  name: "opencli-plugin-yuanbao",
                   description:
-                    "OpenClaw Yuanbao (元宝) channel plugin — community maintained, published on npm.",
+                    "OpenCLI Yuanbao (元宝) channel plugin — community maintained, published on npm.",
                   source: "external",
                   kind: "channel",
-                  openclaw: {
+                  opencli: {
                     channel: {
-                      id: "openclaw-plugin-yuanbao",
+                      id: "opencli-plugin-yuanbao",
                       label: "Yuanbao",
                       selectionLabel: "Yuanbao (Tencent Yuanbao)",
                       detailLabel: "Yuanbao",
@@ -321,7 +321,7 @@ export function describeChannelPluginCatalogEntriesContract() {
                       order: 78,
                     },
                     install: {
-                      npmSpec: "openclaw-plugin-yuanbao@1.0.0",
+                      npmSpec: "opencli-plugin-yuanbao@1.0.0",
                       defaultChoice: "npm",
                       minHostVersion: ">=2026.4.10",
                       expectedIntegrity: "sha512-yuanbao",
@@ -332,10 +332,10 @@ export function describeChannelPluginCatalogEntriesContract() {
             }),
           );
           return {
-            channelId: "openclaw-plugin-yuanbao",
+            channelId: "opencli-plugin-yuanbao",
             catalogPaths: [catalogPath],
             expected: {
-              id: "openclaw-plugin-yuanbao",
+              id: "opencli-plugin-yuanbao",
               meta: {
                 label: "Yuanbao",
                 selectionLabel: "Yuanbao (Tencent Yuanbao)",
@@ -345,7 +345,7 @@ export function describeChannelPluginCatalogEntriesContract() {
                 blurb: "Tencent Yuanbao AI assistant conversation channel.",
               },
               install: {
-                npmSpec: "openclaw-plugin-yuanbao@1.0.0",
+                npmSpec: "opencli-plugin-yuanbao@1.0.0",
                 defaultChoice: "npm",
                 minHostVersion: ">=2026.4.10",
                 expectedIntegrity: "sha512-yuanbao",
@@ -374,13 +374,13 @@ export function describeChannelPluginCatalogPathResolutionContract() {
         name: "uses the provided env for external catalog path resolution",
         setup: () => {
           const home = fs.mkdtempSync(
-            path.join(resolvePreferredOpenClawTmpDir(), "openclaw-catalog-home-"),
+            path.join(resolvePreferredOpenCLITmpDir(), "opencli-catalog-home-"),
           );
           const catalogPath = path.join(home, "catalog.json");
           writeCatalogFile(
             catalogPath,
             createCatalogEntry({
-              packageName: "@openclaw/env-demo-channel",
+              packageName: "@opencli/env-demo-channel",
               channelId: "env-demo-channel",
               label: "Env Demo Channel",
               blurb: "Env demo entry",
@@ -390,8 +390,8 @@ export function describeChannelPluginCatalogPathResolutionContract() {
           return {
             env: {
               ...process.env,
-              OPENCLAW_PLUGIN_CATALOG_PATHS: "~/catalog.json",
-              OPENCLAW_HOME: home,
+              OPENCLI_PLUGIN_CATALOG_PATHS: "~/catalog.json",
+              OPENCLI_HOME: home,
               HOME: home,
             },
             expectedId: "env-demo-channel",
@@ -402,14 +402,14 @@ export function describeChannelPluginCatalogPathResolutionContract() {
         name: "uses the provided env for default catalog paths",
         setup: () => {
           const stateDir = fs.mkdtempSync(
-            path.join(resolvePreferredOpenClawTmpDir(), "openclaw-catalog-state-"),
+            path.join(resolvePreferredOpenCLITmpDir(), "opencli-catalog-state-"),
           );
           const catalogPath = path.join(stateDir, "plugins", "catalog.json");
           fs.mkdirSync(path.dirname(catalogPath), { recursive: true });
           writeCatalogFile(
             catalogPath,
             createCatalogEntry({
-              packageName: "@openclaw/default-env-demo",
+              packageName: "@opencli/default-env-demo",
               channelId: "default-env-demo",
               label: "Default Env Demo",
               blurb: "Default env demo entry",
@@ -418,7 +418,7 @@ export function describeChannelPluginCatalogPathResolutionContract() {
           return {
             env: {
               ...process.env,
-              OPENCLAW_STATE_DIR: stateDir,
+              OPENCLI_STATE_DIR: stateDir,
             },
             expectedId: "default-env-demo",
           };

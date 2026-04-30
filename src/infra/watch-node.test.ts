@@ -2,14 +2,14 @@ import { createHash } from "node:crypto";
 import { EventEmitter } from "node:events";
 import fs from "node:fs";
 import path from "node:path";
-import { bundledPluginFile } from "openclaw/plugin-sdk/test-fixtures";
+import { bundledPluginFile } from "opencli/plugin-sdk/test-fixtures";
 import { describe, expect, it, vi } from "vitest";
 import { runNodeWatchedPaths } from "../../scripts/run-node.mjs";
 import { runWatchMain } from "../../scripts/watch-node.mjs";
 import { withTempDir } from "../test-helpers/temp-dir.js";
 
 const VOICE_CALL_README = bundledPluginFile("voice-call", "README.md");
-const VOICE_CALL_MANIFEST = bundledPluginFile("voice-call", "openclaw.plugin.json");
+const VOICE_CALL_MANIFEST = bundledPluginFile("voice-call", "opencli.plugin.json");
 const VOICE_CALL_PACKAGE = bundledPluginFile("voice-call", "package.json");
 const VOICE_CALL_INDEX = bundledPluginFile("voice-call", "index.ts");
 const VOICE_CALL_RUNTIME = bundledPluginFile("voice-call", "src/runtime.ts");
@@ -85,7 +85,7 @@ const startWatchRun = ({
 describe("watch-node script", () => {
   it("wires chokidar watch to run-node with watched source/config paths", async () => {
     const { child, spawn, watcher, createWatcher, fakeProcess } = createWatchHarness();
-    await withTempDir({ prefix: "openclaw-watch-node-" }, async (cwd) => {
+    await withTempDir({ prefix: "opencli-watch-node-" }, async (cwd) => {
       fs.mkdirSync(path.join(cwd, "src", "infra"), { recursive: true });
       fs.mkdirSync(path.join(cwd, "extensions", "voice-call"), { recursive: true });
 
@@ -140,10 +140,10 @@ describe("watch-node script", () => {
           stdio: "inherit",
           env: expect.objectContaining({
             PATH: "/usr/bin",
-            OPENCLAW_WATCH_MODE: "1",
-            OPENCLAW_WATCH_SESSION: "1700000000000-4242",
-            OPENCLAW_NO_RESPAWN: "1",
-            OPENCLAW_WATCH_COMMAND: "gateway --force",
+            OPENCLI_WATCH_MODE: "1",
+            OPENCLI_WATCH_SESSION: "1700000000000-4242",
+            OPENCLI_NO_RESPAWN: "1",
+            OPENCLI_WATCH_COMMAND: "gateway --force",
           }),
         }),
       );
@@ -245,7 +245,7 @@ describe("watch-node script", () => {
       args: ["gateway", "--force"],
       createWatcher,
       env: {
-        LAUNCH_JOB_LABEL: "ai.openclaw.gateway",
+        LAUNCH_JOB_LABEL: "ai.opencli.gateway",
         PATH: "/usr/bin",
       },
       lockDisabled: true,
@@ -258,8 +258,8 @@ describe("watch-node script", () => {
       ["scripts/run-node.mjs", "gateway", "--force"],
       expect.objectContaining({
         env: expect.objectContaining({
-          LAUNCH_JOB_LABEL: "ai.openclaw.gateway",
-          OPENCLAW_NO_RESPAWN: "1",
+          LAUNCH_JOB_LABEL: "ai.opencli.gateway",
+          OPENCLI_NO_RESPAWN: "1",
         }),
       }),
     );
@@ -348,7 +348,7 @@ describe("watch-node script", () => {
   it("prints recovery guidance when chokidar fails with invalid package config", async () => {
     const error = Object.assign(
       new Error(
-        'Invalid package config /tmp/openclaw/.pnpm/chokidar/package.json while importing "chokidar" from /tmp/openclaw/scripts/watch-node.mjs.',
+        'Invalid package config /tmp/opencli/.pnpm/chokidar/package.json while importing "chokidar" from /tmp/opencli/scripts/watch-node.mjs.',
       ),
       { code: "ERR_INVALID_PACKAGE_CONFIG" },
     );
@@ -358,7 +358,7 @@ describe("watch-node script", () => {
       await expect(
         runWatch({
           args: ["gateway", "--force"],
-          cwd: "/tmp/openclaw",
+          cwd: "/tmp/opencli",
           loadChokidar: vi.fn(async () => {
             throw error;
           }),
@@ -369,16 +369,16 @@ describe("watch-node script", () => {
       expect(errorSpy.mock.calls).toEqual([
         [""],
         [
-          "[openclaw] gateway:watch could not start because a dependency package config looks corrupted.",
+          "[opencli] gateway:watch could not start because a dependency package config looks corrupted.",
         ],
-        ["[openclaw] Invalid package config: /tmp/openclaw/.pnpm/chokidar/package.json"],
-        ["[openclaw] This usually means a file in node_modules is empty or truncated."],
-        ["[openclaw] Recommended recovery:"],
-        ["[openclaw]   rm -rf node_modules"],
-        ["[openclaw]   pnpm store prune"],
-        ["[openclaw]   pnpm install"],
+        ["[opencli] Invalid package config: /tmp/opencli/.pnpm/chokidar/package.json"],
+        ["[opencli] This usually means a file in node_modules is empty or truncated."],
+        ["[opencli] Recommended recovery:"],
+        ["[opencli]   rm -rf node_modules"],
+        ["[opencli]   pnpm store prune"],
+        ["[opencli]   pnpm install"],
         [""],
-        ["[openclaw] Original error:"],
+        ["[opencli] Original error:"],
         [error],
       ]);
     } finally {
@@ -410,7 +410,7 @@ describe("watch-node script", () => {
 
   it("replaces an existing watcher lock holder before starting", async () => {
     const { child, spawn, watcher, createWatcher, fakeProcess } = createWatchHarness();
-    await withTempDir({ prefix: "openclaw-watch-node-lock-" }, async (cwd) => {
+    await withTempDir({ prefix: "opencli-watch-node-lock-" }, async (cwd) => {
       const lockPath = resolveTestWatchLockPath(cwd, ["gateway", "--force"]);
       fs.mkdirSync(path.dirname(lockPath), { recursive: true });
       fs.writeFileSync(

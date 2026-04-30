@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { normalizePluginsConfig, resolveEffectivePluginActivationState } from "./config-state.js";
 import type { PluginManifestRecord } from "./manifest-registry.js";
 
@@ -66,7 +66,7 @@ export function resolveManifestOwnerBasePolicyBlock(params: {
 export function isActivatedManifestOwner(params: {
   plugin: OwnerPlugin;
   normalizedConfig: NormalizedPluginsConfig;
-  rootConfig?: OpenClawConfig;
+  rootConfig?: OpenCLIConfig;
 }): boolean {
   return resolveEffectivePluginActivationState({
     id: params.plugin.id,

@@ -55,7 +55,7 @@ export function buildPluginSdkEntrySources(entries: readonly string[] = pluginSd
 /** List the public package specifiers that should resolve to plugin SDK entrypoints. */
 export function buildPluginSdkSpecifiers() {
   return pluginSdkEntrypoints.map((entry) =>
-    entry === "index" ? "openclaw/plugin-sdk" : `openclaw/plugin-sdk/${entry}`,
+    entry === "index" ? "opencli/plugin-sdk" : `opencli/plugin-sdk/${entry}`,
   );
 }
 

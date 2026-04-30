@@ -1,8 +1,8 @@
 import Foundation
-import OpenClawKit
+import OpenCLIKit
 import os
 import Testing
-@testable import OpenClaw
+@testable import OpenCLI
 
 struct GatewayConnectionTests {
     private func makeConnection(

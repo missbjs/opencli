@@ -12,14 +12,14 @@ export function encodePowerShell(script: string): string {
   );
 }
 
-export const windowsOpenClawResolver = String.raw`function Resolve-OpenClawCommand {
-  if ($script:OpenClawResolvedCommand) { return $script:OpenClawResolvedCommand }
+export const windowsOpenCLIResolver = String.raw`function Resolve-OpenCLICommand {
+  if ($script:OpenCLIResolvedCommand) { return $script:OpenCLIResolvedCommand }
   $shimCandidates = @()
   if ($env:APPDATA) {
-    $shimCandidates += Join-Path $env:APPDATA 'npm\openclaw.cmd'
-    $shimCandidates += Join-Path $env:APPDATA 'npm\openclaw.ps1'
+    $shimCandidates += Join-Path $env:APPDATA 'npm\opencli.cmd'
+    $shimCandidates += Join-Path $env:APPDATA 'npm\opencli.ps1'
   }
-  foreach ($name in @('openclaw.cmd', 'openclaw.ps1', 'openclaw')) {
+  foreach ($name in @('opencli.cmd', 'opencli.ps1', 'opencli')) {
     $command = Get-Command $name -ErrorAction SilentlyContinue | Select-Object -First 1
     if ($command -and $command.Source) { $shimCandidates += $command.Source }
   }
@@ -28,36 +28,36 @@ export const windowsOpenClawResolver = String.raw`function Resolve-OpenClawComma
     $npmPrefix = (& npm.cmd prefix -g 2>$null | Select-Object -First 1)
   } catch {}
   if ($npmPrefix) {
-    $shimCandidates += Join-Path $npmPrefix 'openclaw.cmd'
-    $shimCandidates += Join-Path $npmPrefix 'openclaw.ps1'
+    $shimCandidates += Join-Path $npmPrefix 'opencli.cmd'
+    $shimCandidates += Join-Path $npmPrefix 'opencli.ps1'
   }
   foreach ($candidate in $shimCandidates) {
     if ($candidate -and (Test-Path $candidate)) {
-      $script:OpenClawResolvedCommand = @{ Kind = 'shim'; Path = $candidate }
-      return $script:OpenClawResolvedCommand
+      $script:OpenCLIResolvedCommand = @{ Kind = 'shim'; Path = $candidate }
+      return $script:OpenCLIResolvedCommand
     }
   }
   $entryCandidates = @()
   if ($env:APPDATA) {
-    $entryCandidates += Join-Path $env:APPDATA 'npm\node_modules\openclaw\openclaw.mjs'
+    $entryCandidates += Join-Path $env:APPDATA 'npm\node_modules\opencli\opencli.mjs'
   }
   if ($npmPrefix) {
-    $entryCandidates += Join-Path $npmPrefix 'node_modules\openclaw\openclaw.mjs'
+    $entryCandidates += Join-Path $npmPrefix 'node_modules\opencli\opencli.mjs'
   }
   foreach ($candidate in $entryCandidates) {
     if ($candidate -and (Test-Path $candidate)) {
-      $script:OpenClawResolvedCommand = @{ Kind = 'node'; Path = $candidate }
-      return $script:OpenClawResolvedCommand
+      $script:OpenCLIResolvedCommand = @{ Kind = 'node'; Path = $candidate }
+      return $script:OpenCLIResolvedCommand
     }
   }
-  throw 'openclaw command not found in PATH, APPDATA npm, or npm global prefix'
+  throw 'opencli command not found in PATH, APPDATA npm, or npm global prefix'
 }
-function Invoke-OpenClaw {
-  param([Parameter(ValueFromRemainingArguments = $true)][string[]] $OpenClawArgs)
-  $command = Resolve-OpenClawCommand
+function Invoke-OpenCLI {
+  param([Parameter(ValueFromRemainingArguments = $true)][string[]] $OpenCLIArgs)
+  $command = Resolve-OpenCLICommand
   if ($command.Kind -eq 'node') {
-    & node.exe $command.Path @OpenClawArgs
+    & node.exe $command.Path @OpenCLIArgs
   } else {
-    & $command.Path @OpenClawArgs
+    & $command.Path @OpenCLIArgs
   }
 }`;

@@ -1,2 +1,2 @@
-export { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
-export type { OpenClawPluginApi, PluginRuntime } from "openclaw/plugin-sdk/core";
+export { definePluginEntry } from "opencli/plugin-sdk/plugin-entry";
+export type { OpenCLIPluginApi, PluginRuntime } from "opencli/plugin-sdk/core";

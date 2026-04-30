@@ -1,6 +1,6 @@
-import { createChannelRunQueue } from "openclaw/plugin-sdk/channel-lifecycle";
-import type { ClaimableDedupe } from "openclaw/plugin-sdk/persistent-dedupe";
-import { danger } from "openclaw/plugin-sdk/runtime-env";
+import { createChannelRunQueue } from "opencli/plugin-sdk/channel-lifecycle";
+import type { ClaimableDedupe } from "opencli/plugin-sdk/persistent-dedupe";
+import { danger } from "opencli/plugin-sdk/runtime-env";
 import {
   commitDiscordInboundReplay,
   createDiscordInboundReplayGuard,

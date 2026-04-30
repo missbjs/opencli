@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { ChannelPlugin } from "../../channels/plugins/types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../../config/types.opencli.js";
 import { setActivePluginRegistry } from "../../plugins/runtime.js";
 import {
   createChannelTestPluginBase,
@@ -130,7 +130,7 @@ beforeEach(() => {
 
 function buildParams(
   commandBodyNormalized: string,
-  cfgOverrides: Partial<OpenClawConfig> = {},
+  cfgOverrides: Partial<OpenCLIConfig> = {},
 ): HandleCommandsParams {
   return {
     cfg: {
@@ -143,7 +143,7 @@ function buildParams(
         text: true,
       },
       ...cfgOverrides,
-    } as OpenClawConfig,
+    } as OpenCLIConfig,
     ctx: {
       Surface: "discord",
     },
@@ -235,19 +235,19 @@ describe("handleModelsCommand", () => {
     expect(result?.reply?.text).not.toContain("- google-gemini-cli");
   });
 
-  it("labels the default runtime choice as OpenClaw Pi", async () => {
+  it("labels the default runtime choice as OpenCLI Pi", async () => {
     const data = await buildModelsProviderData({
       agents: {
         defaults: {
           model: { primary: "openai/gpt-5.5" },
         },
       },
-    } as OpenClawConfig);
+    } as OpenCLIConfig);
 
     expect(data.runtimeChoicesByProvider?.get("openai")?.[0]).toEqual({
       id: "pi",
-      label: "OpenClaw Pi Default",
-      description: "Use the built-in OpenClaw Pi runtime.",
+      label: "OpenCLI Pi Default",
+      description: "Use the built-in OpenCLI Pi runtime.",
     });
   });
 
@@ -315,7 +315,7 @@ describe("handleModelsCommand", () => {
           },
         },
       },
-    } satisfies Partial<OpenClawConfig>;
+    } satisfies Partial<OpenCLIConfig>;
 
     const defaultProviderResult = await handleModelsCommand(
       buildParams("/models openai-codex", cfg),

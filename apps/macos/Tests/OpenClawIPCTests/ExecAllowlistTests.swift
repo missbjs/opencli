@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import OpenClaw
+@testable import OpenCLI
 
 /// These cases cover optional `security=allowlist` behavior.
 /// Default install posture remains deny-by-default for exec on macOS node-host.
@@ -111,10 +111,10 @@ struct ExecAllowlistTests {
     }
 
     @Test func `resolve for allowlist splits shell chains`() {
-        let command = ["/bin/sh", "-lc", "echo allowlisted && /usr/bin/touch /tmp/openclaw-allowlist-test"]
+        let command = ["/bin/sh", "-lc", "echo allowlisted && /usr/bin/touch /tmp/opencli-allowlist-test"]
         let resolutions = ExecCommandResolution.resolveForAllowlist(
             command: command,
-            rawCommand: "echo allowlisted && /usr/bin/touch /tmp/openclaw-allowlist-test",
+            rawCommand: "echo allowlisted && /usr/bin/touch /tmp/opencli-allowlist-test",
             cwd: nil,
             env: ["PATH": "/usr/bin:/bin"])
         #expect(resolutions.count == 2)
@@ -123,8 +123,8 @@ struct ExecAllowlistTests {
     }
 
     @Test func `resolve for allowlist uses wrapper argv payload even with canonical raw command`() {
-        let command = ["/bin/sh", "-lc", "echo allowlisted && /usr/bin/touch /tmp/openclaw-allowlist-test"]
-        let canonicalRaw = "/bin/sh -lc \"echo allowlisted && /usr/bin/touch /tmp/openclaw-allowlist-test\""
+        let command = ["/bin/sh", "-lc", "echo allowlisted && /usr/bin/touch /tmp/opencli-allowlist-test"]
+        let canonicalRaw = "/bin/sh -lc \"echo allowlisted && /usr/bin/touch /tmp/opencli-allowlist-test\""
         let resolutions = ExecCommandResolution.resolveForAllowlist(
             command: command,
             rawCommand: canonicalRaw,
@@ -169,30 +169,30 @@ struct ExecAllowlistTests {
     }
 
     @Test func `resolve for allowlist fails closed on command substitution`() {
-        let command = ["/bin/sh", "-lc", "echo $(/usr/bin/touch /tmp/openclaw-allowlist-test-subst)"]
+        let command = ["/bin/sh", "-lc", "echo $(/usr/bin/touch /tmp/opencli-allowlist-test-subst)"]
         let resolutions = ExecCommandResolution.resolveForAllowlist(
             command: command,
-            rawCommand: "echo $(/usr/bin/touch /tmp/openclaw-allowlist-test-subst)",
+            rawCommand: "echo $(/usr/bin/touch /tmp/opencli-allowlist-test-subst)",
             cwd: nil,
             env: ["PATH": "/usr/bin:/bin"])
         #expect(resolutions.isEmpty)
     }
 
     @Test func `resolve for allowlist fails closed on quoted command substitution`() {
-        let command = ["/bin/sh", "-lc", "echo \"ok $(/usr/bin/touch /tmp/openclaw-allowlist-test-quoted-subst)\""]
+        let command = ["/bin/sh", "-lc", "echo \"ok $(/usr/bin/touch /tmp/opencli-allowlist-test-quoted-subst)\""]
         let resolutions = ExecCommandResolution.resolveForAllowlist(
             command: command,
-            rawCommand: "echo \"ok $(/usr/bin/touch /tmp/openclaw-allowlist-test-quoted-subst)\"",
+            rawCommand: "echo \"ok $(/usr/bin/touch /tmp/opencli-allowlist-test-quoted-subst)\"",
             cwd: nil,
             env: ["PATH": "/usr/bin:/bin"])
         #expect(resolutions.isEmpty)
     }
 
     @Test func `resolve for allowlist fails closed on line-continued command substitution`() {
-        let command = ["/bin/sh", "-lc", "echo $\\\n(/usr/bin/touch /tmp/openclaw-allowlist-test-line-cont-subst)"]
+        let command = ["/bin/sh", "-lc", "echo $\\\n(/usr/bin/touch /tmp/opencli-allowlist-test-line-cont-subst)"]
         let resolutions = ExecCommandResolution.resolveForAllowlist(
             command: command,
-            rawCommand: "echo $\\\n(/usr/bin/touch /tmp/openclaw-allowlist-test-line-cont-subst)",
+            rawCommand: "echo $\\\n(/usr/bin/touch /tmp/opencli-allowlist-test-line-cont-subst)",
             cwd: nil,
             env: ["PATH": "/usr/bin:/bin"])
         #expect(resolutions.isEmpty)
@@ -202,11 +202,11 @@ struct ExecAllowlistTests {
         let command = [
             "/bin/sh",
             "-lc",
-            "echo ok && $\\\n(/usr/bin/touch /tmp/openclaw-allowlist-test-chained-line-cont-subst)",
+            "echo ok && $\\\n(/usr/bin/touch /tmp/opencli-allowlist-test-chained-line-cont-subst)",
         ]
         let resolutions = ExecCommandResolution.resolveForAllowlist(
             command: command,
-            rawCommand: "echo ok && $\\\n(/usr/bin/touch /tmp/openclaw-allowlist-test-chained-line-cont-subst)",
+            rawCommand: "echo ok && $\\\n(/usr/bin/touch /tmp/opencli-allowlist-test-chained-line-cont-subst)",
             cwd: nil,
             env: ["PATH": "/usr/bin:/bin"])
         #expect(resolutions.isEmpty)
@@ -277,7 +277,7 @@ struct ExecAllowlistTests {
             "/usr/bin/env",
             "/bin/sh",
             "-lc",
-            "echo allowlisted && /usr/bin/touch /tmp/openclaw-allowlist-test",
+            "echo allowlisted && /usr/bin/touch /tmp/opencli-allowlist-test",
         ]
         let resolutions = ExecCommandResolution.resolveForAllowlist(
             command: command,
@@ -290,10 +290,10 @@ struct ExecAllowlistTests {
     }
 
     @Test func `resolve for allowlist unwraps env dispatch wrappers inside shell segments`() {
-        let command = ["/bin/sh", "-lc", "env /usr/bin/touch /tmp/openclaw-allowlist-test"]
+        let command = ["/bin/sh", "-lc", "env /usr/bin/touch /tmp/opencli-allowlist-test"]
         let resolutions = ExecCommandResolution.resolveForAllowlist(
             command: command,
-            rawCommand: "env /usr/bin/touch /tmp/openclaw-allowlist-test",
+            rawCommand: "env /usr/bin/touch /tmp/opencli-allowlist-test",
             cwd: nil,
             env: ["PATH": "/usr/bin:/bin"])
         #expect(resolutions.count == 1)
@@ -302,10 +302,10 @@ struct ExecAllowlistTests {
     }
 
     @Test func `resolve for allowlist preserves env assignments inside shell segments`() {
-        let command = ["/bin/sh", "-lc", "env FOO=bar /usr/bin/touch /tmp/openclaw-allowlist-test"]
+        let command = ["/bin/sh", "-lc", "env FOO=bar /usr/bin/touch /tmp/opencli-allowlist-test"]
         let resolutions = ExecCommandResolution.resolveForAllowlist(
             command: command,
-            rawCommand: "env FOO=bar /usr/bin/touch /tmp/openclaw-allowlist-test",
+            rawCommand: "env FOO=bar /usr/bin/touch /tmp/opencli-allowlist-test",
             cwd: nil,
             env: ["PATH": "/usr/bin:/bin"])
         #expect(resolutions.count == 1)

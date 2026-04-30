@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { HEARTBEAT_TOKEN } from "../auto-reply/tokens.js";
 import { loadCommitmentStore, saveCommitmentStore } from "../commitments/store.js";
 import type { CommitmentRecord } from "../commitments/types.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { OpenCLIConfig } from "../config/config.js";
 import { runHeartbeatOnce } from "./heartbeat-runner.js";
 import { installHeartbeatRunnerTestRuntime } from "./heartbeat-runner.test-harness.js";
 import { seedSessionStore, withTempHeartbeatSandbox } from "./heartbeat-runner.test-utils.js";
@@ -51,9 +51,9 @@ describe("runHeartbeatOnce commitments", () => {
 
   async function setupCommitmentCase(params?: { replyText?: string }) {
     return await withTempHeartbeatSandbox(async ({ tmpDir, storePath, replySpy }) => {
-      vi.stubEnv("OPENCLAW_STATE_DIR", tmpDir);
+      vi.stubEnv("OPENCLI_STATE_DIR", tmpDir);
       const sessionKey = "agent:main:telegram:user-155462274";
-      const cfg: OpenClawConfig = {
+      const cfg: OpenCLIConfig = {
         agents: {
           defaults: {
             workspace: tmpDir,

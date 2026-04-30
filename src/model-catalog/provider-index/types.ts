@@ -1,20 +1,20 @@
 import type { ModelCatalogProvider } from "../types.js";
 
-export type OpenClawProviderIndexPluginInstall = {
+export type OpenCLIProviderIndexPluginInstall = {
   npmSpec: string;
   defaultChoice?: "npm";
   minHostVersion?: string;
   expectedIntegrity?: string;
 };
 
-export type OpenClawProviderIndexPlugin = {
+export type OpenCLIProviderIndexPlugin = {
   id: string;
   package?: string;
   source?: string;
-  install?: OpenClawProviderIndexPluginInstall;
+  install?: OpenCLIProviderIndexPluginInstall;
 };
 
-export type OpenClawProviderIndexProviderAuthChoice = {
+export type OpenCLIProviderIndexProviderAuthChoice = {
   method: string;
   choiceId: string;
   choiceLabel: string;
@@ -31,17 +31,17 @@ export type OpenClawProviderIndexProviderAuthChoice = {
   onboardingScopes?: readonly ("text-inference" | "image-generation")[];
 };
 
-export type OpenClawProviderIndexProvider = {
+export type OpenCLIProviderIndexProvider = {
   id: string;
   name: string;
-  plugin: OpenClawProviderIndexPlugin;
+  plugin: OpenCLIProviderIndexPlugin;
   docs?: string;
   categories?: readonly string[];
-  authChoices?: readonly OpenClawProviderIndexProviderAuthChoice[];
+  authChoices?: readonly OpenCLIProviderIndexProviderAuthChoice[];
   previewCatalog?: ModelCatalogProvider;
 };
 
-export type OpenClawProviderIndex = {
+export type OpenCLIProviderIndex = {
   version: number;
-  providers: Readonly<Record<string, OpenClawProviderIndexProvider>>;
+  providers: Readonly<Record<string, OpenCLIProviderIndexProvider>>;
 };

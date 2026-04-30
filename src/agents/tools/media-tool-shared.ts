@@ -1,6 +1,6 @@
 import { type Api, type Model } from "@mariozechner/pi-ai";
 import type { AgentModelConfig } from "../../config/types.agents-shared.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../../config/types.opencli.js";
 import type { SsrFPolicy } from "../../infra/net/ssrf.js";
 import { getDefaultLocalRoots } from "../../media/web-media.js";
 import { readSnakeCaseParamRaw } from "../../param-key.js";
@@ -57,30 +57,30 @@ type TaskRunDetailHandle = {
 };
 
 export function applyImageModelConfigDefaults(
-  cfg: OpenClawConfig | undefined,
+  cfg: OpenCLIConfig | undefined,
   imageModelConfig: ImageModelConfig,
-): OpenClawConfig | undefined {
+): OpenCLIConfig | undefined {
   return applyAgentDefaultModelConfig(cfg, "imageModel", imageModelConfig);
 }
 
 export function applyImageGenerationModelConfigDefaults(
-  cfg: OpenClawConfig | undefined,
+  cfg: OpenCLIConfig | undefined,
   imageGenerationModelConfig: ToolModelConfig,
-): OpenClawConfig | undefined {
+): OpenCLIConfig | undefined {
   return applyAgentDefaultModelConfig(cfg, "imageGenerationModel", imageGenerationModelConfig);
 }
 
 export function applyVideoGenerationModelConfigDefaults(
-  cfg: OpenClawConfig | undefined,
+  cfg: OpenCLIConfig | undefined,
   videoGenerationModelConfig: ToolModelConfig,
-): OpenClawConfig | undefined {
+): OpenCLIConfig | undefined {
   return applyAgentDefaultModelConfig(cfg, "videoGenerationModel", videoGenerationModelConfig);
 }
 
 export function applyMusicGenerationModelConfigDefaults(
-  cfg: OpenClawConfig | undefined,
+  cfg: OpenCLIConfig | undefined,
   musicGenerationModelConfig: ToolModelConfig,
-): OpenClawConfig | undefined {
+): OpenCLIConfig | undefined {
   return applyAgentDefaultModelConfig(cfg, "musicGenerationModel", musicGenerationModelConfig);
 }
 
@@ -99,16 +99,16 @@ export function readGenerationTimeoutMs(args: Record<string, unknown>): number |
 }
 
 export function resolveRemoteMediaSsrfPolicy(
-  cfg: OpenClawConfig | undefined,
+  cfg: OpenCLIConfig | undefined,
 ): SsrFPolicy | undefined {
   return cfg?.tools?.web?.fetch?.ssrfPolicy;
 }
 
 function applyAgentDefaultModelConfig(
-  cfg: OpenClawConfig | undefined,
+  cfg: OpenCLIConfig | undefined,
   key: "imageModel" | "imageGenerationModel" | "videoGenerationModel" | "musicGenerationModel",
   modelConfig: ToolModelConfig,
-): OpenClawConfig | undefined {
+): OpenCLIConfig | undefined {
   if (!cfg) {
     return undefined;
   }
@@ -128,7 +128,7 @@ type CapabilityProvider = {
   id: string;
   aliases?: string[];
   defaultModel?: string;
-  isConfigured?: (ctx: { cfg?: OpenClawConfig; agentDir?: string }) => boolean;
+  isConfigured?: (ctx: { cfg?: OpenCLIConfig; agentDir?: string }) => boolean;
 };
 
 export function findCapabilityProviderById<T extends CapabilityProvider>(params: {
@@ -147,7 +147,7 @@ export function isCapabilityProviderConfigured<T extends CapabilityProvider>(par
   providers: T[];
   provider?: T;
   providerId?: string;
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   agentDir?: string;
 }): boolean {
   const provider =
@@ -188,7 +188,7 @@ export function resolveSelectedCapabilityProvider<T extends CapabilityProvider>(
 }
 
 export function resolveCapabilityModelCandidatesForTool(params: {
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   agentDir?: string;
   providers: CapabilityProvider[];
 }): string[] {
@@ -244,7 +244,7 @@ export function resolveCapabilityModelCandidatesForTool(params: {
 }
 
 export function resolveCapabilityModelConfigForTool(params: {
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   agentDir?: string;
   modelConfig?: AgentModelConfig;
   providers: CapabilityProvider[];
@@ -459,7 +459,7 @@ export function resolveModelFromRegistry(params: {
 
 export async function resolveModelRuntimeApiKey(params: {
   model: Model<Api>;
-  cfg: OpenClawConfig | undefined;
+  cfg: OpenCLIConfig | undefined;
   agentDir: string;
   authStorage: {
     setRuntimeApiKey: (provider: string, apiKey: string) => void;

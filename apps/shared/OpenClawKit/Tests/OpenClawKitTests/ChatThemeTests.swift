@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import OpenClawChatUI
+@testable import OpenCLIChatUI
 
 #if os(macOS)
 import AppKit
@@ -19,8 +19,8 @@ private func luminance(_ color: NSColor) throws -> CGFloat {
         let lightAppearance = try #require(NSAppearance(named: .aqua))
         let darkAppearance = try #require(NSAppearance(named: .darkAqua))
 
-        let lightResolved = OpenClawChatTheme.resolvedAssistantBubbleColor(for: lightAppearance)
-        let darkResolved = OpenClawChatTheme.resolvedAssistantBubbleColor(for: darkAppearance)
+        let lightResolved = OpenCLIChatTheme.resolvedAssistantBubbleColor(for: lightAppearance)
+        let darkResolved = OpenCLIChatTheme.resolvedAssistantBubbleColor(for: darkAppearance)
         #expect(try luminance(lightResolved) > luminance(darkResolved))
         #else
         #expect(Bool(true))

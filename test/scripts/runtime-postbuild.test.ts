@@ -24,7 +24,7 @@ describe("runtime postbuild static assets", () => {
   });
 
   it("copies declared static assets into dist", async () => {
-    const rootDir = createTempDir("openclaw-runtime-postbuild-");
+    const rootDir = createTempDir("opencli-runtime-postbuild-");
     const src = "extensions/acpx/src/runtime-internals/mcp-proxy.mjs";
     const dest = "dist/extensions/acpx/mcp-proxy.mjs";
     const sourcePath = path.join(rootDir, src);
@@ -41,7 +41,7 @@ describe("runtime postbuild static assets", () => {
   });
 
   it("warns when a declared static asset is missing", async () => {
-    const rootDir = createTempDir("openclaw-runtime-postbuild-");
+    const rootDir = createTempDir("opencli-runtime-postbuild-");
     const warn = vi.fn();
 
     copyStaticExtensionAssets({
@@ -56,7 +56,7 @@ describe("runtime postbuild static assets", () => {
   });
 
   it("writes stable aliases for hashed root runtime modules", async () => {
-    const rootDir = createTempDir("openclaw-runtime-postbuild-");
+    const rootDir = createTempDir("opencli-runtime-postbuild-");
     const distDir = path.join(rootDir, "dist");
     await fs.mkdir(distDir, { recursive: true });
     await fs.writeFile(
@@ -87,7 +87,7 @@ describe("runtime postbuild static assets", () => {
   });
 
   it("writes legacy CLI exit compatibility chunks", async () => {
-    const rootDir = createTempDir("openclaw-runtime-postbuild-");
+    const rootDir = createTempDir("opencli-runtime-postbuild-");
 
     writeLegacyCliExitCompatChunks({ rootDir });
 

@@ -1,6 +1,6 @@
 import { posixAgentWorkspaceScript, windowsAgentWorkspaceScript } from "./agent-workspace.ts";
 import { shellQuote } from "./host-command.ts";
-import { psSingleQuote, windowsOpenClawResolver } from "./powershell.ts";
+import { psSingleQuote, windowsOpenCLIResolver } from "./powershell.ts";
 import type { ProviderAuth } from "./types.ts";
 
 export interface NpmUpdateScriptInput {
@@ -15,7 +15,7 @@ scrub_future_plugin_entries() {
   python3 - <<'PY'
 import json
 from pathlib import Path
-path = Path.home() / ".openclaw" / "openclaw.json"
+path = Path.home() / ".opencli" / "opencli.json"
 if not path.exists():
     raise SystemExit(0)
 try:
@@ -35,28 +35,28 @@ if isinstance(allow, list):
 path.write_text(json.dumps(config, indent=2) + "\n")
 PY
 }
-stop_openclaw_gateway_processes() {
-  OPENCLAW_DISABLE_BUNDLED_PLUGINS=1 /opt/homebrew/bin/openclaw gateway stop || true
-  pkill -f 'openclaw.*gateway' >/dev/null 2>&1 || true
+stop_opencli_gateway_processes() {
+  OPENCLI_DISABLE_BUNDLED_PLUGINS=1 /opt/homebrew/bin/opencli gateway stop || true
+  pkill -f 'opencli.*gateway' >/dev/null 2>&1 || true
 }
 scrub_future_plugin_entries
-stop_openclaw_gateway_processes
-OPENCLAW_DISABLE_BUNDLED_PLUGINS=1 /opt/homebrew/bin/openclaw update --tag ${shellQuote(input.updateTarget)} --yes --json
-${posixVersionCheck("/opt/homebrew/bin/openclaw", input.expectedNeedle)}
-/opt/homebrew/bin/openclaw gateway restart
-/opt/homebrew/bin/openclaw gateway status --deep --require-rpc
-/opt/homebrew/bin/openclaw models set ${shellQuote(input.auth.modelId)}
-/opt/homebrew/bin/openclaw config set agents.defaults.skipBootstrap true --strict-json
+stop_opencli_gateway_processes
+OPENCLI_DISABLE_BUNDLED_PLUGINS=1 /opt/homebrew/bin/opencli update --tag ${shellQuote(input.updateTarget)} --yes --json
+${posixVersionCheck("/opt/homebrew/bin/opencli", input.expectedNeedle)}
+/opt/homebrew/bin/opencli gateway restart
+/opt/homebrew/bin/opencli gateway status --deep --require-rpc
+/opt/homebrew/bin/opencli models set ${shellQuote(input.auth.modelId)}
+/opt/homebrew/bin/opencli config set agents.defaults.skipBootstrap true --strict-json
 ${posixAgentWorkspaceScript("Parallels npm update smoke test assistant.")}
-${input.auth.apiKeyEnv}=${shellQuote(input.auth.apiKeyValue)} /opt/homebrew/bin/openclaw agent --local --agent main --session-id parallels-npm-update-macos --message 'Reply with exact ASCII text OK only.' --json`;
+${input.auth.apiKeyEnv}=${shellQuote(input.auth.apiKeyValue)} /opt/homebrew/bin/opencli agent --local --agent main --session-id parallels-npm-update-macos --message 'Reply with exact ASCII text OK only.' --json`;
 }
 
 export function windowsUpdateScript(input: NpmUpdateScriptInput): string {
   return `$ErrorActionPreference = 'Stop'
 $PSNativeCommandUseErrorActionPreference = $false
-${windowsOpenClawResolver}
+${windowsOpenCLIResolver}
 function Remove-FuturePluginEntries {
-  $configPath = Join-Path $env:USERPROFILE '.openclaw\\openclaw.json'
+  $configPath = Join-Path $env:USERPROFILE '.opencli\\opencli.json'
   if (-not (Test-Path $configPath)) { return }
   try { $config = Get-Content $configPath -Raw | ConvertFrom-Json -AsHashtable } catch { return }
   $plugins = $config['plugins']
@@ -73,27 +73,27 @@ function Remove-FuturePluginEntries {
   }
   $config | ConvertTo-Json -Depth 100 | Set-Content -Path $configPath -Encoding UTF8
 }
-function Stop-OpenClawGatewayProcesses {
-  Invoke-OpenClaw gateway stop *>&1 | Out-Host
+function Stop-OpenCLIGatewayProcesses {
+  Invoke-OpenCLI gateway stop *>&1 | Out-Host
   Get-CimInstance Win32_Process -ErrorAction SilentlyContinue |
-    Where-Object { $_.CommandLine -match 'openclaw.*gateway' } |
+    Where-Object { $_.CommandLine -match 'opencli.*gateway' } |
     ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
 }
 Remove-FuturePluginEntries
-Stop-OpenClawGatewayProcesses
-$env:OPENCLAW_DISABLE_BUNDLED_PLUGINS = '1'
-Invoke-OpenClaw update --tag ${psSingleQuote(input.updateTarget)} --yes --json
-if ($LASTEXITCODE -ne 0) { throw "openclaw update failed with exit code $LASTEXITCODE" }
-$version = Invoke-OpenClaw --version
+Stop-OpenCLIGatewayProcesses
+$env:OPENCLI_DISABLE_BUNDLED_PLUGINS = '1'
+Invoke-OpenCLI update --tag ${psSingleQuote(input.updateTarget)} --yes --json
+if ($LASTEXITCODE -ne 0) { throw "opencli update failed with exit code $LASTEXITCODE" }
+$version = Invoke-OpenCLI --version
 $version
 ${windowsVersionCheck(input.expectedNeedle)}
-Invoke-OpenClaw gateway restart
-Invoke-OpenClaw gateway status --deep --require-rpc
-Invoke-OpenClaw models set ${psSingleQuote(input.auth.modelId)}
-Invoke-OpenClaw config set agents.defaults.skipBootstrap true --strict-json
+Invoke-OpenCLI gateway restart
+Invoke-OpenCLI gateway status --deep --require-rpc
+Invoke-OpenCLI models set ${psSingleQuote(input.auth.modelId)}
+Invoke-OpenCLI config set agents.defaults.skipBootstrap true --strict-json
 ${windowsAgentWorkspaceScript("Parallels npm update smoke test assistant.")}
 Set-Item -Path ('Env:' + ${psSingleQuote(input.auth.apiKeyEnv)}) -Value ${psSingleQuote(input.auth.apiKeyValue)}
-Invoke-OpenClaw agent --local --agent main --session-id parallels-npm-update-windows --message 'Reply with exact ASCII text OK only.' --json`;
+Invoke-OpenCLI agent --local --agent main --session-id parallels-npm-update-windows --message 'Reply with exact ASCII text OK only.' --json`;
 }
 
 export function linuxUpdateScript(input: NpmUpdateScriptInput): string {
@@ -102,7 +102,7 @@ scrub_future_plugin_entries() {
   node - <<'JS'
 const fs = require("node:fs");
 const path = require("node:path");
-const configPath = path.join(process.env.HOME || "/root", ".openclaw", "openclaw.json");
+const configPath = path.join(process.env.HOME || "/root", ".opencli", "opencli.json");
 if (!fs.existsSync(configPath)) process.exit(0);
 let config;
 try { config = JSON.parse(fs.readFileSync(configPath, "utf8")); } catch { process.exit(0); }
@@ -118,20 +118,20 @@ if (Array.isArray(plugins.allow)) {
 fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + "\n");
 JS
 }
-stop_openclaw_gateway_processes() {
-  OPENCLAW_DISABLE_BUNDLED_PLUGINS=1 openclaw gateway stop || true
-  pkill -f 'openclaw.*gateway' >/dev/null 2>&1 || true
+stop_opencli_gateway_processes() {
+  OPENCLI_DISABLE_BUNDLED_PLUGINS=1 opencli gateway stop || true
+  pkill -f 'opencli.*gateway' >/dev/null 2>&1 || true
 }
 scrub_future_plugin_entries
-stop_openclaw_gateway_processes
-OPENCLAW_DISABLE_BUNDLED_PLUGINS=1 openclaw update --tag ${shellQuote(input.updateTarget)} --yes --json
-${posixVersionCheck("openclaw", input.expectedNeedle)}
-openclaw gateway restart
-openclaw gateway status --deep --require-rpc
-openclaw models set ${shellQuote(input.auth.modelId)}
-openclaw config set agents.defaults.skipBootstrap true --strict-json
+stop_opencli_gateway_processes
+OPENCLI_DISABLE_BUNDLED_PLUGINS=1 opencli update --tag ${shellQuote(input.updateTarget)} --yes --json
+${posixVersionCheck("opencli", input.expectedNeedle)}
+opencli gateway restart
+opencli gateway status --deep --require-rpc
+opencli models set ${shellQuote(input.auth.modelId)}
+opencli config set agents.defaults.skipBootstrap true --strict-json
 ${posixAgentWorkspaceScript("Parallels npm update smoke test assistant.")}
-${input.auth.apiKeyEnv}=${shellQuote(input.auth.apiKeyValue)} openclaw agent --local --agent main --session-id parallels-npm-update-linux --message 'Reply with exact ASCII text OK only.' --json`;
+${input.auth.apiKeyEnv}=${shellQuote(input.auth.apiKeyValue)} opencli agent --local --agent main --session-id parallels-npm-update-linux --message 'Reply with exact ASCII text OK only.' --json`;
 }
 
 function posixVersionCheck(command: string, expectedNeedle: string): string {

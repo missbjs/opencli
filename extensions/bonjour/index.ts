@@ -1,25 +1,25 @@
-import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
+import { definePluginEntry } from "opencli/plugin-sdk/plugin-entry";
 import {
   registerUncaughtExceptionHandler,
   registerUnhandledRejectionHandler,
-} from "openclaw/plugin-sdk/runtime";
+} from "opencli/plugin-sdk/runtime";
 import { startGatewayBonjourAdvertiser } from "./src/advertiser.js";
 
 function formatBonjourInstanceName(displayName: string) {
   const trimmed = displayName.trim();
   if (!trimmed) {
-    return "OpenClaw";
+    return "OpenCLI";
   }
-  if (/openclaw/i.test(trimmed)) {
+  if (/opencli/i.test(trimmed)) {
     return trimmed;
   }
-  return `${trimmed} (OpenClaw)`;
+  return `${trimmed} (OpenCLI)`;
 }
 
 export default definePluginEntry({
   id: "bonjour",
   name: "Bonjour Gateway Discovery",
-  description: "Advertise the local OpenClaw gateway over Bonjour/mDNS.",
+  description: "Advertise the local OpenCLI gateway over Bonjour/mDNS.",
   register(api) {
     api.registerGatewayDiscoveryService({
       id: "bonjour",

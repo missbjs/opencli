@@ -99,7 +99,7 @@ describe("plugins cli list", () => {
     expect(runtimeLogs.join("\n")).toContain("State:");
     expect(runtimeLogs.join("\n")).toContain("stale");
     expect(runtimeLogs.join("\n")).toContain("Refresh reasons:");
-    expect(runtimeLogs.join("\n")).toContain("openclaw plugins registry --refresh");
+    expect(runtimeLogs.join("\n")).toContain("opencli plugins registry --refresh");
   });
 
   it("refreshes the persisted plugin registry on request", async () => {
@@ -122,12 +122,12 @@ describe("plugins cli list", () => {
 
   it("shows conversation-access hook policy in inspect output", async () => {
     buildPluginSnapshotReport.mockReturnValue({
-      plugins: [createPluginRecord({ id: "openclaw-mem0", name: "Mem0" })],
+      plugins: [createPluginRecord({ id: "opencli-mem0", name: "Mem0" })],
       diagnostics: [],
     });
     buildPluginInspectReport.mockReturnValue({
       workspaceDir: "/workspace",
-      plugin: createPluginRecord({ id: "openclaw-mem0", name: "Mem0" }),
+      plugin: createPluginRecord({ id: "opencli-mem0", name: "Mem0" }),
       shape: "hook-only",
       capabilityMode: "plain",
       capabilityCount: 1,
@@ -154,11 +154,11 @@ describe("plugins cli list", () => {
       compatibility: [],
     });
 
-    await runPluginsCommand(["plugins", "inspect", "openclaw-mem0"]);
+    await runPluginsCommand(["plugins", "inspect", "opencli-mem0"]);
 
     expect(buildPluginDiagnosticsReport).toHaveBeenCalledWith({
       config: {},
-      onlyPluginIds: ["openclaw-mem0"],
+      onlyPluginIds: ["opencli-mem0"],
     });
     expect(runtimeLogs.join("\n")).toContain("Policy");
     expect(runtimeLogs.join("\n")).toContain("allowConversationAccess: true");

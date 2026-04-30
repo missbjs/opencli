@@ -7,7 +7,7 @@ import { refreshBundledPluginRuntimeMirrorRoot } from "./bundled-runtime-mirror.
 const tempRoots: string[] = [];
 
 function makeTempRoot(): string {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-bundled-runtime-mirror-"));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "opencli-bundled-runtime-mirror-"));
   tempRoots.push(root);
   return root;
 }
@@ -47,7 +47,7 @@ describe("refreshBundledPluginRuntimeMirrorRoot", () => {
     ).toBe(true);
 
     expect(fs.readdirSync(targetRoot).toSorted()).toEqual([
-      ".openclaw-runtime-mirror.json",
+      ".opencli-runtime-mirror.json",
       "new.js",
     ]);
     expect(fs.readFileSync(path.join(targetRoot, "new.js"), "utf8")).toContain("v2");

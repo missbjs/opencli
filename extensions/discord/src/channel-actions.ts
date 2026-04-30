@@ -1,15 +1,15 @@
 import {
   createUnionActionGate,
   listTokenSourcedAccounts,
-} from "openclaw/plugin-sdk/channel-actions";
+} from "opencli/plugin-sdk/channel-actions";
 import type {
   ChannelMessageActionAdapter,
   ChannelMessageActionName,
   ChannelMessageToolDiscovery,
-} from "openclaw/plugin-sdk/channel-contract";
-import type { DiscordActionConfig } from "openclaw/plugin-sdk/config-types";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/text-runtime";
-import { extractToolSend } from "openclaw/plugin-sdk/tool-send";
+} from "opencli/plugin-sdk/channel-contract";
+import type { DiscordActionConfig } from "opencli/plugin-sdk/config-types";
+import { normalizeOptionalString } from "opencli/plugin-sdk/text-runtime";
+import { extractToolSend } from "opencli/plugin-sdk/tool-send";
 import {
   createDiscordActionGate,
   listEnabledDiscordAccounts,

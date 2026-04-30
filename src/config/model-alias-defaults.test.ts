@@ -2,12 +2,12 @@ import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { DEFAULT_CONTEXT_TOKENS } from "../agents/defaults.js";
 import { applyModelDefaults } from "./defaults.js";
-import type { OpenClawConfig } from "./types.js";
+import type { OpenCLIConfig } from "./types.js";
 
 describe("applyModelDefaults", () => {
   beforeEach(() => {
     vi.stubEnv(
-      "OPENCLAW_BUNDLED_PLUGINS_DIR",
+      "OPENCLI_BUNDLED_PLUGINS_DIR",
       path.resolve(import.meta.dirname, "../../extensions"),
     );
   });
@@ -38,7 +38,7 @@ describe("applyModelDefaults", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies OpenCLIConfig;
   }
 
   function buildMistralProviderConfig(overrides?: {
@@ -67,7 +67,7 @@ describe("applyModelDefaults", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies OpenCLIConfig;
   }
 
   it("adds default aliases when models are present", () => {
@@ -80,7 +80,7 @@ describe("applyModelDefaults", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies OpenCLIConfig;
     const next = applyModelDefaults(cfg);
 
     expect(next.agents?.defaults?.models?.["anthropic/claude-opus-4-7"]?.alias).toBe("opus");
@@ -96,7 +96,7 @@ describe("applyModelDefaults", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies OpenCLIConfig;
 
     const next = applyModelDefaults(cfg);
 
@@ -114,7 +114,7 @@ describe("applyModelDefaults", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies OpenCLIConfig;
 
     const next = applyModelDefaults(cfg);
 
@@ -181,7 +181,7 @@ describe("applyModelDefaults", () => {
           },
         },
       },
-    } satisfies OpenClawConfig;
+    } satisfies OpenCLIConfig;
 
     const next = applyModelDefaults(cfg);
     const provider = next.models?.providers?.anthropic;

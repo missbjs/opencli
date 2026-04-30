@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { WebSocketServer, type RawData, type WebSocket } from "ws";
 import { installGatewayTestHooks, startServer } from "../../../src/gateway/test-helpers.js";
 import { emitAgentEvent, registerAgentRunContext } from "../../../src/infra/agent-events.js";
-import { GatewayClientTransport, OpenClaw } from "./index.js";
+import { GatewayClientTransport, OpenCLI } from "./index.js";
 
 type JsonObject = Record<string, unknown>;
 
@@ -189,7 +189,7 @@ async function createFakeGateway(port = 0): Promise<{ url: string; close: () => 
   };
 }
 
-describe("OpenClaw SDK websocket e2e", () => {
+describe("OpenCLI SDK websocket e2e", () => {
   afterEach(async () => {
     await Promise.all(
       servers.splice(0).map(
@@ -208,7 +208,7 @@ describe("OpenClaw SDK websocket e2e", () => {
       deviceIdentity: null,
       requestTimeoutMs: 2_000,
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new OpenCLI({ transport });
     try {
       const agent = await oc.agents.get("main");
       const run = await agent.run({
@@ -279,7 +279,7 @@ describe("OpenClaw SDK websocket e2e", () => {
   });
 });
 
-describe("OpenClaw SDK real Gateway e2e", () => {
+describe("OpenCLI SDK real Gateway e2e", () => {
   installGatewayTestHooks({ scope: "test" });
 
   it("streams real Gateway agent events", async () => {
@@ -291,7 +291,7 @@ describe("OpenClaw SDK real Gateway e2e", () => {
       deviceIdentity: null,
       requestTimeoutMs: 2_000,
     });
-    const oc = new OpenClaw({ transport });
+    const oc = new OpenCLI({ transport });
     const runId = "sdk-real-gateway-run";
 
     try {

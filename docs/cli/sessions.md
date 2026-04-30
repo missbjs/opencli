@@ -1,21 +1,21 @@
 ---
-summary: "CLI reference for `openclaw sessions` (list stored sessions + usage)"
+summary: "CLI reference for `opencli sessions` (list stored sessions + usage)"
 read_when:
   - You want to list stored sessions and see recent activity
 title: "Sessions"
 ---
 
-# `openclaw sessions`
+# `opencli sessions`
 
 List stored conversation sessions.
 
 ```bash
-openclaw sessions
-openclaw sessions --agent work
-openclaw sessions --all-agents
-openclaw sessions --active 120
-openclaw sessions --verbose
-openclaw sessions --json
+opencli sessions
+opencli sessions --agent work
+opencli sessions --all-agents
+opencli sessions --active 120
+opencli sessions --verbose
+opencli sessions --json
 ```
 
 Scope selection:
@@ -29,15 +29,15 @@ Scope selection:
 Export a trajectory bundle for a stored session:
 
 ```bash
-openclaw sessions export-trajectory --session-key "agent:main:telegram:direct:123" --workspace .
-openclaw sessions export-trajectory --session-key "agent:main:telegram:direct:123" --output bug-123 --json
+opencli sessions export-trajectory --session-key "agent:main:telegram:direct:123" --workspace .
+opencli sessions export-trajectory --session-key "agent:main:telegram:direct:123" --output bug-123 --json
 ```
 
 This is the command path used by the `/export-trajectory` slash command after
 the owner approves the exec request. The output directory is always resolved
-inside `.openclaw/trajectory-exports/` under the selected workspace.
+inside `.opencli/trajectory-exports/` under the selected workspace.
 
-`openclaw sessions --all-agents` reads configured agent stores. Gateway and ACP
+`opencli sessions --all-agents` reads configured agent stores. Gateway and ACP
 session discovery are broader: they also include disk-only stores found under
 the default `agents/` root or a templated `session.store` root. Those
 discovered stores must resolve to regular `sessions.json` files inside the
@@ -45,14 +45,14 @@ agent root; symlinks and out-of-root paths are skipped.
 
 JSON examples:
 
-`openclaw sessions --all-agents --json`:
+`opencli sessions --all-agents --json`:
 
 ```json
 {
   "path": null,
   "stores": [
-    { "agentId": "main", "path": "/home/user/.openclaw/agents/main/sessions/sessions.json" },
-    { "agentId": "work", "path": "/home/user/.openclaw/agents/work/sessions/sessions.json" }
+    { "agentId": "main", "path": "/home/user/.opencli/agents/main/sessions/sessions.json" },
+    { "agentId": "work", "path": "/home/user/.opencli/agents/work/sessions/sessions.json" }
   ],
   "allAgents": true,
   "count": 2,
@@ -69,17 +69,17 @@ JSON examples:
 Run maintenance now (instead of waiting for the next write cycle):
 
 ```bash
-openclaw sessions cleanup --dry-run
-openclaw sessions cleanup --agent work --dry-run
-openclaw sessions cleanup --all-agents --dry-run
-openclaw sessions cleanup --enforce
-openclaw sessions cleanup --enforce --active-key "agent:main:telegram:direct:123"
-openclaw sessions cleanup --json
+opencli sessions cleanup --dry-run
+opencli sessions cleanup --agent work --dry-run
+opencli sessions cleanup --all-agents --dry-run
+opencli sessions cleanup --enforce
+opencli sessions cleanup --enforce --active-key "agent:main:telegram:direct:123"
+opencli sessions cleanup --json
 ```
 
-`openclaw sessions cleanup` uses `session.maintenance` settings from config:
+`opencli sessions cleanup` uses `session.maintenance` settings from config:
 
-- Scope note: `openclaw sessions cleanup` maintains session stores, transcripts, and trajectory sidecars. It does not prune cron run logs (`cron/runs/<jobId>.jsonl`), which are managed by `cron.runLog.maxBytes` and `cron.runLog.keepLines` in [Cron configuration](/automation/cron-jobs#configuration) and explained in [Cron maintenance](/automation/cron-jobs#maintenance).
+- Scope note: `opencli sessions cleanup` maintains session stores, transcripts, and trajectory sidecars. It does not prune cron run logs (`cron/runs/<jobId>.jsonl`), which are managed by `cron.runLog.maxBytes` and `cron.runLog.keepLines` in [Cron configuration](/automation/cron-jobs#configuration) and explained in [Cron maintenance](/automation/cron-jobs#maintenance).
 
 - `--dry-run`: preview how many entries would be pruned/capped without writing.
   - In text mode, dry-run prints a per-session action table (`Action`, `Key`, `Age`, `Model`, `Flags`) so you can see what would be kept vs removed.
@@ -91,7 +91,7 @@ openclaw sessions cleanup --json
 - `--store <path>`: run against a specific `sessions.json` file.
 - `--json`: print a JSON summary. With `--all-agents`, output includes one summary per store.
 
-`openclaw sessions cleanup --all-agents --dry-run --json`:
+`opencli sessions cleanup --all-agents --dry-run --json`:
 
 ```json
 {
@@ -101,7 +101,7 @@ openclaw sessions cleanup --json
   "stores": [
     {
       "agentId": "main",
-      "storePath": "/home/user/.openclaw/agents/main/sessions/sessions.json",
+      "storePath": "/home/user/.opencli/agents/main/sessions/sessions.json",
       "beforeCount": 120,
       "afterCount": 80,
       "pruned": 40,
@@ -109,7 +109,7 @@ openclaw sessions cleanup --json
     },
     {
       "agentId": "work",
-      "storePath": "/home/user/.openclaw/agents/work/sessions/sessions.json",
+      "storePath": "/home/user/.opencli/agents/work/sessions/sessions.json",
       "beforeCount": 18,
       "afterCount": 18,
       "pruned": 0,

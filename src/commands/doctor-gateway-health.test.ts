@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { OpenCLIConfig } from "../config/config.js";
 
 const callGateway = vi.hoisted(() => vi.fn());
 
@@ -17,7 +17,7 @@ vi.mock("./health.js", () => ({
 import { checkGatewayHealth, probeGatewayMemoryStatus } from "./doctor-gateway-health.js";
 
 describe("checkGatewayHealth", () => {
-  const cfg = {} as OpenClawConfig;
+  const cfg = {} as OpenCLIConfig;
 
   beforeEach(() => {
     callGateway.mockReset();
@@ -61,7 +61,7 @@ describe("checkGatewayHealth", () => {
 });
 
 describe("probeGatewayMemoryStatus", () => {
-  const cfg = {} as OpenClawConfig;
+  const cfg = {} as OpenCLIConfig;
 
   beforeEach(() => {
     callGateway.mockReset();

@@ -16,17 +16,17 @@ warm caches, local build state, and fast feedback.
 
 Testbox is the expensive path. Reach for it deliberately.
 
-OpenClaw maintainers can opt into Testbox-first validation by setting
-`OPENCLAW_TESTBOX=1` in their environment or standing agent rules. This mode is
+OpenCLI maintainers can opt into Testbox-first validation by setting
+`OPENCLI_TESTBOX=1` in their environment or standing agent rules. This mode is
 maintainers-only and requires Blacksmith access.
 
-When `OPENCLAW_TESTBOX=1` is set in OpenClaw:
+When `OPENCLI_TESTBOX=1` is set in OpenCLI:
 
 - Pre-warm a Testbox early for longer, wider, or uncertain work.
 - Prefer Testbox for `pnpm` gates, e2e, package-like proof, and broad suites.
 - Reuse the same Testbox ID for every run command in the same task/session.
 - Use local commands only when the task explicitly sets
-  `OPENCLAW_LOCAL_CHECK_MODE=throttled|full`, or when the user asks for local
+  `OPENCLI_LOCAL_CHECK_MODE=throttled|full`, or when the user asks for local
   proof.
 
 ## Install the CLI
@@ -94,8 +94,8 @@ Prefer Testbox when:
 - you are reproducing CI-only failures
 - you need the exact workflow image/job environment from GitHub Actions
 
-For OpenClaw specifically, normal local iteration stays local unless maintainer
-Testbox mode is enabled with `OPENCLAW_TESTBOX=1`:
+For OpenCLI specifically, normal local iteration stays local unless maintainer
+Testbox mode is enabled with `OPENCLI_TESTBOX=1`:
 
 - `pnpm check:changed`
 - `pnpm test:changed`
@@ -103,9 +103,9 @@ Testbox mode is enabled with `OPENCLAW_TESTBOX=1`:
 - `pnpm test:serial`
 - `pnpm build`
 
-If `OPENCLAW_TESTBOX=1` is enabled, run those same repo commands inside the
+If `OPENCLI_TESTBOX=1` is enabled, run those same repo commands inside the
 warm Testbox. If the user wants laptop-friendly local proof for one command, use
-the explicit escape hatch `OPENCLAW_LOCAL_CHECK_MODE=throttled`.
+the explicit escape hatch `OPENCLI_LOCAL_CHECK_MODE=throttled`.
 
 For installable-package product proof, prefer the GitHub `Package Acceptance`
 workflow over an ad hoc Testbox command. It resolves one package candidate
@@ -128,7 +128,7 @@ Treat `blacksmith testbox list` as diagnostics, not a reusable work queue.
 Listed boxes can be visible at the org/repo level while still being unusable or
 stale for the current local agent lane.
 
-For OpenClaw maintainer Testbox mode, pre-warm at the start of longer or wider
+For OpenCLI maintainer Testbox mode, pre-warm at the start of longer or wider
 tasks:
 
     blacksmith testbox warmup ci-check-testbox.yml --ref main --idle-timeout 90
@@ -144,9 +144,9 @@ Warmup dispatches a GitHub Actions workflow that provisions a VM with the
 full CI environment: dependencies installed, services started, secrets
 injected, and a clean checkout of the repo at the default branch.
 
-In OpenClaw, raw commit SHAs are not reliable dispatch refs for `warmup --ref`;
-use a branch or tag. The build-artifact workflow resolves `openclaw@beta` and
-`openclaw@latest` to SHA cache keys internally.
+In OpenCLI, raw commit SHAs are not reliable dispatch refs for `warmup --ref`;
+use a branch or tag. The build-artifact workflow resolves `opencli@beta` and
+`opencli@latest` to SHA cache keys internally.
 
 Options:
 
@@ -183,21 +183,21 @@ The `run` command automatically waits for the testbox to become ready if
 it is still booting, so you can call `run` immediately after warmup without
 needing to check status first.
 
-In OpenClaw, prefer the guarded runner wrapper so stale/reused ids fail before
+In OpenCLI, prefer the guarded runner wrapper so stale/reused ids fail before
 the Blacksmith CLI spends time syncing or emits a confusing missing-key error:
 
-    pnpm testbox:run --id <ID> -- "OPENCLAW_TESTBOX=1 pnpm check:changed"
+    pnpm testbox:run --id <ID> -- "OPENCLI_TESTBOX=1 pnpm check:changed"
 
 The wrapper refuses to run when the local per-Testbox key is missing or when the
-id was not claimed by this OpenClaw checkout with `pnpm testbox:claim --id
+id was not claimed by this OpenCLI checkout with `pnpm testbox:claim --id
 <ID>`. Treat that as the expected remediation, not as a GitHub account or
 normal SSH-key problem. A local key alone is not enough; a ready box may still
 carry stale rsync state from another lane.
 
 If the agent crashes, the remote box relies on Blacksmith's idle timeout. The
-local OpenClaw claim marker is not deleted automatically, so the wrapper treats
+local OpenCLI claim marker is not deleted automatically, so the wrapper treats
 claims older than 12 hours as stale. Override only for intentional long-running
-work with `OPENCLAW_TESTBOX_CLAIM_TTL_MINUTES=<minutes>`.
+work with `OPENCLI_TESTBOX_CLAIM_TTL_MINUTES=<minutes>`.
 
 Before spending a broad gate on a manually assembled command, you can also run:
 
@@ -287,9 +287,9 @@ services, CI-only runners, or reproducibility against the workflow image.
 
 If the repo says local tests/builds are the normal path, follow the repo.
 
-OpenClaw maintainer exception: if `OPENCLAW_TESTBOX=1` is set by the user or
+OpenCLI maintainer exception: if `OPENCLI_TESTBOX=1` is set by the user or
 agent environment, treat Testbox as the normal validation path for this repo.
-Use `OPENCLAW_LOCAL_CHECK_MODE=throttled|full` as the explicit local escape
+Use `OPENCLI_LOCAL_CHECK_MODE=throttled|full` as the explicit local escape
 hatch.
 
 ## When to use
@@ -308,14 +308,14 @@ checks that need parity or remote state.
 
 ## Workflow
 
-1. Decide whether the repo's local loop is the right default. For OpenClaw,
-   `OPENCLAW_TESTBOX=1` makes Testbox the maintainer default.
+1. Decide whether the repo's local loop is the right default. For OpenCLI,
+   `OPENCLI_TESTBOX=1` makes Testbox the maintainer default.
 2. If Testbox is warranted, warm up early:
    `blacksmith testbox warmup ci-check-testbox.yml --ref main --idle-timeout 90` → save the ID,
    then `pnpm testbox:claim --id <ID>`
 3. Write code while the testbox boots in the background.
 4. Run the remote command when needed:
-   `pnpm testbox:run --id <ID> -- "OPENCLAW_TESTBOX=1 pnpm check:changed"`
+   `pnpm testbox:run --id <ID> -- "OPENCLI_TESTBOX=1 pnpm check:changed"`
 5. If tests fail, fix code and re-run against the same warm box.
 6. If you changed dependency manifests (package.json, etc.), prepend
    the install command: `blacksmith testbox run --id <ID> "npm install && npm test"`
@@ -323,19 +323,19 @@ checks that need parity or remote state.
    check the remote copy before a slow gate:
    `pnpm testbox:run --id <ID> -- "pnpm testbox:sanity"`.
    If it reports missing root files or mass tracked deletions, stop the box and
-   warm a fresh one. Use `OPENCLAW_TESTBOX_ALLOW_MASS_DELETIONS=1` only for an
+   warm a fresh one. Use `OPENCLI_TESTBOX_ALLOW_MASS_DELETIONS=1` only for an
    intentional large deletion PR.
 8. If you need artifacts (coverage reports, build outputs, etc.), download them:
    `blacksmith testbox download --id <ID> coverage/ ./coverage/`
 9. Once green, commit and push.
 
-## OpenClaw full test suite
+## OpenCLI full test suite
 
-For OpenClaw, use the repo package manager and the measured stable full-suite
+For OpenCLI, use the repo package manager and the measured stable full-suite
 profile below. It keeps six Vitest project shards active while limiting each
 shard to one worker to avoid worker OOMs on Testbox:
 
-    blacksmith testbox run --id <ID> "env NODE_OPTIONS=--max-old-space-size=4096 OPENCLAW_TEST_PROJECTS_PARALLEL=6 OPENCLAW_VITEST_MAX_WORKERS=1 pnpm test"
+    blacksmith testbox run --id <ID> "env NODE_OPTIONS=--max-old-space-size=4096 OPENCLI_TEST_PROJECTS_PARALLEL=6 OPENCLI_VITEST_MAX_WORKERS=1 pnpm test"
 
 Observed full-suite time on Blacksmith Testbox is about 3-4 minutes:
 
@@ -404,7 +404,7 @@ timeout is reached). Default timeout is 5m; use `--wait-timeout` for longer
     blacksmith testbox stop --id <ID>
 
 Testboxes automatically shut down after being idle (default: 30 minutes).
-If you need a longer session, increase the timeout at warmup time. For OpenClaw
+If you need a longer session, increase the timeout at warmup time. For OpenCLI
 maintainer work, use 90 minutes for long-running sessions:
 
     blacksmith testbox warmup ci-check-testbox.yml --idle-timeout 90

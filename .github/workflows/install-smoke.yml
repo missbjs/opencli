@@ -11,7 +11,7 @@ on:
         default: false
         type: boolean
       update_baseline_version:
-        description: Baseline openclaw version or dist-tag for installer update smoke
+        description: Baseline opencli version or dist-tag for installer update smoke
         required: false
         default: latest
         type: string
@@ -27,7 +27,7 @@ on:
         default: true
         type: boolean
       update_baseline_version:
-        description: Baseline openclaw version or dist-tag for installer update smoke
+        description: Baseline opencli version or dist-tag for installer update smoke
         required: false
         default: latest
         type: string
@@ -68,20 +68,20 @@ jobs:
       - name: Build install-smoke CI manifest
         id: manifest
         env:
-          OPENCLAW_CI_EVENT_NAME: ${{ github.event_name }}
-          OPENCLAW_CI_WORKFLOW_BUN_GLOBAL_INSTALL_SMOKE: ${{ inputs.run_bun_global_install_smoke || 'false' }}
+          OPENCLI_CI_EVENT_NAME: ${{ github.event_name }}
+          OPENCLI_CI_WORKFLOW_BUN_GLOBAL_INSTALL_SMOKE: ${{ inputs.run_bun_global_install_smoke || 'false' }}
         run: |
-          event_name="${OPENCLAW_CI_EVENT_NAME:-}"
-          workflow_bun_global_install_smoke="${OPENCLAW_CI_WORKFLOW_BUN_GLOBAL_INSTALL_SMOKE:-false}"
+          event_name="${OPENCLI_CI_EVENT_NAME:-}"
+          workflow_bun_global_install_smoke="${OPENCLI_CI_WORKFLOW_BUN_GLOBAL_INSTALL_SMOKE:-false}"
           docs_only=false
           run_fast_install_smoke=true
           run_full_install_smoke=true
           run_bun_global_install_smoke=false
           run_install_smoke=true
           target_sha="$(git rev-parse HEAD)"
-          owner="$(printf '%s' "${GITHUB_REPOSITORY_OWNER:-openclaw}" | tr '[:upper:]' '[:lower:]')"
-          dockerfile_image="ghcr.io/${owner}/openclaw-dockerfile-smoke:${target_sha}"
-          dockerfile_cache_scope="openclaw-dockerfile-smoke"
+          owner="$(printf '%s' "${GITHUB_REPOSITORY_OWNER:-opencli}" | tr '[:upper:]' '[:lower:]')"
+          dockerfile_image="ghcr.io/${owner}/opencli-dockerfile-smoke:${target_sha}"
+          dockerfile_cache_scope="opencli-dockerfile-smoke"
           if [ "$event_name" = "schedule" ]; then
             run_bun_global_install_smoke=true
           elif [ "$event_name" = "workflow_dispatch" ] || [ "$event_name" = "workflow_call" ]; then
@@ -126,17 +126,17 @@ jobs:
           timeout 45m docker buildx build \
             --progress=plain \
             --load \
-            --build-arg OPENCLAW_EXTENSIONS=matrix \
-            -t openclaw-dockerfile-smoke:local \
-            -t openclaw-ext-smoke:local \
+            --build-arg OPENCLI_EXTENSIONS=matrix \
+            -t opencli-dockerfile-smoke:local \
+            -t opencli-ext-smoke:local \
             -f ./Dockerfile \
             .
 
       - name: Run root Dockerfile CLI smoke
         run: |
-          docker run --rm --entrypoint sh openclaw-dockerfile-smoke:local -lc '
-            which openclaw &&
-            openclaw --version &&
+          docker run --rm --entrypoint sh opencli-dockerfile-smoke:local -lc '
+            which opencli &&
+            opencli --version &&
             node -e "
               const fs = require(\"node:fs\");
               const path = require(\"node:path\");
@@ -152,21 +152,21 @@ jobs:
 
       - name: Run agents delete shared workspace Docker CLI smoke
         env:
-          OPENCLAW_AGENTS_DELETE_SHARED_WORKSPACE_E2E_IMAGE: openclaw-dockerfile-smoke:local
-          OPENCLAW_AGENTS_DELETE_SHARED_WORKSPACE_E2E_SKIP_BUILD: "1"
+          OPENCLI_AGENTS_DELETE_SHARED_WORKSPACE_E2E_IMAGE: opencli-dockerfile-smoke:local
+          OPENCLI_AGENTS_DELETE_SHARED_WORKSPACE_E2E_SKIP_BUILD: "1"
         run: bash scripts/e2e/agents-delete-shared-workspace-docker.sh
 
       - name: Run Docker gateway network e2e
         env:
-          OPENCLAW_GATEWAY_NETWORK_E2E_IMAGE: openclaw-dockerfile-smoke:local
-          OPENCLAW_GATEWAY_NETWORK_E2E_SKIP_BUILD: "1"
+          OPENCLI_GATEWAY_NETWORK_E2E_IMAGE: opencli-dockerfile-smoke:local
+          OPENCLI_GATEWAY_NETWORK_E2E_SKIP_BUILD: "1"
         run: bash scripts/e2e/gateway-network-docker.sh
 
       - name: Smoke test Dockerfile with matrix extension build arg
         run: |
-          docker run --rm --entrypoint sh openclaw-ext-smoke:local -lc '
-            which openclaw &&
-            openclaw --version &&
+          docker run --rm --entrypoint sh opencli-ext-smoke:local -lc '
+            which opencli &&
+            opencli --version &&
             node -e "
               const Module = require(\"node:module\");
               const matrixPackage = require(\"/app/extensions/matrix/package.json\");
@@ -181,7 +181,7 @@ jobs:
                 requireFromMatrix.resolve(dep);
               }
               const { spawnSync } = require(\"node:child_process\");
-              const run = spawnSync(\"openclaw\", [\"plugins\", \"list\", \"--json\"], { encoding: \"utf8\" });
+              const run = spawnSync(\"opencli\", [\"plugins\", \"list\", \"--json\"], { encoding: \"utf8\" });
               if (run.status !== 0) {
                 process.stderr.write(run.stderr || run.stdout || \"plugins list failed\\n\");
                 process.exit(run.status ?? 1);
@@ -262,7 +262,7 @@ jobs:
             --push \
             --cache-from "type=gha,scope=${CACHE_SCOPE}" \
             --cache-to "type=gha,scope=${CACHE_SCOPE},mode=max" \
-            --build-arg OPENCLAW_EXTENSIONS=matrix \
+            --build-arg OPENCLI_EXTENSIONS=matrix \
             -t "$IMAGE_REF" \
             -f ./Dockerfile \
             .
@@ -298,7 +298,7 @@ jobs:
 
       - name: Run QR package install smoke
         env:
-          OPENCLAW_QR_SMOKE_FORCE_INSTALL: "1"
+          OPENCLI_QR_SMOKE_FORCE_INSTALL: "1"
         run: bash scripts/e2e/qr-import-docker.sh
 
   root_dockerfile_smokes:
@@ -327,18 +327,18 @@ jobs:
         env:
           IMAGE_REF: ${{ needs.root_dockerfile_image.outputs.image_ref }}
         run: |
-          docker run --rm --entrypoint sh "$IMAGE_REF" -lc 'which openclaw && openclaw --version'
+          docker run --rm --entrypoint sh "$IMAGE_REF" -lc 'which opencli && opencli --version'
 
       - name: Run agents delete shared workspace Docker CLI smoke
         env:
-          OPENCLAW_AGENTS_DELETE_SHARED_WORKSPACE_E2E_IMAGE: ${{ needs.root_dockerfile_image.outputs.image_ref }}
-          OPENCLAW_AGENTS_DELETE_SHARED_WORKSPACE_E2E_SKIP_BUILD: "1"
+          OPENCLI_AGENTS_DELETE_SHARED_WORKSPACE_E2E_IMAGE: ${{ needs.root_dockerfile_image.outputs.image_ref }}
+          OPENCLI_AGENTS_DELETE_SHARED_WORKSPACE_E2E_SKIP_BUILD: "1"
         run: bash scripts/e2e/agents-delete-shared-workspace-docker.sh
 
       - name: Run Docker gateway network e2e
         env:
-          OPENCLAW_GATEWAY_NETWORK_E2E_IMAGE: ${{ needs.root_dockerfile_image.outputs.image_ref }}
-          OPENCLAW_GATEWAY_NETWORK_E2E_SKIP_BUILD: "1"
+          OPENCLI_GATEWAY_NETWORK_E2E_IMAGE: ${{ needs.root_dockerfile_image.outputs.image_ref }}
+          OPENCLI_GATEWAY_NETWORK_E2E_SKIP_BUILD: "1"
         run: bash scripts/e2e/gateway-network-docker.sh
 
       - name: Smoke test Dockerfile with matrix extension build arg
@@ -346,8 +346,8 @@ jobs:
           IMAGE_REF: ${{ needs.root_dockerfile_image.outputs.image_ref }}
         run: |
           docker run --rm --entrypoint sh "$IMAGE_REF" -lc '
-            which openclaw &&
-            openclaw --version &&
+            which opencli &&
+            opencli --version &&
             node -e "
               const Module = require(\"node:module\");
               const matrixPackage = require(\"/app/extensions/matrix/package.json\");
@@ -362,7 +362,7 @@ jobs:
                 requireFromMatrix.resolve(dep);
               }
               const { spawnSync } = require(\"node:child_process\");
-              const run = spawnSync(\"openclaw\", [\"plugins\", \"list\", \"--json\"], { encoding: \"utf8\" });
+              const run = spawnSync(\"opencli\", [\"plugins\", \"list\", \"--json\"], { encoding: \"utf8\" });
               if (run.status !== 0) {
                 process.stderr.write(run.stderr || run.stdout || \"plugins list failed\\n\");
                 process.exit(run.status ?? 1);
@@ -423,7 +423,7 @@ jobs:
           timeout 20m docker buildx build \
             --progress=plain \
             --load \
-            -t openclaw-install-smoke:local \
+            -t opencli-install-smoke:local \
             -f ./scripts/docker/install-sh-smoke/Dockerfile \
             ./scripts/docker
 
@@ -432,7 +432,7 @@ jobs:
           timeout 20m docker buildx build \
             --progress=plain \
             --load \
-            -t openclaw-install-nonroot:local \
+            -t opencli-install-nonroot:local \
             -f ./scripts/docker/install-sh-nonroot/Dockerfile \
             ./scripts/docker
 
@@ -444,18 +444,18 @@ jobs:
 
       - name: Run installer docker tests
         env:
-          OPENCLAW_INSTALL_URL: https://openclaw.ai/install.sh
-          OPENCLAW_INSTALL_CLI_URL: https://openclaw.ai/install-cli.sh
-          OPENCLAW_NO_ONBOARD: "1"
-          OPENCLAW_INSTALL_SMOKE_SKIP_CLI: "1"
-          OPENCLAW_INSTALL_SMOKE_SKIP_IMAGE_BUILD: "1"
-          OPENCLAW_INSTALL_NONROOT_SKIP_IMAGE_BUILD: "1"
-          OPENCLAW_INSTALL_SMOKE_SKIP_NONROOT: "0"
-          OPENCLAW_INSTALL_SMOKE_SKIP_NPM_GLOBAL: "1"
-          OPENCLAW_INSTALL_SMOKE_SKIP_PREVIOUS: "1"
-          OPENCLAW_INSTALL_SMOKE_UPDATE_BASELINE: ${{ inputs.update_baseline_version || 'latest' }}
-          OPENCLAW_INSTALL_SMOKE_UPDATE_DIST_IMAGE: ${{ needs.root_dockerfile_image.outputs.image_ref }}
-          OPENCLAW_INSTALL_SMOKE_UPDATE_SKIP_LOCAL_BUILD: "1"
+          OPENCLI_INSTALL_URL: https://opencli.ai/install.sh
+          OPENCLI_INSTALL_CLI_URL: https://opencli.ai/install-cli.sh
+          OPENCLI_NO_ONBOARD: "1"
+          OPENCLI_INSTALL_SMOKE_SKIP_CLI: "1"
+          OPENCLI_INSTALL_SMOKE_SKIP_IMAGE_BUILD: "1"
+          OPENCLI_INSTALL_NONROOT_SKIP_IMAGE_BUILD: "1"
+          OPENCLI_INSTALL_SMOKE_SKIP_NONROOT: "0"
+          OPENCLI_INSTALL_SMOKE_SKIP_NPM_GLOBAL: "1"
+          OPENCLI_INSTALL_SMOKE_SKIP_PREVIOUS: "1"
+          OPENCLI_INSTALL_SMOKE_UPDATE_BASELINE: ${{ inputs.update_baseline_version || 'latest' }}
+          OPENCLI_INSTALL_SMOKE_UPDATE_DIST_IMAGE: ${{ needs.root_dockerfile_image.outputs.image_ref }}
+          OPENCLI_INSTALL_SMOKE_UPDATE_SKIP_LOCAL_BUILD: "1"
         run: bash scripts/test-install-sh-docker.sh
 
   bun_global_install_smoke:
@@ -488,8 +488,8 @@ jobs:
 
       - name: Run Bun global install image-provider smoke
         env:
-          OPENCLAW_BUN_GLOBAL_SMOKE_DIST_IMAGE: ${{ needs.root_dockerfile_image.outputs.image_ref }}
-          OPENCLAW_BUN_GLOBAL_SMOKE_HOST_BUILD: "0"
+          OPENCLI_BUN_GLOBAL_SMOKE_DIST_IMAGE: ${{ needs.root_dockerfile_image.outputs.image_ref }}
+          OPENCLI_BUN_GLOBAL_SMOKE_HOST_BUILD: "0"
         run: bash scripts/e2e/bun-global-install-smoke.sh
 
   docker-e2e-fast:
@@ -519,6 +519,6 @@ jobs:
 
       - name: Run fast bundled plugin Docker E2E
         env:
-          OPENCLAW_BUNDLED_CHANNEL_DEPS_E2E_IMAGE: openclaw-bundled-channel-fast:local
-          OPENCLAW_BUNDLED_CHANNEL_DOCKER_RUN_TIMEOUT: 90s
+          OPENCLI_BUNDLED_CHANNEL_DEPS_E2E_IMAGE: opencli-bundled-channel-fast:local
+          OPENCLI_BUNDLED_CHANNEL_DOCKER_RUN_TIMEOUT: 90s
         run: timeout 480s pnpm test:docker:bundled-channel-deps:fast

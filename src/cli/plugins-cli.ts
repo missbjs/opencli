@@ -3,7 +3,7 @@ import path from "node:path";
 import type { Command } from "commander";
 import { getRuntimeConfig, readConfigFileSnapshot, replaceConfigFile } from "../config/config.js";
 import { resolveStateDir } from "../config/paths.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import type { PluginInstallRecord } from "../config/types.plugins.js";
 import {
   tracePluginLifecyclePhase,
@@ -145,11 +145,11 @@ function formatRegistryState(state: "missing" | "fresh" | "stale"): string {
 export function registerPluginsCli(program: Command) {
   const plugins = program
     .command("plugins")
-    .description("Manage OpenClaw plugins and extensions")
+    .description("Manage OpenCLI plugins and extensions")
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/plugins", "docs.openclaw.ai/cli/plugins")}\n`,
+        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/plugins", "docs.opencli.ai/cli/plugins")}\n`,
     );
 
   plugins
@@ -207,7 +207,7 @@ export function registerPluginsCli(program: Command) {
           return {
             Name: plugin.name || plugin.id,
             ID: plugin.name && plugin.name !== plugin.id ? plugin.id : "",
-            Format: plugin.format ?? "openclaw",
+            Format: plugin.format ?? "opencli",
             Status:
               plugin.status === "error"
                 ? theme.error("error")
@@ -263,7 +263,7 @@ export function registerPluginsCli(program: Command) {
     .command("deps")
     .description("Inspect or repair bundled plugin runtime dependencies")
     .option("--json", "Print JSON")
-    .option("--package-root <path>", "OpenClaw package root to inspect")
+    .option("--package-root <path>", "OpenCLI package root to inspect")
     .option("--prune", "Prune stale unknown external runtime dependency roots", false)
     .option("--repair", "Install missing bundled runtime dependencies", false)
     .action(async (opts: PluginsDepsCliOptions) => {
@@ -444,7 +444,7 @@ export function registerPluginsCli(program: Command) {
       if (inspect.plugin.failedAt) {
         lines.push(`${theme.muted("Failed at:")} ${inspect.plugin.failedAt.toISOString()}`);
       }
-      lines.push(`${theme.muted("Format:")} ${inspect.plugin.format ?? "openclaw"}`);
+      lines.push(`${theme.muted("Format:")} ${inspect.plugin.format ?? "opencli"}`);
       if (inspect.plugin.bundleFormat) {
         lines.push(`${theme.muted("Bundle format:")} ${inspect.plugin.bundleFormat}`);
       }
@@ -568,9 +568,9 @@ export function registerPluginsCli(program: Command) {
       const { refreshPluginRegistryAfterConfigMutation } =
         await import("./plugins-registry-refresh.js");
       const snapshot = await readConfigFileSnapshot();
-      const cfg = (snapshot.sourceConfig ?? snapshot.config) as OpenClawConfig;
+      const cfg = (snapshot.sourceConfig ?? snapshot.config) as OpenCLIConfig;
       const enableResult = enablePluginInConfig(cfg, id);
-      let next: OpenClawConfig = enableResult.config;
+      let next: OpenCLIConfig = enableResult.config;
       const slotResult = applySlotSelectionForPlugin(next, id);
       next = slotResult.config;
       await replaceConfigFile({
@@ -605,7 +605,7 @@ export function registerPluginsCli(program: Command) {
       const { refreshPluginRegistryAfterConfigMutation } =
         await import("./plugins-registry-refresh.js");
       const snapshot = await readConfigFileSnapshot();
-      const cfg = (snapshot.sourceConfig ?? snapshot.config) as OpenClawConfig;
+      const cfg = (snapshot.sourceConfig ?? snapshot.config) as OpenCLIConfig;
       const next = setPluginEnabledInConfig(cfg, id, false);
       await replaceConfigFile({
         nextConfig: next,
@@ -656,7 +656,7 @@ export function registerPluginsCli(program: Command) {
         () => readConfigFileSnapshot(),
         { command: "uninstall" },
       );
-      const sourceConfig = (snapshot.sourceConfig ?? snapshot.config) as OpenClawConfig;
+      const sourceConfig = (snapshot.sourceConfig ?? snapshot.config) as OpenCLIConfig;
       const installRecords = await tracePluginLifecyclePhaseAsync(
         "install records load",
         () => loadInstalledPluginIndexInstallRecords(),
@@ -912,7 +912,7 @@ export function registerPluginsCli(program: Command) {
       if (inspection.refreshReasons.length > 0) {
         lines.push(`${theme.muted("Refresh reasons:")} ${inspection.refreshReasons.join(", ")}`);
         lines.push(
-          `${theme.muted("Repair:")} ${theme.command("openclaw plugins registry --refresh")}`,
+          `${theme.muted("Repair:")} ${theme.command("opencli plugins registry --refresh")}`,
         );
       }
       defaultRuntime.log(lines.join("\n"));
@@ -965,7 +965,7 @@ export function registerPluginsCli(program: Command) {
           lines.push(`- ${formatPluginCompatibilityNotice(notice)} [${marker}]`);
         }
       }
-      const docs = formatDocsLink("/plugin", "docs.openclaw.ai/plugin");
+      const docs = formatDocsLink("/plugin", "docs.opencli.ai/plugin");
       lines.push("");
       lines.push(`${theme.muted("Docs:")} ${docs}`);
       defaultRuntime.log(lines.join("\n"));

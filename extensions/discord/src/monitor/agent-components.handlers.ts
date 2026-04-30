@@ -1,4 +1,4 @@
-import { logError } from "openclaw/plugin-sdk/text-runtime";
+import { logError } from "opencli/plugin-sdk/text-runtime";
 import { resolveDiscordComponentEntry, resolveDiscordModalEntry } from "../components-registry.js";
 import type { ButtonInteraction, ComponentData } from "../internal/discord.js";
 import {

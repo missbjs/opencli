@@ -11,7 +11,7 @@ import {
 const tempDirs: string[] = [];
 
 function makeTempRoot(): string {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-runtime-aliases-"));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "opencli-runtime-aliases-"));
   tempDirs.push(tempDir);
   return tempDir;
 }

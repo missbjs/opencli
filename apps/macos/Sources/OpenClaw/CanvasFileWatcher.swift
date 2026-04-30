@@ -7,11 +7,11 @@ final class CanvasFileWatcher: @unchecked Sendable, SimpleFileWatcherOwner {
     init(url: URL, onChange: @escaping () -> Void) {
         self.watcher = SimpleFileWatcher(CoalescingFSEventsWatcher(
             paths: [url.path],
-            queueLabel: "ai.openclaw.canvaswatcher",
+            queueLabel: "ai.opencli.canvaswatcher",
             onChange: onChange))
         self.pollingWatcher = PollingDirectoryWatcher(
             url: url,
-            queueLabel: "ai.openclaw.canvaswatcher.poll",
+            queueLabel: "ai.opencli.canvaswatcher.poll",
             onChange: onChange)
     }
 

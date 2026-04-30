@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { resolveInstalledPluginIndexPolicyHash } from "./installed-plugin-index-policy.js";
 import type { PluginManifestRecord, PluginManifestRegistry } from "./manifest-registry.js";
 import type { PluginRegistrySnapshot } from "./plugin-registry.js";
@@ -17,11 +17,11 @@ vi.mock("../channels/config-presence.js", () => ({
       Object.keys(value).some((key) => key !== "enabled"),
     ),
   listPotentialConfiguredChannelIds: (
-    config: OpenClawConfig,
+    config: OpenCLIConfig,
     env: NodeJS.ProcessEnv,
     options?: { includePersistedAuthState?: boolean },
   ) => listPotentialConfiguredChannelIds(config, env, options),
-  listExplicitlyDisabledChannelIdsForConfig: (config: OpenClawConfig) =>
+  listExplicitlyDisabledChannelIdsForConfig: (config: OpenCLIConfig) =>
     listExplicitlyDisabledChannelIdsForConfig(config),
 }));
 
@@ -46,7 +46,7 @@ function createManifestRecord(
     hooks: [],
     rootDir: `/plugins/${plugin.id}`,
     source: `/plugins/${plugin.id}/index.js`,
-    manifestPath: `/plugins/${plugin.id}/openclaw.plugin.json`,
+    manifestPath: `/plugins/${plugin.id}/opencli.plugin.json`,
     ...plugin,
   };
 }
@@ -89,13 +89,13 @@ function createIndex(
 
 const indexDiagnostic = {
   level: "warn",
-  source: "/plugins/demo/openclaw.plugin.json",
+  source: "/plugins/demo/opencli.plugin.json",
   message: "indexed warning",
 } as const;
 
 const manifestDiagnostic = {
   level: "warn",
-  source: "/plugins/demo/openclaw.plugin.json",
+  source: "/plugins/demo/opencli.plugin.json",
   message: "manifest warning",
 } as const;
 
@@ -103,7 +103,7 @@ describe("loadPluginLookUpTable", () => {
   beforeEach(() => {
     listPotentialConfiguredChannelIds
       .mockReset()
-      .mockImplementation((config: OpenClawConfig) => Object.keys(config.channels ?? {}));
+      .mockImplementation((config: OpenCLIConfig) => Object.keys(config.channels ?? {}));
     listExplicitlyDisabledChannelIdsForConfig.mockReset().mockReturnValue([]);
     loadPluginManifestRegistryForInstalledIndex.mockReset();
   });
@@ -165,7 +165,7 @@ describe("loadPluginLookUpTable", () => {
         plugins: {
           slots: { memory: "none" },
         },
-      } as OpenClawConfig,
+      } as OpenCLIConfig,
       env: {},
       index,
     });
@@ -212,7 +212,7 @@ describe("loadPluginLookUpTable", () => {
       channels: {
         telegram: { token: "configured" },
       },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
     const compatibleIndex = {
       ...index,
       policyHash: resolveInstalledPluginIndexPolicyHash(config),
@@ -260,12 +260,12 @@ describe("loadPluginLookUpTable", () => {
       plugins: {
         allow: ["telegram"],
       },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
     const requestedConfig = {
       plugins: {
         allow: ["other-plugin"],
       },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
     const snapshotIndex = createIndex(plugins, {
       policyHash: resolveInstalledPluginIndexPolicyHash(snapshotConfig),
     });
@@ -327,7 +327,7 @@ describe("loadPluginLookUpTable", () => {
       channels: {
         telegram: { token: "configured" },
       },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
     const policyHash = resolveInstalledPluginIndexPolicyHash(config);
     const snapshotIndex = createIndex(snapshotPlugins, { policyHash });
     const requestedIndex = createIndex(requestedPlugins, { policyHash });
@@ -384,14 +384,14 @@ describe("loadPluginLookUpTable", () => {
         channels: ["telegram"],
         rootDir: "/plugins-moved/telegram",
         source: "/plugins-moved/telegram/index.js",
-        manifestPath: "/plugins-moved/telegram/openclaw.plugin.json",
+        manifestPath: "/plugins-moved/telegram/opencli.plugin.json",
       }),
     ];
     const config = {
       channels: {
         telegram: { token: "configured" },
       },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
     const policyHash = resolveInstalledPluginIndexPolicyHash(config);
     const snapshotIndex = createIndex(snapshotPlugins, { policyHash });
     const requestedIndex = createIndex(requestedPlugins, { policyHash });

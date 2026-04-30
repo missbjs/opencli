@@ -2,12 +2,12 @@ import fs from "node:fs";
 import os from "node:os";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const resolvePreferredOpenClawTmpDirMock = vi.hoisted(() => vi.fn(() => "/tmp/openclaw"));
-const OPENCLAW_TMP_ROOT = "/tmp/openclaw";
-const TRASH_SOURCE = `${OPENCLAW_TMP_ROOT}/demo`;
+const resolvePreferredOpenCLITmpDirMock = vi.hoisted(() => vi.fn(() => "/tmp/opencli"));
+const OPENCLI_TMP_ROOT = "/tmp/opencli";
+const TRASH_SOURCE = `${OPENCLI_TMP_ROOT}/demo`;
 
-vi.mock("openclaw/plugin-sdk/temp-path", () => ({
-  resolvePreferredOpenClawTmpDir: resolvePreferredOpenClawTmpDirMock,
+vi.mock("opencli/plugin-sdk/temp-path", () => ({
+  resolvePreferredOpenCLITmpDir: resolvePreferredOpenCLITmpDirMock,
 }));
 
 function mockTrashContainer(...suffixes: string[]) {
@@ -22,8 +22,8 @@ function mockTrashContainer(...suffixes: string[]) {
 describe("browser trash", () => {
   beforeEach(() => {
     vi.restoreAllMocks();
-    resolvePreferredOpenClawTmpDirMock.mockReset();
-    resolvePreferredOpenClawTmpDirMock.mockReturnValue("/tmp/openclaw");
+    resolvePreferredOpenCLITmpDirMock.mockReset();
+    resolvePreferredOpenCLITmpDirMock.mockReturnValue("/tmp/opencli");
     vi.spyOn(Date, "now").mockReturnValue(123);
     vi.spyOn(os, "homedir").mockReturnValue("/home/test");
     vi.spyOn(os, "tmpdir").mockReturnValue("/tmp");
@@ -90,7 +90,7 @@ describe("browser trash", () => {
   it("refuses to trash paths outside allowed roots", async () => {
     const { movePathToTrash } = await import("./trash.js");
 
-    await expect(movePathToTrash("/etc/openclaw-demo")).rejects.toThrow(
+    await expect(movePathToTrash("/etc/opencli-demo")).rejects.toThrow(
       "Refusing to trash path outside allowed roots",
     );
   });

@@ -1,5 +1,5 @@
-import * as providerAuth from "openclaw/plugin-sdk/provider-auth-runtime";
-import { installPinnedHostnameTestHooks } from "openclaw/plugin-sdk/test-env";
+import * as providerAuth from "opencli/plugin-sdk/provider-auth-runtime";
+import { installPinnedHostnameTestHooks } from "opencli/plugin-sdk/test-env";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   buildMinimaxImageGenerationProvider,

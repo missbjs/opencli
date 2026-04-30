@@ -1,9 +1,9 @@
-import OpenClawProtocol
+import OpenCLIProtocol
 import SwiftUI
 import Testing
-@testable import OpenClaw
+@testable import OpenCLI
 
-private typealias ProtoAnyCodable = OpenClawProtocol.AnyCodable
+private typealias ProtoAnyCodable = OpenCLIProtocol.AnyCodable
 
 @Suite(.serialized)
 @MainActor

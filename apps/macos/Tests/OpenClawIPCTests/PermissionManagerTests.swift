@@ -1,7 +1,7 @@
 import CoreLocation
-import OpenClawIPC
+import OpenCLIIPC
 import Testing
-@testable import OpenClaw
+@testable import OpenCLI
 
 @Suite(.serialized)
 @MainActor

@@ -47,7 +47,7 @@ function enableAdvertiserUnitMode(hostname = "test-host") {
   delete process.env.VITEST;
   process.env.NODE_ENV = "development";
   vi.spyOn(os, "hostname").mockReturnValue(hostname);
-  process.env.OPENCLAW_MDNS_HOSTNAME = hostname;
+  process.env.OPENCLI_MDNS_HOSTNAME = hostname;
 }
 
 function mockCiaoService(params?: {
@@ -155,13 +155,13 @@ describe("gateway bonjour advertiser", () => {
       gatewayPort: 18789,
       sshPort: 2222,
       tailnetDns: "host.tailnet.ts.net",
-      cliPath: "/opt/homebrew/bin/openclaw",
+      cliPath: "/opt/homebrew/bin/opencli",
       minimal: false,
     });
 
     expect(createService).toHaveBeenCalledTimes(1);
     const [gatewayCall] = createService.mock.calls as Array<[Record<string, unknown>]>;
-    expect(gatewayCall?.[0]?.type).toBe("openclaw-gw");
+    expect(gatewayCall?.[0]?.type).toBe("opencli-gw");
     const gatewayType = asString(gatewayCall?.[0]?.type, "");
     expect(gatewayType.length).toBeLessThanOrEqual(15);
     expect(gatewayCall?.[0]?.port).toBe(18789);
@@ -174,7 +174,7 @@ describe("gateway bonjour advertiser", () => {
       "host.tailnet.ts.net",
     );
     expect((gatewayCall?.[0]?.txt as Record<string, string>)?.cliPath).toBe(
-      "/opt/homebrew/bin/openclaw",
+      "/opt/homebrew/bin/opencli",
     );
     expect((gatewayCall?.[0]?.txt as Record<string, string>)?.transport).toBe("gateway");
 
@@ -198,7 +198,7 @@ describe("gateway bonjour advertiser", () => {
     const started = await startAdvertiser({
       gatewayPort: 18789,
       sshPort: 2222,
-      cliPath: "/opt/homebrew/bin/openclaw",
+      cliPath: "/opt/homebrew/bin/opencli",
       tailnetDns: "host.tailnet.ts.net",
       minimal: true,
     });
@@ -211,9 +211,9 @@ describe("gateway bonjour advertiser", () => {
     await started.stop();
   });
 
-  it("honors truthy OPENCLAW_DISABLE_BONJOUR values", async () => {
+  it("honors truthy OPENCLI_DISABLE_BONJOUR values", async () => {
     enableAdvertiserUnitMode();
-    process.env.OPENCLAW_DISABLE_BONJOUR = "true";
+    process.env.OPENCLI_DISABLE_BONJOUR = "true";
 
     const started = await startAdvertiser({
       gatewayPort: 18789,
@@ -239,7 +239,7 @@ describe("gateway bonjour advertiser", () => {
 
   it("honors explicit Bonjour opt-in inside detected containers", async () => {
     enableAdvertiserUnitMode();
-    process.env.OPENCLAW_DISABLE_BONJOUR = "0";
+    process.env.OPENCLI_DISABLE_BONJOUR = "0";
     vi.spyOn(fs, "existsSync").mockImplementation((filePath) => String(filePath) === "/.dockerenv");
 
     const destroy = vi.fn().mockResolvedValue(undefined);
@@ -527,7 +527,7 @@ describe("gateway bonjour advertiser", () => {
       });
 
       console.log(
-        "[test._openclaw-gw._tcp.local.] failed probing with reason: Error: Can't probe for a service which is announced already. Received announcing for service test._openclaw-gw._tcp.local.. Trying again in 2 seconds!",
+        "[test._opencli-gw._tcp.local.] failed probing with reason: Error: Can't probe for a service which is announced already. Received announcing for service test._opencli-gw._tcp.local.. Trying again in 2 seconds!",
       );
       console.log("ordinary console line");
 
@@ -744,7 +744,7 @@ describe("gateway bonjour advertiser", () => {
     });
 
     const [gatewayCall] = createService.mock.calls as Array<[ServiceCall]>;
-    expect(gatewayCall?.[0]?.name).toBe("Mac (OpenClaw)");
+    expect(gatewayCall?.[0]?.name).toBe("Mac (OpenCLI)");
     expect(gatewayCall?.[0]?.domain).toBe("local");
     expect(gatewayCall?.[0]?.hostname).toBe("Mac");
     expect((gatewayCall?.[0]?.txt as Record<string, string>)?.lanHost).toBe("Mac.local");
@@ -752,11 +752,11 @@ describe("gateway bonjour advertiser", () => {
     await started.stop();
   });
 
-  it("falls back to openclaw when system hostname is invalid for DNS", async () => {
+  it("falls back to opencli when system hostname is invalid for DNS", async () => {
     // Allow advertiser to run in unit tests.
     delete process.env.VITEST;
     process.env.NODE_ENV = "development";
-    delete process.env.OPENCLAW_MDNS_HOSTNAME;
+    delete process.env.OPENCLI_MDNS_HOSTNAME;
     vi.spyOn(os, "hostname").mockReturnValue("My_Lobster Host");
 
     const destroy = vi.fn().mockResolvedValue(undefined);
@@ -769,8 +769,8 @@ describe("gateway bonjour advertiser", () => {
     });
 
     const [gatewayCall] = createService.mock.calls as Array<[ServiceCall]>;
-    expect(gatewayCall?.[0]?.hostname).toBe("openclaw");
-    expect((gatewayCall?.[0]?.txt as Record<string, string>)?.lanHost).toBe("openclaw.local");
+    expect(gatewayCall?.[0]?.hostname).toBe("opencli");
+    expect((gatewayCall?.[0]?.txt as Record<string, string>)?.lanHost).toBe("opencli.local");
 
     await started.stop();
   });
@@ -792,7 +792,7 @@ describe("gateway bonjour advertiser", () => {
     const serviceName = gatewayCall?.[0]?.name as string;
     const hostname = gatewayCall?.[0]?.hostname as string;
 
-    expectDnsLabelByteLength(`${reportedHostname} (OpenClaw)`, 64);
+    expectDnsLabelByteLength(`${reportedHostname} (OpenCLI)`, 64);
     expect(hostname).toBe(reportedHostname);
     expectDnsLabelWithinLimit(serviceName);
 
@@ -826,7 +826,7 @@ describe("gateway bonjour advertiser", () => {
   });
 
   it("truncates multi-byte hostname within DNS label byte limit", async () => {
-    // 21 CJK characters = 63 bytes in UTF-8, adding " (OpenClaw)" pushes over
+    // 21 CJK characters = 63 bytes in UTF-8, adding " (OpenCLI)" pushes over
     const cjkHostname = "你".repeat(21);
     enableAdvertiserUnitMode(cjkHostname);
 
@@ -848,11 +848,11 @@ describe("gateway bonjour advertiser", () => {
     await started.stop();
   });
 
-  it("uses system hostname when OPENCLAW_MDNS_HOSTNAME is unset", async () => {
+  it("uses system hostname when OPENCLI_MDNS_HOSTNAME is unset", async () => {
     // Allow advertiser to run in unit tests.
     delete process.env.VITEST;
     process.env.NODE_ENV = "development";
-    delete process.env.OPENCLAW_MDNS_HOSTNAME;
+    delete process.env.OPENCLI_MDNS_HOSTNAME;
     vi.spyOn(os, "hostname").mockReturnValue("Lobster");
 
     const destroy = vi.fn().mockResolvedValue(undefined);

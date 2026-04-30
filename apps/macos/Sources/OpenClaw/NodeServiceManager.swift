@@ -2,7 +2,7 @@ import Foundation
 import OSLog
 
 enum NodeServiceManager {
-    private static let logger = Logger(subsystem: "ai.openclaw", category: "node.service")
+    private static let logger = Logger(subsystem: "ai.opencli", category: "node.service")
 
     static func start() async -> String? {
         let result = await self.runServiceCommandResult(
@@ -31,7 +31,7 @@ enum NodeServiceManager {
 
 extension NodeServiceManager {
     private static func serviceCommand(_ args: [String]) -> [String] {
-        CommandResolver.openclawCommand(
+        CommandResolver.opencliCommand(
             subcommand: "node",
             extraArgs: self.withJsonFlag(args),
             // Service management must always run locally, even if remote mode is configured.

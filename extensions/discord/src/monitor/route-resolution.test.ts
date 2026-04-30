@@ -1,5 +1,5 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
-import type { ResolvedAgentRoute } from "openclaw/plugin-sdk/routing";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
+import type { ResolvedAgentRoute } from "opencli/plugin-sdk/routing";
 import { describe, expect, it } from "vitest";
 import {
   buildDiscordRoutePeer,
@@ -9,10 +9,7 @@ import {
   shouldIgnoreStaleDiscordRouteBinding,
 } from "./route-resolution.js";
 
-function buildWorkerBindingConfig(peer: {
-  kind: "channel" | "direct";
-  id: string;
-}): OpenClawConfig {
+function buildWorkerBindingConfig(peer: { kind: "channel" | "direct"; id: string }): OpenCLIConfig {
   return {
     agents: {
       list: [{ id: "worker" }],

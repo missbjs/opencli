@@ -1,7 +1,7 @@
 import type {
-  OpenClawConfig,
+  OpenCLIConfig,
   ResolvedMemorySearchConfig,
-} from "openclaw/plugin-sdk/memory-core-host-engine-foundation";
+} from "opencli/plugin-sdk/memory-core-host-engine-foundation";
 import {
   resolveEmbeddingProviderFallbackModel,
   type EmbeddingProvider,
@@ -74,7 +74,7 @@ export function applyMemoryFallbackProviderState(params: {
 }
 
 export function resolveMemoryFallbackProviderRequest(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   settings: ResolvedMemorySearchConfig;
   currentProviderId: string | null;
 }): {

@@ -1,4 +1,4 @@
-name: openclaw-codeql-actions-critical-security
+name: opencli-codeql-actions-critical-security
 
 paths:
   - .github/actions

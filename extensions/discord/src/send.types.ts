@@ -1,5 +1,5 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
-import type { RetryConfig } from "openclaw/plugin-sdk/retry-runtime";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
+import type { RetryConfig } from "opencli/plugin-sdk/retry-runtime";
 import type { RequestClient } from "./internal/discord.js";
 
 export class DiscordSendError extends Error {
@@ -32,12 +32,12 @@ export type DiscordSendResult = {
 };
 
 export type DiscordRuntimeAccountContext = {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   accountId: string;
 };
 
 export type DiscordReactOpts = {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   accountId?: string;
   token?: string;
   rest?: RequestClient;

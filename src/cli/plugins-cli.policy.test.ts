@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { OpenCLIConfig } from "../config/config.js";
 import {
   enablePluginInConfig,
   loadConfig,
@@ -21,8 +21,8 @@ describe("plugins cli policy mutations", () => {
           alpha: { enabled: true },
         },
       },
-    } as OpenClawConfig;
-    loadConfig.mockReturnValue({} as OpenClawConfig);
+    } as OpenCLIConfig;
+    loadConfig.mockReturnValue({} as OpenCLIConfig);
     enablePluginInConfig.mockReturnValue({
       config: enabledConfig,
       enabled: true,
@@ -45,11 +45,11 @@ describe("plugins cli policy mutations", () => {
           alpha: { enabled: true },
         },
       },
-    } as OpenClawConfig);
+    } as OpenCLIConfig);
 
     await runPluginsCommand(["plugins", "disable", "alpha"]);
 
-    const nextConfig = writeConfigFile.mock.calls[0]?.[0] as OpenClawConfig;
+    const nextConfig = writeConfigFile.mock.calls[0]?.[0] as OpenCLIConfig;
     expect(nextConfig.plugins?.entries?.alpha?.enabled).toBe(false);
     expect(refreshPluginRegistry).toHaveBeenCalledWith({
       config: nextConfig,

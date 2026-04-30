@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../../config/types.opencli.js";
 
-const loadConfigMock = vi.fn<() => OpenClawConfig>();
+const loadConfigMock = vi.fn<() => OpenCLIConfig>();
 
 vi.mock("../../config/config.js", async () => {
   const actual =
@@ -36,7 +36,7 @@ describe("agents_list tool", () => {
           },
         ],
       },
-    } satisfies OpenClawConfig);
+    } satisfies OpenCLIConfig);
 
     const { createAgentsListTool } = await import("./agents-list-tool.js");
     const result = await createAgentsListTool({ agentSessionKey: "agent:main:main" }).execute(
@@ -63,7 +63,7 @@ describe("agents_list tool", () => {
       agents: {
         list: [{ id: "main", default: true }, { id: "codex" }],
       },
-    } satisfies OpenClawConfig);
+    } satisfies OpenCLIConfig);
 
     const { createAgentsListTool } = await import("./agents-list-tool.js");
     const result = await createAgentsListTool({ agentSessionKey: "agent:main:main" }).execute(
@@ -83,9 +83,9 @@ describe("agents_list tool", () => {
     });
   });
 
-  it("marks OPENCLAW_AGENT_RUNTIME and fallback env overrides as effective", async () => {
-    vi.stubEnv("OPENCLAW_AGENT_RUNTIME", "codex");
-    vi.stubEnv("OPENCLAW_AGENT_HARNESS_FALLBACK", "pi");
+  it("marks OPENCLI_AGENT_RUNTIME and fallback env overrides as effective", async () => {
+    vi.stubEnv("OPENCLI_AGENT_RUNTIME", "codex");
+    vi.stubEnv("OPENCLI_AGENT_HARNESS_FALLBACK", "pi");
     loadConfigMock.mockReturnValue({
       agents: {
         defaults: {
@@ -94,7 +94,7 @@ describe("agents_list tool", () => {
         },
         list: [{ id: "main", default: true }],
       },
-    } satisfies OpenClawConfig);
+    } satisfies OpenCLIConfig);
 
     const { createAgentsListTool } = await import("./agents-list-tool.js");
     const result = await createAgentsListTool({ agentSessionKey: "agent:main:main" }).execute(
@@ -124,7 +124,7 @@ describe("agents_list tool", () => {
           { id: "strict", agentRuntime: { fallback: "none" } },
         ],
       },
-    } satisfies OpenClawConfig);
+    } satisfies OpenCLIConfig);
 
     const { createAgentsListTool } = await import("./agents-list-tool.js");
     const result = await createAgentsListTool({ agentSessionKey: "agent:main:main" }).execute(

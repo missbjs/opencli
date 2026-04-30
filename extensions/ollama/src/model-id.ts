@@ -1,4 +1,4 @@
-import { normalizeProviderId } from "openclaw/plugin-sdk/provider-model-shared";
+import { normalizeProviderId } from "opencli/plugin-sdk/provider-model-shared";
 
 export const OLLAMA_PROVIDER_ID = "ollama";
 

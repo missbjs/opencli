@@ -2,7 +2,7 @@ import {
   resolveAgentModelFallbackValues,
   resolveAgentModelPrimaryValue,
 } from "../config/model-input.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { normalizeOptionalString } from "../shared/string-coerce.js";
@@ -372,7 +372,7 @@ function resolveFallbackSoonestCooldownExpiry(params: {
   authRuntime: ModelFallbackAuthRuntime | null;
   authStore: AuthProfileStore | null;
   agentDir?: string;
-  cfg: OpenClawConfig | undefined;
+  cfg: OpenCLIConfig | undefined;
   candidates: ModelCandidate[];
 }): number | null {
   if (!params.authRuntime || !params.authStore) {
@@ -408,7 +408,7 @@ function resolveFallbackSoonestCooldownExpiry(params: {
 }
 
 function resolveImageFallbackCandidates(params: {
-  cfg: OpenClawConfig | undefined;
+  cfg: OpenCLIConfig | undefined;
   defaultProvider: string;
   modelOverride?: string;
 }): ModelCandidate[] {
@@ -459,7 +459,7 @@ function resolveImageFallbackCandidates(params: {
   return candidates;
 }
 
-function resolveImageFallbackDefaultProvider(cfg: OpenClawConfig | undefined): string {
+function resolveImageFallbackDefaultProvider(cfg: OpenCLIConfig | undefined): string {
   const configuredPrimary = resolveAgentModelPrimaryValue(cfg?.agents?.defaults?.imageModel);
   if (configuredPrimary?.trim()) {
     const aliasIndex = buildModelAliasIndex({
@@ -479,7 +479,7 @@ function resolveImageFallbackDefaultProvider(cfg: OpenClawConfig | undefined): s
 }
 
 function resolveFallbackCandidates(params: {
-  cfg: OpenClawConfig | undefined;
+  cfg: OpenCLIConfig | undefined;
   provider: string;
   model: string;
   /** Optional explicit fallbacks list; when provided (even empty), replaces agents.defaults.model.fallbacks. */
@@ -749,7 +749,7 @@ function resolveCooldownDecision(params: {
 }
 
 export async function runWithModelFallback<T>(params: {
-  cfg: OpenClawConfig | undefined;
+  cfg: OpenCLIConfig | undefined;
   provider: string;
   model: string;
   runId?: string;
@@ -1064,7 +1064,7 @@ export async function runWithModelFallback<T>(params: {
 }
 
 export async function runWithImageModelFallback<T>(params: {
-  cfg: OpenClawConfig | undefined;
+  cfg: OpenCLIConfig | undefined;
   modelOverride?: string;
   run: (provider: string, model: string) => Promise<T>;
   onError?: ModelFallbackErrorHandler;

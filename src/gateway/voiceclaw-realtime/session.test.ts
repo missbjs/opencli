@@ -2,7 +2,7 @@ import { EventEmitter } from "node:events";
 import type { IncomingMessage } from "node:http";
 import { describe, expect, it, vi } from "vitest";
 import WebSocket from "ws";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../../config/types.opencli.js";
 import type { ResolvedGatewayAuth } from "../auth.js";
 import { resolveRealtimeSenderIsOwner, VoiceClawRealtimeSession } from "./session.js";
 import type {
@@ -68,7 +68,7 @@ describe("VoiceClawRealtimeSession lifecycle", () => {
       ws: ws as unknown as WebSocket,
       req: {} as IncomingMessage,
       auth: { mode: "none" } as ResolvedGatewayAuth,
-      config: {} as OpenClawConfig,
+      config: {} as OpenCLIConfig,
       trustedProxies: [],
       allowRealIpFallback: false,
       releasePreauthBudget,

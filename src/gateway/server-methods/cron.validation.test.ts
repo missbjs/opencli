@@ -1,10 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../../config/types.opencli.js";
 import type { CronJob } from "../../cron/types.js";
 
-const getRuntimeConfig = vi.hoisted(() =>
-  vi.fn<() => OpenClawConfig>(() => ({}) as OpenClawConfig),
-);
+const getRuntimeConfig = vi.hoisted(() => vi.fn<() => OpenCLIConfig>(() => ({}) as OpenCLIConfig));
 
 vi.mock("../../config/config.js", async () => {
   const actual =
@@ -79,7 +77,7 @@ function createCronJob(overrides: Partial<CronJob> = {}): CronJob {
 
 describe("cron method validation", () => {
   beforeEach(() => {
-    getRuntimeConfig.mockReset().mockReturnValue({} as OpenClawConfig);
+    getRuntimeConfig.mockReset().mockReturnValue({} as OpenCLIConfig);
   });
 
   it("accepts threadId on announce delivery add params", async () => {
@@ -94,7 +92,7 @@ describe("cron method validation", () => {
           telegram: { enabled: true },
         },
       },
-    } as OpenClawConfig);
+    } as OpenCLIConfig);
 
     const { context, respond } = await invokeCronAdd({
       name: "topic announce add",
@@ -136,7 +134,7 @@ describe("cron method validation", () => {
           telegram: { enabled: true },
         },
       },
-    } as OpenClawConfig);
+    } as OpenCLIConfig);
 
     const { context, respond } = await invokeCronUpdate(
       {
@@ -189,7 +187,7 @@ describe("cron method validation", () => {
           slack: { enabled: true },
         },
       },
-    } as OpenClawConfig);
+    } as OpenCLIConfig);
 
     const { context, respond } = await invokeCronAdd({
       name: "ambiguous announce add",
@@ -231,7 +229,7 @@ describe("cron method validation", () => {
           slack: { enabled: true },
         },
       },
-    } as OpenClawConfig);
+    } as OpenCLIConfig);
 
     const { context, respond } = await invokeCronUpdate(
       {
@@ -269,7 +267,7 @@ describe("cron method validation", () => {
           slack: { enabled: true },
         },
       },
-    } as OpenClawConfig);
+    } as OpenCLIConfig);
 
     const { context, respond } = await invokeCronAdd({
       name: "invalid delivery provider",

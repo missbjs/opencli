@@ -1,12 +1,12 @@
 import AppKit
 import Observation
-import OpenClawChatUI
-import OpenClawDiscovery
-import OpenClawIPC
+import OpenCLIChatUI
+import OpenCLIDiscovery
+import OpenCLIIPC
 import SwiftUI
 
 enum UIStrings {
-    static let welcomeTitle = "Welcome to OpenClaw"
+    static let welcomeTitle = "Welcome to OpenCLI"
 }
 
 enum RemoteOnboardingProbeState: Equatable {
@@ -24,7 +24,7 @@ final class OnboardingController {
     func show() {
         if ProcessInfo.processInfo.isNixMode {
             // Nix mode is fully declarative; onboarding would suggest interactive setup that doesn't apply.
-            UserDefaults.standard.set(true, forKey: "openclaw.onboardingSeen")
+            UserDefaults.standard.set(true, forKey: "opencli.onboardingSeen")
             UserDefaults.standard.set(currentOnboardingVersion, forKey: onboardingVersionKey)
             AppStateStore.shared.onboardingSeen = true
             return
@@ -83,7 +83,7 @@ struct OnboardingView: View {
     @State var remoteAuthIssue: RemoteGatewayAuthIssue?
     @State var suppressRemoteProbeReset = false
     @State var gatewayDiscovery: GatewayDiscoveryModel
-    @State var onboardingChatModel: OpenClawChatViewModel
+    @State var onboardingChatModel: OpenCLIChatViewModel
     @State var onboardingSkillsModel = SkillsSettingsModel()
     @State var onboardingWizard = OnboardingWizardModel()
     @State var didLoadOnboardingSkills = false
@@ -151,7 +151,7 @@ struct OnboardingView: View {
 
     var devLinkCommand: String {
         let version = GatewayEnvironment.expectedGatewayVersionString() ?? "latest"
-        return "npm install -g openclaw@\(version)"
+        return "npm install -g opencli@\(version)"
     }
 
     struct LocalGatewayProbe: Equatable {
@@ -172,7 +172,7 @@ struct OnboardingView: View {
         self.permissionMonitor = permissionMonitor
         self._gatewayDiscovery = State(initialValue: discoveryModel)
         self._onboardingChatModel = State(
-            initialValue: OpenClawChatViewModel(
+            initialValue: OpenCLIChatViewModel(
                 sessionKey: "onboarding",
                 transport: MacGatewayChatTransport()))
     }

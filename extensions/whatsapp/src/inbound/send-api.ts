@@ -3,7 +3,7 @@ import type {
   MiscMessageGenerationOptions,
   WAPresence,
 } from "@whiskeysockets/baileys";
-import { recordChannelActivity } from "openclaw/plugin-sdk/channel-activity-runtime";
+import { recordChannelActivity } from "opencli/plugin-sdk/channel-activity-runtime";
 import { buildQuotedMessageOptions } from "../quoted-message.js";
 import { toWhatsappJid } from "../text-runtime.js";
 import type { ActiveWebSendOptions } from "./types.js";

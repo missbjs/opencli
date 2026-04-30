@@ -1,14 +1,14 @@
 ---
-summary: "OpenClaw browser control API, CLI reference, and scripting actions"
+summary: "OpenCLI browser control API, CLI reference, and scripting actions"
 read_when:
   - Scripting or debugging the agent browser via the local control API
-  - Looking for the `openclaw browser` CLI reference
+  - Looking for the `opencli browser` CLI reference
   - Adding custom browser automation with snapshots and refs
 title: "Browser control API"
 ---
 
 For setup, configuration, and troubleshooting, see [Browser](/tools/browser).
-This page is the reference for the local control HTTP API, the `openclaw browser`
+This page is the reference for the local control HTTP API, the `opencli browser`
 CLI, and scripting patterns (snapshots, refs, waits, debug flows).
 
 ## Control API (optional)
@@ -32,12 +32,12 @@ For local integrations only, the Gateway exposes a small loopback HTTP API:
 All endpoints accept `?profile=<name>`. `POST /start?headless=true` requests a
 one-shot headless launch for local managed profiles without changing persisted
 browser config; attach-only, remote CDP, and existing-session profiles reject
-that override because OpenClaw does not launch those browser processes.
+that override because OpenCLI does not launch those browser processes.
 
 If shared-secret gateway auth is configured, browser HTTP routes require auth too:
 
 - `Authorization: Bearer <gateway token>`
-- `x-openclaw-password: <gateway password>` or HTTP Basic auth with that password
+- `x-opencli-password: <gateway password>` or HTTP Basic auth with that password
 
 Notes:
 
@@ -80,7 +80,7 @@ What still works without Playwright:
   `--depth`, `--efficient`) when a per-tab CDP WebSocket is available. This is
   a fallback for inspection and ref discovery; Playwright remains the primary
   action engine.
-- Page screenshots for the managed `openclaw` browser when a per-tab CDP
+- Page screenshots for the managed `opencli` browser when a per-tab CDP
   WebSocket is available
 - Page screenshots for `existing-session` / Chrome MCP profiles
 - `existing-session` ref-based screenshots (`--ref`) from snapshot output
@@ -98,7 +98,7 @@ not supported for element screenshots`.
 
 If you see `Playwright is not available in this gateway build`, repair the
 bundled browser plugin runtime dependencies so `playwright-core` is installed,
-then restart the gateway. For packaged installs, run `openclaw doctor --fix`.
+then restart the gateway. For packaged installs, run `opencli doctor --fix`.
 For Docker, also install the Chromium browser binaries as shown below.
 
 #### Docker Playwright install
@@ -107,13 +107,13 @@ If your Gateway runs in Docker, avoid `npx playwright` (npm override conflicts).
 Use the bundled CLI instead:
 
 ```bash
-docker compose run --rm openclaw-cli \
+docker compose run --rm opencli-cli \
   node /app/node_modules/playwright-core/cli.js install chromium
 ```
 
 To persist browser downloads, set `PLAYWRIGHT_BROWSERS_PATH` (for example,
 `/home/node/.cache/ms-playwright`) and make sure `/home/node` is persisted via
-`OPENCLAW_HOME_VOLUME` or a bind mount. See [Docker](/install/docker).
+`OPENCLI_HOME_VOLUME` or a bind mount. See [Docker](/install/docker).
 
 ## How it works (internal)
 
@@ -128,18 +128,18 @@ All commands accept `--browser-profile <name>` to target a specific profile, and
 <Accordion title="Basics: status, tabs, open/focus/close">
 
 ```bash
-openclaw browser status
-openclaw browser start
-openclaw browser start --headless # one-shot local managed headless launch
-openclaw browser stop            # also clears emulation on attach-only/remote CDP
-openclaw browser tabs
-openclaw browser tab             # shortcut for current tab
-openclaw browser tab new
-openclaw browser tab select 2
-openclaw browser tab close 2
-openclaw browser open https://example.com
-openclaw browser focus abcd1234
-openclaw browser close abcd1234
+opencli browser status
+opencli browser start
+opencli browser start --headless # one-shot local managed headless launch
+opencli browser stop            # also clears emulation on attach-only/remote CDP
+opencli browser tabs
+opencli browser tab             # shortcut for current tab
+opencli browser tab new
+opencli browser tab select 2
+opencli browser tab close 2
+opencli browser open https://example.com
+opencli browser focus abcd1234
+opencli browser close abcd1234
 ```
 
 </Accordion>
@@ -147,23 +147,23 @@ openclaw browser close abcd1234
 <Accordion title="Inspection: screenshot, snapshot, console, errors, requests">
 
 ```bash
-openclaw browser screenshot
-openclaw browser screenshot --full-page
-openclaw browser screenshot --ref 12        # or --ref e12
-openclaw browser screenshot --labels
-openclaw browser snapshot
-openclaw browser snapshot --format aria --limit 200
-openclaw browser snapshot --interactive --compact --depth 6
-openclaw browser snapshot --efficient
-openclaw browser snapshot --labels
-openclaw browser snapshot --urls
-openclaw browser snapshot --selector "#main" --interactive
-openclaw browser snapshot --frame "iframe#main" --interactive
-openclaw browser console --level error
-openclaw browser errors --clear
-openclaw browser requests --filter api --clear
-openclaw browser pdf
-openclaw browser responsebody "**/api" --max-chars 5000
+opencli browser screenshot
+opencli browser screenshot --full-page
+opencli browser screenshot --ref 12        # or --ref e12
+opencli browser screenshot --labels
+opencli browser snapshot
+opencli browser snapshot --format aria --limit 200
+opencli browser snapshot --interactive --compact --depth 6
+opencli browser snapshot --efficient
+opencli browser snapshot --labels
+opencli browser snapshot --urls
+opencli browser snapshot --selector "#main" --interactive
+opencli browser snapshot --frame "iframe#main" --interactive
+opencli browser console --level error
+opencli browser errors --clear
+opencli browser requests --filter api --clear
+opencli browser pdf
+opencli browser responsebody "**/api" --max-chars 5000
 ```
 
 </Accordion>
@@ -171,27 +171,27 @@ openclaw browser responsebody "**/api" --max-chars 5000
 <Accordion title="Actions: navigate, click, type, drag, wait, evaluate">
 
 ```bash
-openclaw browser navigate https://example.com
-openclaw browser resize 1280 720
-openclaw browser click 12 --double           # or e12 for role refs
-openclaw browser click-coords 120 340        # viewport coordinates
-openclaw browser type 23 "hello" --submit
-openclaw browser press Enter
-openclaw browser hover 44
-openclaw browser scrollintoview e12
-openclaw browser drag 10 11
-openclaw browser select 9 OptionA OptionB
-openclaw browser download e12 report.pdf
-openclaw browser waitfordownload report.pdf
-openclaw browser upload /tmp/openclaw/uploads/file.pdf
-openclaw browser fill --fields '[{"ref":"1","type":"text","value":"Ada"}]'
-openclaw browser dialog --accept
-openclaw browser wait --text "Done"
-openclaw browser wait "#main" --url "**/dash" --load networkidle --fn "window.ready===true"
-openclaw browser evaluate --fn '(el) => el.textContent' --ref 7
-openclaw browser highlight e12
-openclaw browser trace start
-openclaw browser trace stop
+opencli browser navigate https://example.com
+opencli browser resize 1280 720
+opencli browser click 12 --double           # or e12 for role refs
+opencli browser click-coords 120 340        # viewport coordinates
+opencli browser type 23 "hello" --submit
+opencli browser press Enter
+opencli browser hover 44
+opencli browser scrollintoview e12
+opencli browser drag 10 11
+opencli browser select 9 OptionA OptionB
+opencli browser download e12 report.pdf
+opencli browser waitfordownload report.pdf
+opencli browser upload /tmp/opencli/uploads/file.pdf
+opencli browser fill --fields '[{"ref":"1","type":"text","value":"Ada"}]'
+opencli browser dialog --accept
+opencli browser wait --text "Done"
+opencli browser wait "#main" --url "**/dash" --load networkidle --fn "window.ready===true"
+opencli browser evaluate --fn '(el) => el.textContent' --ref 7
+opencli browser highlight e12
+opencli browser trace start
+opencli browser trace stop
 ```
 
 </Accordion>
@@ -199,20 +199,20 @@ openclaw browser trace stop
 <Accordion title="State: cookies, storage, offline, headers, geo, device">
 
 ```bash
-openclaw browser cookies
-openclaw browser cookies set session abc123 --url "https://example.com"
-openclaw browser cookies clear
-openclaw browser storage local get
-openclaw browser storage local set theme dark
-openclaw browser storage session clear
-openclaw browser set offline on
-openclaw browser set headers --headers-json '{"X-Debug":"1"}'
-openclaw browser set credentials user pass            # --clear to remove
-openclaw browser set geo 37.7749 -122.4194 --origin "https://example.com"
-openclaw browser set media dark
-openclaw browser set timezone America/New_York
-openclaw browser set locale en-US
-openclaw browser set device "iPhone 14"
+opencli browser cookies
+opencli browser cookies set session abc123 --url "https://example.com"
+opencli browser cookies clear
+opencli browser storage local get
+opencli browser storage local set theme dark
+opencli browser storage session clear
+opencli browser set offline on
+opencli browser set headers --headers-json '{"X-Debug":"1"}'
+opencli browser set credentials user pass            # --clear to remove
+opencli browser set geo 37.7749 -122.4194 --origin "https://example.com"
+opencli browser set media dark
+opencli browser set timezone America/New_York
+opencli browser set locale en-US
+opencli browser set device "iPhone 14"
 ```
 
 </Accordion>
@@ -223,10 +223,10 @@ Notes:
 
 - `upload` and `dialog` are **arming** calls; run them before the click/press that triggers the chooser/dialog.
 - `click`/`type`/etc require a `ref` from `snapshot` (numeric `12`, role ref `e12`, or actionable ARIA ref `ax12`). CSS selectors are intentionally not supported for actions. Use `click-coords` when the visible viewport position is the only reliable target.
-- Download, trace, and upload paths are constrained to OpenClaw temp roots: `/tmp/openclaw{,/downloads,/uploads}` (fallback: `${os.tmpdir()}/openclaw/...`).
+- Download, trace, and upload paths are constrained to OpenCLI temp roots: `/tmp/opencli{,/downloads,/uploads}` (fallback: `${os.tmpdir()}/opencli/...`).
 - `upload` can also set file inputs directly via `--input-ref` or `--element`.
 
-Stable tab ids and labels survive Chromium raw-target replacement when OpenClaw
+Stable tab ids and labels survive Chromium raw-target replacement when OpenCLI
 can prove the replacement tab, such as same URL or a single old tab becoming a
 single new tab after form submission. Raw target ids are still volatile; prefer
 `suggestedTargetId` from `tabs` in scripts.
@@ -234,7 +234,7 @@ single new tab after form submission. Raw target ids are still volatile; prefer
 Snapshot flags at a glance:
 
 - `--format ai` (default with Playwright): AI snapshot with numeric refs (`aria-ref="<n>"`).
-- `--format aria`: accessibility tree with `axN` refs. When Playwright is available, OpenClaw binds refs with backend DOM ids to the live page so follow-up actions can use them; otherwise treat the output as inspection-only.
+- `--format aria`: accessibility tree with `axN` refs. When Playwright is available, OpenCLI binds refs with backend DOM ids to the live page so follow-up actions can use them; otherwise treat the output as inspection-only.
 - `--efficient` (or `--mode efficient`): compact role snapshot preset. Set `browser.snapshotDefaults.mode: "efficient"` to make this the default (see [Gateway configuration](/gateway/configuration-reference#browser)).
 - `--interactive`, `--compact`, `--depth`, `--selector` force a role snapshot with `ref=e12` refs. `--frame "<iframe>"` scopes role snapshots to an iframe.
 - `--labels` adds a viewport-only screenshot with overlayed ref labels (prints `MEDIA:<path>`).
@@ -242,24 +242,24 @@ Snapshot flags at a glance:
 
 ## Snapshots and refs
 
-OpenClaw supports two “snapshot” styles:
+OpenCLI supports two “snapshot” styles:
 
-- **AI snapshot (numeric refs)**: `openclaw browser snapshot` (default; `--format ai`)
+- **AI snapshot (numeric refs)**: `opencli browser snapshot` (default; `--format ai`)
   - Output: a text snapshot that includes numeric refs.
-  - Actions: `openclaw browser click 12`, `openclaw browser type 23 "hello"`.
+  - Actions: `opencli browser click 12`, `opencli browser type 23 "hello"`.
   - Internally, the ref is resolved via Playwright’s `aria-ref`.
 
-- **Role snapshot (role refs like `e12`)**: `openclaw browser snapshot --interactive` (or `--compact`, `--depth`, `--selector`, `--frame`)
+- **Role snapshot (role refs like `e12`)**: `opencli browser snapshot --interactive` (or `--compact`, `--depth`, `--selector`, `--frame`)
   - Output: a role-based list/tree with `[ref=e12]` (and optional `[nth=1]`).
-  - Actions: `openclaw browser click e12`, `openclaw browser highlight e12`.
+  - Actions: `opencli browser click e12`, `opencli browser highlight e12`.
   - Internally, the ref is resolved via `getByRole(...)` (plus `nth()` for duplicates).
   - Add `--labels` to include a viewport screenshot with overlayed `e12` labels.
   - Add `--urls` when link text is ambiguous and the agent needs concrete
     navigation targets.
 
-- **ARIA snapshot (ARIA refs like `ax12`)**: `openclaw browser snapshot --format aria`
+- **ARIA snapshot (ARIA refs like `ax12`)**: `opencli browser snapshot --format aria`
   - Output: the accessibility tree as structured nodes.
-  - Actions: `openclaw browser click ax12` works when the snapshot path can bind
+  - Actions: `opencli browser click ax12` works when the snapshot path can bind
     the ref through Playwright and Chrome backend DOM ids.
 - If Playwright is unavailable, ARIA snapshots can still be useful for
   inspection, but refs may not be actionable. Re-snapshot with `--format ai`
@@ -284,18 +284,18 @@ Ref behavior:
 You can wait on more than just time/text:
 
 - Wait for URL (globs supported by Playwright):
-  - `openclaw browser wait --url "**/dash"`
+  - `opencli browser wait --url "**/dash"`
 - Wait for load state:
-  - `openclaw browser wait --load networkidle`
+  - `opencli browser wait --load networkidle`
 - Wait for a JS predicate:
-  - `openclaw browser wait --fn "window.ready===true"`
+  - `opencli browser wait --fn "window.ready===true"`
 - Wait for a selector to become visible:
-  - `openclaw browser wait "#main"`
+  - `opencli browser wait "#main"`
 
 These can be combined:
 
 ```bash
-openclaw browser wait "#main" \
+opencli browser wait "#main" \
   --url "**/dash" \
   --load networkidle \
   --fn "window.ready===true" \
@@ -306,16 +306,16 @@ openclaw browser wait "#main" \
 
 When an action fails (e.g. “not visible”, “strict mode violation”, “covered”):
 
-1. `openclaw browser snapshot --interactive`
+1. `opencli browser snapshot --interactive`
 2. Use `click <ref>` / `type <ref>` (prefer role refs in interactive mode)
-3. If it still fails: `openclaw browser highlight <ref>` to see what Playwright is targeting
+3. If it still fails: `opencli browser highlight <ref>` to see what Playwright is targeting
 4. If the page behaves oddly:
-   - `openclaw browser errors --clear`
-   - `openclaw browser requests --filter api --clear`
+   - `opencli browser errors --clear`
+   - `opencli browser requests --filter api --clear`
 5. For deep debugging: record a trace:
-   - `openclaw browser trace start`
+   - `opencli browser trace start`
    - reproduce the issue
-   - `openclaw browser trace stop` (prints `TRACE:<path>`)
+   - `opencli browser trace stop` (prints `TRACE:<path>`)
 
 ## JSON output
 
@@ -324,10 +324,10 @@ When an action fails (e.g. “not visible”, “strict mode violation”, “co
 Examples:
 
 ```bash
-openclaw browser status --json
-openclaw browser snapshot --interactive --json
-openclaw browser requests --filter api --json
-openclaw browser cookies --json
+opencli browser status --json
+opencli browser snapshot --interactive --json
+opencli browser requests --filter api --json
+opencli browser cookies --json
 ```
 
 Role snapshots in JSON include `refs` plus a small `stats` block (lines/chars/refs/interactive) so tools can reason about payload size and density.
@@ -350,8 +350,8 @@ These are useful for “make the site behave like X” workflows:
 
 ## Security and privacy
 
-- The openclaw browser profile may contain logged-in sessions; treat it as sensitive.
-- `browser act kind=evaluate` / `openclaw browser evaluate` and `wait --fn`
+- The opencli browser profile may contain logged-in sessions; treat it as sensitive.
+- `browser act kind=evaluate` / `opencli browser evaluate` and `wait --fn`
   execute arbitrary JavaScript in the page context. Prompt injection can steer
   this. Disable it with `browser.evaluateEnabled=false` if you do not need it.
 - For logins and anti-bot notes (X/Twitter, etc.), see [Browser login + X/Twitter posting](/tools/browser-login).

@@ -419,7 +419,7 @@ describe("resolveSharedMemoryStatusSnapshot", () => {
     };
     const resolveMemoryConfig = vi.fn(() => null);
     const getMemorySearchManager = vi.fn(async () => ({ manager }));
-    const requireDefaultStore = vi.fn(() => `/tmp/openclaw-missing-memory-${process.pid}.sqlite`);
+    const requireDefaultStore = vi.fn(() => `/tmp/opencli-missing-memory-${process.pid}.sqlite`);
 
     const result = await resolveSharedMemoryStatusSnapshot({
       cfg: {
@@ -474,7 +474,7 @@ describe("resolveSharedMemoryStatusSnapshot", () => {
       memoryPlugin: { enabled: true, slot: "memory-core" },
       resolveMemoryConfig,
       getMemorySearchManager,
-      requireDefaultStore: () => `/tmp/openclaw-missing-memory-${process.pid}.sqlite`,
+      requireDefaultStore: () => `/tmp/opencli-missing-memory-${process.pid}.sqlite`,
     });
 
     expect(result).toBeNull();

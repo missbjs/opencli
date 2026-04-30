@@ -1,1 +1,1 @@
-export { createWindowsCmdShimFixture } from "openclaw/plugin-sdk/test-env";
+export { createWindowsCmdShimFixture } from "opencli/plugin-sdk/test-env";

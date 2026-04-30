@@ -1,7 +1,7 @@
 import Darwin
 import Foundation
 import Testing
-@testable import OpenClawDiscovery
+@testable import OpenCLIDiscovery
 
 private final class NameserverQueryLog: @unchecked Sendable {
     private let lock = NSLock()
@@ -23,13 +23,13 @@ private final class NameserverQueryLog: @unchecked Sendable {
 @Suite(.serialized)
 struct WideAreaGatewayDiscoveryTests {
     @Test func `discovers beacon from tailnet dns sd fallback`() {
-        let originalWideAreaDomain = getenv("OPENCLAW_WIDE_AREA_DOMAIN").map { String(cString: $0) }
-        setenv("OPENCLAW_WIDE_AREA_DOMAIN", "openclaw.internal", 1)
+        let originalWideAreaDomain = getenv("OPENCLI_WIDE_AREA_DOMAIN").map { String(cString: $0) }
+        setenv("OPENCLI_WIDE_AREA_DOMAIN", "opencli.internal", 1)
         defer {
             if let originalWideAreaDomain {
-                setenv("OPENCLAW_WIDE_AREA_DOMAIN", originalWideAreaDomain, 1)
+                setenv("OPENCLI_WIDE_AREA_DOMAIN", originalWideAreaDomain, 1)
             } else {
-                unsetenv("OPENCLAW_WIDE_AREA_DOMAIN")
+                unsetenv("OPENCLI_WIDE_AREA_DOMAIN")
             }
         }
         let statusJson = """
@@ -48,15 +48,15 @@ struct WideAreaGatewayDiscoveryTests {
                 let nameserver = args.first(where: { $0.hasPrefix("@") }) ?? ""
                 if recordType == "PTR" {
                     if nameserver == "@100.100.100.100" {
-                        return "steipetacstudio-gateway._openclaw-gw._tcp.openclaw.internal.\n"
+                        return "steipetacstudio-gateway._opencli-gw._tcp.opencli.internal.\n"
                     }
                     return ""
                 }
                 if recordType == "SRV" {
-                    return "0 0 18789 steipetacstudio.openclaw.internal."
+                    return "0 0 18789 steipetacstudio.opencli.internal."
                 }
                 if recordType == "TXT" {
-                    return "\"displayName=Peter\\226\\128\\153s Mac Studio (OpenClaw)\" \"gatewayPort=18789\" \"tailnetDns=peters-mac-studio-1.sheep-coho.ts.net\" \"cliPath=/Users/steipete/openclaw/src/entry.ts\""
+                    return "\"displayName=Peter\\226\\128\\153s Mac Studio (OpenCLI)\" \"gatewayPort=18789\" \"tailnetDns=peters-mac-studio-1.sheep-coho.ts.net\" \"cliPath=/Users/steipete/opencli/src/entry.ts\""
                 }
                 return ""
             })
@@ -67,22 +67,22 @@ struct WideAreaGatewayDiscoveryTests {
 
         #expect(beacons.count == 1)
         let beacon = beacons[0]
-        let expectedDisplay = "Peter\u{2019}s Mac Studio (OpenClaw)"
+        let expectedDisplay = "Peter\u{2019}s Mac Studio (OpenCLI)"
         #expect(beacon.displayName == expectedDisplay)
         #expect(beacon.port == 18789)
         #expect(beacon.gatewayPort == 18789)
         #expect(beacon.tailnetDns == "peters-mac-studio-1.sheep-coho.ts.net")
-        #expect(beacon.cliPath == "/Users/steipete/openclaw/src/entry.ts")
+        #expect(beacon.cliPath == "/Users/steipete/opencli/src/entry.ts")
     }
 
     @Test func `attacker peer cannot become nameserver`() {
-        let originalWideAreaDomain = getenv("OPENCLAW_WIDE_AREA_DOMAIN").map { String(cString: $0) }
-        setenv("OPENCLAW_WIDE_AREA_DOMAIN", "openclaw.internal", 1)
+        let originalWideAreaDomain = getenv("OPENCLI_WIDE_AREA_DOMAIN").map { String(cString: $0) }
+        setenv("OPENCLI_WIDE_AREA_DOMAIN", "opencli.internal", 1)
         defer {
             if let originalWideAreaDomain {
-                setenv("OPENCLAW_WIDE_AREA_DOMAIN", originalWideAreaDomain, 1)
+                setenv("OPENCLI_WIDE_AREA_DOMAIN", originalWideAreaDomain, 1)
             } else {
-                unsetenv("OPENCLAW_WIDE_AREA_DOMAIN")
+                unsetenv("OPENCLI_WIDE_AREA_DOMAIN")
             }
         }
         let statusJson = """
@@ -104,7 +104,7 @@ struct WideAreaGatewayDiscoveryTests {
                 let recordType = args.last ?? ""
                 if recordType == "PTR" {
                     if nameserver == "@100.64.0.2" {
-                        return "evil._openclaw-gw._tcp.openclaw.internal.\n"
+                        return "evil._opencli-gw._tcp.opencli.internal.\n"
                     }
                     return ""
                 }

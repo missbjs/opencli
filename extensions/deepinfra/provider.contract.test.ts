@@ -1,3 +1,3 @@
-import { describeProviderContracts } from "openclaw/plugin-sdk/provider-test-contracts";
+import { describeProviderContracts } from "opencli/plugin-sdk/provider-test-contracts";
 
 describeProviderContracts("deepinfra");

@@ -2,11 +2,11 @@ import crypto from "node:crypto";
 import { mkdtemp, rm } from "node:fs/promises";
 import path from "node:path";
 import { createSubsystemLogger } from "../logging/subsystem.js";
-import { resolvePreferredOpenClawTmpDir } from "./tmp-openclaw-dir.js";
+import { resolvePreferredOpenCLITmpDir } from "./tmp-opencli-dir.js";
 
 const logger = createSubsystemLogger("infra:temp-download");
 
-export { resolvePreferredOpenClawTmpDir } from "./tmp-openclaw-dir.js";
+export { resolvePreferredOpenCLITmpDir } from "./tmp-opencli-dir.js";
 
 export type TempDownloadTarget = {
   dir: string;
@@ -36,7 +36,7 @@ export function sanitizeTempFileName(fileName: string): string {
 }
 
 function resolveTempRoot(tmpDir?: string): string {
-  return tmpDir ?? resolvePreferredOpenClawTmpDir();
+  return tmpDir ?? resolvePreferredOpenCLITmpDir();
 }
 
 function isNodeErrorWithCode(err: unknown, code: string): boolean {

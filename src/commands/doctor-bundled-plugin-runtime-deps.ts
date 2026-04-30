@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import { formatCliCommand } from "../cli/command-format.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
-import { resolveOpenClawPackageRootSync } from "../infra/openclaw-root.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
+import { resolveOpenCLIPackageRootSync } from "../infra/opencli-root.js";
 import {
   createBundledRuntimeDepsInstallSpecs,
   repairBundledRuntimeDepsInstallRootAsync,
@@ -20,7 +20,7 @@ const RUNTIME_DEPS_INSTALL_HEARTBEAT_MS = 15_000;
 
 function collectPackagedRuntimeDepsRepairPluginIds(params: {
   bundledPluginsDir: string;
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   includeConfiguredChannels?: boolean;
 }): string[] {
   if (!fs.existsSync(params.bundledPluginsDir)) {
@@ -36,7 +36,7 @@ function collectPackagedRuntimeDepsRepairPluginIds(params: {
     let manifest: Record<string, unknown>;
     try {
       manifest = JSON.parse(
-        fs.readFileSync(path.join(pluginDir, "openclaw.plugin.json"), "utf-8"),
+        fs.readFileSync(path.join(pluginDir, "opencli.plugin.json"), "utf-8"),
       ) as Record<string, unknown>;
     } catch {
       continue;
@@ -108,7 +108,7 @@ function logRuntimeDepsInstallProgress(runtime: RuntimeEnv, message: string): vo
 export async function maybeRepairBundledPluginRuntimeDeps(params: {
   runtime: RuntimeEnv;
   prompter: DoctorPrompter;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   env?: NodeJS.ProcessEnv;
   packageRoot?: string | null;
   includeConfiguredChannels?: boolean;
@@ -116,7 +116,7 @@ export async function maybeRepairBundledPluginRuntimeDeps(params: {
 }): Promise<void> {
   const packageRoot =
     params.packageRoot ??
-    resolveOpenClawPackageRootSync({
+    resolveOpenCLIPackageRootSync({
       argv1: process.argv[1],
       cwd: process.cwd(),
       moduleUrl: import.meta.url,
@@ -154,7 +154,7 @@ export async function maybeRepairBundledPluginRuntimeDeps(params: {
       [
         "Bundled plugin runtime deps use conflicting versions.",
         ...conflictLines,
-        `Update bundled plugins and rerun ${formatCliCommand("openclaw doctor")}.`,
+        `Update bundled plugins and rerun ${formatCliCommand("opencli doctor")}.`,
       ].join("\n"),
       "Bundled plugins",
     );
@@ -174,7 +174,7 @@ export async function maybeRepairBundledPluginRuntimeDeps(params: {
     [
       "Bundled plugin runtime deps need staging.",
       ...missing.map((dep) => `- ${dep.name}@${dep.version} (used by ${dep.pluginIds.join(", ")})`),
-      `Fix: run ${formatCliCommand("openclaw doctor --fix")} to install them.`,
+      `Fix: run ${formatCliCommand("opencli doctor --fix")} to install them.`,
     ].join("\n"),
     "Bundled plugins",
   );
@@ -197,7 +197,7 @@ export async function maybeRepairBundledPluginRuntimeDeps(params: {
     progress = createCliProgress({
       label: `Installing bundled plugin runtime deps (${installSpecs.length})`,
       indeterminate: true,
-      enabled: process.env.VITEST !== "true" || process.env.OPENCLAW_TEST_RUNTIME_LOG === "1",
+      enabled: process.env.VITEST !== "true" || process.env.OPENCLI_TEST_RUNTIME_LOG === "1",
     });
     const installStartedAt = Date.now();
     logRuntimeDepsInstallProgress(

@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { normalizeOptionalLowercaseString } from "../shared/string-coerce.js";
 import { readRuntimeDepsJsonObject, type JsonObject } from "./bundled-runtime-deps-json.js";
 import {
@@ -15,7 +15,7 @@ import {
   type NormalizePluginId,
 } from "./config-normalization-shared.js";
 
-const MIRRORED_PACKAGE_RUNTIME_DEP_PLUGIN_ID = "openclaw-core";
+const MIRRORED_PACKAGE_RUNTIME_DEP_PLUGIN_ID = "opencli-core";
 
 export type RuntimeDepConflict = {
   name: string;
@@ -34,10 +34,10 @@ export type BundledPluginRuntimeDepsManifest = {
 export type BundledPluginRuntimeDepsManifestCache = Map<string, BundledPluginRuntimeDepsManifest>;
 
 function collectDeclaredMirroredRootRuntimeDepNames(packageJson: JsonObject): string[] {
-  const openclaw = packageJson.openclaw;
+  const opencli = packageJson.opencli;
   const bundle =
-    openclaw && typeof openclaw === "object" && !Array.isArray(openclaw)
-      ? (openclaw as JsonObject).bundle
+    opencli && typeof opencli === "object" && !Array.isArray(opencli)
+      ? (opencli as JsonObject).bundle
       : undefined;
   const rawNames =
     bundle && typeof bundle === "object" && !Array.isArray(bundle)
@@ -47,12 +47,12 @@ function collectDeclaredMirroredRootRuntimeDepNames(packageJson: JsonObject): st
     return [];
   }
   if (!Array.isArray(rawNames)) {
-    throw new Error("openclaw.bundle.mirroredRootRuntimeDependencies must be an array");
+    throw new Error("opencli.bundle.mirroredRootRuntimeDependencies must be an array");
   }
   const names = new Set<string>();
   for (const rawName of rawNames) {
     if (typeof rawName !== "string") {
-      throw new Error("openclaw.bundle.mirroredRootRuntimeDependencies must contain strings");
+      throw new Error("opencli.bundle.mirroredRootRuntimeDependencies must contain strings");
     }
     const normalizedName = normalizeInstallableRuntimeDepName(rawName);
     if (!normalizedName) {
@@ -99,7 +99,7 @@ function readBundledPluginRuntimeDepsManifest(
   if (cached) {
     return cached;
   }
-  const manifest = readRuntimeDepsJsonObject(path.join(pluginDir, "openclaw.plugin.json"));
+  const manifest = readRuntimeDepsJsonObject(path.join(pluginDir, "opencli.plugin.json"));
   const channels = manifest?.channels;
   const legacyPluginIds = manifest?.legacyPluginIds;
   const providers = manifest?.providers;
@@ -208,7 +208,7 @@ function passesRuntimeDepsPluginPolicy(params: {
 }
 
 export function isBundledPluginConfiguredForRuntimeDeps(params: {
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   plugins: NormalizedPluginsConfig;
   pluginId: string;
   pluginDir: string;
@@ -284,7 +284,7 @@ export function isBundledPluginConfiguredForRuntimeDeps(params: {
 }
 
 function isBundledPluginExplicitlyDisabledForRuntimeDeps(params: {
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   plugins: NormalizedPluginsConfig;
   pluginId: string;
   pluginDir: string;
@@ -312,7 +312,7 @@ function isBundledPluginExplicitlyDisabledForRuntimeDeps(params: {
 }
 
 function shouldIncludeBundledPluginRuntimeDeps(params: {
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   plugins?: NormalizedPluginsConfig;
   pluginIds?: ReadonlySet<string>;
   selectedPluginIds?: ReadonlySet<string>;
@@ -374,7 +374,7 @@ function shouldIncludeBundledPluginRuntimeDeps(params: {
 
 export function collectBundledPluginRuntimeDeps(params: {
   extensionsDir: string;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   pluginIds?: ReadonlySet<string>;
   selectedPluginIds?: ReadonlySet<string>;
   includeConfiguredChannels?: boolean;

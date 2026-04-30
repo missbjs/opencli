@@ -5,7 +5,7 @@ import {
   listPotentialConfiguredChannelIds,
 } from "../channels/config-presence.js";
 import { applyPluginAutoEnable } from "../config/plugin-auto-enable.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { normalizeOptionalLowercaseString } from "../shared/string-coerce.js";
 import { resolveBundledPluginsDir } from "./bundled-dir.js";
 import {
@@ -18,8 +18,8 @@ import { passesManifestOwnerBasePolicy } from "./manifest-owner-policy.js";
 import { loadPluginManifest } from "./manifest.js";
 
 function collectConfiguredChannelIds(
-  config: OpenClawConfig,
-  activationSourceConfig: OpenClawConfig,
+  config: OpenCLIConfig,
+  activationSourceConfig: OpenCLIConfig,
   env: NodeJS.ProcessEnv,
 ): string[] {
   const disabled = new Set([
@@ -42,7 +42,7 @@ function collectConfiguredChannelIds(
 }
 
 function collectBundledChannelOwnerPluginIds(params: {
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   channelIds: readonly string[];
   env: NodeJS.ProcessEnv;
   bundledPluginsDir?: string;
@@ -97,7 +97,7 @@ function collectBundledChannelOwnerPluginIds(params: {
   return [...pluginIds].toSorted((left, right) => left.localeCompare(right));
 }
 
-function collectExplicitEffectivePluginIds(config: OpenClawConfig): string[] {
+function collectExplicitEffectivePluginIds(config: OpenCLIConfig): string[] {
   const plugins = normalizePluginsConfig(config.plugins);
   if (!plugins.enabled) {
     return [];
@@ -124,7 +124,7 @@ function collectExplicitEffectivePluginIds(config: OpenClawConfig): string[] {
 }
 
 export function resolveEffectivePluginIds(params: {
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   env: NodeJS.ProcessEnv;
   workspaceDir?: string;
   bundledPluginsDir?: string;

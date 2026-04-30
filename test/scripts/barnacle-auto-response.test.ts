@@ -51,8 +51,8 @@ function barnacleContext(
 ) {
   return {
     repo: {
-      owner: "openclaw",
-      repo: "openclaw",
+      owner: "opencli",
+      repo: "opencli",
     },
     payload: {
       action: options.action ?? "opened",
@@ -215,7 +215,7 @@ describe("barnacle-auto-response", () => {
       pr(
         "Fix duplicate plugin auto-enable entries",
         [
-          "- Problem: openclaw doctor --fix adds duplicate installed plugin entries",
+          "- Problem: opencli doctor --fix adds duplicate installed plugin entries",
           "- Why it matters: users get noisy config churn",
           "- What changed: respect manifest-provided channel auto-loads",
           "",
@@ -292,13 +292,13 @@ describe("barnacle-auto-response", () => {
 
   it("does not close automation PRs for the active PR limit", async () => {
     for (const automationPullRequest of [
-      { head: { ref: "clawsweeper/openclaw-openclaw-73880" }, login: "app/openclaw-clawsweeper" },
-      { headRefName: "clawsweeper/openclaw-openclaw-73880", login: "app/openclaw-clawsweeper" },
+      { head: { ref: "clawsweeper/opencli-opencli-73880" }, login: "app/opencli-clawsweeper" },
+      { headRefName: "clawsweeper/opencli-opencli-73880", login: "app/opencli-clawsweeper" },
       {
         head: { ref: "clownfish/ghcrawl-156993-autonomous-smoke" },
-        login: "app/openclaw-clownfish",
+        login: "app/opencli-clownfish",
       },
-      { headRefName: "clownfish/ghcrawl-156993-autonomous-smoke", login: "app/openclaw-clownfish" },
+      { headRefName: "clownfish/ghcrawl-156993-autonomous-smoke", login: "app/opencli-clownfish" },
     ]) {
       const { calls, github } = barnacleGithub([]);
       const { login, ...pullRequest } = automationPullRequest;
@@ -357,7 +357,7 @@ describe("barnacle-auto-response", () => {
   });
 
   it("actions manually applied candidate labels", async () => {
-    const { calls, github } = barnacleGithub([file("extensions/example/openclaw.plugin.json")]);
+    const { calls, github } = barnacleGithub([file("extensions/example/opencli.plugin.json")]);
 
     await runBarnacleAutoResponse({
       github,
@@ -380,14 +380,14 @@ describe("barnacle-auto-response", () => {
   });
 
   it("keeps bot-applied candidate labels passive", async () => {
-    const { calls, github } = barnacleGithub([file("extensions/example/openclaw.plugin.json")]);
+    const { calls, github } = barnacleGithub([file("extensions/example/opencli.plugin.json")]);
 
     await runBarnacleAutoResponse({
       github,
       context: barnacleContext({}, [candidateLabels.externalPluginCandidate], {
         action: "labeled",
         label: { name: candidateLabels.externalPluginCandidate },
-        sender: { login: "openclaw-bot[bot]", type: "Bot" },
+        sender: { login: "opencli-bot[bot]", type: "Bot" },
       }),
       core: {
         info: () => undefined,

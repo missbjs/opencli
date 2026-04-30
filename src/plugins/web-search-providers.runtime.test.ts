@@ -28,7 +28,7 @@ let loadPluginManifestRegistryMock: ReturnType<
 let setActivePluginRegistry: RuntimeModule["setActivePluginRegistry"];
 let resolvePluginWebSearchProviders: WebSearchProvidersRuntimeModule["resolvePluginWebSearchProviders"];
 let resolveRuntimeWebSearchProviders: WebSearchProvidersRuntimeModule["resolveRuntimeWebSearchProviders"];
-let loadOpenClawPluginsMock: ReturnType<typeof vi.fn>;
+let loadOpenCLIPluginsMock: ReturnType<typeof vi.fn>;
 let loaderModule: typeof import("./loader.js");
 let pluginAutoEnableModule: PluginAutoEnableModule;
 let applyPluginAutoEnableSpy: ReturnType<typeof vi.fn>;
@@ -105,7 +105,7 @@ function createBraveAllowConfig() {
 
 function createWebSearchEnv(overrides?: Partial<NodeJS.ProcessEnv>) {
   return {
-    OPENCLAW_HOME: "/tmp/openclaw-home",
+    OPENCLI_HOME: "/tmp/opencli-home",
     ...overrides,
   } as NodeJS.ProcessEnv;
 }
@@ -146,7 +146,7 @@ function createManifestRegistryFixture(): PluginManifestRegistry {
         origin: "bundled",
         rootDir: "/tmp/brave",
         source: "/tmp/brave/index.js",
-        manifestPath: "/tmp/brave/openclaw.plugin.json",
+        manifestPath: "/tmp/brave/opencli.plugin.json",
         channels: [],
         providers: [],
         cliBackends: [],
@@ -161,7 +161,7 @@ function createManifestRegistryFixture(): PluginManifestRegistry {
         origin: "bundled",
         rootDir: "/tmp/noise",
         source: "/tmp/noise/index.js",
-        manifestPath: "/tmp/noise/openclaw.plugin.json",
+        manifestPath: "/tmp/noise/opencli.plugin.json",
         channels: [],
         providers: [],
         cliBackends: [],
@@ -177,12 +177,12 @@ function createManifestRegistryFixture(): PluginManifestRegistry {
 }
 
 function expectLoaderCallCount(count: number) {
-  expect(loadOpenClawPluginsMock).toHaveBeenCalledTimes(count);
+  expect(loadOpenCLIPluginsMock).toHaveBeenCalledTimes(count);
 }
 
 function expectScopedWebSearchCandidates(pluginIds: readonly string[]) {
   expect(loadPluginManifestRegistryMock).toHaveBeenCalled();
-  expect(loadOpenClawPluginsMock).toHaveBeenCalledWith(
+  expect(loadOpenCLIPluginsMock).toHaveBeenCalledWith(
     expect.objectContaining({
       onlyPluginIds: [...pluginIds],
     }),
@@ -197,7 +197,7 @@ function expectAutoEnabledWebSearchLoad(params: {
     config: params.rawConfig,
     env: createWebSearchEnv(),
   });
-  expect(loadOpenClawPluginsMock).toHaveBeenCalledWith(
+  expect(loadOpenCLIPluginsMock).toHaveBeenCalledWith(
     expect.objectContaining({
       config: expect.objectContaining({
         plugins: expect.objectContaining({
@@ -314,7 +314,7 @@ function expectRuntimeProviderResolution(
   expected: readonly string[],
 ) {
   expect(toRuntimeProviderKeys(providers)).toEqual([...expected]);
-  expect(loadOpenClawPluginsMock).not.toHaveBeenCalled();
+  expect(loadOpenCLIPluginsMock).not.toHaveBeenCalled();
 }
 
 describe("resolvePluginWebSearchProviders", () => {
@@ -354,8 +354,8 @@ describe("resolvePluginWebSearchProviders", () => {
       );
     loadPluginManifestRegistryMock.mockReset();
     loadPluginManifestRegistryMock.mockReturnValue(createManifestRegistryFixture());
-    loadOpenClawPluginsMock = vi
-      .spyOn(loaderModule, "loadOpenClawPlugins")
+    loadOpenCLIPluginsMock = vi
+      .spyOn(loaderModule, "loadOpenCLIPlugins")
       .mockImplementation((params) => {
         const registry = createEmptyPluginRegistry();
         registry.webSearchProviders = buildMockedWebSearchProviders(params);
@@ -388,7 +388,7 @@ describe("resolvePluginWebSearchProviders", () => {
     });
 
     expect(toRuntimeProviderKeys(providers)).toEqual(["brave:brave"]);
-    expect(loadOpenClawPluginsMock).not.toHaveBeenCalled();
+    expect(loadOpenCLIPluginsMock).not.toHaveBeenCalled();
   });
 
   it("loads plugin web-search providers from the auto-enabled config snapshot", () => {
@@ -440,7 +440,7 @@ describe("resolvePluginWebSearchProviders", () => {
         workspaceDir: "/tmp/runtime-workspace",
       }),
     );
-    expect(loadOpenClawPluginsMock).toHaveBeenCalledWith(
+    expect(loadOpenCLIPluginsMock).toHaveBeenCalledWith(
       expect.objectContaining({
         workspaceDir: "/tmp/runtime-workspace",
         onlyPluginIds: ["brave"],
@@ -458,7 +458,7 @@ describe("resolvePluginWebSearchProviders", () => {
     });
 
     expectRuntimeProviderResolution(providers, ["brave:brave"]);
-    expect(loadOpenClawPluginsMock).not.toHaveBeenCalled();
+    expect(loadOpenCLIPluginsMock).not.toHaveBeenCalled();
   });
 
   it("inherits workspaceDir from the active registry for compatible web-search snapshot reuse", () => {
@@ -474,7 +474,7 @@ describe("resolvePluginWebSearchProviders", () => {
     });
 
     expectRuntimeProviderResolution(providers, ["brave:brave"]);
-    expect(loadOpenClawPluginsMock).not.toHaveBeenCalled();
+    expect(loadOpenCLIPluginsMock).not.toHaveBeenCalled();
   });
 
   it("uses the inherited active workspace for each web-search resolution", () => {
@@ -500,7 +500,7 @@ describe("resolvePluginWebSearchProviders", () => {
 
   it("resolves current config contents when config changes in place", () => {
     const config = createBraveAllowConfig();
-    const env = createWebSearchEnv({ OPENCLAW_HOME: "/tmp/openclaw-home-a" });
+    const env = createWebSearchEnv({ OPENCLI_HOME: "/tmp/opencli-home-a" });
 
     expectSnapshotLoaderCalls({
       config,
@@ -514,13 +514,13 @@ describe("resolvePluginWebSearchProviders", () => {
 
   it("resolves current env contents when env changes in place", () => {
     const config = createBraveAllowConfig();
-    const env = createWebSearchEnv({ OPENCLAW_HOME: "/tmp/openclaw-home-a" });
+    const env = createWebSearchEnv({ OPENCLI_HOME: "/tmp/opencli-home-a" });
 
     expectSnapshotLoaderCalls({
       config,
       env,
       mutate: () => {
-        env.OPENCLAW_HOME = "/tmp/openclaw-home-b";
+        env.OPENCLI_HOME = "/tmp/opencli-home-b";
       },
       expectedLoaderCalls: 2,
     });
@@ -545,7 +545,7 @@ describe("resolvePluginWebSearchProviders", () => {
       }
     }
 
-    expect(loadOpenClawPluginsMock).toHaveBeenCalledTimes(2);
+    expect(loadOpenCLIPluginsMock).toHaveBeenCalledTimes(2);
   });
 
   it.each([

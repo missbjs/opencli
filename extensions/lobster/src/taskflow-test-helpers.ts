@@ -1,8 +1,8 @@
 import { vi } from "vitest";
-import type { OpenClawPluginApi } from "../runtime-api.js";
+import type { OpenCLIPluginApi } from "../runtime-api.js";
 
 export type BoundTaskFlow = ReturnType<
-  NonNullable<OpenClawPluginApi["runtime"]>["tasks"]["managedFlows"]["bindSession"]
+  NonNullable<OpenCLIPluginApi["runtime"]>["tasks"]["managedFlows"]["bindSession"]
 >;
 
 export function createFakeTaskFlow(overrides?: Partial<BoundTaskFlow>): BoundTaskFlow {

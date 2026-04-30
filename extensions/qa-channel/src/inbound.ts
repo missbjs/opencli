@@ -1,10 +1,10 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
-import { dispatchInboundReplyWithBase } from "openclaw/plugin-sdk/inbound-reply-dispatch";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
+import { dispatchInboundReplyWithBase } from "opencli/plugin-sdk/inbound-reply-dispatch";
 import {
   buildAgentMediaPayload,
   saveMediaBuffer,
   saveMediaSource,
-} from "openclaw/plugin-sdk/media-runtime";
+} from "opencli/plugin-sdk/media-runtime";
 import { buildQaTarget, sendQaBusMessage, type QaBusMessage } from "./bus-client.js";
 import { getQaChannelRuntime } from "./runtime.js";
 import type { CoreConfig, ResolvedQaChannelAccount } from "./types.js";
@@ -73,7 +73,7 @@ export async function handleQaInbound(params: {
     threadId: inbound.threadId,
   });
   const route = runtime.channel.routing.resolveAgentRoute({
-    cfg: params.config as OpenClawConfig,
+    cfg: params.config as OpenCLIConfig,
     channel: params.channelId,
     accountId: params.account.accountId,
     peer: {
@@ -85,10 +85,7 @@ export async function handleQaInbound(params: {
   const wasMentioned = isGroup
     ? runtime.channel.mentions.matchesMentionPatterns(
         inbound.text,
-        runtime.channel.mentions.buildMentionRegexes(
-          params.config as OpenClawConfig,
-          route.agentId,
-        ),
+        runtime.channel.mentions.buildMentionRegexes(params.config as OpenCLIConfig, route.agentId),
       )
     : undefined;
   const storePath = runtime.channel.session.resolveStorePath(params.config.session?.store, {
@@ -103,7 +100,7 @@ export async function handleQaInbound(params: {
     from: inbound.senderName || inbound.senderId,
     timestamp: inbound.timestamp,
     previousTimestamp,
-    envelope: runtime.channel.reply.resolveEnvelopeFormatOptions(params.config as OpenClawConfig),
+    envelope: runtime.channel.reply.resolveEnvelopeFormatOptions(params.config as OpenCLIConfig),
     body: inbound.text,
   });
   const mediaPayload = await resolveQaInboundMediaPayload(inbound.attachments);
@@ -151,7 +148,7 @@ export async function handleQaInbound(params: {
   });
 
   await dispatchInboundReplyWithBase({
-    cfg: params.config as OpenClawConfig,
+    cfg: params.config as OpenCLIConfig,
     channel: params.channelId,
     accountId: params.account.accountId,
     route,

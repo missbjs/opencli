@@ -314,7 +314,7 @@ export class GatewayPlugin extends Plugin {
         d: {
           token: this.client?.options.token ?? "",
           intents: this.options.intents ?? 0,
-          properties: { os: process.platform, browser: "openclaw", device: "openclaw" },
+          properties: { os: process.platform, browser: "opencli", device: "opencli" },
           shard: this.options.shard,
         },
       } as GatewayIdentify,

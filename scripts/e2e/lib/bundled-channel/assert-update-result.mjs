@@ -17,10 +17,10 @@ if ((payload.after?.version ?? null) !== expectedAfter) {
   );
 }
 const steps = Array.isArray(payload.steps) ? payload.steps : [];
-const doctor = steps.find((step) => step?.name === "openclaw doctor");
+const doctor = steps.find((step) => step?.name === "opencli doctor");
 if (!doctor) {
-  throw new Error("missing openclaw doctor step");
+  throw new Error("missing opencli doctor step");
 }
 if (Number(doctor.exitCode ?? 1) !== 0) {
-  throw new Error(`openclaw doctor step failed: ${JSON.stringify(doctor)}`);
+  throw new Error(`opencli doctor step failed: ${JSON.stringify(doctor)}`);
 }

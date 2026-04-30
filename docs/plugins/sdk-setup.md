@@ -5,10 +5,10 @@ sidebarTitle: "Setup and config"
 read_when:
   - You are adding a setup wizard to a plugin
   - You need to understand setup-entry.ts vs index.ts
-  - You are defining plugin config schemas or package.json openclaw metadata
+  - You are defining plugin config schemas or package.json opencli metadata
 ---
 
-Reference for plugin packaging (`package.json` metadata), manifests (`openclaw.plugin.json`), setup entries, and config schemas.
+Reference for plugin packaging (`package.json` metadata), manifests (`opencli.plugin.json`), setup entries, and config schemas.
 
 <Tip>
 **Looking for a walkthrough?** The how-to guides cover packaging in context: [Channel plugins](/plugins/sdk-channel-plugins#step-1-package-and-manifest) and [Provider plugins](/plugins/sdk-provider-plugins#step-1-package-and-manifest).
@@ -16,16 +16,16 @@ Reference for plugin packaging (`package.json` metadata), manifests (`openclaw.p
 
 ## Package metadata
 
-Your `package.json` needs an `openclaw` field that tells the plugin system what your plugin provides:
+Your `package.json` needs an `opencli` field that tells the plugin system what your plugin provides:
 
 <Tabs>
   <Tab title="Channel plugin">
     ```json
     {
-      "name": "@myorg/openclaw-my-channel",
+      "name": "@myorg/opencli-my-channel",
       "version": "1.0.0",
       "type": "module",
-      "openclaw": {
+      "opencli": {
         "extensions": ["./index.ts"],
         "setupEntry": "./setup-entry.ts",
         "channel": {
@@ -38,19 +38,19 @@ Your `package.json` needs an `openclaw` field that tells the plugin system what 
     ```
   </Tab>
   <Tab title="Provider plugin / ClawHub baseline">
-    ```json openclaw-clawhub-package.json
+    ```json opencli-clawhub-package.json
     {
-      "name": "@myorg/openclaw-my-plugin",
+      "name": "@myorg/opencli-my-plugin",
       "version": "1.0.0",
       "type": "module",
-      "openclaw": {
+      "opencli": {
         "extensions": ["./index.ts"],
         "compat": {
           "pluginApi": ">=2026.3.24-beta.2",
           "minGatewayVersion": "2026.3.24-beta.2"
         },
         "build": {
-          "openclawVersion": "2026.3.24-beta.2",
+          "opencliVersion": "2026.3.24-beta.2",
           "pluginSdkVersion": "2026.3.24-beta.2"
         }
       }
@@ -63,7 +63,7 @@ Your `package.json` needs an `openclaw` field that tells the plugin system what 
 If you publish the plugin externally on ClawHub, those `compat` and `build` fields are required. The canonical publish snippets live in `docs/snippets/plugin-publish/`.
 </Note>
 
-### `openclaw` fields
+### `opencli` fields
 
 <ParamField path="extensions" type="string[]">
   Entry point files (relative to package root).
@@ -84,9 +84,9 @@ If you publish the plugin externally on ClawHub, those `compat` and `build` fiel
   Startup behavior flags.
 </ParamField>
 
-### `openclaw.channel`
+### `opencli.channel`
 
-`openclaw.channel` is cheap package metadata for channel discovery and setup surfaces before runtime loads.
+`opencli.channel` is cheap package metadata for channel discovery and setup surfaces before runtime loads.
 
 | Field                                  | Type       | What it means                                                                 |
 | -------------------------------------- | ---------- | ----------------------------------------------------------------------------- |
@@ -114,7 +114,7 @@ Example:
 
 ```json
 {
-  "openclaw": {
+  "opencli": {
     "channel": {
       "id": "my-channel",
       "label": "My Channel",
@@ -150,22 +150,22 @@ Example:
 `showConfigured` and `showInSetup` remain supported as legacy aliases. Prefer `exposure`.
 </Note>
 
-### `openclaw.install`
+### `opencli.install`
 
-`openclaw.install` is package metadata, not manifest metadata.
+`opencli.install` is package metadata, not manifest metadata.
 
 | Field                        | Type                 | What it means                                                                    |
 | ---------------------------- | -------------------- | -------------------------------------------------------------------------------- |
 | `npmSpec`                    | `string`             | Canonical npm spec for install/update flows.                                     |
 | `localPath`                  | `string`             | Local development or bundled install path.                                       |
 | `defaultChoice`              | `"npm"` \| `"local"` | Preferred install source when both are available.                                |
-| `minHostVersion`             | `string`             | Minimum supported OpenClaw version in the form `>=x.y.z`.                        |
+| `minHostVersion`             | `string`             | Minimum supported OpenCLI version in the form `>=x.y.z`.                         |
 | `expectedIntegrity`          | `string`             | Expected npm dist integrity string, usually `sha512-...`, for pinned installs.   |
 | `allowInvalidConfigRecovery` | `boolean`            | Lets bundled-plugin reinstall flows recover from specific stale-config failures. |
 
 <AccordionGroup>
   <Accordion title="Onboarding behavior">
-    Interactive onboarding also uses `openclaw.install` for install-on-demand surfaces. If your plugin exposes provider auth choices or channel setup/catalog metadata before runtime loads, onboarding can show that choice, prompt for npm vs local install, install or enable the plugin, then continue the selected flow. Npm onboarding choices require trusted catalog metadata with a registry `npmSpec`; exact versions and `expectedIntegrity` are optional pins. If `expectedIntegrity` is present, install/update flows enforce it. Keep the "what to show" metadata in `openclaw.plugin.json` and the "how to install it" metadata in `package.json`.
+    Interactive onboarding also uses `opencli.install` for install-on-demand surfaces. If your plugin exposes provider auth choices or channel setup/catalog metadata before runtime loads, onboarding can show that choice, prompt for npm vs local install, install or enable the plugin, then continue the selected flow. Npm onboarding choices require trusted catalog metadata with a registry `npmSpec`; exact versions and `expectedIntegrity` are optional pins. If `expectedIntegrity` is present, install/update flows enforce it. Keep the "what to show" metadata in `opencli.plugin.json` and the "how to install it" metadata in `package.json`.
   </Accordion>
   <Accordion title="minHostVersion enforcement">
     If `minHostVersion` is set, install and manifest-registry loading both enforce it. Older hosts skip the plugin; invalid version strings are rejected.
@@ -175,9 +175,9 @@ Example:
 
     ```json
     {
-      "openclaw": {
+      "opencli": {
         "install": {
-          "npmSpec": "@wecom/wecom-openclaw-plugin@1.2.3",
+          "npmSpec": "@wecom/wecom-opencli-plugin@1.2.3",
           "expectedIntegrity": "sha512-REPLACE_WITH_NPM_DIST_INTEGRITY",
           "defaultChoice": "npm"
         }
@@ -187,7 +187,7 @@ Example:
 
   </Accordion>
   <Accordion title="allowInvalidConfigRecovery scope">
-    `allowInvalidConfigRecovery` is not a general bypass for broken configs. It is for narrow bundled-plugin recovery only, so reinstall/setup can repair known upgrade leftovers like a missing bundled plugin path or stale `channels.<id>` entry for that same plugin. If config is broken for unrelated reasons, install still fails closed and tells the operator to run `openclaw doctor --fix`.
+    `allowInvalidConfigRecovery` is not a general bypass for broken configs. It is for narrow bundled-plugin recovery only, so reinstall/setup can repair known upgrade leftovers like a missing bundled plugin path or stale `channels.<id>` entry for that same plugin. If config is broken for unrelated reasons, install still fails closed and tells the operator to run `opencli doctor --fix`.
   </Accordion>
 </AccordionGroup>
 
@@ -197,7 +197,7 @@ Channel plugins can opt into deferred loading with:
 
 ```json
 {
-  "openclaw": {
+  "opencli": {
     "extensions": ["./index.ts"],
     "setupEntry": "./setup-entry.ts",
     "startup": {
@@ -207,7 +207,7 @@ Channel plugins can opt into deferred loading with:
 }
 ```
 
-When enabled, OpenClaw loads only `setupEntry` during the pre-listen startup phase, even for already-configured channels. The full entry loads after the gateway starts listening.
+When enabled, OpenCLI loads only `setupEntry` during the pre-listen startup phase, even for already-configured channels. The full entry loads after the gateway starts listening.
 
 <Warning>
 Only enable deferred loading when your `setupEntry` registers everything the gateway needs before it starts listening (channel registration, HTTP routes, gateway methods). If the full entry owns required startup capabilities, keep the default behavior.
@@ -217,13 +217,13 @@ If your setup/full entry registers gateway RPC methods, keep them on a plugin-sp
 
 ## Plugin manifest
 
-Every native plugin must ship an `openclaw.plugin.json` in the package root. OpenClaw uses this to validate config without executing plugin code.
+Every native plugin must ship an `opencli.plugin.json` in the package root. OpenCLI uses this to validate config without executing plugin code.
 
 ```json
 {
   "id": "my-plugin",
   "name": "My Plugin",
-  "description": "Adds My Plugin capabilities to OpenClaw",
+  "description": "Adds My Plugin capabilities to OpenCLI",
   "configSchema": {
     "type": "object",
     "additionalProperties": false,
@@ -281,11 +281,11 @@ The legacy skill-only publish alias is for skills. Plugin packages should always
 
 ## Setup entry
 
-The `setup-entry.ts` file is a lightweight alternative to `index.ts` that OpenClaw loads when it only needs setup surfaces (onboarding, config repair, disabled channel inspection).
+The `setup-entry.ts` file is a lightweight alternative to `index.ts` that OpenCLI loads when it only needs setup surfaces (onboarding, config repair, disabled channel inspection).
 
 ```typescript
 // setup-entry.ts
-import { defineSetupPluginEntry } from "openclaw/plugin-sdk/channel-core";
+import { defineSetupPluginEntry } from "opencli/plugin-sdk/channel-core";
 import { myChannelPlugin } from "./src/channel.js";
 
 export default defineSetupPluginEntry(myChannelPlugin);
@@ -293,10 +293,10 @@ export default defineSetupPluginEntry(myChannelPlugin);
 
 This avoids loading heavy runtime code (crypto libraries, CLI registrations, background services) during setup flows.
 
-Bundled workspace channels that keep setup-safe exports in sidecar modules can use `defineBundledChannelSetupEntry(...)` from `openclaw/plugin-sdk/channel-entry-contract` instead of `defineSetupPluginEntry(...)`. That bundled contract also supports an optional `runtime` export so setup-time runtime wiring can stay lightweight and explicit.
+Bundled workspace channels that keep setup-safe exports in sidecar modules can use `defineBundledChannelSetupEntry(...)` from `opencli/plugin-sdk/channel-entry-contract` instead of `defineSetupPluginEntry(...)`. That bundled contract also supports an optional `runtime` export so setup-time runtime wiring can stay lightweight and explicit.
 
 <AccordionGroup>
-  <Accordion title="When OpenClaw uses setupEntry instead of the full entry">
+  <Accordion title="When OpenCLI uses setupEntry instead of the full entry">
     - The channel is disabled but needs setup/onboarding surfaces.
     - The channel is enabled but unconfigured.
     - Deferred loading is enabled (`deferConfiguredChannelFullLoadUntilAfterListen`).
@@ -386,7 +386,7 @@ Use `buildChannelConfigSchema` to convert a Zod schema into the `ChannelConfigSc
 
 ```typescript
 import { z } from "zod";
-import { buildChannelConfigSchema } from "openclaw/plugin-sdk/channel-config-schema";
+import { buildChannelConfigSchema } from "opencli/plugin-sdk/channel-config-schema";
 
 const accountSchema = z.object({
   token: z.string().optional(),
@@ -398,14 +398,14 @@ const accountSchema = z.object({
 const configSchema = buildChannelConfigSchema(accountSchema);
 ```
 
-For third-party plugins, the cold-path contract is still the plugin manifest: mirror the generated JSON Schema into `openclaw.plugin.json#channelConfigs` so config schema, setup, and UI surfaces can inspect `channels.<id>` without loading runtime code.
+For third-party plugins, the cold-path contract is still the plugin manifest: mirror the generated JSON Schema into `opencli.plugin.json#channelConfigs` so config schema, setup, and UI surfaces can inspect `channels.<id>` without loading runtime code.
 
 ## Setup wizards
 
-Channel plugins can provide interactive setup wizards for `openclaw onboard`. The wizard is a `ChannelSetupWizard` object on the `ChannelPlugin`:
+Channel plugins can provide interactive setup wizards for `opencli onboard`. The wizard is a `ChannelSetupWizard` object on the `ChannelPlugin`:
 
 ```typescript
-import type { ChannelSetupWizard } from "openclaw/plugin-sdk/channel-setup";
+import type { ChannelSetupWizard } from "opencli/plugin-sdk/channel-setup";
 
 const setupWizard: ChannelSetupWizard = {
   channel: "my-channel",
@@ -439,21 +439,21 @@ The `ChannelSetupWizard` type supports `credentials`, `textInputs`, `dmPolicy`, 
 
 <AccordionGroup>
   <Accordion title="Shared allowFrom prompts">
-    For DM allowlist prompts that only need the standard `note -> prompt -> parse -> merge -> patch` flow, prefer the shared setup helpers from `openclaw/plugin-sdk/setup`: `createPromptParsedAllowFromForAccount(...)`, `createTopLevelChannelParsedAllowFromPrompt(...)`, and `createNestedChannelParsedAllowFromPrompt(...)`.
+    For DM allowlist prompts that only need the standard `note -> prompt -> parse -> merge -> patch` flow, prefer the shared setup helpers from `opencli/plugin-sdk/setup`: `createPromptParsedAllowFromForAccount(...)`, `createTopLevelChannelParsedAllowFromPrompt(...)`, and `createNestedChannelParsedAllowFromPrompt(...)`.
   </Accordion>
   <Accordion title="Standard channel setup status">
-    For channel setup status blocks that only vary by labels, scores, and optional extra lines, prefer `createStandardChannelSetupStatus(...)` from `openclaw/plugin-sdk/setup` instead of hand-rolling the same `status` object in each plugin.
+    For channel setup status blocks that only vary by labels, scores, and optional extra lines, prefer `createStandardChannelSetupStatus(...)` from `opencli/plugin-sdk/setup` instead of hand-rolling the same `status` object in each plugin.
   </Accordion>
   <Accordion title="Optional channel setup surface">
-    For optional setup surfaces that should only appear in certain contexts, use `createOptionalChannelSetupSurface` from `openclaw/plugin-sdk/channel-setup`:
+    For optional setup surfaces that should only appear in certain contexts, use `createOptionalChannelSetupSurface` from `opencli/plugin-sdk/channel-setup`:
 
     ```typescript
-    import { createOptionalChannelSetupSurface } from "openclaw/plugin-sdk/channel-setup";
+    import { createOptionalChannelSetupSurface } from "opencli/plugin-sdk/channel-setup";
 
     const setupSurface = createOptionalChannelSetupSurface({
       channel: "my-channel",
       label: "My Channel",
-      npmSpec: "@myorg/openclaw-my-channel",
+      npmSpec: "@myorg/opencli-my-channel",
       docsPath: "/channels/my-channel",
     });
     // Returns { setupAdapter, setupWizard }
@@ -482,15 +482,15 @@ The `ChannelSetupWizard` type supports `credentials`, `textInputs`, `dmPolicy`, 
 <Tabs>
   <Tab title="Auto (ClawHub then npm)">
     ```bash
-    openclaw plugins install @myorg/openclaw-my-plugin
+    opencli plugins install @myorg/opencli-my-plugin
     ```
 
-    OpenClaw tries ClawHub first and falls back to npm automatically.
+    OpenCLI tries ClawHub first and falls back to npm automatically.
 
   </Tab>
   <Tab title="ClawHub only">
     ```bash
-    openclaw plugins install clawhub:@myorg/openclaw-my-plugin
+    opencli plugins install clawhub:@myorg/opencli-my-plugin
     ```
   </Tab>
   <Tab title="npm package spec">
@@ -498,7 +498,7 @@ The `ChannelSetupWizard` type supports `credentials`, `textInputs`, `dmPolicy`, 
     direct npm install path during migration:
 
     ```bash
-    openclaw plugins install npm:@myorg/openclaw-my-plugin
+    opencli plugins install npm:@myorg/opencli-my-plugin
     ```
 
   </Tab>
@@ -509,18 +509,18 @@ The `ChannelSetupWizard` type supports `credentials`, `textInputs`, `dmPolicy`, 
 **Users can install:**
 
 ```bash
-openclaw plugins install <package-name>
+opencli plugins install <package-name>
 ```
 
 <Info>
-For npm-sourced installs, `openclaw plugins install` runs project-local `npm install --ignore-scripts` (no lifecycle scripts), ignoring inherited global npm install settings. Keep plugin dependency trees pure JS/TS and avoid packages that require `postinstall` builds.
+For npm-sourced installs, `opencli plugins install` runs project-local `npm install --ignore-scripts` (no lifecycle scripts), ignoring inherited global npm install settings. Keep plugin dependency trees pure JS/TS and avoid packages that require `postinstall` builds.
 </Info>
 
 <Note>
-Bundled OpenClaw-owned plugins are the only startup repair exception: when a packaged install sees one enabled by plugin config, legacy channel config, or its bundled default-enabled manifest, startup installs that plugin's missing runtime dependencies before import. Operators can inspect or repair that stage with `openclaw plugins deps`. Third-party plugins should not rely on startup installs; keep using the explicit plugin installer.
+Bundled OpenCLI-owned plugins are the only startup repair exception: when a packaged install sees one enabled by plugin config, legacy channel config, or its bundled default-enabled manifest, startup installs that plugin's missing runtime dependencies before import. Operators can inspect or repair that stage with `opencli plugins deps`. Third-party plugins should not rely on startup installs; keep using the explicit plugin installer.
 </Note>
 
-Bundled package-level runtime deps are explicit metadata, not inferred from built JavaScript at gateway startup. If a shared OpenClaw root dependency must be available inside the external bundled-plugin runtime mirror, declare it in `openclaw.bundle.mirroredRootRuntimeDependencies` in the root package manifest.
+Bundled package-level runtime deps are explicit metadata, not inferred from built JavaScript at gateway startup. If a shared OpenCLI root dependency must be available inside the external bundled-plugin runtime mirror, declare it in `opencli.bundle.mirroredRootRuntimeDependencies` in the root package manifest.
 
 ## Related
 

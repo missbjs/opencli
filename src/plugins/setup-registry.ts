@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { normalizeProviderId } from "../agents/provider-id.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { buildPluginApi } from "./api-builder.js";
 import { collectPluginConfigContractMatches } from "./config-contracts.js";
 import { getCachedPluginJitiLoader, type PluginJitiLoaderCache } from "./jiti-loader-cache.js";
@@ -12,7 +12,7 @@ import type { PluginRuntime } from "./runtime/types.js";
 import { listSetupCliBackendIds, listSetupProviderIds } from "./setup-descriptors.js";
 import type {
   CliBackendPlugin,
-  OpenClawPluginModule,
+  OpenCLIPluginModule,
   PluginConfigMigration,
   PluginLogger,
   PluginSetupAutoEnableProbe,
@@ -153,7 +153,7 @@ function resolveSetupApiPath(
   return null;
 }
 
-function collectConfiguredPluginEntryIds(config: OpenClawConfig): string[] {
+function collectConfiguredPluginEntryIds(config: OpenCLIConfig): string[] {
   const entries = config.plugins?.entries;
   if (!entries || typeof entries !== "object") {
     return [];
@@ -165,7 +165,7 @@ function collectConfiguredPluginEntryIds(config: OpenClawConfig): string[] {
 }
 
 function resolveRelevantSetupMigrationPluginIds(params: {
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
 }): string[] {
@@ -195,7 +195,7 @@ function resolveRelevantSetupMigrationPluginIds(params: {
   return [...ids].toSorted();
 }
 
-function resolveRegister(mod: OpenClawPluginModule): {
+function resolveRegister(mod: OpenCLIPluginModule): {
   definition?: { id?: string };
   register?: (api: ReturnType<typeof buildPluginApi>) => void | Promise<void>;
 } {
@@ -236,14 +236,14 @@ function resolveSetupRegistration(record: PluginManifestRecord): {
     return null;
   }
 
-  let mod: OpenClawPluginModule;
+  let mod: OpenCLIPluginModule;
   try {
-    mod = getJiti(setupSource)(setupSource) as OpenClawPluginModule;
+    mod = getJiti(setupSource)(setupSource) as OpenCLIPluginModule;
   } catch {
     return null;
   }
 
-  const resolved = resolveRegister((mod as { default?: OpenClawPluginModule }).default ?? mod);
+  const resolved = resolveRegister((mod as { default?: OpenCLIPluginModule }).default ?? mod);
   if (!resolved.register) {
     return null;
   }
@@ -269,7 +269,7 @@ function buildSetupPluginApi(params: {
     source: params.setupSource,
     rootDir: params.record.rootDir,
     registrationMode: "setup-only",
-    config: {} as OpenClawConfig,
+    config: {} as OpenCLIConfig,
     runtime: EMPTY_RUNTIME,
     logger: NOOP_LOGGER,
     resolvePath: (input) => input,
@@ -297,7 +297,7 @@ function matchesProvider(provider: ProviderPlugin, providerId: string): boolean 
 }
 
 function loadSetupManifestRegistry(params?: {
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   pluginIds?: readonly string[];
@@ -351,7 +351,7 @@ function pushDescriptorRuntimeDisabledDiagnostic(params: {
     pluginId: params.record.id,
     code: "setup-descriptor-runtime-disabled",
     message:
-      "setup.requiresRuntime is false, so OpenClaw ignored the plugin setup runtime entry. Remove setup-api/openclaw.setupEntry or set requiresRuntime true if setup lookup still needs plugin code.",
+      "setup.requiresRuntime is false, so OpenCLI ignored the plugin setup runtime entry. Remove setup-api/opencli.setupEntry or set requiresRuntime true if setup lookup still needs plugin code.",
   });
 }
 
@@ -413,7 +413,7 @@ function pushSetupDescriptorDriftDiagnostics(params: {
 }
 
 export function resolvePluginSetupRegistry(params?: {
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   pluginIds?: readonly string[];
@@ -538,7 +538,7 @@ export function resolvePluginSetupRegistry(params?: {
 
 export function resolvePluginSetupProvider(params: {
   provider: string;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   pluginIds?: readonly string[];
@@ -601,7 +601,7 @@ export function resolvePluginSetupProvider(params: {
 
 export function resolvePluginSetupCliBackend(params: {
   backend: string;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
 }): SetupCliBackendEntry | undefined {
@@ -667,11 +667,11 @@ export function resolvePluginSetupCliBackend(params: {
 }
 
 export function runPluginSetupConfigMigrations(params: {
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
 }): {
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   changes: string[];
 } {
   let next = params.config;
@@ -699,7 +699,7 @@ export function runPluginSetupConfigMigrations(params: {
 }
 
 export function resolvePluginSetupAutoEnableReasons(params: {
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
   pluginIds?: readonly string[];

@@ -3,13 +3,13 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { Readable, Transform } from "node:stream";
 import { pipeline } from "node:stream/promises";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { runPluginCommandWithTimeout } from "openclaw/plugin-sdk/run-command";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
-import { CONFIG_DIR, extractArchive, resolveBrewExecutable } from "openclaw/plugin-sdk/setup-tools";
-import { fetchWithSsrFGuard } from "openclaw/plugin-sdk/ssrf-runtime";
-import { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
-import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/text-runtime";
+import { formatErrorMessage } from "opencli/plugin-sdk/error-runtime";
+import { runPluginCommandWithTimeout } from "opencli/plugin-sdk/run-command";
+import type { RuntimeEnv } from "opencli/plugin-sdk/runtime-env";
+import { CONFIG_DIR, extractArchive, resolveBrewExecutable } from "opencli/plugin-sdk/setup-tools";
+import { fetchWithSsrFGuard } from "opencli/plugin-sdk/ssrf-runtime";
+import { resolvePreferredOpenCLITmpDir } from "opencli/plugin-sdk/temp-path";
+import { normalizeLowercaseStringOrEmpty } from "opencli/plugin-sdk/text-runtime";
 
 export type ReleaseAsset = {
   name?: string;
@@ -255,7 +255,7 @@ async function installSignalCliFromRelease(runtime: RuntimeEnv): Promise<SignalI
     auditContext: "signal-cli-release-info",
     init: {
       headers: {
-        "User-Agent": "openclaw",
+        "User-Agent": "opencli",
         Accept: "application/vnd.github+json",
       },
     },
@@ -284,7 +284,7 @@ async function installSignalCliFromRelease(runtime: RuntimeEnv): Promise<SignalI
     };
   }
 
-  const tmpDir = await fs.mkdtemp(path.join(resolvePreferredOpenClawTmpDir(), "openclaw-signal-"));
+  const tmpDir = await fs.mkdtemp(path.join(resolvePreferredOpenCLITmpDir(), "opencli-signal-"));
   const archivePath = path.join(tmpDir, asset.name);
 
   runtime.log(`Downloading signal-cli ${version} (${asset.name})…`);

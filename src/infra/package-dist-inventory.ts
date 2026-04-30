@@ -34,12 +34,12 @@ const OMITTED_PRIVATE_QA_DIST_PREFIXES = ["dist/qa-runtime-"];
 const OMITTED_DIST_SUBTREE_PATTERNS = [
   /^dist\/extensions\/node_modules(?:\/|$)/u,
   /^dist\/extensions\/[^/]+\/node_modules(?:\/|$)/u,
-  /^dist\/extensions\/[^/]+\/\.openclaw-runtime-deps-[^/]+(?:\/|$)/u,
+  /^dist\/extensions\/[^/]+\/\.opencli-runtime-deps-[^/]+(?:\/|$)/u,
   /^dist\/extensions\/qa-matrix(?:\/|$)/u,
   new RegExp(`^dist/plugin-sdk/extensions/${LEGACY_QA_CHANNEL_DIR}(?:/|$)`, "u"),
   new RegExp(`^dist/plugin-sdk/extensions/${LEGACY_QA_LAB_DIR}(?:/|$)`, "u"),
 ] as const;
-const INSTALL_STAGE_DEBRIS_DIR_PATTERN = /^\.openclaw-install-stage(?:-[^/]+)?$/iu;
+const INSTALL_STAGE_DEBRIS_DIR_PATTERN = /^\.opencli-install-stage(?:-[^/]+)?$/iu;
 
 function normalizeRelativePath(value: string): string {
   return value.replace(/\\/g, "/");
@@ -70,7 +70,7 @@ function isPackagedDistPath(relativePath: string): boolean {
   if (isLocalBuildMetadataDistPath(relativePath)) {
     return false;
   }
-  if (relativePath.endsWith("/.openclaw-runtime-deps-stamp.json")) {
+  if (relativePath.endsWith("/.opencli-runtime-deps-stamp.json")) {
     return false;
   }
   if (relativePath.endsWith(".map")) {

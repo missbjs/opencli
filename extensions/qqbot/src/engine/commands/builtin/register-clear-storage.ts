@@ -76,14 +76,14 @@ const CLEAR_STORAGE_MAX_DISPLAY = 10;
 
 /**
  * Resolve the canonical downloads directory for an appId under the user's home.
- * Must stay strictly under ~/.openclaw/media/qqbot/downloads/.
+ * Must stay strictly under ~/.opencli/media/qqbot/downloads/.
  */
 export function resolveQqbotDownloadsDirForApp(appId: string): string {
   const id = appId.trim();
   if (!id || id.includes("\0") || /[/\\\n]|\.\./.test(id)) {
     throw new Error("invalid appId path");
   }
-  const base = path.join(getHomeDir(), ".openclaw", "media", "qqbot", "downloads");
+  const base = path.join(getHomeDir(), ".opencli", "media", "qqbot", "downloads");
   const resolvedBase = path.resolve(base);
   const target = path.resolve(path.join(resolvedBase, id));
   if (target === resolvedBase || !target.startsWith(resolvedBase + path.sep)) {
@@ -120,7 +120,7 @@ export function registerClearStorageCommands(registry: SlashCommandRegistry): vo
       } catch {
         return `❌ 无效的机器人标识，无法解析清理目录。`;
       }
-      const displayDir = `~/.openclaw/media/qqbot/downloads/${appId}`;
+      const displayDir = `~/.opencli/media/qqbot/downloads/${appId}`;
 
       if (!isForce) {
         const files = scanDirectoryFiles(targetDir);
@@ -151,7 +151,7 @@ export function registerClearStorageCommands(registry: SlashCommandRegistry): vo
           ``,
           `---`,
           ``,
-          `确认清理后，上述保存在 OpenClaw 运行主机磁盘上的文件将永久删除，后续对话过程中 AI 无法再找回相关文件。`,
+          `确认清理后，上述保存在 OpenCLI 运行主机磁盘上的文件将永久删除，后续对话过程中 AI 无法再找回相关文件。`,
           `‼️ 点击指令确认删除`,
           `<qqbot-cmd-enter text="/bot-clear-storage --force" />`,
         );

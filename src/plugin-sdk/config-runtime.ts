@@ -102,7 +102,7 @@ export type {
   MSTeamsConfig,
   MSTeamsReplyStyle,
   MSTeamsTeamConfig,
-  OpenClawConfig,
+  OpenCLIConfig,
   ReplyToMode,
   SignalReactionNotificationMode,
   SlackAccountConfig,

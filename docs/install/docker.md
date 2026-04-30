@@ -1,5 +1,5 @@
 ---
-summary: "Optional Docker-based setup and onboarding for OpenClaw"
+summary: "Optional Docker-based setup and onboarding for OpenCLI"
 read_when:
   - You want a containerized gateway instead of local installs
   - You are validating the Docker flow
@@ -10,7 +10,7 @@ Docker is **optional**. Use it only if you want a containerized gateway or to va
 
 ## Is Docker right for me?
 
-- **Yes**: you want an isolated, throwaway gateway environment or to run OpenClaw on a host without local installs.
+- **Yes**: you want an isolated, throwaway gateway environment or to run OpenCLI on a host without local installs.
 - **No**: you are running on your own machine and just want the fastest dev loop. Use the normal install flow instead.
 - **Sandboxing note**: the default sandbox backend uses Docker when sandboxing is enabled, but sandboxing is off by default and does **not** require the full gateway to run in Docker. SSH and OpenShell sandbox backends are also available. See [Sandboxing](/gateway/sandboxing).
 
@@ -36,12 +36,12 @@ Docker is **optional**. Use it only if you want a containerized gateway or to va
     This builds the gateway image locally. To use a pre-built image instead:
 
     ```bash
-    export OPENCLAW_IMAGE="ghcr.io/openclaw/openclaw:latest"
+    export OPENCLI_IMAGE="ghcr.io/opencli/opencli:latest"
     ./scripts/docker/setup.sh
     ```
 
     Pre-built images are published at the
-    [GitHub Container Registry](https://github.com/openclaw/openclaw/pkgs/container/openclaw).
+    [GitHub Container Registry](https://github.com/opencli/opencli/pkgs/container/opencli).
     Common tags: `main`, `latest`, `<version>` (e.g. `2026.2.26`).
 
   </Step>
@@ -54,7 +54,7 @@ Docker is **optional**. Use it only if you want a containerized gateway or to va
     - start the gateway via Docker Compose
 
     During setup, pre-start onboarding and config writes run through
-    `openclaw-gateway` directly. `openclaw-cli` is for commands you run after
+    `opencli-gateway` directly. `opencli-cli` is for commands you run after
     the gateway container already exists.
 
   </Step>
@@ -68,7 +68,7 @@ Docker is **optional**. Use it only if you want a containerized gateway or to va
     Need the URL again?
 
     ```bash
-    docker compose run --rm openclaw-cli dashboard --no-open
+    docker compose run --rm opencli-cli dashboard --no-open
     ```
 
   </Step>
@@ -78,13 +78,13 @@ Docker is **optional**. Use it only if you want a containerized gateway or to va
 
     ```bash
     # WhatsApp (QR)
-    docker compose run --rm openclaw-cli channels login
+    docker compose run --rm opencli-cli channels login
 
     # Telegram
-    docker compose run --rm openclaw-cli channels add --channel telegram --token "<token>"
+    docker compose run --rm opencli-cli channels add --channel telegram --token "<token>"
 
     # Discord
-    docker compose run --rm openclaw-cli channels add --channel discord --token "<token>"
+    docker compose run --rm opencli-cli channels add --channel discord --token "<token>"
     ```
 
     Docs: [WhatsApp](/channels/whatsapp), [Telegram](/channels/telegram), [Discord](/channels/discord)
@@ -97,24 +97,24 @@ Docker is **optional**. Use it only if you want a containerized gateway or to va
 If you prefer to run each step yourself instead of using the setup script:
 
 ```bash
-docker build -t openclaw:local -f Dockerfile .
-docker compose run --rm --no-deps --entrypoint node openclaw-gateway \
+docker build -t opencli:local -f Dockerfile .
+docker compose run --rm --no-deps --entrypoint node opencli-gateway \
   dist/index.js onboard --mode local --no-install-daemon
-docker compose run --rm --no-deps --entrypoint node openclaw-gateway \
+docker compose run --rm --no-deps --entrypoint node opencli-gateway \
   dist/index.js config set --batch-json '[{"path":"gateway.mode","value":"local"},{"path":"gateway.bind","value":"lan"},{"path":"gateway.controlUi.allowedOrigins","value":["http://localhost:18789","http://127.0.0.1:18789"]}]'
-docker compose up -d openclaw-gateway
+docker compose up -d opencli-gateway
 ```
 
 <Note>
-Run `docker compose` from the repo root. If you enabled `OPENCLAW_EXTRA_MOUNTS`
-or `OPENCLAW_HOME_VOLUME`, the setup script writes `docker-compose.extra.yml`;
+Run `docker compose` from the repo root. If you enabled `OPENCLI_EXTRA_MOUNTS`
+or `OPENCLI_HOME_VOLUME`, the setup script writes `docker-compose.extra.yml`;
 include it with `-f docker-compose.yml -f docker-compose.extra.yml`.
 </Note>
 
 <Note>
-Because `openclaw-cli` shares `openclaw-gateway`'s network namespace, it is a
-post-start tool. Before `docker compose up -d openclaw-gateway`, run onboarding
-and setup-time config writes through `openclaw-gateway` with
+Because `opencli-cli` shares `opencli-gateway`'s network namespace, it is a
+post-start tool. Before `docker compose up -d opencli-gateway`, run onboarding
+and setup-time config writes through `opencli-gateway` with
 `--no-deps --entrypoint node`.
 </Note>
 
@@ -122,29 +122,29 @@ and setup-time config writes through `openclaw-gateway` with
 
 The setup script accepts these optional environment variables:
 
-| Variable                                   | Purpose                                                         |
-| ------------------------------------------ | --------------------------------------------------------------- |
-| `OPENCLAW_IMAGE`                           | Use a remote image instead of building locally                  |
-| `OPENCLAW_DOCKER_APT_PACKAGES`             | Install extra apt packages during build (space-separated)       |
-| `OPENCLAW_EXTENSIONS`                      | Pre-install plugin deps at build time (space-separated names)   |
-| `OPENCLAW_EXTRA_MOUNTS`                    | Extra host bind mounts (comma-separated `source:target[:opts]`) |
-| `OPENCLAW_HOME_VOLUME`                     | Persist `/home/node` in a named Docker volume                   |
-| `OPENCLAW_PLUGIN_STAGE_DIR`                | Container path for generated bundled plugin deps and mirrors    |
-| `OPENCLAW_SANDBOX`                         | Opt in to sandbox bootstrap (`1`, `true`, `yes`, `on`)          |
-| `OPENCLAW_SKIP_ONBOARDING`                 | Skip the interactive onboarding step (`1`, `true`, `yes`, `on`) |
-| `OPENCLAW_DOCKER_SOCKET`                   | Override Docker socket path                                     |
-| `OPENCLAW_DISABLE_BONJOUR`                 | Disable Bonjour/mDNS advertising (defaults to `1` for Docker)   |
-| `OPENCLAW_DISABLE_BUNDLED_SOURCE_OVERLAYS` | Disable bundled plugin source bind-mount overlays               |
-| `OTEL_EXPORTER_OTLP_ENDPOINT`              | Shared OTLP/HTTP collector endpoint for OpenTelemetry export    |
-| `OTEL_EXPORTER_OTLP_*_ENDPOINT`            | Signal-specific OTLP endpoints for traces, metrics, or logs     |
-| `OTEL_EXPORTER_OTLP_PROTOCOL`              | OTLP protocol override. Only `http/protobuf` is supported today |
-| `OTEL_SERVICE_NAME`                        | Service name used for OpenTelemetry resources                   |
-| `OTEL_SEMCONV_STABILITY_OPT_IN`            | Opt in to latest experimental GenAI semantic attributes         |
-| `OPENCLAW_OTEL_PRELOADED`                  | Skip starting a second OpenTelemetry SDK when one is preloaded  |
+| Variable                                  | Purpose                                                         |
+| ----------------------------------------- | --------------------------------------------------------------- |
+| `OPENCLI_IMAGE`                           | Use a remote image instead of building locally                  |
+| `OPENCLI_DOCKER_APT_PACKAGES`             | Install extra apt packages during build (space-separated)       |
+| `OPENCLI_EXTENSIONS`                      | Pre-install plugin deps at build time (space-separated names)   |
+| `OPENCLI_EXTRA_MOUNTS`                    | Extra host bind mounts (comma-separated `source:target[:opts]`) |
+| `OPENCLI_HOME_VOLUME`                     | Persist `/home/node` in a named Docker volume                   |
+| `OPENCLI_PLUGIN_STAGE_DIR`                | Container path for generated bundled plugin deps and mirrors    |
+| `OPENCLI_SANDBOX`                         | Opt in to sandbox bootstrap (`1`, `true`, `yes`, `on`)          |
+| `OPENCLI_SKIP_ONBOARDING`                 | Skip the interactive onboarding step (`1`, `true`, `yes`, `on`) |
+| `OPENCLI_DOCKER_SOCKET`                   | Override Docker socket path                                     |
+| `OPENCLI_DISABLE_BONJOUR`                 | Disable Bonjour/mDNS advertising (defaults to `1` for Docker)   |
+| `OPENCLI_DISABLE_BUNDLED_SOURCE_OVERLAYS` | Disable bundled plugin source bind-mount overlays               |
+| `OTEL_EXPORTER_OTLP_ENDPOINT`             | Shared OTLP/HTTP collector endpoint for OpenTelemetry export    |
+| `OTEL_EXPORTER_OTLP_*_ENDPOINT`           | Signal-specific OTLP endpoints for traces, metrics, or logs     |
+| `OTEL_EXPORTER_OTLP_PROTOCOL`             | OTLP protocol override. Only `http/protobuf` is supported today |
+| `OTEL_SERVICE_NAME`                       | Service name used for OpenTelemetry resources                   |
+| `OTEL_SEMCONV_STABILITY_OPT_IN`           | Opt in to latest experimental GenAI semantic attributes         |
+| `OPENCLI_OTEL_PRELOADED`                  | Skip starting a second OpenTelemetry SDK when one is preloaded  |
 
 Maintainers can test bundled plugin source against a packaged image by mounting
 one plugin source directory over its packaged source path, for example
-`OPENCLAW_EXTRA_MOUNTS=/path/to/fork/extensions/synology-chat:/app/extensions/synology-chat:ro`.
+`OPENCLI_EXTRA_MOUNTS=/path/to/fork/extensions/synology-chat:/app/extensions/synology-chat:ro`.
 That mounted source directory overrides the matching compiled
 `/app/dist/extensions/synology-chat` bundle for the same plugin id.
 
@@ -156,13 +156,13 @@ locally and want the bundled OpenTelemetry exporter available inside the image,
 include its runtime dependencies:
 
 ```bash
-export OPENCLAW_EXTENSIONS="diagnostics-otel"
+export OPENCLI_EXTENSIONS="diagnostics-otel"
 export OTEL_EXPORTER_OTLP_ENDPOINT="http://otel-collector:4318"
-export OTEL_SERVICE_NAME="openclaw-gateway"
+export OTEL_SERVICE_NAME="opencli-gateway"
 ./scripts/docker/setup.sh
 ```
 
-The official OpenClaw Docker release image includes the bundled
+The official OpenCLI Docker release image includes the bundled
 `diagnostics-otel` plugin source. Depending on the image and cache state, the
 Gateway may still stage plugin-local OpenTelemetry runtime dependencies the
 first time the plugin is enabled, so allow that first boot to reach the package
@@ -200,12 +200,12 @@ orchestration systems can restart or replace it.
 Authenticated deep health snapshot:
 
 ```bash
-docker compose exec openclaw-gateway node dist/index.js health --token "$OPENCLAW_GATEWAY_TOKEN"
+docker compose exec opencli-gateway node dist/index.js health --token "$OPENCLI_GATEWAY_TOKEN"
 ```
 
 ### LAN vs loopback
 
-`scripts/docker/setup.sh` defaults `OPENCLAW_GATEWAY_BIND=lan` so host access to
+`scripts/docker/setup.sh` defaults `OPENCLI_GATEWAY_BIND=lan` so host access to
 `http://127.0.0.1:18789` works with Docker port publishing.
 
 - `lan` (default): host browser and host CLI can reach the published gateway port.
@@ -219,7 +219,7 @@ Use bind mode values in `gateway.bind` (`lan` / `loopback` / `custom` /
 
 ### Host Local Providers
 
-When OpenClaw runs in Docker, `127.0.0.1` inside the container is the container
+When OpenCLI runs in Docker, `127.0.0.1` inside the container is the container
 itself, not your host machine. Use `host.docker.internal` for AI providers that
 run on the host:
 
@@ -248,40 +248,40 @@ mapping yourself, for example
 
 Docker bridge networking usually does not forward Bonjour/mDNS multicast
 (`224.0.0.251:5353`) reliably. The bundled Compose setup therefore defaults
-`OPENCLAW_DISABLE_BONJOUR=1` so the Gateway does not crash-loop or repeatedly
+`OPENCLI_DISABLE_BONJOUR=1` so the Gateway does not crash-loop or repeatedly
 restart advertising when the bridge drops multicast traffic.
 
 Use the published Gateway URL, Tailscale, or wide-area DNS-SD for Docker hosts.
-Set `OPENCLAW_DISABLE_BONJOUR=0` only when running with host networking, macvlan,
+Set `OPENCLI_DISABLE_BONJOUR=0` only when running with host networking, macvlan,
 or another network where mDNS multicast is known to work.
 
 For gotchas and troubleshooting, see [Bonjour discovery](/gateway/bonjour).
 
 ### Storage and persistence
 
-Docker Compose bind-mounts `OPENCLAW_CONFIG_DIR` to `/home/node/.openclaw` and
-`OPENCLAW_WORKSPACE_DIR` to `/home/node/.openclaw/workspace`, so those paths
+Docker Compose bind-mounts `OPENCLI_CONFIG_DIR` to `/home/node/.opencli` and
+`OPENCLI_WORKSPACE_DIR` to `/home/node/.opencli/workspace`, so those paths
 survive container replacement. When either variable is unset, the bundled
-`docker-compose.yml` falls back to `${HOME}/.openclaw` (and
-`${HOME}/.openclaw/workspace` for the workspace mount), or `/tmp/.openclaw`
+`docker-compose.yml` falls back to `${HOME}/.opencli` (and
+`${HOME}/.opencli/workspace` for the workspace mount), or `/tmp/.opencli`
 when `HOME` itself is also missing. That keeps `docker compose up` from
 emitting an empty-source volume spec on bare environments.
 
-That mounted config directory is where OpenClaw keeps:
+That mounted config directory is where OpenCLI keeps:
 
-- `openclaw.json` for behavior config
+- `opencli.json` for behavior config
 - `agents/<agentId>/agent/auth-profiles.json` for stored provider OAuth/API-key auth
-- `.env` for env-backed runtime secrets such as `OPENCLAW_GATEWAY_TOKEN`
+- `.env` for env-backed runtime secrets such as `OPENCLI_GATEWAY_TOKEN`
 
 Bundled plugin runtime dependencies and mirrored runtime files are generated
 state, not user config. Compose stores them in the named Docker volume
-`openclaw-plugin-runtime-deps` mounted at
-`/var/lib/openclaw/plugin-runtime-deps`. Keeping that high-churn tree out of the
+`opencli-plugin-runtime-deps` mounted at
+`/var/lib/opencli/plugin-runtime-deps`. Keeping that high-churn tree out of the
 host config bind mount avoids slow Docker Desktop/WSL file operations and stale
 Windows handles during cold Gateway startup.
 
-The default Compose file sets `OPENCLAW_PLUGIN_STAGE_DIR` to that path for both
-`openclaw-gateway` and `openclaw-cli`, so `openclaw doctor --fix`, channel
+The default Compose file sets `OPENCLI_PLUGIN_STAGE_DIR` to that path for both
+`opencli-gateway` and `opencli-cli`, so `opencli doctor --fix`, channel
 login/setup commands, and Gateway startup all use the same generated runtime
 volume.
 
@@ -289,15 +289,15 @@ For full persistence details on VM deployments, see
 [Docker VM Runtime - What persists where](/install/docker-vm-runtime#what-persists-where).
 
 **Disk growth hotspots:** watch `media/`, session JSONL files, `cron/runs/*.jsonl`,
-the `openclaw-plugin-runtime-deps` Docker volume, and rolling file logs under
-`/tmp/openclaw/`.
+the `opencli-plugin-runtime-deps` Docker volume, and rolling file logs under
+`/tmp/opencli/`.
 
 ### Shell helpers (optional)
 
 For easier day-to-day Docker management, install `ClawDock`:
 
 ```bash
-mkdir -p ~/.clawdock && curl -sL https://raw.githubusercontent.com/openclaw/openclaw/main/scripts/clawdock/clawdock-helpers.sh -o ~/.clawdock/clawdock-helpers.sh
+mkdir -p ~/.clawdock && curl -sL https://raw.githubusercontent.com/opencli/opencli/main/scripts/clawdock/clawdock-helpers.sh -o ~/.clawdock/clawdock-helpers.sh
 echo 'source ~/.clawdock/clawdock-helpers.sh' >> ~/.zshrc && source ~/.zshrc
 ```
 
@@ -310,15 +310,15 @@ See [ClawDock](/install/clawdock) for the full helper guide.
 <AccordionGroup>
   <Accordion title="Enable agent sandbox for Docker gateway">
     ```bash
-    export OPENCLAW_SANDBOX=1
+    export OPENCLI_SANDBOX=1
     ./scripts/docker/setup.sh
     ```
 
     Custom socket path (e.g. rootless Docker):
 
     ```bash
-    export OPENCLAW_SANDBOX=1
-    export OPENCLAW_DOCKER_SOCKET=/run/user/1000/docker.sock
+    export OPENCLI_SANDBOX=1
+    export OPENCLI_DOCKER_SOCKET=/run/user/1000/docker.sock
     ./scripts/docker/setup.sh
     ```
 
@@ -332,25 +332,25 @@ See [ClawDock](/install/clawdock) for the full helper guide.
     Disable Compose pseudo-TTY allocation with `-T`:
 
     ```bash
-    docker compose run -T --rm openclaw-cli gateway probe
-    docker compose run -T --rm openclaw-cli devices list --json
+    docker compose run -T --rm opencli-cli gateway probe
+    docker compose run -T --rm opencli-cli devices list --json
     ```
 
   </Accordion>
 
   <Accordion title="Shared-network security note">
-    `openclaw-cli` uses `network_mode: "service:openclaw-gateway"` so CLI
+    `opencli-cli` uses `network_mode: "service:opencli-gateway"` so CLI
     commands can reach the gateway over `127.0.0.1`. Treat this as a shared
     trust boundary. The compose config drops `NET_RAW`/`NET_ADMIN` and enables
-    `no-new-privileges` on `openclaw-cli`.
+    `no-new-privileges` on `opencli-cli`.
   </Accordion>
 
   <Accordion title="Permissions and EACCES">
     The image runs as `node` (uid 1000). If you see permission errors on
-    `/home/node/.openclaw`, make sure your host bind mounts are owned by uid 1000:
+    `/home/node/.opencli`, make sure your host bind mounts are owned by uid 1000:
 
     ```bash
-    sudo chown -R 1000:1000 /path/to/openclaw-config /path/to/openclaw-workspace
+    sudo chown -R 1000:1000 /path/to/opencli-config /path/to/opencli-workspace
     ```
 
   </Accordion>
@@ -383,16 +383,16 @@ See [ClawDock](/install/clawdock) for the full helper guide.
     The default image is security-first and runs as non-root `node`. For a more
     full-featured container:
 
-    1. **Persist `/home/node`**: `export OPENCLAW_HOME_VOLUME="openclaw_home"`
-    2. **Bake system deps**: `export OPENCLAW_DOCKER_APT_PACKAGES="git curl jq"`
+    1. **Persist `/home/node`**: `export OPENCLI_HOME_VOLUME="opencli_home"`
+    2. **Bake system deps**: `export OPENCLI_DOCKER_APT_PACKAGES="git curl jq"`
     3. **Install Playwright browsers**:
        ```bash
-       docker compose run --rm openclaw-cli \
+       docker compose run --rm opencli-cli \
          node /app/node_modules/playwright-core/cli.js install chromium
        ```
     4. **Persist browser downloads**: set
        `PLAYWRIGHT_BROWSERS_PATH=/home/node/.cache/ms-playwright` and use
-       `OPENCLAW_HOME_VOLUME` or `OPENCLAW_EXTRA_MOUNTS`.
+       `OPENCLI_HOME_VOLUME` or `OPENCLI_EXTRA_MOUNTS`.
 
   </Accordion>
 
@@ -463,7 +463,7 @@ scripts/sandbox-setup.sh
 <AccordionGroup>
   <Accordion title="Image missing or sandbox container not starting">
     Build the sandbox image with
-    [`scripts/sandbox-setup.sh`](https://github.com/openclaw/openclaw/blob/main/scripts/sandbox-setup.sh)
+    [`scripts/sandbox-setup.sh`](https://github.com/opencli/opencli/blob/main/scripts/sandbox-setup.sh)
     or set `agents.defaults.sandbox.docker.image` to your custom image.
     Containers are auto-created per session on demand.
   </Accordion>
@@ -474,7 +474,7 @@ scripts/sandbox-setup.sh
   </Accordion>
 
   <Accordion title="Custom tools not found in sandbox">
-    OpenClaw runs commands with `sh -lc` (login shell), which sources
+    OpenCLI runs commands with `sh -lc` (login shell), which sources
     `/etc/profile` and may reset PATH. Set `docker.env.PATH` to prepend your
     custom tool paths, or add a script under `/etc/profile.d/` in your Dockerfile.
   </Accordion>
@@ -487,9 +487,9 @@ scripts/sandbox-setup.sh
     Fetch a fresh dashboard link and approve the browser device:
 
     ```bash
-    docker compose run --rm openclaw-cli dashboard --no-open
-    docker compose run --rm openclaw-cli devices list
-    docker compose run --rm openclaw-cli devices approve <requestId>
+    docker compose run --rm opencli-cli dashboard --no-open
+    docker compose run --rm opencli-cli devices list
+    docker compose run --rm opencli-cli devices approve <requestId>
     ```
 
     More detail: [Dashboard](/web/dashboard), [Devices](/cli/devices).
@@ -500,8 +500,8 @@ scripts/sandbox-setup.sh
     Reset gateway mode and bind:
 
     ```bash
-    docker compose run --rm openclaw-cli config set --batch-json '[{"path":"gateway.mode","value":"local"},{"path":"gateway.bind","value":"lan"}]'
-    docker compose run --rm openclaw-cli devices list --url ws://127.0.0.1:18789
+    docker compose run --rm opencli-cli config set --batch-json '[{"path":"gateway.mode","value":"local"},{"path":"gateway.bind","value":"lan"}]'
+    docker compose run --rm opencli-cli devices list --url ws://127.0.0.1:18789
     ```
 
   </Accordion>
@@ -512,5 +512,5 @@ scripts/sandbox-setup.sh
 - [Install Overview](/install) — all installation methods
 - [Podman](/install/podman) — Podman alternative to Docker
 - [ClawDock](/install/clawdock) — Docker Compose community setup
-- [Updating](/install/updating) — keeping OpenClaw up to date
+- [Updating](/install/updating) — keeping OpenCLI up to date
 - [Configuration](/gateway/configuration) — gateway configuration after install

@@ -9,7 +9,7 @@ const { buildGuardedModelFetchMock, guardedFetchMock } = vi.hoisted(() => ({
   guardedFetchMock: vi.fn(),
 }));
 
-vi.mock("openclaw/plugin-sdk/provider-transport-runtime", async (importOriginal) => ({
+vi.mock("opencli/plugin-sdk/provider-transport-runtime", async (importOriginal) => ({
   ...(await importOriginal()),
   buildGuardedModelFetch: buildGuardedModelFetchMock,
 }));
@@ -19,9 +19,7 @@ let createGoogleGenerativeAiTransportStreamFn: typeof import("./transport-stream
 let createGoogleVertexTransportStreamFn: typeof import("./transport-stream.js").createGoogleVertexTransportStreamFn;
 let hasGoogleVertexAuthorizedUserAdcSync: typeof import("./vertex-adc.js").hasGoogleVertexAuthorizedUserAdcSync;
 
-const MODEL_PROVIDER_REQUEST_TRANSPORT_SYMBOL = Symbol.for(
-  "openclaw.modelProviderRequestTransport",
-);
+const MODEL_PROVIDER_REQUEST_TRANSPORT_SYMBOL = Symbol.for("opencli.modelProviderRequestTransport");
 
 function attachModelProviderRequestTransport<TModel extends object>(
   model: TModel,
@@ -271,7 +269,7 @@ describe("google transport stream", () => {
   });
 
   it("refreshes authorized_user ADC before Google Vertex requests", async () => {
-    const tempDir = await mkdtemp(path.join(os.tmpdir(), "openclaw-google-vertex-adc-"));
+    const tempDir = await mkdtemp(path.join(os.tmpdir(), "opencli-google-vertex-adc-"));
     const credentialsPath = path.join(tempDir, "application_default_credentials.json");
     await writeFile(
       credentialsPath,

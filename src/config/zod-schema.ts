@@ -262,7 +262,7 @@ const CommitmentsSchema = z
   .strict()
   .optional();
 
-export const OpenClawSchema = z
+export const OpenCLISchema = z
   .object({
     $schema: z.string().optional(),
     meta: z
@@ -443,7 +443,7 @@ export const OpenClawSchema = z
                 mcpCommand: z.string().optional(),
                 mcpArgs: z.array(z.string()).optional(),
                 driver: z
-                  .union([z.literal("openclaw"), z.literal("clawd"), z.literal("existing-session")])
+                  .union([z.literal("opencli"), z.literal("clawd"), z.literal("existing-session")])
                   .optional(),
                 headless: z.boolean().optional(),
                 executablePath: z.string().optional(),

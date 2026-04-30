@@ -1,11 +1,11 @@
-import type { ProviderResolveDynamicModelContext } from "openclaw/plugin-sdk/plugin-entry";
-import { defineSingleProviderPluginEntry } from "openclaw/plugin-sdk/provider-entry";
+import type { ProviderResolveDynamicModelContext } from "opencli/plugin-sdk/plugin-entry";
+import { defineSingleProviderPluginEntry } from "opencli/plugin-sdk/provider-entry";
 import {
   cloneFirstTemplateModel,
   DEFAULT_CONTEXT_TOKENS,
   normalizeModelCompat,
   OPENAI_COMPATIBLE_REPLAY_HOOKS,
-} from "openclaw/plugin-sdk/provider-model-shared";
+} from "opencli/plugin-sdk/provider-model-shared";
 import { isFireworksKimiModelId } from "./model-id.js";
 import { applyFireworksConfig, FIREWORKS_DEFAULT_MODEL_REF } from "./onboard.js";
 import {

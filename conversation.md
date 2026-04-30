@@ -12,12 +12,12 @@ Original ask: "install, build, test this folder" — `extensions/tui-bridge`.
 That snowballed into:
 
 1. Fix the tui-bridge plugin so it actually loads inside the gateway.
-2. Stand up the OpenClaw gateway on this Windows PC from a fresh source build.
+2. Stand up the OpenCLI gateway on this Windows PC from a fresh source build.
 3. Connect a real Telegram bot (`@chichongpc_bot`) and drive a TUI from chat — without involving any LLM.
 4. End-to-end testing.
 5. Pre-approve the plugin's conversation binding so it works without an interactive Allow/Deny prompt.
 6. **NEW direction (last user message before this log):** strip every LLM/API call from the
-   repo, rebrand `openclaw` → `opencli`, and make `pnpm opencli chat --message "..."`
+   repo, rebrand `opencli` → `opencli`, and make `pnpm opencli chat --message "..."`
    a non-interactive one-shot (execute, return result, exit). User is going to
    branch/split/unfork from upstream/main.
 
@@ -29,7 +29,7 @@ That snowballed into:
 | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ----- | --------- | ------- |
 | `extensions/tui-bridge/src/commands.ts:50, 117`                                      | Used `ctx.argString` — that field was renamed to `args` in the SDK                                                                                 | Changed to `ctx.args`                                                                                                                                 |
 | `extensions/tui-bridge/src/commands.ts:39`                                           | `ownership: "reserved"` rejected by validator (`tui` is not on the reserved-name allowlist with `help`/`status`/`codex`/etc.)                      | Removed the field; it's a normal plugin command now                                                                                                   |
-| `extensions/tui-bridge/openclaw.plugin.json`                                         | `activation.onStartup: false` made the plugin "available but inert" — config `enabled: true` does NOT override it                                  | Set `activation.onStartup: true`                                                                                                                      |
+| `extensions/tui-bridge/opencli.plugin.json`                                          | `activation.onStartup: false` made the plugin "available but inert" — config `enabled: true` does NOT override it                                  | Set `activation.onStartup: true`                                                                                                                      |
 | `extensions/tui-bridge/src/process-pool.ts`                                          | Windows ConPTY (via `@lydell/node-pty`) does not search `PATH`/`PATHEXT` like the shell does — bare `cmd`/`bash` returned "File not found"         | Added `resolveExecutable()` that walks `PATH × PATHEXT` on `process.platform === "win32"`, no-op elsewhere; called from `startSession` before `spawn` |
 | `extensions/tui-bridge/src/inbound-claim.test.ts` + `src/process-pool.smoke.test.ts` | Hardcoded `/usr/bin/cat`, `/usr/bin/echo`, `/bin/sh -c "exit 0"` — Unix-only                                                                       | Replaced with `process.execPath` + `-e "<inline JS>"` for cross-platform; added pid/exit polling for ConPTY's async semantics                         |
 | `scripts/lib/bundled-runtime-deps-stage-state.mjs`                                   | Atomic `renameSync` of staging dirs intermittently fails with `EPERM`/`EBUSY` on Windows during the `pnpm build` step (Defender / indexer locking) | Wrapped both renames in a 10× retry-with-backoff on `EPERM                                                                                            | EBUSY | ENOTEMPTY | EACCES` |
@@ -52,7 +52,7 @@ To re-run on the new device:
 node node_modules/vitest/vitest.mjs run extensions/tui-bridge --no-coverage
 ```
 
-(Use the direct vitest entry — `pnpm openclaw <cmd>` triggers a tsdown rebuild that
+(Use the direct vitest entry — `pnpm opencli <cmd>` triggers a tsdown rebuild that
 can clobber `dist-runtime/*` files held open by a running gateway.)
 
 ---
@@ -65,7 +65,7 @@ Not committed, but reproducible from notes here.
 ### 4.1 Config file location
 
 The active config has migrated to the new branding location:
-`C:\Users\Wong\.openclaw\openclaw.json`
+`C:\Users\Wong\.opencli\opencli.json`
 
 The previous `C:\Users\Wong\.clawdbot\clawdbot.json` is now stale.
 
@@ -84,7 +84,7 @@ User Telegram numeric ID: **`255433743`**.
 
 ### 4.3 Plugin binding pre-approval
 
-File: `C:\Users\Wong\.openclaw\plugin-binding-approvals.json`
+File: `C:\Users\Wong\.opencli\plugin-binding-approvals.json`
 
 ```json
 {
@@ -123,13 +123,13 @@ The user's pivot to "strip all LLM" supersedes this — see §6.
 ### 4.5 Known noise (not fixable in scope)
 
 - WhatsApp 401 reconnect loop in the gateway logs — the WhatsApp session expired.
-  Re-login via `pnpm openclaw channels login` if WhatsApp is wanted; otherwise disable
+  Re-login via `pnpm opencli channels login` if WhatsApp is wanted; otherwise disable
   the channel.
-- `bonjour` advertises the gateway with a `(2)` suffix because another OpenClaw lives
+- `bonjour` advertises the gateway with a `(2)` suffix because another OpenCLI lives
   somewhere on the LAN. Cosmetic.
 - `Telegram menu text exceeded the conservative 5700-character payload budget;
 shortening descriptions to keep 56 commands visible.` — comes from the unstripped
-  full-fat OpenClaw build. After §6's strip, most of those go away.
+  full-fat OpenCLI build. After §6's strip, most of those go away.
 
 ---
 
@@ -166,15 +166,15 @@ returns a no-claim only when no binding; otherwise short-circuits.
 
 Concrete tasks for the next session:
 
-### 6.1 Rebrand `openclaw` → `opencli`
+### 6.1 Rebrand `opencli` → `opencli`
 
 - The repo is already named `opencli` (https://github.com/missbjs/opencli) but the
-  package is still `"name": "openclaw"` in `package.json` and many files reference
-  `openclaw`/`OpenClaw`/`OPENCLAW_*` env vars/`.openclaw/` config dir.
+  package is still `"name": "opencli"` in `package.json` and many files reference
+  `opencli`/`OpenCLI`/`OPENCLI_*` env vars/`.opencli/` config dir.
 - Pick: rename everything user-facing to `opencli` / `OpenCLI`, OR keep internal
   module names and only rename CLI binary + brand strings. Latter is much smaller
   blast radius — recommended start.
-- Config dir: `~/.openclaw/` → `~/.opencli/` is a migration; suggest leaving the
+- Config dir: `~/.opencli/` → `~/.opencli/` is a migration; suggest leaving the
   read-existing-and-write-new compat shim that's already in place for `~/.clawdbot/`
   as a model.
 
@@ -257,7 +257,7 @@ On branch main
 Your branch is up to date with 'origin/main'.
 
 Untracked files:
-  extensions/google/.openclaw-install-stage/    (build artifact, ignore)
+  extensions/google/.opencli-install-stage/    (build artifact, ignore)
 
 $ git log --oneline -5
 7a08c0415e dev stage           # ← all this session's code changes
@@ -280,10 +280,10 @@ This `conversation.md` will be added on top of `7a08c0415e`.
 4. `pnpm build:plugin-sdk:dts` (only if you'll edit and re-run `node scripts/run-tsgo.mjs`)
 5. `node node_modules/vitest/vitest.mjs run extensions/tui-bridge --no-coverage` —
    should print `Test Files 5 passed (5) | Tests 44 passed (44)`.
-6. Re-create `~/.opencli/` (or `~/.openclaw/` for now) with the Telegram block + the
+6. Re-create `~/.opencli/` (or `~/.opencli/` for now) with the Telegram block + the
    `plugin-binding-approvals.json` shown in §4.3 — paths in that file need to match
    the new device's repo location.
-7. `pnpm openclaw gateway` to bring the bot back online.
+7. `pnpm opencli gateway` to bring the bot back online.
 
 Or, if jumping straight into §6's pivot, skip 6/7 and start with the inventory grep.
 
@@ -329,7 +329,7 @@ delivered §6.3 first.
 - `--local` + `--once` end-to-end: would route through the agent path (no
   binding without first running `/tui start ...`), and there are no API keys
   here so the agent would fail with auth-error. §6.2 deletes that path; on a
-  device with a running gateway + tui-bridge binding, `pnpm openclaw chat
+  device with a running gateway + tui-bridge binding, `pnpm opencli chat
 --message "ls" --once` should print the bound TUI's response.
 - Gateway WS path (`--url`/`--token` + `--once`) — same: needs a running
   gateway to verify. The wiring is structurally identical to `--local` because
@@ -367,10 +367,10 @@ delivered §6.3 first.
    plugin command dispatcher, inbound_claim hook.
 2. After §6.2, verify `--once` path on a device with a gateway running and a
    tui-bridge binding. The path should be: `/tui start cmd` once → then
-   `pnpm openclaw chat --message "dir" --once` returns the dir listing
+   `pnpm opencli chat --message "dir" --once` returns the dir listing
    without any LLM call.
 3. **§6.1 rebrand.** Last, smallest blast radius. Keep internal module names;
-   rename CLI binary + brand strings; add `~/.openclaw/` → `~/.opencli/`
+   rename CLI binary + brand strings; add `~/.opencli/` → `~/.opencli/`
    read-existing-write-new shim modeled on the existing `~/.clawdbot/` one.
 
 ## 10. Session 2 (cont.) — §6.2 first cut: agent fallback severed
@@ -478,22 +478,22 @@ cleanup pass. Four commits landed in this session.
 `package.json` only — kept internal module names per the smaller-blast-radius
 strategy:
 
-- `name`: `openclaw` → `opencli`
-- `bin`: `openclaw` → `opencli` (still points to `openclaw.mjs`)
+- `name`: `opencli` → `opencli`
+- `bin`: `opencli` → `opencli` (still points to `opencli.mjs`)
 - `homepage` / `bugs` / `repository`: → `missbjs/opencli` (this fork)
 - `description`: dropped "AI gateway" framing now that the LLM path is gone
-- `pnpm` script: added `opencli` as a sibling of `openclaw`, both invoke
+- `pnpm` script: added `opencli` as a sibling of `opencli`, both invoke
   the same `node scripts/run-node.mjs` wrapper, so both `pnpm opencli ...`
-  and `pnpm openclaw ...` work
+  and `pnpm opencli ...` work
 
 Intentionally NOT done in this pass (cascades into ~120 files):
 
-- `openclaw.mjs` filename (referenced from src/entry.ts, agent harness,
+- `opencli.mjs` filename (referenced from src/entry.ts, agent harness,
   control-ui-assets, etc.)
-- `"openclaw"` metadata block in `package.json` (read by bundle/runtime)
-- `~/.openclaw/` config dir (needs migration shim)
-- `OpenClaw` brand strings in CLI help text, doctor output, status banners
-- 132 plugin manifest IDs and the `OPENCLAW_*` env vars
+- `"opencli"` metadata block in `package.json` (read by bundle/runtime)
+- `~/.opencli/` config dir (needs migration shim)
+- `OpenCLI` brand strings in CLI help text, doctor output, status banners
+- 132 plugin manifest IDs and the `OPENCLI_*` env vars
 
 ### 11.2 Cleanup pass
 
@@ -536,9 +536,9 @@ elsewhere in `auto-reply/`).
    browser, memory, voice). Each touches manifest discovery + plugin SDK
    capability registrations.
 
-5. **Full rebrand pass**: rename `openclaw.mjs` filename, the `"openclaw"`
-   package.json metadata block, `~/.openclaw/` config dir (with migration
-   shim), `OpenClaw` brand strings, plugin manifest IDs, `OPENCLAW_*` env
+5. **Full rebrand pass**: rename `opencli.mjs` filename, the `"opencli"`
+   package.json metadata block, `~/.opencli/` config dir (with migration
+   shim), `OpenCLI` brand strings, plugin manifest IDs, `OPENCLI_*` env
    vars. Last because it's textual and biggest merge-friction risk.
 
 6. **Verify gateway behavior end-to-end** on a device with a running

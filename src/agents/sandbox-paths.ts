@@ -9,7 +9,7 @@ import {
 } from "../infra/local-file-access.js";
 import { assertNoPathAliasEscape, type PathAliasPolicy } from "../infra/path-alias-guards.js";
 import { isPathInside } from "../infra/path-guards.js";
-import { resolvePreferredOpenClawTmpDir } from "../infra/tmp-openclaw-dir.js";
+import { resolvePreferredOpenCLITmpDir } from "../infra/tmp-opencli-dir.js";
 import { isPassThroughRemoteMediaSource } from "../media/media-source-url.js";
 import { resolveConfigDir } from "../utils.js";
 
@@ -267,7 +267,7 @@ async function resolveAllowedTmpMediaPath(params: {
     return undefined;
   }
   const resolved = path.resolve(resolveSandboxInputPath(params.candidate, params.sandboxRoot));
-  const openClawTmpDir = path.resolve(resolvePreferredOpenClawTmpDir());
+  const openClawTmpDir = path.resolve(resolvePreferredOpenCLITmpDir());
   if (!isPathInside(openClawTmpDir, resolved)) {
     return undefined;
   }

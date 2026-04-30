@@ -3,7 +3,7 @@ import { type Api, type Model } from "@mariozechner/pi-ai";
 import { formatCliCommand } from "../cli/command-format.js";
 import { getRuntimeConfigSnapshot } from "../config/config.js";
 import type { ModelProviderAuthMode, ModelProviderConfig } from "../config/types.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { coerceSecretRef } from "../config/types.secrets.js";
 import { getShellEnvAppliedKeys } from "../infra/shell-env.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
@@ -50,7 +50,7 @@ export type ProviderCredentialPrecedence = "profile-first" | "env-first";
 const log = createSubsystemLogger("model-auth");
 
 function resolveConfigAwareEnvApiKey(
-  cfg: OpenClawConfig | undefined,
+  cfg: OpenCLIConfig | undefined,
   provider: string,
   workspaceDir?: string,
 ): EnvApiKeyResult | null {
@@ -58,7 +58,7 @@ function resolveConfigAwareEnvApiKey(
 }
 
 function resolveProviderConfig(
-  cfg: OpenClawConfig | undefined,
+  cfg: OpenCLIConfig | undefined,
   provider: string,
 ): ModelProviderConfig | undefined {
   const providers = cfg?.models?.providers ?? {};
@@ -80,7 +80,7 @@ function resolveProviderConfig(
 }
 
 export function getCustomProviderApiKey(
-  cfg: OpenClawConfig | undefined,
+  cfg: OpenCLIConfig | undefined,
   provider: string,
 ): string | undefined {
   const entry = resolveProviderConfig(cfg, provider);
@@ -105,7 +105,7 @@ type ResolvedCustomProviderApiKey = {
 };
 
 function canResolveEnvSecretRefInReadOnlyPath(params: {
-  cfg: OpenClawConfig | undefined;
+  cfg: OpenCLIConfig | undefined;
   provider: string;
   id: string;
 }): boolean {
@@ -121,7 +121,7 @@ function canResolveEnvSecretRefInReadOnlyPath(params: {
 }
 
 export function resolveUsableCustomProviderApiKey(params: {
-  cfg: OpenClawConfig | undefined;
+  cfg: OpenCLIConfig | undefined;
   provider: string;
   env?: NodeJS.ProcessEnv;
 }): ResolvedCustomProviderApiKey | null {
@@ -197,7 +197,7 @@ export function resolveUsableCustomProviderApiKey(params: {
 }
 
 export function hasUsableCustomProviderApiKey(
-  cfg: OpenClawConfig | undefined,
+  cfg: OpenCLIConfig | undefined,
   provider: string,
   env?: NodeJS.ProcessEnv,
 ): boolean {
@@ -205,7 +205,7 @@ export function hasUsableCustomProviderApiKey(
 }
 
 export function shouldPreferExplicitConfigApiKeyAuth(
-  cfg: OpenClawConfig | undefined,
+  cfg: OpenCLIConfig | undefined,
   provider: string,
 ): boolean {
   const providerConfig = resolveProviderConfig(cfg, provider);
@@ -217,7 +217,7 @@ export function shouldPreferExplicitConfigApiKeyAuth(
 }
 
 function resolveProviderAuthOverride(
-  cfg: OpenClawConfig | undefined,
+  cfg: OpenCLIConfig | undefined,
   provider: string,
 ): ModelProviderAuthMode | undefined {
   const entry = resolveProviderConfig(cfg, provider);
@@ -284,7 +284,7 @@ function isManagedSecretRefApiKeyMarker(apiKey: string | undefined): boolean {
 }
 
 export function hasSyntheticLocalProviderAuthConfig(params: {
-  cfg: OpenClawConfig | undefined;
+  cfg: OpenCLIConfig | undefined;
   provider: string;
 }): boolean {
   const providerConfig = resolveProviderConfig(params.cfg, params.provider);
@@ -315,7 +315,7 @@ export function hasSyntheticLocalProviderAuthConfig(params: {
 
 export function hasRuntimeAvailableProviderAuth(params: {
   provider: string;
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   workspaceDir?: string;
   env?: NodeJS.ProcessEnv;
 }): boolean {
@@ -350,11 +350,11 @@ type SyntheticProviderAuthResolution = {
 };
 
 function resolveProviderSyntheticRuntimeAuth(params: {
-  cfg: OpenClawConfig | undefined;
+  cfg: OpenCLIConfig | undefined;
   provider: string;
 }): SyntheticProviderAuthResolution {
   const resolveFromConfig = (
-    config: OpenClawConfig | undefined,
+    config: OpenCLIConfig | undefined,
   ): ResolvedProviderAuth | undefined => {
     const providerConfig = resolveProviderConfig(config, params.provider);
     return (
@@ -394,7 +394,7 @@ function resolveProviderSyntheticRuntimeAuth(params: {
 }
 
 function resolveSyntheticLocalProviderAuth(params: {
-  cfg: OpenClawConfig | undefined;
+  cfg: OpenCLIConfig | undefined;
   provider: string;
 }): ResolvedProviderAuth | null {
   const syntheticProviderAuth = resolveProviderSyntheticRuntimeAuth(params);
@@ -470,7 +470,7 @@ function resolveAwsSdkAuthInfo(): { mode: "aws-sdk"; source: string } {
 }
 
 function shouldDeferSyntheticProfileAuth(params: {
-  cfg: OpenClawConfig | undefined;
+  cfg: OpenCLIConfig | undefined;
   provider: string;
   resolvedApiKey: string | undefined;
 }): boolean {
@@ -491,7 +491,7 @@ function shouldDeferSyntheticProfileAuth(params: {
 
 export async function resolveApiKeyForProvider(params: {
   provider: string;
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   profileId?: string;
   preferredProfile?: string;
   store?: AuthProfileStore;
@@ -693,7 +693,7 @@ export async function resolveApiKeyForProvider(params: {
     [
       `No API key found for provider "${provider}".`,
       `Auth store: ${authStorePath} (agentDir: ${resolvedAgentDir}).`,
-      `Configure auth for this agent (${formatCliCommand("openclaw agents add <id>")}) or copy only portable static auth profiles from the main agentDir.`,
+      `Configure auth for this agent (${formatCliCommand("opencli agents add <id>")}) or copy only portable static auth profiles from the main agentDir.`,
     ].join(" "),
   );
 }
@@ -705,7 +705,7 @@ export type { EnvApiKeyResult } from "./model-auth-env.js";
 
 export function resolveModelAuthMode(
   provider?: string,
-  cfg?: OpenClawConfig,
+  cfg?: OpenCLIConfig,
   store?: AuthProfileStore,
   options?: { workspaceDir?: string },
 ): ModelAuthMode | undefined {
@@ -769,7 +769,7 @@ export function resolveModelAuthMode(
 
 export async function hasAvailableAuthForProvider(params: {
   provider: string;
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   preferredProfile?: string;
   store?: AuthProfileStore;
   agentDir?: string;
@@ -821,7 +821,7 @@ export async function hasAvailableAuthForProvider(params: {
 
 export async function getApiKeyForModel(params: {
   model: Model<Api>;
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   profileId?: string;
   preferredProfile?: string;
   store?: AuthProfileStore;
@@ -878,7 +878,7 @@ export function applyLocalNoAuthHeaderOverride<T extends Model<Api>>(
 export function applyAuthHeaderOverride<T extends Model<Api>>(
   model: T,
   auth: ResolvedProviderAuth | null | undefined,
-  cfg: OpenClawConfig | undefined,
+  cfg: OpenCLIConfig | undefined,
 ): T {
   if (!auth?.apiKey) {
     return model;

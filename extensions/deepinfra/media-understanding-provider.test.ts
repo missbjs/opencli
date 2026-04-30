@@ -8,9 +8,9 @@ const { transcribeOpenAiCompatibleAudioMock } = vi.hoisted(() => ({
   transcribeOpenAiCompatibleAudioMock: vi.fn(async () => ({ text: "hello", model: "whisper" })),
 }));
 
-vi.mock("openclaw/plugin-sdk/media-understanding", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/media-understanding")>(
-    "openclaw/plugin-sdk/media-understanding",
+vi.mock("opencli/plugin-sdk/media-understanding", async () => {
+  const actual = await vi.importActual<typeof import("opencli/plugin-sdk/media-understanding")>(
+    "opencli/plugin-sdk/media-understanding",
   );
   return {
     ...actual,

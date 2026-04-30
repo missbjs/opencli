@@ -1,5 +1,5 @@
-import { expectChannelInboundContextContract } from "openclaw/plugin-sdk/channel-contract-testing";
-import { finalizeInboundContext } from "openclaw/plugin-sdk/reply-runtime";
+import { expectChannelInboundContextContract } from "opencli/plugin-sdk/channel-contract-testing";
+import { finalizeInboundContext } from "opencli/plugin-sdk/reply-runtime";
 import { describe, it } from "vitest";
 
 describe("Signal inbound context contract", () => {

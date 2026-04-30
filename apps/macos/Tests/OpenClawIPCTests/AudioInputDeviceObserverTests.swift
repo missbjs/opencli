@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import OpenClaw
+@testable import OpenCLI
 
 struct AudioInputDeviceObserverTests {
     @Test func `has usable default input device returns bool`() {

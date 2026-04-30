@@ -17,8 +17,8 @@ type CandidateDir = {
   origin?: string;
 };
 
-const OPENCLAW_PACKAGE_ROOT = fileURLToPath(new URL("../..", import.meta.url));
-const PLUGIN_MANIFEST_FILENAME = "openclaw.plugin.json";
+const OPENCLI_PACKAGE_ROOT = fileURLToPath(new URL("../..", import.meta.url));
+const PLUGIN_MANIFEST_FILENAME = "opencli.plugin.json";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
@@ -30,23 +30,23 @@ function normalizeTrimmedString(value: unknown): string | undefined {
 
 function resolveUserPath(value: string, env: NodeJS.ProcessEnv): string {
   if (value === "~" || value.startsWith("~/")) {
-    const home = env.OPENCLAW_HOME ?? env.HOME ?? env.USERPROFILE ?? os.homedir();
+    const home = env.OPENCLI_HOME ?? env.HOME ?? env.USERPROFILE ?? os.homedir();
     return path.join(home, value.slice(2));
   }
   return path.resolve(value);
 }
 
 function resolveStateDir(env: NodeJS.ProcessEnv): string {
-  const override = normalizeTrimmedString(env.OPENCLAW_STATE_DIR);
+  const override = normalizeTrimmedString(env.OPENCLI_STATE_DIR);
   if (override) {
     return resolveUserPath(override, env);
   }
-  const home = env.OPENCLAW_HOME ?? env.HOME ?? env.USERPROFILE ?? os.homedir();
-  return path.join(home, ".openclaw");
+  const home = env.OPENCLI_HOME ?? env.HOME ?? env.USERPROFILE ?? os.homedir();
+  return path.join(home, ".opencli");
 }
 
 function areBundledPluginsDisabled(env: NodeJS.ProcessEnv): boolean {
-  const value = normalizeTrimmedString(env.OPENCLAW_DISABLE_BUNDLED_PLUGINS)?.toLowerCase();
+  const value = normalizeTrimmedString(env.OPENCLI_DISABLE_BUNDLED_PLUGINS)?.toLowerCase();
   return value === "1" || value === "true";
 }
 
@@ -59,14 +59,14 @@ function resolveBundledPluginRoot(env: NodeJS.ProcessEnv): string | undefined {
     return undefined;
   }
 
-  const override = normalizeTrimmedString(env.OPENCLAW_BUNDLED_PLUGINS_DIR);
+  const override = normalizeTrimmedString(env.OPENCLI_BUNDLED_PLUGINS_DIR);
   if (override) {
     return resolveUserPath(override, env);
   }
 
-  const sourceRoot = path.join(OPENCLAW_PACKAGE_ROOT, "extensions");
-  const runtimeRoot = path.join(OPENCLAW_PACKAGE_ROOT, "dist-runtime", "extensions");
-  const distRoot = path.join(OPENCLAW_PACKAGE_ROOT, "dist", "extensions");
+  const sourceRoot = path.join(OPENCLI_PACKAGE_ROOT, "extensions");
+  const runtimeRoot = path.join(OPENCLI_PACKAGE_ROOT, "dist-runtime", "extensions");
+  const distRoot = path.join(OPENCLI_PACKAGE_ROOT, "dist", "extensions");
   return [sourceRoot, runtimeRoot, distRoot].find(hasManifestDir);
 }
 
@@ -154,7 +154,7 @@ function uniqueCandidateDirs(candidates: CandidateDir[]): CandidateDir[] {
   );
 }
 
-export function listOpenClawPluginManifestMetadata(
+export function listOpenCLIPluginManifestMetadata(
   env: NodeJS.ProcessEnv = process.env,
 ): PluginManifestMetadataRecord[] {
   const candidates: CandidateDir[] = [];

@@ -19,7 +19,7 @@ afterEach(() => {
 });
 
 function makeTempDir() {
-  return makeTrackedTempDir("openclaw-installed-plugin-index-store", tempDirs);
+  return makeTrackedTempDir("opencli-installed-plugin-index-store", tempDirs);
 }
 
 function createIndex(overrides: Partial<InstalledPluginIndex> = {}): InstalledPluginIndex {
@@ -34,7 +34,7 @@ function createIndex(overrides: Partial<InstalledPluginIndex> = {}): InstalledPl
     plugins: [
       {
         pluginId: "demo",
-        manifestPath: "/plugins/demo/openclaw.plugin.json",
+        manifestPath: "/plugins/demo/opencli.plugin.json",
         manifestHash: "manifest-hash",
         rootDir: "/plugins/demo",
         origin: "global",
@@ -61,7 +61,7 @@ function createCandidate(rootDir: string): PluginCandidate {
     "utf8",
   );
   fs.writeFileSync(
-    path.join(rootDir, "openclaw.plugin.json"),
+    path.join(rootDir, "opencli.plugin.json"),
     JSON.stringify({
       id: "demo",
       name: "Demo",
@@ -168,8 +168,8 @@ describe("installed plugin index persistence", () => {
     fs.mkdirSync(pluginDir, { recursive: true });
     const candidate = createCandidate(pluginDir);
     const env = {
-      OPENCLAW_BUNDLED_PLUGINS_DIR: undefined,
-      OPENCLAW_VERSION: "2026.4.25",
+      OPENCLI_BUNDLED_PLUGINS_DIR: undefined,
+      OPENCLI_VERSION: "2026.4.25",
       VITEST: "true",
     };
 
@@ -227,7 +227,7 @@ describe("installed plugin index persistence", () => {
     });
 
     fs.writeFileSync(
-      path.join(pluginDir, "openclaw.plugin.json"),
+      path.join(pluginDir, "opencli.plugin.json"),
       JSON.stringify({
         id: "demo",
         name: "Demo",
@@ -264,8 +264,8 @@ describe("installed plugin index persistence", () => {
       stateDir,
       candidates: [candidate],
       env: {
-        OPENCLAW_BUNDLED_PLUGINS_DIR: undefined,
-        OPENCLAW_VERSION: "2026.4.25",
+        OPENCLI_BUNDLED_PLUGINS_DIR: undefined,
+        OPENCLI_VERSION: "2026.4.25",
         VITEST: "true",
       },
     });
@@ -299,8 +299,8 @@ describe("installed plugin index persistence", () => {
       stateDir,
       candidates: [],
       env: {
-        OPENCLAW_BUNDLED_PLUGINS_DIR: undefined,
-        OPENCLAW_VERSION: "2026.4.25",
+        OPENCLI_BUNDLED_PLUGINS_DIR: undefined,
+        OPENCLI_VERSION: "2026.4.25",
         VITEST: "true",
       },
     });

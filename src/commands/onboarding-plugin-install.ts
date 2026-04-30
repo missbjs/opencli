@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { resolveBundledInstallPlanForCatalogEntry } from "../cli/plugin-install-plan.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { parseRegistryNpmSpec } from "../infra/npm-registry-spec.js";
 import {
   findBundledPluginSourceInMap,
@@ -30,7 +30,7 @@ export type OnboardingPluginInstallEntry = {
 export type OnboardingPluginInstallStatus = "installed" | "skipped" | "failed" | "timed_out";
 
 export type OnboardingPluginInstallResult = {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   installed: boolean;
   pluginId: string;
   status: OnboardingPluginInstallStatus;
@@ -102,7 +102,7 @@ function hasGitWorkspace(workspaceDir?: string): boolean {
   return roots.some((root) => hasTrustedGitWorkspace(root));
 }
 
-function addPluginLoadPath(cfg: OpenClawConfig, pluginPath: string): OpenClawConfig {
+function addPluginLoadPath(cfg: OpenCLIConfig, pluginPath: string): OpenCLIConfig {
   const existing = cfg.plugins?.load?.paths ?? [];
   const merged = Array.from(new Set([...existing, pluginPath]));
   return {
@@ -149,12 +149,12 @@ function formatPortableLocalPath(localPath: string, workspaceDir?: string): stri
 }
 
 async function recordLocalPluginInstall(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   entry: OnboardingPluginInstallEntry;
   localPath: string;
   npmSpec?: string | null;
   workspaceDir?: string;
-}): Promise<OpenClawConfig> {
+}): Promise<OpenCLIConfig> {
   const sourcePath = formatPortableLocalPath(params.localPath, params.workspaceDir);
   const install = {
     pluginId: params.entry.pluginId,
@@ -250,7 +250,7 @@ function resolveNpmSpecForOnboarding(install: PluginPackageInstall): string | nu
 }
 
 function resolveInstallDefaultChoice(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   entry: OnboardingPluginInstallEntry;
   localPath?: string | null;
   bundledLocalPath?: string | null;
@@ -378,7 +378,7 @@ function isTimeoutError(error: unknown): boolean {
 }
 
 async function applyPluginEnablement(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   pluginId: string;
   label: string;
   prompter: WizardPrompter;
@@ -475,8 +475,7 @@ function createAnimatedInstallProgress(
   const renderBar = (): string => {
     const percent = computePercent();
     const filled = Math.round((percent / 100) * PROGRESS_BAR_WIDTH);
-    const bar =
-      "█".repeat(filled) + "░".repeat(Math.max(0, PROGRESS_BAR_WIDTH - filled));
+    const bar = "█".repeat(filled) + "░".repeat(Math.max(0, PROGRESS_BAR_WIDTH - filled));
     return `[${bar}] ${percent}%`;
   };
 
@@ -580,7 +579,7 @@ async function installPluginFromNpmSpecWithProgress(params: {
 }
 
 export async function ensureOnboardingPluginInstalled(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   entry: OnboardingPluginInstallEntry;
   prompter: WizardPrompter;
   runtime: RuntimeEnv;

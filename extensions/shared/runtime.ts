@@ -1,1 +1,1 @@
-export { resolveLoggerBackedRuntime } from "openclaw/plugin-sdk/extension-shared";
+export { resolveLoggerBackedRuntime } from "opencli/plugin-sdk/extension-shared";

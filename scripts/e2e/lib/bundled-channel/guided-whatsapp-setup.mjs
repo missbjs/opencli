@@ -3,7 +3,7 @@ import { readdir } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
-const root = process.argv[2] || process.env.OPENCLAW_PACKAGE_ROOT;
+const root = process.argv[2] || process.env.OPENCLI_PACKAGE_ROOT;
 if (!root) {
   throw new Error("missing package root");
 }

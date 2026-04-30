@@ -2,18 +2,18 @@ import {
   listNativeCommandSpecsForConfig,
   listSkillCommandsForAgents,
   type NativeCommandSpec,
-} from "openclaw/plugin-sdk/command-auth";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
-import { danger, warn, type RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
-import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/text-runtime";
+} from "opencli/plugin-sdk/command-auth";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
+import { danger, warn, type RuntimeEnv } from "opencli/plugin-sdk/runtime-env";
+import { normalizeLowercaseStringOrEmpty } from "opencli/plugin-sdk/text-runtime";
 
 export type GetPluginCommandSpecs =
-  typeof import("openclaw/plugin-sdk/plugin-runtime").getPluginCommandSpecs;
+  typeof import("opencli/plugin-sdk/plugin-runtime").getPluginCommandSpecs;
 
-let pluginRuntimePromise: Promise<typeof import("openclaw/plugin-sdk/plugin-runtime")> | undefined;
+let pluginRuntimePromise: Promise<typeof import("opencli/plugin-sdk/plugin-runtime")> | undefined;
 
 async function loadPluginRuntime() {
-  const promise = pluginRuntimePromise ?? import("openclaw/plugin-sdk/plugin-runtime");
+  const promise = pluginRuntimePromise ?? import("opencli/plugin-sdk/plugin-runtime");
   pluginRuntimePromise = promise;
   try {
     return await promise;
@@ -28,7 +28,7 @@ async function loadPluginRuntime() {
 async function appendPluginCommandSpecs(params: {
   commandSpecs: NativeCommandSpec[];
   runtime: RuntimeEnv;
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   getPluginCommandSpecs?: GetPluginCommandSpecs;
 }): Promise<NativeCommandSpec[]> {
   const merged = [...params.commandSpecs];
@@ -61,7 +61,7 @@ async function appendPluginCommandSpecs(params: {
 }
 
 export async function resolveDiscordProviderCommandSpecs(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   runtime: RuntimeEnv;
   nativeEnabled: boolean;
   nativeSkillsEnabled: boolean;

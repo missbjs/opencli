@@ -1,13 +1,13 @@
 ---
 summary: "LINE Messaging API plugin setup, config, and usage"
 read_when:
-  - You want to connect OpenClaw to LINE
+  - You want to connect OpenCLI to LINE
   - You need LINE webhook + credential setup
   - You want LINE-specific message options
 title: LINE
 ---
 
-LINE connects to OpenClaw via the LINE Messaging API. The plugin runs as a webhook
+LINE connects to OpenCLI via the LINE Messaging API. The plugin runs as a webhook
 receiver on the gateway and uses your channel access token + channel secret for
 authentication.
 
@@ -17,24 +17,24 @@ are not supported.
 
 ## Bundled plugin
 
-LINE ships as a bundled plugin in current OpenClaw releases, so normal
+LINE ships as a bundled plugin in current OpenCLI releases, so normal
 packaged builds do not need a separate install.
 
 If you are on an older build or a custom install that excludes LINE, install a
 current npm package when one is published:
 
 ```bash
-openclaw plugins install @openclaw/line
+opencli plugins install @opencli/line
 ```
 
-If npm reports the OpenClaw-owned package as deprecated or missing, use a
-current packaged OpenClaw build or a local checkout until the npm package train
+If npm reports the OpenCLI-owned package as deprecated or missing, use a
+current packaged OpenCLI build or a local checkout until the npm package train
 catches up.
 
 Local checkout (when running from a git repo):
 
 ```bash
-openclaw plugins install ./path/to/local/line-plugin
+opencli plugins install ./path/to/local/line-plugin
 ```
 
 ## Setup
@@ -56,8 +56,8 @@ If you need a custom path, set `channels.line.webhookPath` or
 
 Security note:
 
-- LINE signature verification is body-dependent (HMAC over the raw body), so OpenClaw applies strict pre-auth body limits and timeout before verification.
-- OpenClaw processes webhook events from the verified raw request bytes. Upstream middleware-transformed `req.body` values are ignored for signature-integrity safety.
+- LINE signature verification is body-dependent (HMAC over the raw body), so OpenCLI applies strict pre-auth body limits and timeout before verification.
+- OpenCLI processes webhook events from the verified raw request bytes. Upstream middleware-transformed `req.body` values are ignored for signature-integrity safety.
 
 ## Configure
 
@@ -120,8 +120,8 @@ Direct messages default to pairing. Unknown senders get a pairing code and their
 messages are ignored until approved.
 
 ```bash
-openclaw pairing list line
-openclaw pairing approve line <CODE>
+opencli pairing list line
+opencli pairing approve line <CODE>
 ```
 
 Allowlists and policies:
@@ -147,7 +147,7 @@ LINE IDs are case-sensitive. Valid IDs look like:
 - Streaming responses are buffered; LINE receives full chunks with a loading
   animation while the agent works.
 - Media downloads are capped by `channels.line.mediaMaxMb` (default 10).
-- Inbound media is saved under `~/.openclaw/media/inbound/` before it is passed
+- Inbound media is saved under `~/.opencli/media/inbound/` before it is passed
   to the agent, matching the shared media store used by other bundled channel
   plugins.
 
@@ -210,7 +210,7 @@ The LINE plugin supports sending images, videos, and audio files through the age
 - **Videos**: sent with explicit preview and content-type handling.
 - **Audio**: sent as LINE audio messages.
 
-Outbound media URLs must be public HTTPS URLs. OpenClaw validates the target hostname before handing the URL to LINE and rejects loopback, link-local, and private-network targets.
+Outbound media URLs must be public HTTPS URLs. OpenCLI validates the target hostname before handing the URL to LINE and rejects loopback, link-local, and private-network targets.
 
 Generic media sends fall back to the existing image-only route when a LINE-specific path is not available.
 

@@ -1,10 +1,10 @@
 import { lowercasePreservingWhitespace } from "../shared/string-coerce.js";
 
-export const A2UI_PATH = "/__openclaw__/a2ui";
+export const A2UI_PATH = "/__opencli__/a2ui";
 
-export const CANVAS_HOST_PATH = "/__openclaw__/canvas";
+export const CANVAS_HOST_PATH = "/__opencli__/canvas";
 
-export const CANVAS_WS_PATH = "/__openclaw__/ws";
+export const CANVAS_WS_PATH = "/__opencli__/ws";
 
 export function isA2uiPath(pathname: string): boolean {
   return pathname === A2UI_PATH || pathname.startsWith(`${A2UI_PATH}/`);
@@ -16,9 +16,9 @@ export function injectCanvasLiveReload(html: string): string {
 (() => {
   // Cross-platform action bridge helper.
   // Works on:
-  // - iOS: window.webkit.messageHandlers.openclawCanvasA2UIAction.postMessage(...)
-  // - Android: window.openclawCanvasA2UIAction.postMessage(...)
-  const handlerNames = ["openclawCanvasA2UIAction"];
+  // - iOS: window.webkit.messageHandlers.opencliCanvasA2UIAction.postMessage(...)
+  // - Android: window.opencliCanvasA2UIAction.postMessage(...)
+  const handlerNames = ["opencliCanvasA2UIAction"];
   function postToNode(payload) {
     try {
       const raw = typeof payload === "string" ? payload : JSON.stringify(payload);
@@ -45,11 +45,11 @@ export function injectCanvasLiveReload(html: string): string {
     const action = { ...userAction, id };
     return postToNode({ userAction: action });
   }
-  globalThis.OpenClaw = globalThis.OpenClaw ?? {};
-  globalThis.OpenClaw.postMessage = postToNode;
-  globalThis.OpenClaw.sendUserAction = sendUserAction;
-  globalThis.openclawPostMessage = postToNode;
-  globalThis.openclawSendUserAction = sendUserAction;
+  globalThis.OpenCLI = globalThis.OpenCLI ?? {};
+  globalThis.OpenCLI.postMessage = postToNode;
+  globalThis.OpenCLI.sendUserAction = sendUserAction;
+  globalThis.opencliPostMessage = postToNode;
+  globalThis.opencliSendUserAction = sendUserAction;
 
   try {
     const cap = new URLSearchParams(location.search).get("oc_cap");

@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { measureDiagnosticsTimelineSpanSync } from "../infra/diagnostics-timeline.js";
 import { resolveInstalledPluginIndexPolicyHash } from "./installed-plugin-index-policy.js";
 import type { InstalledPluginIndex } from "./installed-plugin-index.js";
@@ -37,7 +37,7 @@ function indexesMatch(
 
 export function isPluginMetadataSnapshotCompatible(params: {
   snapshot: Pick<PluginMetadataSnapshot, "index" | "policyHash" | "workspaceDir">;
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   workspaceDir?: string;
   index?: InstalledPluginIndex;
 }): boolean {

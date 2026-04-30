@@ -525,7 +525,7 @@ html.theme-transition::view-transition-new(theme) {
   }
 }
 
-openclaw-app {
+opencli-app {
   display: block;
   position: relative;
   z-index: 1;

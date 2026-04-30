@@ -1,7 +1,7 @@
 import type { EventEmitter } from "node:events";
-import { danger } from "openclaw/plugin-sdk/runtime-env";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
-import { formatErrorMessage } from "openclaw/plugin-sdk/ssrf-runtime";
+import { danger } from "opencli/plugin-sdk/runtime-env";
+import type { RuntimeEnv } from "opencli/plugin-sdk/runtime-env";
+import { formatErrorMessage } from "opencli/plugin-sdk/ssrf-runtime";
 
 export type DiscordGatewayEventType =
   | "disallowed-intents"

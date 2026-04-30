@@ -1,5 +1,5 @@
-import { expectChannelInboundContextContract as expectInboundContextContract } from "openclaw/plugin-sdk/channel-contract-testing";
-import type { MsgContext } from "openclaw/plugin-sdk/reply-runtime";
+import { expectChannelInboundContextContract as expectInboundContextContract } from "opencli/plugin-sdk/channel-contract-testing";
+import type { MsgContext } from "opencli/plugin-sdk/reply-runtime";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 vi.useRealTimers();
 const [
@@ -34,9 +34,9 @@ vi.mock("../send.js", () => ({
   sendReadReceiptSignal: sendReadReceiptMock,
 }));
 
-vi.mock("openclaw/plugin-sdk/reply-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/reply-runtime")>(
-    "openclaw/plugin-sdk/reply-runtime",
+vi.mock("opencli/plugin-sdk/reply-runtime", async () => {
+  const actual = await vi.importActual<typeof import("opencli/plugin-sdk/reply-runtime")>(
+    "opencli/plugin-sdk/reply-runtime",
   );
   return {
     ...actual,
@@ -46,9 +46,9 @@ vi.mock("openclaw/plugin-sdk/reply-runtime", async () => {
   };
 });
 
-vi.mock("openclaw/plugin-sdk/conversation-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/conversation-runtime")>(
-    "openclaw/plugin-sdk/conversation-runtime",
+vi.mock("opencli/plugin-sdk/conversation-runtime", async () => {
+  const actual = await vi.importActual<typeof import("opencli/plugin-sdk/conversation-runtime")>(
+    "opencli/plugin-sdk/conversation-runtime",
   );
   return {
     ...actual,

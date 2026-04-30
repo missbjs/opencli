@@ -1,11 +1,11 @@
-import { createSubsystemLogger } from "openclaw/plugin-sdk/core";
-import { resolvePluginConfigObject } from "openclaw/plugin-sdk/plugin-config-runtime";
-import type { ProviderRuntimeModel } from "openclaw/plugin-sdk/plugin-entry";
+import { createSubsystemLogger } from "opencli/plugin-sdk/core";
+import { resolvePluginConfigObject } from "opencli/plugin-sdk/plugin-config-runtime";
+import type { ProviderRuntimeModel } from "opencli/plugin-sdk/plugin-entry";
 import {
   normalizeModelCompat,
   type ModelProviderConfig,
   type ProviderPlugin,
-} from "openclaw/plugin-sdk/provider-model-shared";
+} from "opencli/plugin-sdk/provider-model-shared";
 import { resolveCodexSystemPromptContribution } from "./prompt-overlay.js";
 import {
   buildCodexModelDefinition,
@@ -26,7 +26,7 @@ import type {
 } from "./src/app-server/models.js";
 
 const DEFAULT_DISCOVERY_TIMEOUT_MS = 2500;
-const LIVE_DISCOVERY_ENV = "OPENCLAW_CODEX_DISCOVERY_LIVE";
+const LIVE_DISCOVERY_ENV = "OPENCLI_CODEX_DISCOVERY_LIVE";
 const MODEL_DISCOVERY_PAGE_LIMIT = 100;
 const codexCatalogLog = createSubsystemLogger("codex/catalog");
 

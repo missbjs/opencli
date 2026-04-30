@@ -1,5 +1,5 @@
 import { readDiscordComponentSpec } from "../components.js";
-import type { OpenClawConfig } from "../runtime-api.js";
+import type { OpenCLIConfig } from "../runtime-api.js";
 import { sendDiscordComponentMessage } from "../send.components.js";
 import {
   createThreadDiscord,
@@ -53,7 +53,7 @@ export const discordMessagingActionRuntime = {
 
 export async function resolveDiscordReactionTargetChannelId(params: {
   target: string;
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   accountId?: string;
 }): Promise<string> {
   try {

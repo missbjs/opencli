@@ -70,7 +70,7 @@ function setCachedSessionTitleFields(cacheKey: string, stat: fs.Stats, value: Se
   }
 }
 
-export function attachOpenClawTranscriptMeta(
+export function attachOpenCLITranscriptMeta(
   message: unknown,
   meta: Record<string, unknown>,
 ): unknown {
@@ -79,12 +79,12 @@ export function attachOpenClawTranscriptMeta(
   }
   const record = message as Record<string, unknown>;
   const existing =
-    record.__openclaw && typeof record.__openclaw === "object" && !Array.isArray(record.__openclaw)
-      ? (record.__openclaw as Record<string, unknown>)
+    record.__opencli && typeof record.__opencli === "object" && !Array.isArray(record.__opencli)
+      ? (record.__opencli as Record<string, unknown>)
       : {};
   return {
     ...record,
-    __openclaw: {
+    __opencli: {
       ...existing,
       ...meta,
     },
@@ -131,7 +131,7 @@ export function readSessionMessages(
       if (entry.type === "message" && entry.message) {
         messageSeq += 1;
         messages.push(
-          attachOpenClawTranscriptMeta(entry.message, {
+          attachOpenCLITranscriptMeta(entry.message, {
             ...(typeof entry.id === "string" ? { id: entry.id } : {}),
             seq: messageSeq,
           }),
@@ -147,7 +147,7 @@ export function readSessionMessages(
           role: "system",
           content: [{ type: "text", text: "Compaction" }],
           timestamp,
-          __openclaw: {
+          __opencli: {
             kind: "compaction",
             id: typeof entry.id === "string" ? entry.id : undefined,
             seq: messageSeq,
@@ -169,7 +169,7 @@ export function readSessionMessages(
       if (parsed?.message) {
         messageSeq += 1;
         messages.push(
-          attachOpenClawTranscriptMeta(parsed.message, {
+          attachOpenCLITranscriptMeta(parsed.message, {
             ...(typeof parsed.id === "string" ? { id: parsed.id } : {}),
             seq: messageSeq,
           }),
@@ -187,7 +187,7 @@ export function readSessionMessages(
           role: "system",
           content: [{ type: "text", text: "Compaction" }],
           timestamp,
-          __openclaw: {
+          __opencli: {
             kind: "compaction",
             id: typeof parsed.id === "string" ? parsed.id : undefined,
             seq: messageSeq,
@@ -548,7 +548,7 @@ function extractLatestUsageFromTranscriptChunk(
           : typeof parsed.model === "string"
             ? parsed.model.trim()
             : undefined;
-      const isDeliveryMirror = modelProvider === "openclaw" && model === "delivery-mirror";
+      const isDeliveryMirror = modelProvider === "opencli" && model === "delivery-mirror";
       const hasMeaningfulUsage =
         hasNonzeroUsage(usage) ||
         typeof totalTokens === "number" ||

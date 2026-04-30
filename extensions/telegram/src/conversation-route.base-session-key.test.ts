@@ -1,10 +1,10 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
-import { resolveThreadSessionKeys } from "openclaw/plugin-sdk/routing";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
+import { resolveThreadSessionKeys } from "opencli/plugin-sdk/routing";
 import { describe, expect, it } from "vitest";
 import { resolveTelegramConversationBaseSessionKey } from "./conversation-route.js";
 
 describe("resolveTelegramConversationBaseSessionKey", () => {
-  const cfg: OpenClawConfig = {};
+  const cfg: OpenCLIConfig = {};
 
   it("keeps default-account DMs on the route session key", () => {
     expect(

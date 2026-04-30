@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../../config/types.opencli.js";
 import {
   normalizeModelCatalogProviderId,
   planManifestModelCatalogRows,
@@ -16,7 +16,7 @@ import {
 type ManifestCatalogRowsForListMode = "static-authoritative" | "supplemental";
 
 function loadManifestCatalogRowsForPluginIds(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   env?: NodeJS.ProcessEnv;
   index: PluginRegistrySnapshot;
   mode: ManifestCatalogRowsForListMode;
@@ -52,7 +52,7 @@ function loadManifestCatalogRowsForPluginIds(params: {
 }
 
 function resolveConventionModelCatalogPluginIds(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   index: PluginRegistrySnapshot;
   providerFilter: string;
 }): readonly string[] {
@@ -74,7 +74,7 @@ function resolveConventionModelCatalogPluginIds(params: {
 }
 
 function resolveDeclaredModelCatalogPluginIds(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   index: PluginRegistrySnapshot;
   providerFilter: string;
 }): readonly string[] {
@@ -87,7 +87,7 @@ function resolveDeclaredModelCatalogPluginIds(params: {
 }
 
 export function loadManifestCatalogRowsForList(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   providerFilter?: string;
   env?: NodeJS.ProcessEnv;
   mode?: ManifestCatalogRowsForListMode;
@@ -138,7 +138,7 @@ export function loadManifestCatalogRowsForList(params: {
 }
 
 export function loadStaticManifestCatalogRowsForList(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   providerFilter?: string;
   env?: NodeJS.ProcessEnv;
 }): readonly NormalizedModelCatalogRow[] {
@@ -149,7 +149,7 @@ export function loadStaticManifestCatalogRowsForList(params: {
 }
 
 export function loadSupplementalManifestCatalogRowsForList(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   providerFilter?: string;
   env?: NodeJS.ProcessEnv;
 }): readonly NormalizedModelCatalogRow[] {

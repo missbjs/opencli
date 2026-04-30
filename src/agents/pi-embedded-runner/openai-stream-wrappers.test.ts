@@ -211,7 +211,7 @@ describe("createOpenAIThinkingLevelWrapper", () => {
 });
 
 describe("createOpenAIAttributionHeadersWrapper", () => {
-  it("routes native Codex traffic through the OpenClaw transport instead of pi upstream", () => {
+  it("routes native Codex traffic through the OpenCLI transport instead of pi upstream", () => {
     let upstreamCalls = 0;
     let codexCalls = 0;
     let capturedHeaders: Record<string, string> | undefined;
@@ -245,8 +245,8 @@ describe("createOpenAIAttributionHeadersWrapper", () => {
     expect(upstreamCalls).toBe(0);
     expect(codexCalls).toBe(1);
     expect(capturedHeaders).toMatchObject({
-      originator: "openclaw",
-      "User-Agent": expect.stringMatching(/^openclaw\//),
+      originator: "opencli",
+      "User-Agent": expect.stringMatching(/^opencli\//),
     });
   });
 });

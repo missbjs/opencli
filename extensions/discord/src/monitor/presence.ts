@@ -1,5 +1,5 @@
-import type { DiscordAccountConfig } from "openclaw/plugin-sdk/config-types";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/text-runtime";
+import type { DiscordAccountConfig } from "opencli/plugin-sdk/config-types";
+import { normalizeOptionalString } from "opencli/plugin-sdk/text-runtime";
 import type { Activity, UpdatePresenceData } from "../internal/gateway.js";
 
 const DEFAULT_CUSTOM_ACTIVITY_TYPE = 4;

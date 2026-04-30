@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import OpenClaw
+@testable import OpenCLI
 
 @Suite(.serialized)
 struct ExecApprovalsStoreRefactorTests {
@@ -8,10 +8,10 @@ struct ExecApprovalsStoreRefactorTests {
         _ body: @escaping @Sendable (URL) async throws -> Void) async throws
     {
         let stateDir = FileManager().temporaryDirectory
-            .appendingPathComponent("openclaw-state-\(UUID().uuidString)", isDirectory: true)
+            .appendingPathComponent("opencli-state-\(UUID().uuidString)", isDirectory: true)
         defer { try? FileManager().removeItem(at: stateDir) }
 
-        try await TestIsolation.withEnvValues(["OPENCLAW_STATE_DIR": stateDir.path]) {
+        try await TestIsolation.withEnvValues(["OPENCLI_STATE_DIR": stateDir.path]) {
             try await body(stateDir)
         }
     }

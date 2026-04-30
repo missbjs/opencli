@@ -251,7 +251,7 @@ export function createPluginRuntimeMock(overrides: DeepPartial<PluginRuntime> = 
     config: {
       current: vi.fn(() => ({})) as unknown as PluginRuntime["config"]["current"],
       mutateConfigFile: vi.fn(async () => ({
-        path: "/tmp/openclaw.json",
+        path: "/tmp/opencli.json",
         previousHash: null,
         snapshot: {} as never,
         nextConfig: {},
@@ -260,7 +260,7 @@ export function createPluginRuntimeMock(overrides: DeepPartial<PluginRuntime> = 
         result: undefined,
       })) as unknown as PluginRuntime["config"]["mutateConfigFile"],
       replaceConfigFile: vi.fn(async ({ nextConfig }) => ({
-        path: "/tmp/openclaw.json",
+        path: "/tmp/opencli.json",
         previousHash: null,
         snapshot: {} as never,
         nextConfig,
@@ -640,7 +640,7 @@ export function createPluginRuntimeMock(overrides: DeepPartial<PluginRuntime> = 
       })),
     },
     state: {
-      resolveStateDir: vi.fn(() => "/tmp/openclaw"),
+      resolveStateDir: vi.fn(() => "/tmp/opencli"),
       openKeyedStore: vi.fn(() => {
         throw new Error("openKeyedStore mock is not configured");
       }) as unknown as PluginRuntime["state"]["openKeyedStore"],

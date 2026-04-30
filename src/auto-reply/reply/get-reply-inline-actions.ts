@@ -4,7 +4,7 @@ import type { SkillCommandSpec } from "../../agents/skills.js";
 import { applyOwnerOnlyToolPolicy } from "../../agents/tool-policy.js";
 import { getChannelPlugin } from "../../channels/plugins/index.js";
 import type { SessionEntry } from "../../config/sessions.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../../config/types.opencli.js";
 import { logVerbose } from "../../globals.js";
 import { formatErrorMessage } from "../../infra/errors.js";
 import { generateSecureToken } from "../../infra/secure-random.js";
@@ -36,12 +36,12 @@ import { extractInlineSimpleCommand } from "./reply-inline.js";
 import type { TypingController } from "./typing.js";
 
 type SkillCommandsRuntime = typeof import("../skill-commands.runtime.js");
-type OpenClawToolsRuntime = typeof import("../../agents/openclaw-tools.runtime.js");
+type OpenCLIToolsRuntime = typeof import("../../agents/opencli-tools.runtime.js");
 type AbortCutoffRuntime = typeof import("./abort-cutoff.runtime.js");
 type CommandsRuntime = typeof import("./commands.runtime.js");
 
 let skillCommandsRuntimePromise: Promise<SkillCommandsRuntime> | undefined;
-let openClawToolsRuntimePromise: Promise<OpenClawToolsRuntime> | undefined;
+let openClawToolsRuntimePromise: Promise<OpenCLIToolsRuntime> | undefined;
 let abortCutoffRuntimePromise: Promise<AbortCutoffRuntime> | undefined;
 let commandsRuntimePromise: Promise<CommandsRuntime> | undefined;
 let builtinSlashCommands: Set<string> | null = null;
@@ -51,8 +51,8 @@ function loadSkillCommandsRuntime(): Promise<SkillCommandsRuntime> {
   return skillCommandsRuntimePromise;
 }
 
-function loadOpenClawToolsRuntime(): Promise<OpenClawToolsRuntime> {
-  openClawToolsRuntimePromise ??= import("../../agents/openclaw-tools.runtime.js");
+function loadOpenCLIToolsRuntime(): Promise<OpenCLIToolsRuntime> {
+  openClawToolsRuntimePromise ??= import("../../agents/opencli-tools.runtime.js");
   return openClawToolsRuntimePromise;
 }
 
@@ -142,7 +142,7 @@ function extractTextFromToolResult(result: unknown): string | null {
 export async function handleInlineActions(params: {
   ctx: MsgContext;
   sessionCtx: TemplateContext;
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   agentId: string;
   agentDir?: string;
   sessionEntry?: SessionEntry;
@@ -266,8 +266,8 @@ export async function handleInlineActions(params: {
         resolveGatewayMessageChannel(ctx.Provider) ??
         undefined;
 
-      const { createOpenClawTools } = await loadOpenClawToolsRuntime();
-      const tools = createOpenClawTools({
+      const { createOpenCLITools } = await loadOpenCLIToolsRuntime();
+      const tools = createOpenCLITools({
         agentSessionKey: sessionKey,
         agentChannel: channel,
         agentAccountId: (ctx as { AccountId?: string }).AccountId,

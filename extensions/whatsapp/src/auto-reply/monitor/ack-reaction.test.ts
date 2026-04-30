@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { WebInboundMessage } from "../../inbound/types.js";
 import { maybeSendAckReaction } from "./ack-reaction.js";
@@ -30,8 +30,8 @@ function createMessage(overrides: Partial<WebInboundMessage> = {}): WebInboundMe
 
 function createConfig(
   reactionLevel: "off" | "ack" | "minimal" | "extensive",
-  extras?: Partial<NonNullable<OpenClawConfig["channels"]>["whatsapp"]>,
-): OpenClawConfig {
+  extras?: Partial<NonNullable<OpenCLIConfig["channels"]>["whatsapp"]>,
+): OpenCLIConfig {
   return {
     channels: {
       whatsapp: {
@@ -44,7 +44,7 @@ function createConfig(
         ...extras,
       },
     },
-  } as OpenClawConfig;
+  } as OpenCLIConfig;
 }
 
 type AckReactionParams = Parameters<typeof maybeSendAckReaction>[0];

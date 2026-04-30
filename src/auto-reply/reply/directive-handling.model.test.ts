@@ -67,7 +67,7 @@ import {
   replaceRuntimeAuthProfileStoreSnapshots,
 } from "../../agents/auth-profiles.js";
 import type { ModelAliasIndex } from "../../agents/model-selection.js";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { OpenCLIConfig } from "../../config/config.js";
 import type { SessionEntry } from "../../config/sessions.js";
 import { enqueueSystemEvent } from "../../infra/system-events.js";
 import { createEmptyPluginRegistry } from "../../plugins/registry-empty.js";
@@ -138,11 +138,11 @@ function baseAliasIndex(): ModelAliasIndex {
   return { byAlias: new Map(), byKey: new Map() };
 }
 
-function baseConfig(): OpenClawConfig {
+function baseConfig(): OpenCLIConfig {
   return {
     commands: { text: true },
     agents: { defaults: {} },
-  } as unknown as OpenClawConfig;
+  } as unknown as OpenCLIConfig;
 }
 
 function createSessionEntry(overrides?: Partial<SessionEntry>): SessionEntry {
@@ -232,7 +232,7 @@ function resolveModelSelectionForCommand(params: {
 }) {
   return resolveModelSelectionFromDirective({
     directives: parseInlineDirectives(params.command),
-    cfg: { commands: { text: true } } as unknown as OpenClawConfig,
+    cfg: { commands: { text: true } } as unknown as OpenCLIConfig,
     agentDir: TEST_AGENT_DIR,
     defaultProvider: "anthropic",
     defaultModel: "claude-opus-4-6",
@@ -357,9 +357,9 @@ describe("/model chat UX", () => {
   });
 
   it("uses workspace-scoped auth evidence in /model list provider visibility", async () => {
-    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-model-list-auth-label-"));
+    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "opencli-model-list-auth-label-"));
     const workspaceDir = path.join(tempRoot, "workspace");
-    const pluginDir = path.join(workspaceDir, ".openclaw", "extensions", "workspace-model-list");
+    const pluginDir = path.join(workspaceDir, ".opencli", "extensions", "workspace-model-list");
     const bundledDir = path.join(tempRoot, "bundled");
     const stateDir = path.join(tempRoot, "state");
     const credentialPath = path.join(tempRoot, "credentials.json");
@@ -369,7 +369,7 @@ describe("/model chat UX", () => {
     fs.writeFileSync(path.join(pluginDir, "index.ts"), "export default {}\n", "utf8");
     fs.writeFileSync(credentialPath, "{}", "utf8");
     fs.writeFileSync(
-      path.join(pluginDir, "openclaw.plugin.json"),
+      path.join(pluginDir, "opencli.plugin.json"),
       JSON.stringify({
         id: "workspace-model-list",
         configSchema: { type: "object" },
@@ -395,8 +395,8 @@ describe("/model chat UX", () => {
     try {
       await withEnvAsync(
         {
-          OPENCLAW_BUNDLED_PLUGINS_DIR: bundledDir,
-          OPENCLAW_STATE_DIR: stateDir,
+          OPENCLI_BUNDLED_PLUGINS_DIR: bundledDir,
+          OPENCLI_STATE_DIR: stateDir,
           WORKSPACE_MODEL_LIST_CREDENTIALS: credentialPath,
         },
         async () => {
@@ -406,7 +406,7 @@ describe("/model chat UX", () => {
             cfg: {
               ...baseConfig(),
               plugins: { allow: ["workspace-model-list"] },
-            } as OpenClawConfig,
+            } as OpenCLIConfig,
           });
 
           expect(reply?.text).toContain("- anthropic");
@@ -448,7 +448,7 @@ describe("/model chat UX", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as OpenCLIConfig,
       allowedModelCatalog: [
         { provider: "anthropic", id: "claude-opus-4-6", name: "Claude Opus 4.5" },
         { provider: "openai", id: "gpt-4.1-mini", name: "GPT-4.1 mini" },
@@ -463,9 +463,9 @@ describe("/model chat UX", () => {
   });
 
   it("uses workspace-scoped auth evidence in /model status labels", async () => {
-    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-model-status-auth-label-"));
+    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "opencli-model-status-auth-label-"));
     const workspaceDir = path.join(tempRoot, "workspace");
-    const pluginDir = path.join(workspaceDir, ".openclaw", "extensions", "workspace-model-auth");
+    const pluginDir = path.join(workspaceDir, ".opencli", "extensions", "workspace-model-auth");
     const bundledDir = path.join(tempRoot, "bundled");
     const stateDir = path.join(tempRoot, "state");
     const credentialPath = path.join(tempRoot, "credentials.json");
@@ -475,7 +475,7 @@ describe("/model chat UX", () => {
     fs.writeFileSync(path.join(pluginDir, "index.ts"), "export default {}\n", "utf8");
     fs.writeFileSync(credentialPath, "{}", "utf8");
     fs.writeFileSync(
-      path.join(pluginDir, "openclaw.plugin.json"),
+      path.join(pluginDir, "opencli.plugin.json"),
       JSON.stringify({
         id: "workspace-model-auth",
         configSchema: { type: "object" },
@@ -501,8 +501,8 @@ describe("/model chat UX", () => {
     try {
       await withEnvAsync(
         {
-          OPENCLAW_BUNDLED_PLUGINS_DIR: bundledDir,
-          OPENCLAW_STATE_DIR: stateDir,
+          OPENCLI_BUNDLED_PLUGINS_DIR: bundledDir,
+          OPENCLI_STATE_DIR: stateDir,
           WORKSPACE_MODEL_CREDENTIALS: credentialPath,
         },
         async () => {
@@ -519,7 +519,7 @@ describe("/model chat UX", () => {
                   },
                 },
               },
-            } as OpenClawConfig,
+            } as OpenCLIConfig,
             allowedModelCatalog: [
               { provider: "anthropic", id: "claude-opus-4-6", name: "Claude Opus 4.6" },
             ],
@@ -535,7 +535,7 @@ describe("/model chat UX", () => {
 
   it("auto-applies closest match for typos", () => {
     const directives = parseInlineDirectives("/model anthropic/claud-opus-4-5");
-    const cfg = { commands: { text: true } } as unknown as OpenClawConfig;
+    const cfg = { commands: { text: true } } as unknown as OpenCLIConfig;
 
     const resolved = resolveModelSelectionFromDirective({
       directives,
@@ -637,7 +637,7 @@ describe("/model chat UX", () => {
 
     const resolved = resolveModelSelectionFromDirective({
       directives: parseInlineDirectives(`/model gpt@${OPENAI_DATE_PROFILE_ID}`),
-      cfg: { commands: { text: true } } as unknown as OpenClawConfig,
+      cfg: { commands: { text: true } } as unknown as OpenCLIConfig,
       agentDir: TEST_AGENT_DIR,
       defaultProvider: "anthropic",
       defaultModel: "claude-opus-4-6",

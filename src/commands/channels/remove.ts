@@ -4,7 +4,7 @@ import { listReadOnlyChannelPluginsForConfig } from "../../channels/plugins/read
 import type { ChannelPlugin } from "../../channels/plugins/types.plugin.js";
 import { commitConfigWithPendingPluginInstalls } from "../../cli/plugins-install-record-commit.js";
 import { refreshPluginRegistryAfterConfigMutation } from "../../cli/plugins-registry-refresh.js";
-import { replaceConfigFile, type OpenClawConfig } from "../../config/config.js";
+import { replaceConfigFile, type OpenCLIConfig } from "../../config/config.js";
 import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../../routing/session-key.js";
 import { defaultRuntime, type RuntimeEnv } from "../../runtime.js";
 import { normalizeOptionalString } from "../../shared/string-coerce.js";
@@ -19,7 +19,7 @@ export type ChannelsRemoveOptions = {
 };
 
 function listAccountIds(
-  cfg: OpenClawConfig,
+  cfg: OpenCLIConfig,
   channel: ChatChannel,
   plugin?: ChannelPlugin,
 ): string[] {
@@ -40,7 +40,7 @@ export async function channelsRemoveCommand(
     return;
   }
   const baseHash = configSnapshot.hash;
-  let cfg = (configSnapshot.sourceConfig ?? configSnapshot.config) as OpenClawConfig;
+  let cfg = (configSnapshot.sourceConfig ?? configSnapshot.config) as OpenCLIConfig;
 
   const useWizard = shouldUseWizard(params);
   const prompter = useWizard ? createClackPrompter() : null;

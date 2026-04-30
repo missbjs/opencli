@@ -680,7 +680,7 @@ describe("loadChatHistory", () => {
         content: [
           {
             type: "text",
-            text: "[openclaw] missing tool result in session history; inserted synthetic error result for transcript repair.",
+            text: "[opencli] missing tool result in session history; inserted synthetic error result for transcript repair.",
           },
         ],
       },
@@ -711,7 +711,7 @@ describe("loadChatHistory", () => {
         content: [
           {
             type: "text",
-            text: "[openclaw] missing tool result in session history; inserted synthetic error result for transcript repair.",
+            text: "[opencli] missing tool result in session history; inserted synthetic error result for transcript repair.",
           },
         ],
       },
@@ -977,9 +977,9 @@ describe("loadChatHistory", () => {
             {
               type: "text",
               text: [
-                "<<<BEGIN_OPENCLAW_INTERNAL_CONTEXT>>>",
+                "<<<BEGIN_OPENCLI_INTERNAL_CONTEXT>>>",
                 "subagent completion payload",
-                "<<<END_OPENCLAW_INTERNAL_CONTEXT>>>",
+                "<<<END_OPENCLI_INTERNAL_CONTEXT>>>",
               ].join("\n"),
             },
           ],
@@ -1004,7 +1004,7 @@ describe("loadChatHistory", () => {
     const persistedUser = {
       role: "user",
       content: [{ type: "text", text: "first" }],
-      __openclaw: { seq: 1 },
+      __opencli: { seq: 1 },
     };
     const optimisticUser = {
       role: "user",
@@ -1068,12 +1068,12 @@ describe("loadChatHistory", () => {
     const historyUser = {
       role: "user",
       content: [{ type: "text", text: "latest ask" }],
-      __openclaw: { seq: 1 },
+      __opencli: { seq: 1 },
     };
     const historyAssistant = {
       role: "assistant",
       content: [{ type: "text", text: "latest answer" }],
-      __openclaw: { seq: 2 },
+      __opencli: { seq: 2 },
     };
     const request = vi.fn().mockResolvedValue({
       messages: [historyUser, historyAssistant],

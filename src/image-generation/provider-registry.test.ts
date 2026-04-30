@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.js";
+import type { OpenCLIConfig } from "../config/types.js";
 import type { ImageGenerationProviderPlugin } from "../plugins/types.js";
 import type * as ProviderRegistry from "./provider-registry.js";
 
@@ -40,7 +40,7 @@ describe("image-generation provider registry", () => {
   });
 
   it("delegates provider resolution to the capability provider boundary", () => {
-    const cfg = {} as OpenClawConfig;
+    const cfg = {} as OpenCLIConfig;
 
     expect(listImageGenerationProviders(cfg)).toEqual([]);
     expect(resolvePluginCapabilityProvidersMock).toHaveBeenCalledWith({

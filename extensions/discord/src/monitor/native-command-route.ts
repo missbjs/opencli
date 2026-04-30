@@ -1,7 +1,7 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
-import * as conversationRuntime from "openclaw/plugin-sdk/conversation-binding-runtime";
-import type { ResolvedAgentRoute } from "openclaw/plugin-sdk/routing";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/text-runtime";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
+import * as conversationRuntime from "opencli/plugin-sdk/conversation-binding-runtime";
+import type { ResolvedAgentRoute } from "opencli/plugin-sdk/routing";
+import { normalizeOptionalString } from "opencli/plugin-sdk/text-runtime";
 import {
   resolveDiscordBoundConversationRoute,
   resolveDiscordEffectiveRoute,
@@ -27,7 +27,7 @@ export type DiscordNativeInteractionRouteState = {
 };
 
 export async function resolveDiscordNativeInteractionRouteState(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   accountId: string;
   guildId?: string;
   memberRoleIds?: string[];

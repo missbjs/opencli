@@ -4,7 +4,7 @@ import { createProviderRuntimeTestMock } from "./model.provider-runtime.test-sup
 
 vi.mock("../model-suppression.js", () => {
   // Mirrors the canonical manifest-driven suppression in
-  // extensions/qwen/openclaw.plugin.json and src/plugins/manifest-model-suppression.ts.
+  // extensions/qwen/opencli.plugin.json and src/plugins/manifest-model-suppression.ts.
   function isQwenCodingPlanBaseUrl(value: string | undefined): boolean {
     const trimmed = value?.trim();
     if (!trimmed) {
@@ -120,7 +120,7 @@ vi.mock("./openrouter-model-capabilities.js", () => ({
     mockLoadOpenRouterModelCapabilities(modelId),
 }));
 
-import type { OpenClawConfig } from "../../config/config.js";
+import type { OpenCLIConfig } from "../../config/config.js";
 import { getModelProviderRequestTransport } from "../provider-request-config.js";
 import { buildForwardCompatTemplate } from "./model.forward-compat.test-support.js";
 import { buildInlineProviderModels, resolveModel, resolveModelAsync } from "./model.js";
@@ -165,7 +165,7 @@ function resolveModelForTest(
   provider: string,
   modelId: string,
   agentDir?: string,
-  cfg?: OpenClawConfig,
+  cfg?: OpenCLIConfig,
 ) {
   const resolvedAgentDir = agentDir ?? "/tmp/agent";
   return resolveModel(provider, modelId, agentDir, cfg, {
@@ -179,7 +179,7 @@ function resolveModelAsyncForTest(
   provider: string,
   modelId: string,
   agentDir?: string,
-  cfg?: OpenClawConfig,
+  cfg?: OpenCLIConfig,
   options?: { retryTransientProviderRuntimeMiss?: boolean },
 ) {
   const resolvedAgentDir = agentDir ?? "/tmp/agent";
@@ -242,7 +242,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig);
+    } as unknown as OpenCLIConfig);
 
     expect(result.error).toBeUndefined();
     expect(Array.isArray(result.model?.input)).toBe(true);
@@ -259,7 +259,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("custom", "missing-model", "/tmp/agent", cfg);
 
@@ -284,7 +284,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("local-agent-proxy", "gpt-5.2", "/tmp/agent", cfg);
 
@@ -318,7 +318,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("qwen", "qwen3.6-plus", "/tmp/agent", cfg);
 
@@ -345,7 +345,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("qwen", "qwen3.6-plus", "/tmp/agent", cfg);
 
@@ -366,7 +366,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("google-paid", "missing-model", "/tmp/agent", cfg);
 
@@ -394,7 +394,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("google", "gemini-2.5-pro", "/tmp/agent", cfg);
 
@@ -419,7 +419,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("custom-openai", "gpt-5.4", "/tmp/agent", cfg);
 
@@ -448,7 +448,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("custom-xai", "grok-4.1-fast", "/tmp/agent", cfg);
 
@@ -472,7 +472,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     // Requesting a non-listed model forces the providerCfg fallback branch.
     const result = resolveModelForTest("custom", "missing-model", "/tmp/agent", cfg);
@@ -498,7 +498,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("custom", "missing-model", "/tmp/agent", cfg);
 
@@ -552,7 +552,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("custom", "model-b", "/tmp/agent", cfg);
 
@@ -593,7 +593,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("ollama", "qwen3:32b", "/tmp/agent", cfg);
 
@@ -624,7 +624,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("ollama", "qwen3:32b", "/tmp/agent", cfg);
 
@@ -657,7 +657,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("ollama", "qwen3.5:9b", "/tmp/agent", cfg);
 
@@ -696,7 +696,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("ollama", "qwen3.5:9b", "/tmp/agent", cfg);
 
@@ -724,7 +724,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("ollama", "llama3.2", "/tmp/agent", cfg);
 
@@ -753,7 +753,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("custom", "model-b", "/tmp/agent", cfg);
 
@@ -779,7 +779,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("custom", "model-b", "/tmp/agent", cfg);
 
@@ -802,7 +802,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("custom", "vision-model", "/tmp/agent", cfg);
 
@@ -830,7 +830,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("bytedance", "vision-model", "/tmp/agent", cfg);
 
@@ -857,7 +857,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("custom", "vision-model", "/tmp/agent", cfg);
 
@@ -889,7 +889,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("mlx", modelId, "/tmp/agent", cfg);
 
@@ -927,7 +927,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("custom", "vision-model", "/tmp/agent", cfg);
 
@@ -954,7 +954,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("custom", "typoed-model", "/tmp/agent", cfg);
 
@@ -980,7 +980,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("microsoft-foundry", "gpt-5.4", "/tmp/agent", cfg);
 
@@ -1005,7 +1005,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     mockDiscoveredModel(discoverModels, {
       provider: "microsoft-foundry",
@@ -1071,7 +1071,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const models = buildInlineProviderModels(cfg.models?.providers ?? {});
     expect(models).toEqual(
@@ -1265,7 +1265,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("onehub", "glm-5", "/tmp/agent", cfg);
 
@@ -1324,7 +1324,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("bedrock", "bedrock-alias-exact-test", "/tmp/agent", cfg);
 
@@ -1447,7 +1447,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("openai-codex", "gpt-5.4-codex", "/tmp/agent", cfg);
 
@@ -1487,7 +1487,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("openai-codex", "gpt-5.4-codex", "/tmp/agent", cfg);
 
@@ -1599,7 +1599,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("openai-codex", "gpt-5.5-pro", "/tmp/agent", cfg);
 
@@ -1651,7 +1651,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("openai-codex", "gpt-5.5", "/tmp/agent", cfg);
 
@@ -1715,7 +1715,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("openai-codex", "gpt-5.5", "/tmp/agent", cfg);
 
@@ -1864,7 +1864,7 @@ describe("resolveModel", () => {
           workspace: "/tmp/workspace",
         },
       },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
 
     const result = resolveModel("openai-codex", "gpt-5.4", "/tmp/agent-state", cfg, {
       authStorage: { mocked: true } as never,
@@ -1965,7 +1965,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("openai", "gpt-5.4", "/tmp/agent", cfg);
 
@@ -2003,7 +2003,7 @@ describe("resolveModel", () => {
           },
         },
       },
-    } as unknown as OpenClawConfig;
+    } as unknown as OpenCLIConfig;
 
     const result = resolveModelForTest("github-copilot", "gpt-5.4-mini", "/tmp/agent", cfg);
 

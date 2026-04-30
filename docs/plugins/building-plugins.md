@@ -1,21 +1,21 @@
 ---
-summary: "Create your first OpenClaw plugin in minutes"
+summary: "Create your first OpenCLI plugin in minutes"
 title: "Building plugins"
 sidebarTitle: "Getting Started"
 read_when:
-  - You want to create a new OpenClaw plugin
+  - You want to create a new OpenCLI plugin
   - You need a quick-start for plugin development
-  - You are adding a new channel, provider, tool, or other capability to OpenClaw
+  - You are adding a new channel, provider, tool, or other capability to OpenCLI
 ---
 
-Plugins extend OpenClaw with new capabilities: channels, model providers,
+Plugins extend OpenCLI with new capabilities: channels, model providers,
 speech, realtime transcription, realtime voice, media understanding, image
 generation, video generation, web fetch, web search, agent tools, or any
 combination.
 
-You do not need to add your plugin to the OpenClaw repository. Publish to
+You do not need to add your plugin to the OpenCLI repository. Publish to
 [ClawHub](/tools/clawhub) and users install with
-`openclaw plugins install <package-name>`. OpenClaw tries ClawHub first and
+`opencli plugins install <package-name>`. OpenCLI tries ClawHub first and
 falls back to npm automatically for packages that still use npm distribution.
 
 ## Prerequisites
@@ -28,7 +28,7 @@ falls back to npm automatically for packages that still use npm distribution.
 
 <CardGroup cols={3}>
   <Card title="Channel plugin" icon="messages-square" href="/plugins/sdk-channel-plugins">
-    Connect OpenClaw to a messaging platform (Discord, IRC, etc.)
+    Connect OpenCLI to a messaging platform (Discord, IRC, etc.)
   </Card>
   <Card title="Provider plugin" icon="cpu" href="/plugins/sdk-provider-plugins">
     Add a model provider (LLM, proxy, or custom endpoint)
@@ -40,7 +40,7 @@ falls back to npm automatically for packages that still use npm distribution.
 
 For a channel plugin that isn't guaranteed to be installed when onboarding/setup
 runs, use `createOptionalChannelSetupSurface(...)` from
-`openclaw/plugin-sdk/channel-setup`. It produces a setup adapter + wizard pair
+`opencli/plugin-sdk/channel-setup`. It produces a setup adapter + wizard pair
 that advertises the install requirement and fails closed on real config writes
 until the plugin is installed.
 
@@ -54,28 +54,28 @@ and provider plugins have dedicated guides linked above.
     <CodeGroup>
     ```json package.json
     {
-      "name": "@myorg/openclaw-my-plugin",
+      "name": "@myorg/opencli-my-plugin",
       "version": "1.0.0",
       "type": "module",
-      "openclaw": {
+      "opencli": {
         "extensions": ["./index.ts"],
         "compat": {
           "pluginApi": ">=2026.3.24-beta.2",
           "minGatewayVersion": "2026.3.24-beta.2"
         },
         "build": {
-          "openclawVersion": "2026.3.24-beta.2",
+          "opencliVersion": "2026.3.24-beta.2",
           "pluginSdkVersion": "2026.3.24-beta.2"
         }
       }
     }
     ```
 
-    ```json openclaw.plugin.json
+    ```json opencli.plugin.json
     {
       "id": "my-plugin",
       "name": "My Plugin",
-      "description": "Adds a custom tool to OpenClaw",
+      "description": "Adds a custom tool to OpenCLI",
       "activation": {
         "onStartup": true
       },
@@ -99,13 +99,13 @@ and provider plugins have dedicated guides linked above.
 
     ```typescript
     // index.ts
-    import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
+    import { definePluginEntry } from "opencli/plugin-sdk/plugin-entry";
     import { Type } from "@sinclair/typebox";
 
     export default definePluginEntry({
       id: "my-plugin",
       name: "My Plugin",
-      description: "Adds a custom tool to OpenClaw",
+      description: "Adds a custom tool to OpenCLI",
       register(api) {
         api.registerTool({
           name: "my_tool",
@@ -132,11 +132,11 @@ and provider plugins have dedicated guides linked above.
     ```bash
     clawhub package publish your-org/your-plugin --dry-run
     clawhub package publish your-org/your-plugin
-    openclaw plugins install clawhub:@myorg/openclaw-my-plugin
+    opencli plugins install clawhub:@myorg/opencli-my-plugin
     ```
 
-    OpenClaw also checks ClawHub before npm for bare package specs like
-    `@myorg/openclaw-my-plugin`; npm remains a fallback for packages that have
+    OpenCLI also checks ClawHub before npm for bare package specs like
+    `@myorg/opencli-my-plugin`; npm remains a fallback for packages that have
     not migrated to ClawHub yet.
 
     **In-repo plugins:** place under the bundled plugin workspace tree — automatically discovered.
@@ -180,7 +180,7 @@ Bundled plugins can use `api.registerAgentToolResultMiddleware(...)` when they
 need async tool-result rewriting before the model sees the output. Declare the
 targeted runtimes in `contracts.agentToolResultMiddleware`, for example
 `["pi", "codex"]`. This is a trusted bundled-plugin seam; external
-plugins should prefer regular OpenClaw plugin hooks unless OpenClaw grows an
+plugins should prefer regular OpenCLI plugin hooks unless OpenCLI grows an
 explicit trust policy for this capability.
 
 If your plugin registers custom gateway RPC methods, keep them on a
@@ -200,10 +200,10 @@ Hook guard semantics to keep in mind:
 - `message_received`: prefer the typed `threadId` field when you need inbound thread/topic routing. Keep `metadata` for channel-specific extras.
 - `message_sending`: prefer typed `replyToId` / `threadId` routing fields over channel-specific metadata keys.
 
-The `/approve` command handles both exec and plugin approvals with bounded fallback: when an exec approval id is not found, OpenClaw retries the same id through plugin approvals. Plugin approval forwarding can be configured independently via `approvals.plugin` in config.
+The `/approve` command handles both exec and plugin approvals with bounded fallback: when an exec approval id is not found, OpenCLI retries the same id through plugin approvals. Plugin approval forwarding can be configured independently via `approvals.plugin` in config.
 
 If custom approval plumbing needs to detect that same bounded fallback case,
-prefer `isApprovalNotFoundError` from `openclaw/plugin-sdk/error-runtime`
+prefer `isApprovalNotFoundError` from `opencli/plugin-sdk/error-runtime`
 instead of matching approval-expiry strings manually.
 
 See [Plugin hooks](/plugins/hooks) for examples and the hook reference.
@@ -255,14 +255,14 @@ Users enable optional tools in config:
 
 ## Import conventions
 
-Always import from focused `openclaw/plugin-sdk/<subpath>` paths:
+Always import from focused `opencli/plugin-sdk/<subpath>` paths:
 
 ```typescript
-import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
-import { createPluginRuntimeStore } from "openclaw/plugin-sdk/runtime-store";
+import { definePluginEntry } from "opencli/plugin-sdk/plugin-entry";
+import { createPluginRuntimeStore } from "opencli/plugin-sdk/runtime-store";
 
 // Wrong: monolithic root (deprecated, will be removed)
-import { ... } from "openclaw/plugin-sdk";
+import { ... } from "opencli/plugin-sdk";
 ```
 
 For the full subpath reference, see [SDK Overview](/plugins/sdk-overview).
@@ -278,16 +278,16 @@ barrels unless the seam is truly generic. Current bundled examples:
 - OpenRouter: provider builder plus onboarding/config helpers
 
 If a helper is only useful inside one bundled provider package, keep it on that
-package-root seam instead of promoting it into `openclaw/plugin-sdk/*`.
+package-root seam instead of promoting it into `opencli/plugin-sdk/*`.
 
-Some generated `openclaw/plugin-sdk/<bundled-id>` helper seams still exist for
+Some generated `opencli/plugin-sdk/<bundled-id>` helper seams still exist for
 bundled-plugin maintenance when they have tracked owner usage. Treat those as
 reserved surfaces, not as the default pattern for new third-party plugins.
 
 ## Pre-submission checklist
 
-<Check>**package.json** has correct `openclaw` metadata</Check>
-<Check>**openclaw.plugin.json** manifest is present and valid</Check>
+<Check>**package.json** has correct `opencli` metadata</Check>
+<Check>**opencli.plugin.json** manifest is present and valid</Check>
 <Check>Entry point uses `defineChannelPluginEntry` or `definePluginEntry`</Check>
 <Check>All imports use focused `plugin-sdk/<subpath>` paths</Check>
 <Check>Internal imports use local modules, not SDK self-imports</Check>
@@ -296,7 +296,7 @@ reserved surfaces, not as the default pattern for new third-party plugins.
 
 ## Beta release testing
 
-1. Watch for GitHub release tags on [openclaw/openclaw](https://github.com/openclaw/openclaw/releases) and subscribe via `Watch` > `Releases`. Beta tags look like `v2026.3.N-beta.1`. You can also turn on notifications for the official OpenClaw X account [@openclaw](https://x.com/openclaw) for release announcements.
+1. Watch for GitHub release tags on [opencli/opencli](https://github.com/opencli/opencli/releases) and subscribe via `Watch` > `Releases`. Beta tags look like `v2026.3.N-beta.1`. You can also turn on notifications for the official OpenCLI X account [@opencli](https://x.com/opencli) for release announcements.
 2. Test your plugin against the beta tag as soon as it appears. The window before stable is typically only a few hours.
 3. Post in your plugin's thread in the `plugin-forum` Discord channel after testing with either `all good` or what broke. If you do not have a thread yet, create one.
 4. If something breaks, open or update an issue titled `Beta blocker: <plugin-name> - <summary>` and apply the `beta-blocker` label. Put the issue link in your thread.

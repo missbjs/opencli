@@ -149,7 +149,7 @@ function createLoginShellEnvCacheKey(params: {
       ) {
         return true;
       }
-      return key.startsWith("XDG_") || key.startsWith("OPENCLAW_");
+      return key.startsWith("XDG_") || key.startsWith("OPENCLI_");
     })
     .toSorted(([left], [right]) => left.localeCompare(right));
   return JSON.stringify([
@@ -234,7 +234,7 @@ export function loadShellEnvFallback(opts: ShellEnvFallbackOptions): ShellEnvFal
     exec: opts.exec,
   });
   if (!probe.ok) {
-    logger.warn(`[openclaw] shell env fallback failed: ${probe.error}`);
+    logger.warn(`[opencli] shell env fallback failed: ${probe.error}`);
     lastAppliedKeys = [];
     return { ok: false, error: probe.error, applied: [] };
   }
@@ -254,15 +254,15 @@ export function loadShellEnvFallback(opts: ShellEnvFallbackOptions): ShellEnvFal
 }
 
 export function shouldEnableShellEnvFallback(env: NodeJS.ProcessEnv): boolean {
-  return isTruthyEnvValue(env.OPENCLAW_LOAD_SHELL_ENV);
+  return isTruthyEnvValue(env.OPENCLI_LOAD_SHELL_ENV);
 }
 
 export function shouldDeferShellEnvFallback(env: NodeJS.ProcessEnv): boolean {
-  return isTruthyEnvValue(env.OPENCLAW_DEFER_SHELL_ENV_FALLBACK);
+  return isTruthyEnvValue(env.OPENCLI_DEFER_SHELL_ENV_FALLBACK);
 }
 
 export function resolveShellEnvFallbackTimeoutMs(env: NodeJS.ProcessEnv): number {
-  const raw = env.OPENCLAW_SHELL_ENV_TIMEOUT_MS?.trim();
+  const raw = env.OPENCLI_SHELL_ENV_TIMEOUT_MS?.trim();
   if (!raw) {
     return DEFAULT_TIMEOUT_MS;
   }

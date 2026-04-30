@@ -112,21 +112,21 @@ describe("command-registry", () => {
 
   it("registers doctor placeholder for doctor primary command", () => {
     const program = createProgram();
-    registerCoreCliCommands(program, testProgramContext, ["node", "openclaw", "doctor"]);
+    registerCoreCliCommands(program, testProgramContext, ["node", "opencli", "doctor"]);
 
     expect(namesOf(program)).toEqual(["doctor"]);
   });
 
   it("narrows to the primary command when command help is requested", () => {
     const program = createProgram();
-    registerCoreCliCommands(program, testProgramContext, ["node", "openclaw", "doctor", "--help"]);
+    registerCoreCliCommands(program, testProgramContext, ["node", "opencli", "doctor", "--help"]);
 
     expect(namesOf(program)).toEqual(["doctor"]);
   });
 
   it("keeps all placeholders for root help", () => {
     const program = createProgram();
-    registerCoreCliCommands(program, testProgramContext, ["node", "openclaw", "--help"]);
+    registerCoreCliCommands(program, testProgramContext, ["node", "opencli", "--help"]);
 
     const names = namesOf(program);
     expect(names).toContain("doctor");
@@ -149,10 +149,10 @@ describe("command-registry", () => {
 
   it("registers grouped core entry placeholders without duplicate command errors", async () => {
     const program = createProgram();
-    registerCoreCliCommands(program, testProgramContext, ["node", "openclaw", "vitest"]);
+    registerCoreCliCommands(program, testProgramContext, ["node", "opencli", "vitest"]);
     program.exitOverride();
-    await withProcessArgv(["node", "openclaw", "status"], async () => {
-      await program.parseAsync(["node", "openclaw", "status"]);
+    await withProcessArgv(["node", "opencli", "status"], async () => {
+      await program.parseAsync(["node", "opencli", "status"]);
     });
 
     const names = namesOf(program);
@@ -164,7 +164,7 @@ describe("command-registry", () => {
 
   it("replaces placeholders when loading a grouped entry by secondary command name", async () => {
     const program = createProgram();
-    registerCoreCliCommands(program, testProgramContext, ["node", "openclaw", "doctor"]);
+    registerCoreCliCommands(program, testProgramContext, ["node", "opencli", "doctor"]);
     expect(namesOf(program)).toEqual(["doctor"]);
 
     const found = await registerCoreCliByName(program, testProgramContext, "dashboard");

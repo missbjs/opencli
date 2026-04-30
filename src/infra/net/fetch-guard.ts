@@ -122,7 +122,7 @@ function resolveGuardedFetchMode(params: GuardedFetchOptions): GuardedFetchMode 
 }
 
 function isManagedProxyActive(): boolean {
-  return process.env["OPENCLAW_PROXY_ACTIVE"] === "1";
+  return process.env["OPENCLI_PROXY_ACTIVE"] === "1";
 }
 
 function assertExplicitProxySupportsPinnedDns(

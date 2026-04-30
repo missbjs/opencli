@@ -10,11 +10,11 @@ import {
 } from "./bundled-runtime-deps-specs.js";
 import { satisfies } from "./semver.runtime.js";
 
-const LEGACY_RETAINED_RUNTIME_DEPS_MANIFEST = ".openclaw-runtime-deps.json";
+const LEGACY_RETAINED_RUNTIME_DEPS_MANIFEST = ".opencli-runtime-deps.json";
 
 export function readGeneratedInstallManifestSpecs(installRoot: string): string[] | null {
   const parsed = readRuntimeDepsJsonObject(path.join(installRoot, "package.json"));
-  if (parsed?.name !== "openclaw-runtime-deps-install") {
+  if (parsed?.name !== "opencli-runtime-deps-install") {
     return null;
   }
   const dependencies = parsed.dependencies;
@@ -33,7 +33,7 @@ export function readGeneratedInstallManifestSpecs(installRoot: string): string[]
 
 function readPackageRuntimeDepSpecs(packageRoot: string): string[] | null {
   const parsed = readRuntimeDepsJsonObject(path.join(packageRoot, "package.json"));
-  if (!parsed || parsed.name === "openclaw-runtime-deps-install") {
+  if (!parsed || parsed.name === "opencli-runtime-deps-install") {
     return null;
   }
   const specs = Object.entries(collectPackageRuntimeDeps(parsed))
@@ -132,7 +132,7 @@ function createNpmInstallExecutionManifest(installSpecs: readonly string[]): Jso
     Object.entries(dependencies).toSorted(([left], [right]) => left.localeCompare(right)),
   );
   return {
-    name: "openclaw-runtime-deps-install",
+    name: "opencli-runtime-deps-install",
     private: true,
     ...(Object.keys(sortedDependencies).length > 0 ? { dependencies: sortedDependencies } : {}),
   };

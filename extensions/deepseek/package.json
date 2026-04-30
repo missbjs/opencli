@@ -1,13 +1,13 @@
 {
-  "name": "@openclaw/deepseek-provider",
+  "name": "@opencli/deepseek-provider",
   "version": "2026.4.25",
   "private": true,
-  "description": "OpenClaw DeepSeek provider plugin",
+  "description": "OpenCLI DeepSeek provider plugin",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@opencli/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "opencli": {
     "extensions": [
       "./index.ts"
     ]

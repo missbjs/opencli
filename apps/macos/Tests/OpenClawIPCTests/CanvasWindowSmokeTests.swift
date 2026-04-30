@@ -1,15 +1,15 @@
 import AppKit
 import Foundation
-import OpenClawIPC
+import OpenCLIIPC
 import Testing
-@testable import OpenClaw
+@testable import OpenCLI
 
 @Suite(.serialized)
 @MainActor
 struct CanvasWindowSmokeTests {
     @Test func `panel controller shows and hides`() async throws {
         let root = FileManager().temporaryDirectory
-            .appendingPathComponent("openclaw-canvas-test-\(UUID().uuidString)")
+            .appendingPathComponent("opencli-canvas-test-\(UUID().uuidString)")
         try FileManager().createDirectory(at: root, withIntermediateDirectories: true)
         defer { try? FileManager().removeItem(at: root) }
 
@@ -32,7 +32,7 @@ struct CanvasWindowSmokeTests {
 
     @Test func `window controller shows and closes`() throws {
         let root = FileManager().temporaryDirectory
-            .appendingPathComponent("openclaw-canvas-test-\(UUID().uuidString)")
+            .appendingPathComponent("opencli-canvas-test-\(UUID().uuidString)")
         try FileManager().createDirectory(at: root, withIntermediateDirectories: true)
         defer { try? FileManager().removeItem(at: root) }
 

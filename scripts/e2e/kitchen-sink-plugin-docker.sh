@@ -3,27 +3,27 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$ROOT_DIR/scripts/lib/docker-e2e-image.sh"
-IMAGE_NAME="$(docker_e2e_resolve_image "openclaw-kitchen-sink-plugin-e2e" OPENCLAW_KITCHEN_SINK_PLUGIN_E2E_IMAGE)"
+IMAGE_NAME="$(docker_e2e_resolve_image "opencli-kitchen-sink-plugin-e2e" OPENCLI_KITCHEN_SINK_PLUGIN_E2E_IMAGE)"
 
 docker_e2e_build_or_reuse "$IMAGE_NAME" kitchen-sink-plugin
-OPENCLAW_TEST_STATE_SCRIPT_B64="$(docker_e2e_test_state_shell_b64 kitchen-sink-plugin empty)"
+OPENCLI_TEST_STATE_SCRIPT_B64="$(docker_e2e_test_state_shell_b64 kitchen-sink-plugin empty)"
 
 DEFAULT_KITCHEN_SINK_SCENARIOS="$(
   cat <<'SCENARIOS'
-npm-latest-full|npm:@openclaw/kitchen-sink@latest|openclaw-kitchen-sink-fixture|npm|success|full
-npm-latest-conformance|npm:@openclaw/kitchen-sink@latest|openclaw-kitchen-sink-fixture|npm|success|conformance|conformance
-npm-latest-adversarial|npm:@openclaw/kitchen-sink@latest|openclaw-kitchen-sink-fixture|npm|success|adversarial|adversarial
-npm-beta|npm:@openclaw/kitchen-sink@beta|openclaw-kitchen-sink-fixture|npm|failure|none
-clawhub-latest|clawhub:openclaw-kitchen-sink@latest|openclaw-kitchen-sink-fixture|clawhub|success|basic
-clawhub-beta|clawhub:openclaw-kitchen-sink@beta|openclaw-kitchen-sink-fixture|clawhub|failure|none
+npm-latest-full|npm:@opencli/kitchen-sink@latest|opencli-kitchen-sink-fixture|npm|success|full
+npm-latest-conformance|npm:@opencli/kitchen-sink@latest|opencli-kitchen-sink-fixture|npm|success|conformance|conformance
+npm-latest-adversarial|npm:@opencli/kitchen-sink@latest|opencli-kitchen-sink-fixture|npm|success|adversarial|adversarial
+npm-beta|npm:@opencli/kitchen-sink@beta|opencli-kitchen-sink-fixture|npm|failure|none
+clawhub-latest|clawhub:opencli-kitchen-sink@latest|opencli-kitchen-sink-fixture|clawhub|success|basic
+clawhub-beta|clawhub:opencli-kitchen-sink@beta|opencli-kitchen-sink-fixture|clawhub|failure|none
 SCENARIOS
 )"
-KITCHEN_SINK_SCENARIOS="${OPENCLAW_KITCHEN_SINK_PLUGIN_SCENARIOS:-$DEFAULT_KITCHEN_SINK_SCENARIOS}"
-MAX_MEMORY_MIB="${OPENCLAW_KITCHEN_SINK_MAX_MEMORY_MIB:-2048}"
-MAX_CPU_PERCENT="${OPENCLAW_KITCHEN_SINK_MAX_CPU_PERCENT:-1200}"
-CONTAINER_NAME="openclaw-kitchen-sink-plugin-e2e-$$"
-RUN_LOG="$(mktemp "${TMPDIR:-/tmp}/openclaw-kitchen-sink-plugin.XXXXXX")"
-STATS_LOG="$(mktemp "${TMPDIR:-/tmp}/openclaw-kitchen-sink-plugin-stats.XXXXXX")"
+KITCHEN_SINK_SCENARIOS="${OPENCLI_KITCHEN_SINK_PLUGIN_SCENARIOS:-$DEFAULT_KITCHEN_SINK_SCENARIOS}"
+MAX_MEMORY_MIB="${OPENCLI_KITCHEN_SINK_MAX_MEMORY_MIB:-2048}"
+MAX_CPU_PERCENT="${OPENCLI_KITCHEN_SINK_MAX_CPU_PERCENT:-1200}"
+CONTAINER_NAME="opencli-kitchen-sink-plugin-e2e-$$"
+RUN_LOG="$(mktemp "${TMPDIR:-/tmp}/opencli-kitchen-sink-plugin.XXXXXX")"
+STATS_LOG="$(mktemp "${TMPDIR:-/tmp}/opencli-kitchen-sink-plugin-stats.XXXXXX")"
 
 cleanup() {
   docker rm -f "$CONTAINER_NAME" >/dev/null 2>&1 || true
@@ -32,14 +32,14 @@ trap cleanup EXIT
 
 DOCKER_ENV_ARGS=(
   -e COREPACK_ENABLE_DOWNLOAD_PROMPT=0
-  -e "OPENCLAW_TEST_STATE_SCRIPT_B64=$OPENCLAW_TEST_STATE_SCRIPT_B64"
+  -e "OPENCLI_TEST_STATE_SCRIPT_B64=$OPENCLI_TEST_STATE_SCRIPT_B64"
   -e "KITCHEN_SINK_SCENARIOS=$KITCHEN_SINK_SCENARIOS"
 )
 for env_name in \
-  OPENCLAW_KITCHEN_SINK_LIVE_CLAWHUB \
-  OPENCLAW_CLAWHUB_URL \
+  OPENCLI_KITCHEN_SINK_LIVE_CLAWHUB \
+  OPENCLI_CLAWHUB_URL \
   CLAWHUB_URL \
-  OPENCLAW_CLAWHUB_TOKEN \
+  OPENCLI_CLAWHUB_TOKEN \
   CLAWHUB_TOKEN \
   CLAWHUB_AUTH_TOKEN; do
   env_value="${!env_name:-}"

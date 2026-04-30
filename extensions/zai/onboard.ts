@@ -1,8 +1,8 @@
 import {
   applyProviderConfigWithModelCatalogPreset,
-  type OpenClawConfig,
-} from "openclaw/plugin-sdk/provider-onboard";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/text-runtime";
+  type OpenCLIConfig,
+} from "opencli/plugin-sdk/provider-onboard";
+import { normalizeOptionalString } from "opencli/plugin-sdk/text-runtime";
 import {
   buildZaiModelDefinition,
   resolveZaiBaseUrl,
@@ -27,17 +27,17 @@ const ZAI_DEFAULT_MODELS = [
   buildZaiModelDefinition({ id: "glm-4.5v" }),
 ];
 
-function resolveZaiPresetBaseUrl(cfg: OpenClawConfig, endpoint?: string): string {
+function resolveZaiPresetBaseUrl(cfg: OpenCLIConfig, endpoint?: string): string {
   const existingProvider = cfg.models?.providers?.zai;
   const existingBaseUrl = normalizeOptionalString(existingProvider?.baseUrl) ?? "";
   return endpoint ? resolveZaiBaseUrl(endpoint) : existingBaseUrl || resolveZaiBaseUrl();
 }
 
 function applyZaiPreset(
-  cfg: OpenClawConfig,
+  cfg: OpenCLIConfig,
   params?: { endpoint?: string; modelId?: string },
   primaryModelRef?: string,
-): OpenClawConfig {
+): OpenCLIConfig {
   const modelId = normalizeOptionalString(params?.modelId) ?? ZAI_DEFAULT_MODEL_ID;
   const modelRef = `zai/${modelId}`;
   return applyProviderConfigWithModelCatalogPreset(cfg, {
@@ -51,16 +51,16 @@ function applyZaiPreset(
 }
 
 export function applyZaiProviderConfig(
-  cfg: OpenClawConfig,
+  cfg: OpenCLIConfig,
   params?: { endpoint?: string; modelId?: string },
-): OpenClawConfig {
+): OpenCLIConfig {
   return applyZaiPreset(cfg, params);
 }
 
 export function applyZaiConfig(
-  cfg: OpenClawConfig,
+  cfg: OpenCLIConfig,
   params?: { endpoint?: string; modelId?: string },
-): OpenClawConfig {
+): OpenCLIConfig {
   const modelId = normalizeOptionalString(params?.modelId) ?? ZAI_DEFAULT_MODEL_ID;
   const modelRef = modelId === ZAI_DEFAULT_MODEL_ID ? ZAI_DEFAULT_MODEL_REF : `zai/${modelId}`;
   return applyZaiPreset(cfg, params, modelRef);

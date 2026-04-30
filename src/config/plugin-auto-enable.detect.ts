@@ -5,15 +5,15 @@ import {
   resolvePluginAutoEnableManifestRegistry,
 } from "./plugin-auto-enable.shared.js";
 import type { PluginAutoEnableCandidate } from "./plugin-auto-enable.types.js";
-import type { OpenClawConfig } from "./types.openclaw.js";
+import type { OpenCLIConfig } from "./types.opencli.js";
 
 export function detectPluginAutoEnableCandidates(params: {
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   env?: NodeJS.ProcessEnv;
   manifestRegistry?: PluginManifestRegistry;
 }): PluginAutoEnableCandidate[] {
   const env = params.env ?? process.env;
-  const config = params.config ?? ({} as OpenClawConfig);
+  const config = params.config ?? ({} as OpenCLIConfig);
   if (!configMayNeedPluginAutoEnable(config, env)) {
     return [];
   }

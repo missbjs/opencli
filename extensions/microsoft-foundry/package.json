@@ -1,13 +1,13 @@
 {
-  "name": "@openclaw/microsoft-foundry",
+  "name": "@opencli/microsoft-foundry",
   "version": "2026.4.25",
   "private": true,
-  "description": "OpenClaw Microsoft Foundry provider plugin",
+  "description": "OpenCLI Microsoft Foundry provider plugin",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@opencli/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "opencli": {
     "extensions": [
       "./index.ts"
     ]

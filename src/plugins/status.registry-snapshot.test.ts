@@ -13,7 +13,7 @@ import { cleanupTrackedTempDirs, makeTrackedTempDir } from "./test-helpers/fs-fi
 const tempDirs: string[] = [];
 
 function makeTempDir() {
-  return makeTrackedTempDir("openclaw-plugin-status", tempDirs);
+  return makeTrackedTempDir("opencli-plugin-status", tempDirs);
 }
 
 afterEach(() => {
@@ -25,7 +25,7 @@ describe("buildPluginRegistrySnapshotReport", () => {
     const fixture = createColdPluginFixture({
       rootDir: makeTempDir(),
       pluginId: "indexed-demo",
-      packageName: "@example/openclaw-indexed-demo",
+      packageName: "@example/opencli-indexed-demo",
       packageVersion: "9.8.7",
       manifest: {
         id: "indexed-demo",
@@ -56,7 +56,7 @@ describe("buildPluginRegistrySnapshotReport", () => {
       name: "Indexed Demo",
       description: "Manifest-backed list metadata",
       version: "9.8.7",
-      format: "openclaw",
+      format: "opencli",
       providerIds: ["indexed-provider"],
       commands: ["indexed-demo"],
       source: fs.realpathSync(fixture.runtimeSource),
@@ -69,7 +69,7 @@ describe("buildPluginRegistrySnapshotReport", () => {
     const fixture = createColdPluginFixture({
       rootDir: makeTempDir(),
       pluginId: "persisted-demo",
-      packageName: "@example/openclaw-persisted-demo",
+      packageName: "@example/opencli-persisted-demo",
       packageVersion: "2.0.0",
       manifest: {
         id: "persisted-demo",

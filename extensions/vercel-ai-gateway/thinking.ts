@@ -1,9 +1,9 @@
-import type { ProviderThinkingProfile } from "openclaw/plugin-sdk/core";
+import type { ProviderThinkingProfile } from "opencli/plugin-sdk/core";
 import {
   matchesExactOrPrefix,
   resolveClaudeThinkingProfile,
-} from "openclaw/plugin-sdk/provider-model-shared";
-import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/text-runtime";
+} from "opencli/plugin-sdk/provider-model-shared";
+import { normalizeLowercaseStringOrEmpty } from "opencli/plugin-sdk/text-runtime";
 
 const UPSTREAM_OPENAI_PREFIX = "openai/";
 const UPSTREAM_ANTHROPIC_PREFIX = "anthropic/";

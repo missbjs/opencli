@@ -1,9 +1,9 @@
 import process from "node:process";
 import type {
-  OpenClawPluginCommandDefinition,
+  OpenCLIPluginCommandDefinition,
   PluginCommandContext,
   PluginCommandResult,
-} from "openclaw/plugin-sdk/plugin-entry";
+} from "opencli/plugin-sdk/plugin-entry";
 import { createBindingData, readBindingData } from "./binding-data.js";
 import { defaultLogRoot } from "./persistence.js";
 import {
@@ -32,7 +32,7 @@ const HELP_TEXT = [
 
 export function createTuiCommand(options: {
   pluginConfig?: unknown;
-}): OpenClawPluginCommandDefinition {
+}): OpenCLIPluginCommandDefinition {
   return {
     name: "tui",
     description: "Bind a chat to a long-lived TUI process and pipe stdin/stdout.",

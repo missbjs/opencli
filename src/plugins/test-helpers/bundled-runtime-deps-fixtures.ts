@@ -29,7 +29,7 @@ export function writeGeneratedRuntimeDepsManifest(rootDir: string, specs: readon
     path.join(rootDir, "package.json"),
     `${JSON.stringify(
       {
-        name: "openclaw-runtime-deps-install",
+        name: "opencli-runtime-deps-install",
         private: true,
         dependencies,
       },
@@ -54,7 +54,7 @@ export function writeBundledPluginRuntimeDepsPackage(params: {
     JSON.stringify({ dependencies: params.deps }),
   );
   fs.writeFileSync(
-    path.join(pluginRoot, "openclaw.plugin.json"),
+    path.join(pluginRoot, "opencli.plugin.json"),
     JSON.stringify({
       id: params.pluginId,
       enabledByDefault: params.enabledByDefault === true,

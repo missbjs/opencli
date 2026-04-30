@@ -1,5 +1,5 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
-import type { ResolvedAgentRoute } from "openclaw/plugin-sdk/routing";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
+import type { ResolvedAgentRoute } from "opencli/plugin-sdk/routing";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import type { TelegramNativeCommandDeps } from "./bot-native-command-deps.runtime.js";
 import {
@@ -14,11 +14,11 @@ import { type RegisterTelegramHandlerParams } from "./bot-native-commands.js";
 // All mocks scoped to this file only — does not affect bot-native-commands.test.ts
 
 type ResolveConfiguredBindingRouteFn =
-  typeof import("openclaw/plugin-sdk/conversation-runtime").resolveConfiguredBindingRoute;
+  typeof import("opencli/plugin-sdk/conversation-runtime").resolveConfiguredBindingRoute;
 type EnsureConfiguredBindingRouteReadyFn =
-  typeof import("openclaw/plugin-sdk/conversation-runtime").ensureConfiguredBindingRouteReady;
+  typeof import("opencli/plugin-sdk/conversation-runtime").ensureConfiguredBindingRouteReady;
 type DispatchReplyWithBufferedBlockDispatcherFn =
-  typeof import("openclaw/plugin-sdk/reply-dispatch-runtime").dispatchReplyWithBufferedBlockDispatcher;
+  typeof import("opencli/plugin-sdk/reply-dispatch-runtime").dispatchReplyWithBufferedBlockDispatcher;
 type DispatchReplyWithBufferedBlockDispatcherParams =
   Parameters<DispatchReplyWithBufferedBlockDispatcherFn>[0];
 type DispatchReplyWithBufferedBlockDispatcherResult = Awaited<
@@ -68,9 +68,9 @@ const conversationStoreMocks = vi.hoisted(() => ({
   upsertChannelPairingRequest: vi.fn(async () => ({ code: "PAIRCODE", created: true })),
 }));
 
-vi.mock("openclaw/plugin-sdk/conversation-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/conversation-runtime")>(
-    "openclaw/plugin-sdk/conversation-runtime",
+vi.mock("opencli/plugin-sdk/conversation-runtime", async () => {
+  const actual = await vi.importActual<typeof import("opencli/plugin-sdk/conversation-runtime")>(
+    "opencli/plugin-sdk/conversation-runtime",
   );
   return {
     ...actual,
@@ -108,7 +108,7 @@ vi.mock("openclaw/plugin-sdk/conversation-runtime", async () => {
     ensureConfiguredBindingRouteReady: persistentBindingMocks.ensureConfiguredBindingRouteReady,
     recordInboundSessionMetaSafe: vi.fn(
       async (params: {
-        cfg: OpenClawConfig;
+        cfg: OpenCLIConfig;
         agentId: string;
         sessionKey: string;
         ctx: unknown;
@@ -140,9 +140,9 @@ vi.mock("openclaw/plugin-sdk/conversation-runtime", async () => {
     }),
   };
 });
-vi.mock("openclaw/plugin-sdk/session-store-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/session-store-runtime")>(
-    "openclaw/plugin-sdk/session-store-runtime",
+vi.mock("opencli/plugin-sdk/session-store-runtime", async () => {
+  const actual = await vi.importActual<typeof import("opencli/plugin-sdk/session-store-runtime")>(
+    "opencli/plugin-sdk/session-store-runtime",
   );
   return {
     ...actual,
@@ -150,9 +150,9 @@ vi.mock("openclaw/plugin-sdk/session-store-runtime", async () => {
     resolveStorePath: sessionMocks.resolveStorePath,
   };
 });
-vi.mock("openclaw/plugin-sdk/command-auth-native", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/command-auth-native")>(
-    "openclaw/plugin-sdk/command-auth-native",
+vi.mock("opencli/plugin-sdk/command-auth-native", async () => {
+  const actual = await vi.importActual<typeof import("opencli/plugin-sdk/command-auth-native")>(
+    "opencli/plugin-sdk/command-auth-native",
   );
   commandAuthMocks.resolveCommandArgMenu.mockImplementation(actual.resolveCommandArgMenu);
   return {
@@ -170,9 +170,9 @@ vi.mock("./bot-native-commands.runtime.js", async () => {
     dispatchReplyWithBufferedBlockDispatcher: replyMocks.dispatchReplyWithBufferedBlockDispatcher,
   };
 });
-vi.mock("openclaw/plugin-sdk/plugin-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/plugin-runtime")>(
-    "openclaw/plugin-sdk/plugin-runtime",
+vi.mock("opencli/plugin-sdk/plugin-runtime", async () => {
+  const actual = await vi.importActual<typeof import("opencli/plugin-sdk/plugin-runtime")>(
+    "opencli/plugin-sdk/plugin-runtime",
   );
   return {
     ...actual,
@@ -193,7 +193,7 @@ let registerTelegramNativeCommands: typeof import("./bot-native-commands.js").re
 type TelegramCommandHandler = (ctx: unknown) => Promise<void>;
 
 function registerAndResolveStatusHandler(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   allowFrom?: string[];
   groupAllowFrom?: string[];
   storeAllowFrom?: string[];
@@ -225,7 +225,7 @@ function registerAndResolveStatusHandler(params: {
 
 function registerAndResolveCommandHandlerBase(params: {
   commandName: string;
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   allowFrom: string[];
   groupAllowFrom: string[];
   storeAllowFrom?: string[];
@@ -284,7 +284,7 @@ function registerAndResolveCommandHandlerBase(params: {
 
 function registerAndResolveCommandHandler(params: {
   commandName: string;
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   allowFrom?: string[];
   groupAllowFrom?: string[];
   storeAllowFrom?: string[];
@@ -449,7 +449,7 @@ describe("registerTelegramNativeCommands — session metadata", () => {
     commandAuthMocks.resolveCommandArgMenu.mockClear();
     sessionMocks.loadSessionStore.mockClear().mockReturnValue({});
     sessionMocks.recordSessionMetaFromInbound.mockClear().mockResolvedValue(undefined);
-    sessionMocks.resolveStorePath.mockClear().mockReturnValue("/tmp/openclaw-sessions.json");
+    sessionMocks.resolveStorePath.mockClear().mockReturnValue("/tmp/opencli-sessions.json");
     replyMocks.dispatchReplyWithBufferedBlockDispatcher
       .mockClear()
       .mockResolvedValue(dispatchReplyResult);
@@ -459,7 +459,7 @@ describe("registerTelegramNativeCommands — session metadata", () => {
   });
 
   it("calls recordSessionMetaFromInbound after a native slash command", async () => {
-    const cfg: OpenClawConfig = {};
+    const cfg: OpenCLIConfig = {};
     const { handler } = registerAndResolveStatusHandler({ cfg });
     await handler(createTelegramPrivateCommandContext());
 
@@ -480,7 +480,7 @@ describe("registerTelegramNativeCommands — session metadata", () => {
   });
 
   it("uses the target session model when building native argument menus", async () => {
-    const cfg: OpenClawConfig = {};
+    const cfg: OpenCLIConfig = {};
     sessionMocks.loadSessionStore.mockReturnValue({
       "agent:main:main": {
         providerOverride: "anthropic",
@@ -506,7 +506,7 @@ describe("registerTelegramNativeCommands — session metadata", () => {
         model: "claude-opus-4-7",
       }),
     );
-    expect(sessionMocks.loadSessionStore).toHaveBeenCalledWith("/tmp/openclaw-sessions.json");
+    expect(sessionMocks.loadSessionStore).toHaveBeenCalledWith("/tmp/opencli-sessions.json");
     expect(sendMessage).toHaveBeenCalledWith(
       100,
       expect.stringContaining("Choose level for /think."),
@@ -516,7 +516,7 @@ describe("registerTelegramNativeCommands — session metadata", () => {
   });
 
   it("inherits the parent session model when building DM thread native argument menus", async () => {
-    const cfg: OpenClawConfig = {};
+    const cfg: OpenCLIConfig = {};
     sessionMocks.loadSessionStore.mockReturnValue({
       "agent:main:main": {
         providerOverride: "anthropic",
@@ -557,7 +557,7 @@ describe("registerTelegramNativeCommands — session metadata", () => {
           model: { primary: "openai/gpt-5.5" },
         },
       },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
     sessionMocks.loadSessionStore.mockReturnValue({
       "agent:main:main": {
         providerOverride: "anthropic",
@@ -609,7 +609,7 @@ describe("registerTelegramNativeCommands — session metadata", () => {
     const deferred = createDeferred<void>();
     sessionMocks.recordSessionMetaFromInbound.mockReturnValue(deferred.promise);
 
-    const cfg: OpenClawConfig = {};
+    const cfg: OpenCLIConfig = {};
     const { handler } = registerAndResolveStatusHandler({ cfg });
     const runPromise = handler(createTelegramPrivateCommandContext());
 

@@ -1,21 +1,21 @@
 import Foundation
 import Testing
-@testable import OpenClaw
+@testable import OpenCLI
 
 @Suite(.serialized) struct NodeServiceManagerTests {
     @Test func `builds node service commands with current CLI shape`() async throws {
-        try await TestIsolation.withUserDefaultsValues(["openclaw.gatewayProjectRootPath": nil]) {
+        try await TestIsolation.withUserDefaultsValues(["opencli.gatewayProjectRootPath": nil]) {
             let tmp = try makeTempDirForTests()
             CommandResolver.setProjectRoot(tmp.path)
 
-            let openclawPath = tmp.appendingPathComponent("node_modules/.bin/openclaw")
-            try makeExecutableForTests(at: openclawPath)
+            let opencliPath = tmp.appendingPathComponent("node_modules/.bin/opencli")
+            try makeExecutableForTests(at: opencliPath)
 
             let start = NodeServiceManager._testServiceCommand(["start"])
-            #expect(start == [openclawPath.path, "node", "start", "--json"])
+            #expect(start == [opencliPath.path, "node", "start", "--json"])
 
             let stop = NodeServiceManager._testServiceCommand(["stop"])
-            #expect(stop == [openclawPath.path, "node", "stop", "--json"])
+            #expect(stop == [opencliPath.path, "node", "stop", "--json"])
         }
     }
 }

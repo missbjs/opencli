@@ -1,5 +1,5 @@
 import type { Bot } from "grammy";
-import { importFreshModule } from "openclaw/plugin-sdk/test-fixtures";
+import { importFreshModule } from "opencli/plugin-sdk/test-fixtures";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { __testing, createTelegramDraftStream } from "./draft-stream.js";
 

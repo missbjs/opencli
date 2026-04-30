@@ -44,7 +44,7 @@ function createManifestPlugin(id: string): PluginManifestRecord {
     origin: "bundled",
     rootDir: `/tmp/${id}`,
     source: "bundled",
-    manifestPath: `/tmp/${id}/openclaw.plugin.json`,
+    manifestPath: `/tmp/${id}/opencli.plugin.json`,
     providerDiscoverySource: `/tmp/${id}/provider-discovery.ts`,
   };
 }

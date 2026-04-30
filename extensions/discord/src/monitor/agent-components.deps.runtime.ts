@@ -1,2 +1,2 @@
-export { enqueueSystemEvent } from "openclaw/plugin-sdk/system-event-runtime";
-export { readSessionUpdatedAt, resolveStorePath } from "openclaw/plugin-sdk/session-store-runtime";
+export { enqueueSystemEvent } from "opencli/plugin-sdk/system-event-runtime";
+export { readSessionUpdatedAt, resolveStorePath } from "opencli/plugin-sdk/session-store-runtime";

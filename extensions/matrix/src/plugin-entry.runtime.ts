@@ -1,5 +1,5 @@
-import type { GatewayRequestHandlerOptions } from "openclaw/plugin-sdk/gateway-runtime";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/string-coerce-runtime";
+import type { GatewayRequestHandlerOptions } from "opencli/plugin-sdk/gateway-runtime";
+import { normalizeOptionalString } from "opencli/plugin-sdk/string-coerce-runtime";
 import { formatMatrixErrorMessage } from "./matrix/errors.js";
 
 type MatrixVerificationRuntime = typeof import("./matrix/actions/verification.js");

@@ -1,6 +1,6 @@
-import { buildDispatchInboundCaptureMock } from "openclaw/plugin-sdk/channel-contract-testing";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
-import type { MsgContext } from "openclaw/plugin-sdk/reply-runtime";
+import { buildDispatchInboundCaptureMock } from "opencli/plugin-sdk/channel-contract-testing";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
+import type { MsgContext } from "opencli/plugin-sdk/reply-runtime";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 type SignalMsgContext = Pick<MsgContext, "Body" | "WasMentioned"> & {
@@ -14,9 +14,9 @@ function getCapturedCtx() {
   return capturedCtx as SignalMsgContext;
 }
 
-vi.mock("openclaw/plugin-sdk/reply-runtime", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/reply-runtime")>(
-    "openclaw/plugin-sdk/reply-runtime",
+vi.mock("opencli/plugin-sdk/reply-runtime", async () => {
+  const actual = await vi.importActual<typeof import("opencli/plugin-sdk/reply-runtime")>(
+    "opencli/plugin-sdk/reply-runtime",
   );
   return buildDispatchInboundCaptureMock(actual, (ctx) => {
     capturedCtx = ctx as SignalMsgContext;
@@ -92,7 +92,7 @@ function createSignalConfig(params: { requireMention: boolean; mentionPattern?: 
         groups: { "*": { requireMention: params.requireMention } },
       },
     },
-  } as unknown as OpenClawConfig;
+  } as unknown as OpenCLIConfig;
 }
 
 async function expectSkippedGroupHistory(opts: GroupEventOpts, expectedBody: string) {

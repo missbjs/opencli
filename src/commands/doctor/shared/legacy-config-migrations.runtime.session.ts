@@ -13,7 +13,7 @@ function hasLegacyRotateBytes(value: unknown): boolean {
 const LEGACY_SESSION_MAINTENANCE_ROTATE_BYTES_RULE: LegacyConfigRule = {
   path: ["session", "maintenance"],
   message:
-    'session.maintenance.rotateBytes is deprecated and ignored; run "openclaw doctor --fix" to remove it.',
+    'session.maintenance.rotateBytes is deprecated and ignored; run "opencli doctor --fix" to remove it.',
   match: hasLegacyRotateBytes,
 };
 

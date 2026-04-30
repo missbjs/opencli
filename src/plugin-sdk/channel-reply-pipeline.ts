@@ -15,7 +15,7 @@ import {
   type CreateTypingCallbacksParams,
   type TypingCallbacks,
 } from "../channels/typing.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import type { ReplyPayload } from "./reply-payload.js";
 
 export type ReplyPrefixContext = ReplyPrefixContextBundle["prefixContext"];
@@ -25,7 +25,7 @@ export { createReplyPrefixContext, createReplyPrefixOptions, createTypingCallbac
 export type { SourceReplyDeliveryMode };
 
 export function resolveChannelSourceReplyDeliveryMode(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   ctx: SourceReplyDeliveryModeContext;
   requested?: SourceReplyDeliveryMode;
 }): SourceReplyDeliveryMode {

@@ -1,13 +1,13 @@
 {
-  "name": "@openclaw/exa-plugin",
+  "name": "@opencli/exa-plugin",
   "version": "2026.4.25",
   "private": true,
-  "description": "OpenClaw Exa plugin",
+  "description": "OpenCLI Exa plugin",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@opencli/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "opencli": {
     "extensions": [
       "./index.ts"
     ]

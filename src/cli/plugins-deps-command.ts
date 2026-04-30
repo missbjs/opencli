@@ -1,6 +1,6 @@
 import path from "node:path";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
-import { resolveOpenClawPackageRootSync } from "../infra/openclaw-root.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
+import { resolveOpenCLIPackageRootSync } from "../infra/opencli-root.js";
 import {
   createBundledRuntimeDepsInstallSpecs,
   pruneUnknownBundledRuntimeDepsRoots,
@@ -24,7 +24,7 @@ function resolvePackageRoot(rawPackageRoot: string | undefined): string | null {
   if (rawPackageRoot?.trim()) {
     return path.resolve(rawPackageRoot.trim());
   }
-  return resolveOpenClawPackageRootSync({
+  return resolveOpenCLIPackageRootSync({
     argv1: process.argv[1],
     cwd: process.cwd(),
     moduleUrl: import.meta.url,
@@ -55,12 +55,12 @@ function createWarningSink(params: { json?: boolean; warnings: string[] }) {
 }
 
 export async function runPluginsDepsCommand(params: {
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   options: PluginsDepsOptions;
 }): Promise<void> {
   const packageRoot = resolvePackageRoot(params.options.packageRoot);
   if (!packageRoot) {
-    const message = "Could not resolve the OpenClaw package root for bundled plugin deps.";
+    const message = "Could not resolve the OpenCLI package root for bundled plugin deps.";
     if (params.options.json) {
       defaultRuntime.writeJson({ ok: false, error: message });
       return;

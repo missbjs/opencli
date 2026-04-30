@@ -172,7 +172,7 @@ export type SessionConfig = {
   typingMode?: TypingMode;
   /**
    * Max parent transcript token count allowed for thread/session forking.
-   * If parent totalTokens is above this value, OpenClaw skips parent fork and
+   * If parent totalTokens is above this value, OpenCLI skips parent fork and
    * starts a fresh thread session instead. Set to 0 to disable this guard.
    */
   parentForkMaxTokens?: number;
@@ -199,7 +199,7 @@ export type SessionMaintenanceConfig = {
   pruneDays?: number;
   /** Maximum number of session entries to keep. Default: 500. */
   maxEntries?: number;
-  /** @deprecated Ignored. Run `openclaw doctor --fix` to remove. */
+  /** @deprecated Ignored. Run `opencli doctor --fix` to remove. */
   rotateBytes?: number | string;
   /**
    * Retention for archived reset transcripts (`*.reset.<timestamp>`).

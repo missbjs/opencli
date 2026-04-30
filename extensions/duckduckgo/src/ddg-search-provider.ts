@@ -1,5 +1,5 @@
-import { readNumberParam, readStringParam } from "openclaw/plugin-sdk/param-readers";
-import type { WebSearchProviderPlugin } from "openclaw/plugin-sdk/provider-web-search-contract";
+import { readNumberParam, readStringParam } from "opencli/plugin-sdk/param-readers";
+import type { WebSearchProviderPlugin } from "opencli/plugin-sdk/provider-web-search-contract";
 import { createDuckDuckGoWebSearchProviderBase } from "./ddg-search-provider.shared.js";
 
 type DuckDuckGoClientModule = typeof import("./ddg-client.js");

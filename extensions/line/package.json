@@ -1,25 +1,25 @@
 {
-  "name": "@openclaw/line",
+  "name": "@opencli/line",
   "version": "2026.4.25",
   "private": true,
-  "description": "OpenClaw LINE channel plugin",
+  "description": "OpenCLI LINE channel plugin",
   "type": "module",
   "dependencies": {
     "@line/bot-sdk": "^11.0.0"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*",
-    "openclaw": "workspace:*"
+    "@opencli/plugin-sdk": "workspace:*",
+    "opencli": "workspace:*"
   },
   "peerDependencies": {
-    "openclaw": ">=2026.4.25"
+    "opencli": ">=2026.4.25"
   },
   "peerDependenciesMeta": {
-    "openclaw": {
+    "opencli": {
       "optional": true
     }
   },
-  "openclaw": {
+  "opencli": {
     "extensions": [
       "./index.ts"
     ],
@@ -37,7 +37,7 @@
       "quickstartAllowFrom": true
     },
     "install": {
-      "npmSpec": "@openclaw/line",
+      "npmSpec": "@opencli/line",
       "defaultChoice": "npm",
       "minHostVersion": ">=2026.4.10"
     }

@@ -497,11 +497,11 @@ describe("scripts/lib/docker-e2e-plan", () => {
     expect(selectedLaneNames).toEqual(["install-e2e-openai", "install-e2e-anthropic"]);
     expect(plan.lanes).toEqual([
       expect.objectContaining({
-        command: expect.stringContaining("OPENCLAW_E2E_MODELS=openai"),
+        command: expect.stringContaining("OPENCLI_E2E_MODELS=openai"),
         name: "install-e2e-openai",
       }),
       expect.objectContaining({
-        command: expect.stringContaining("OPENCLAW_E2E_MODELS=anthropic"),
+        command: expect.stringContaining("OPENCLI_E2E_MODELS=anthropic"),
         name: "install-e2e-anthropic",
       }),
     ]);
@@ -521,7 +521,7 @@ describe("scripts/lib/docker-e2e-plan", () => {
     expect(plan.lanes).toHaveLength(BUNDLED_PLUGIN_INSTALL_UNINSTALL_SHARDS);
     expect(plan.lanes[0]).toEqual(
       expect.objectContaining({
-        command: expect.stringContaining("OPENCLAW_BUNDLED_PLUGIN_SWEEP_INDEX=0"),
+        command: expect.stringContaining("OPENCLI_BUNDLED_PLUGIN_SWEEP_INDEX=0"),
         imageKind: "functional",
         live: false,
         name: "bundled-plugin-install-uninstall-0",
@@ -530,7 +530,7 @@ describe("scripts/lib/docker-e2e-plan", () => {
     );
     expect(plan.lanes[23]).toEqual(
       expect.objectContaining({
-        command: expect.stringContaining("OPENCLAW_BUNDLED_PLUGIN_SWEEP_INDEX=23"),
+        command: expect.stringContaining("OPENCLI_BUNDLED_PLUGIN_SWEEP_INDEX=23"),
         imageKind: "functional",
         live: false,
         name: "bundled-plugin-install-uninstall-23",
@@ -545,7 +545,7 @@ describe("scripts/lib/docker-e2e-plan", () => {
 
   it("rejects unknown selected lanes with the available lane names", () => {
     expect(() => planFor({ selectedLaneNames: ["missing-lane"] })).toThrow(
-      /OPENCLAW_DOCKER_ALL_LANES unknown lane\(s\): missing-lane/u,
+      /OPENCLI_DOCKER_ALL_LANES unknown lane\(s\): missing-lane/u,
     );
   });
 });

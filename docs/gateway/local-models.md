@@ -1,5 +1,5 @@
 ---
-summary: "Run OpenClaw on local LLMs (LM Studio, vLLM, LiteLLM, custom OpenAI endpoints)"
+summary: "Run OpenCLI on local LLMs (LM Studio, vLLM, LiteLLM, custom OpenAI endpoints)"
 read_when:
   - You want to serve models from your own GPU box
   - You are wiring LM Studio or an OpenAI-compatible proxy
@@ -7,9 +7,9 @@ read_when:
 title: "Local models"
 ---
 
-Local is doable, but OpenClaw expects large context + strong defenses against prompt injection. Small cards truncate context and leak safety. Aim high: **≥2 maxed-out Mac Studios or equivalent GPU rig (~$30k+)**. A single **24 GB** GPU works only for lighter prompts with higher latency. Use the **largest / full-size model variant you can run**; aggressively quantized or “small” checkpoints raise prompt-injection risk (see [Security](/gateway/security)).
+Local is doable, but OpenCLI expects large context + strong defenses against prompt injection. Small cards truncate context and leak safety. Aim high: **≥2 maxed-out Mac Studios or equivalent GPU rig (~$30k+)**. A single **24 GB** GPU works only for lighter prompts with higher latency. Use the **largest / full-size model variant you can run**; aggressively quantized or “small” checkpoints raise prompt-injection risk (see [Security](/gateway/security)).
 
-If you want the lowest-friction local setup, start with [LM Studio](/providers/lmstudio) or [Ollama](/providers/ollama) and `openclaw onboard`. This page is the opinionated guide for higher-end local stacks and custom OpenAI-compatible local servers.
+If you want the lowest-friction local setup, start with [LM Studio](/providers/lmstudio) or [Ollama](/providers/ollama) and `opencli onboard`. This page is the opinionated guide for higher-end local stacks and custom OpenAI-compatible local servers.
 
 <Warning>
 **WSL2 + Ollama + NVIDIA/CUDA users:** The official Ollama Linux installer enables a systemd service with `Restart=always`. On WSL2 GPU setups, autostart can reload the last model during boot and pin host memory. If your WSL2 VM repeatedly restarts after enabling Ollama, see [WSL2 crash loop](/providers/ollama#wsl2-crash-loop-repeated-reboots).
@@ -155,7 +155,7 @@ endpoint and model ID:
 }
 ```
 
-If `api` is omitted on a custom provider with a `baseUrl`, OpenClaw defaults to
+If `api` is omitted on a custom provider with a `baseUrl`, OpenCLI defaults to
 `openai-completions`. Loopback endpoints such as `127.0.0.1` are trusted
 automatically; LAN, tailnet, and private DNS endpoints still need
 `request.allowPrivateNetwork: true`.
@@ -182,17 +182,17 @@ applies only to model HTTP requests, including connect, headers, body streaming,
 and the total guarded-fetch abort.
 
 <Note>
-For custom OpenAI-compatible providers, persisting a non-secret local marker such as `apiKey: "ollama-local"` is accepted when `baseUrl` resolves to loopback, a private LAN, `.local`, or a bare hostname. OpenClaw treats it as a valid local credential instead of reporting a missing key. Use a real value for any provider that accepts a public hostname.
+For custom OpenAI-compatible providers, persisting a non-secret local marker such as `apiKey: "ollama-local"` is accepted when `baseUrl` resolves to loopback, a private LAN, `.local`, or a bare hostname. OpenCLI treats it as a valid local credential instead of reporting a missing key. Use a real value for any provider that accepts a public hostname.
 </Note>
 
 Behavior note for local/proxied `/v1` backends:
 
-- OpenClaw treats these as proxy-style OpenAI-compatible routes, not native
+- OpenCLI treats these as proxy-style OpenAI-compatible routes, not native
   OpenAI endpoints
 - native OpenAI-only request shaping does not apply here: no
   `service_tier`, no Responses `store`, no OpenAI reasoning-compat payload
   shaping, and no prompt-cache hints
-- hidden OpenClaw attribution headers (`originator`, `version`, `User-Agent`)
+- hidden OpenCLI attribution headers (`originator`, `version`, `User-Agent`)
   are not injected on these custom proxy URLs
 
 Compatibility notes for stricter OpenAI-compatible backends:
@@ -202,12 +202,12 @@ Compatibility notes for stricter OpenAI-compatible backends:
   `models.providers.<provider>.models[].compat.requiresStringContent: true` for
   those endpoints.
 - Some local models emit standalone bracketed tool requests as text, such as
-  `[tool_name]` followed by JSON and `[END_TOOL_REQUEST]`. OpenClaw promotes
+  `[tool_name]` followed by JSON and `[END_TOOL_REQUEST]`. OpenCLI promotes
   those into real tool calls only when the name exactly matches a registered
   tool for the turn; otherwise the block is treated as unsupported text and is
   hidden from user-visible replies.
 - If a model emits JSON, XML, or ReAct-style text that looks like a tool call
-  but the provider did not emit a structured invocation, OpenClaw leaves it as
+  but the provider did not emit a structured invocation, OpenCLI leaves it as
   text and logs a warning with the run id, provider/model, detected pattern, and
   tool name when available. Treat that as provider/model tool-call
   incompatibility, not a completed tool run.
@@ -237,12 +237,12 @@ Compatibility notes for stricter OpenAI-compatible backends:
   ```
 
   Use this only for models/sessions where every normal turn should call a tool.
-  It overrides OpenClaw's default proxy value of `tool_choice: "auto"`.
+  It overrides OpenCLI's default proxy value of `tool_choice: "auto"`.
   Replace `local/my-local-model` with the exact provider/model ref shown by
-  `openclaw models list`.
+  `opencli models list`.
 
   ```bash
-  openclaw config set agents.defaults.models '{"local/my-local-model":{"params":{"extra_body":{"tool_choice":"required"}}}}' --strict-json --merge
+  opencli config set agents.defaults.models '{"local/my-local-model":{"params":{"extra_body":{"tool_choice":"required"}}}}' --strict-json --merge
   ```
 
 - If a custom OpenAI-compatible model accepts OpenAI reasoning efforts beyond
@@ -279,19 +279,19 @@ Compatibility notes for stricter OpenAI-compatible backends:
   }
   ```
 
-- Some smaller or stricter local backends are unstable with OpenClaw's full
+- Some smaller or stricter local backends are unstable with OpenCLI's full
   agent-runtime prompt shape, especially when tool schemas are included. First
   verify the provider path with the lean local probe:
 
   ```bash
-  openclaw infer model run --local --model <provider/model> --prompt "Reply with exactly: pong" --json
+  opencli infer model run --local --model <provider/model> --prompt "Reply with exactly: pong" --json
   ```
 
   To verify the Gateway route without the full agent prompt shape, use the
   Gateway model probe instead:
 
   ```bash
-  openclaw infer model run --gateway --model <provider/model> --prompt "Reply with exactly: pong" --json
+  opencli infer model run --gateway --model <provider/model> --prompt "Reply with exactly: pong" --json
   ```
 
   Both local and Gateway model probes send only the supplied prompt. The
@@ -299,15 +299,15 @@ Compatibility notes for stricter OpenAI-compatible backends:
   but it intentionally skips prior session transcript, AGENTS/bootstrap context,
   context-engine assembly, tools, and bundled MCP servers.
 
-  If that succeeds but normal OpenClaw agent turns fail, first try
+  If that succeeds but normal OpenCLI agent turns fail, first try
   `agents.defaults.experimental.localModelLean: true` to drop heavyweight
   default tools like `browser`, `cron`, and `message`; this is an experimental
   flag, not a stable default-mode setting. See
   [Experimental Features](/concepts/experimental-features). If that still fails, try
   `models.providers.<provider>.models[].compat.supportsTools: false`.
 
-- If the backend still fails only on larger OpenClaw runs, the remaining issue
-  is usually upstream model/server capacity or a backend bug, not OpenClaw's
+- If the backend still fails only on larger OpenCLI runs, the remaining issue
+  is usually upstream model/server capacity or a backend bug, not OpenCLI's
   transport layer.
 
 ## Troubleshooting
@@ -315,15 +315,15 @@ Compatibility notes for stricter OpenAI-compatible backends:
 - Gateway can reach the proxy? `curl http://127.0.0.1:1234/v1/models`.
 - LM Studio model unloaded? Reload; cold start is a common “hanging” cause.
 - Local server says `terminated`, `ECONNRESET`, or closes the stream mid-turn?
-  OpenClaw records a low-cardinality `model.call.error.failureKind` plus the
-  OpenClaw process RSS/heap snapshot in diagnostics. For LM Studio/Ollama
+  OpenCLI records a low-cardinality `model.call.error.failureKind` plus the
+  OpenCLI process RSS/heap snapshot in diagnostics. For LM Studio/Ollama
   memory pressure, match that timestamp against the server log or macOS crash /
   jetsam log to confirm whether the model server was killed.
-- OpenClaw warns when the detected context window is below **32k** and blocks below **16k**. If you hit that preflight, raise the server/model context limit or choose a larger model.
+- OpenCLI warns when the detected context window is below **32k** and blocks below **16k**. If you hit that preflight, raise the server/model context limit or choose a larger model.
 - Context errors? Lower `contextWindow` or raise your server limit.
 - OpenAI-compatible server returns `messages[].content ... expected a string`?
   Add `compat.requiresStringContent: true` on that model entry.
-- Direct tiny `/v1/chat/completions` calls work, but `openclaw infer model run --local`
+- Direct tiny `/v1/chat/completions` calls work, but `opencli infer model run --local`
   fails on Gemma or another local model? Check the provider URL, model ref, auth
   marker, and server logs first; local `model run` does not include agent tools.
   If local `model run` succeeds but larger agent turns fail, reduce the agent

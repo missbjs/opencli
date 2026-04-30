@@ -1,5 +1,5 @@
 import { resolveAgentModelPrimaryValue } from "../config/model-input.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import {
   normalizeLowercaseStringOrEmpty,
@@ -69,7 +69,7 @@ function mergeModelCatalogEntries(params: {
 }
 
 export function inferUniqueProviderFromConfiguredModels(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   model: string;
 }): string | undefined {
   const model = params.model.trim();
@@ -163,7 +163,7 @@ export function inferUniqueProviderFromCatalog(params: {
 }
 
 export function resolveBareModelDefaultProvider(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   catalog: readonly ModelCatalogEntry[];
   model: string;
   defaultProvider: string;
@@ -180,7 +180,7 @@ function isConcreteOpenRouterFreeModelRef(ref: ModelRef): boolean {
 }
 
 function resolveConfiguredOpenRouterCompatFreeRef(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   defaultProvider: string;
   allowManifestNormalization?: boolean;
   allowPluginNormalization?: boolean;
@@ -218,7 +218,7 @@ function resolveConfiguredOpenRouterCompatFreeRef(params: {
 }
 
 export function resolveConfiguredOpenRouterCompatAlias(params: {
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   raw: string;
   defaultProvider: string;
   allowManifestNormalization?: boolean;
@@ -243,7 +243,7 @@ export function resolveConfiguredOpenRouterCompatAlias(params: {
 }
 
 export function parseModelRefWithCompatAlias(params: {
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   raw: string;
   defaultProvider: string;
   allowManifestNormalization?: boolean;
@@ -260,7 +260,7 @@ export function parseModelRefWithCompatAlias(params: {
 }
 
 function resolveExactConfiguredProviderRef(params: {
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   raw: string;
   allowManifestNormalization?: boolean;
   allowPluginNormalization?: boolean;
@@ -298,7 +298,7 @@ function resolveExactConfiguredProviderRef(params: {
 }
 
 export function resolveAllowlistModelKey(params: {
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   raw: string;
   defaultProvider: string;
 }): string | null {
@@ -314,7 +314,7 @@ export function resolveAllowlistModelKey(params: {
 }
 
 export function buildConfiguredAllowlistKeys(params: {
-  cfg: OpenClawConfig | undefined;
+  cfg: OpenCLIConfig | undefined;
   defaultProvider: string;
 }): Set<string> | null {
   const rawAllowlist = Object.keys(params.cfg?.agents?.defaults?.models ?? {});
@@ -337,7 +337,7 @@ export function buildConfiguredAllowlistKeys(params: {
 }
 
 export function buildModelAliasIndex(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   defaultProvider: string;
   allowManifestNormalization?: boolean;
   allowPluginNormalization?: boolean;
@@ -379,7 +379,7 @@ type ModelCatalogMetadata = {
 };
 
 function buildModelCatalogMetadata(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   defaultProvider: string;
 }): ModelCatalogMetadata {
   const configuredByKey = new Map<string, ModelCatalogEntry>();
@@ -460,7 +460,7 @@ function buildSyntheticAllowedCatalogEntry(params: {
 }
 
 export function resolveModelRefFromString(params: {
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   raw: string;
   defaultProvider: string;
   aliasIndex?: ModelAliasIndex;
@@ -490,7 +490,7 @@ export function resolveModelRefFromString(params: {
 }
 
 export function resolveConfiguredModelRef(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   defaultProvider: string;
   defaultModel: string;
   allowManifestNormalization?: boolean;
@@ -568,7 +568,7 @@ export function resolveConfiguredModelRef(params: {
 }
 
 export function buildAllowedModelSetWithFallbacks(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   catalog: ModelCatalogEntry[];
   defaultProvider: string;
   defaultModel?: string;
@@ -733,7 +733,7 @@ export function getModelRefStatusFromAllowedSet(params: {
 }
 
 export function getModelRefStatusWithFallbackModels(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   catalog: ModelCatalogEntry[];
   ref: ModelRef;
   defaultProvider: string;
@@ -755,7 +755,7 @@ export function getModelRefStatusWithFallbackModels(params: {
 }
 
 export function resolveAllowedModelRefFromAliasIndex(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   raw: string;
   defaultProvider: string;
   aliasIndex: ModelAliasIndex;
@@ -789,7 +789,7 @@ export function resolveAllowedModelRefFromAliasIndex(params: {
   return { ref: resolved.ref, key: status.key };
 }
 
-export function buildConfiguredModelCatalog(params: { cfg: OpenClawConfig }): ModelCatalogEntry[] {
+export function buildConfiguredModelCatalog(params: { cfg: OpenCLIConfig }): ModelCatalogEntry[] {
   const providers = params.cfg.models?.providers;
   if (!providers || typeof providers !== "object") {
     return [];
@@ -830,7 +830,7 @@ export function buildConfiguredModelCatalog(params: { cfg: OpenClawConfig }): Mo
 }
 
 export function resolveHooksGmailModel(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   defaultProvider: string;
 }): ModelRef | null {
   const hooksModel = params.cfg.hooks?.gmail?.model;

@@ -1,7 +1,7 @@
 import {
   createPluginRegistryFixture,
   registerVirtualTestPlugin,
-} from "openclaw/plugin-sdk/plugin-test-contracts";
+} from "opencli/plugin-sdk/plugin-test-contracts";
 import { describe, expect, it } from "vitest";
 import { getRegisteredMemoryEmbeddingProvider } from "../memory-embedding-providers.js";
 

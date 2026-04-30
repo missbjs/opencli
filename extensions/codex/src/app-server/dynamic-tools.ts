@@ -12,7 +12,7 @@ import {
   type AnyAgentTool,
   type MessagingToolSend,
   wrapToolWithBeforeToolCallHook,
-} from "openclaw/plugin-sdk/agent-harness-runtime";
+} from "opencli/plugin-sdk/agent-harness-runtime";
 import {
   type CodexDynamicToolCallOutputContentItem,
   type CodexDynamicToolCallParams,
@@ -81,7 +81,7 @@ export function createCodexDynamicToolBridge(params: {
       const tool = toolMap.get(call.tool);
       if (!tool) {
         return {
-          contentItems: [{ type: "inputText", text: `Unknown OpenClaw tool: ${call.tool}` }],
+          contentItems: [{ type: "inputText", text: `Unknown OpenCLI tool: ${call.tool}` }],
           success: false,
         };
       }

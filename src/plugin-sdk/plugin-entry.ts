@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { emptyPluginConfigSchema } from "../plugins/config-schema.js";
 import type { ProviderRuntimeModel } from "../plugins/provider-runtime-model.types.js";
 import type {
@@ -12,19 +12,19 @@ import type {
   MigrationProviderContext,
   MigrationProviderPlugin,
   MigrationSummary,
-  OpenClawPluginApi,
-  OpenClawPluginCommandDefinition,
-  OpenClawPluginConfigSchema,
-  OpenClawPluginDefinition,
-  OpenClawPluginHttpRouteHandler,
-  OpenClawPluginNodeHostCommand,
-  OpenClawPluginReloadRegistration,
-  OpenClawPluginSecurityAuditCollector,
-  OpenClawPluginSecurityAuditContext,
-  OpenClawPluginService,
-  OpenClawPluginServiceContext,
-  OpenClawPluginToolContext,
-  OpenClawPluginToolFactory,
+  OpenCLIPluginApi,
+  OpenCLIPluginCommandDefinition,
+  OpenCLIPluginConfigSchema,
+  OpenCLIPluginDefinition,
+  OpenCLIPluginHttpRouteHandler,
+  OpenCLIPluginNodeHostCommand,
+  OpenCLIPluginReloadRegistration,
+  OpenCLIPluginSecurityAuditCollector,
+  OpenCLIPluginSecurityAuditContext,
+  OpenCLIPluginService,
+  OpenCLIPluginServiceContext,
+  OpenCLIPluginToolContext,
+  OpenCLIPluginToolFactory,
   PluginLogger,
   ProviderAugmentModelCatalogContext,
   ProviderAuthContext,
@@ -76,8 +76,8 @@ import type {
   ProviderValidateReplayTurnsContext,
   ProviderWebSocketSessionPolicy,
   ProviderWrapStreamFnContext,
-  OpenClawGatewayDiscoveryAdvertiseContext,
-  OpenClawGatewayDiscoveryService,
+  OpenCLIGatewayDiscoveryAdvertiseContext,
+  OpenCLIGatewayDiscoveryService,
   SpeechProviderPlugin,
   PluginCommandContext,
   PluginCommandResult,
@@ -114,13 +114,13 @@ export type {
   MigrationProviderContext,
   MigrationProviderPlugin,
   MigrationSummary,
-  OpenClawPluginApi,
-  OpenClawPluginNodeHostCommand,
-  OpenClawPluginReloadRegistration,
-  OpenClawPluginSecurityAuditCollector,
-  OpenClawPluginSecurityAuditContext,
-  OpenClawPluginToolContext,
-  OpenClawPluginToolFactory,
+  OpenCLIPluginApi,
+  OpenCLIPluginNodeHostCommand,
+  OpenCLIPluginReloadRegistration,
+  OpenCLIPluginSecurityAuditCollector,
+  OpenCLIPluginSecurityAuditContext,
+  OpenCLIPluginToolContext,
+  OpenCLIPluginToolFactory,
   PluginCommandContext,
   PluginCommandResult,
   PluginAgentEventSubscriptionRegistration,
@@ -142,8 +142,8 @@ export type {
   PluginSessionExtensionProjection,
   PluginToolMetadataRegistration,
   PluginTrustedToolPolicyRegistration,
-  OpenClawPluginConfigSchema,
-  OpenClawPluginHttpRouteHandler,
+  OpenCLIPluginConfigSchema,
+  OpenCLIPluginHttpRouteHandler,
   ProviderDiscoveryContext,
   ProviderCatalogContext,
   ProviderCatalogResult,
@@ -190,17 +190,17 @@ export type {
   ProviderValidateReplayTurnsContext,
   ProviderWebSocketSessionPolicy,
   ProviderWrapStreamFnContext,
-  OpenClawGatewayDiscoveryAdvertiseContext,
-  OpenClawGatewayDiscoveryService,
-  OpenClawPluginService,
-  OpenClawPluginServiceContext,
+  OpenCLIGatewayDiscoveryAdvertiseContext,
+  OpenCLIGatewayDiscoveryService,
+  OpenCLIPluginService,
+  OpenCLIPluginServiceContext,
   ProviderAuthContext,
   ProviderAuthDoctorHintContext,
   ProviderAuthMethodNonInteractiveContext,
   ProviderAuthMethod,
   ProviderAuthResult,
-  OpenClawPluginCommandDefinition,
-  OpenClawPluginDefinition,
+  OpenCLIPluginCommandDefinition,
+  OpenCLIPluginDefinition,
   PluginLogger,
 };
 export type {
@@ -215,7 +215,7 @@ export type {
   PluginHookInboundClaimResult,
 } from "../plugins/hook-types.js";
 export type { ProviderRuntimeModel } from "../plugins/provider-runtime-model.types.js";
-export type { OpenClawConfig };
+export type { OpenCLIConfig };
 
 export { buildPluginConfigSchema, emptyPluginConfigSchema } from "../plugins/config-schema.js";
 
@@ -225,27 +225,27 @@ type DefinePluginEntryOptions = {
   name: string;
   description: string;
   /**
-   * @deprecated Declare exclusive plugin kind in `openclaw.plugin.json` via
+   * @deprecated Declare exclusive plugin kind in `opencli.plugin.json` via
    * manifest `kind`. Runtime-entry `kind` remains only as a compatibility
    * fallback for older plugins.
    */
-  kind?: OpenClawPluginDefinition["kind"];
-  configSchema?: OpenClawPluginConfigSchema | (() => OpenClawPluginConfigSchema);
-  reload?: OpenClawPluginDefinition["reload"];
-  nodeHostCommands?: OpenClawPluginDefinition["nodeHostCommands"];
-  securityAuditCollectors?: OpenClawPluginDefinition["securityAuditCollectors"];
-  register: (api: OpenClawPluginApi) => void;
+  kind?: OpenCLIPluginDefinition["kind"];
+  configSchema?: OpenCLIPluginConfigSchema | (() => OpenCLIPluginConfigSchema);
+  reload?: OpenCLIPluginDefinition["reload"];
+  nodeHostCommands?: OpenCLIPluginDefinition["nodeHostCommands"];
+  securityAuditCollectors?: OpenCLIPluginDefinition["securityAuditCollectors"];
+  register: (api: OpenCLIPluginApi) => void;
 };
 
-/** Normalized object shape that OpenClaw loads from a plugin entry module. */
+/** Normalized object shape that OpenCLI loads from a plugin entry module. */
 type DefinedPluginEntry = {
   id: string;
   name: string;
   description: string;
-  configSchema: OpenClawPluginConfigSchema;
-  register: NonNullable<OpenClawPluginDefinition["register"]>;
+  configSchema: OpenCLIPluginConfigSchema;
+  register: NonNullable<OpenCLIPluginDefinition["register"]>;
 } & Pick<
-  OpenClawPluginDefinition,
+  OpenCLIPluginDefinition,
   "kind" | "reload" | "nodeHostCommands" | "securityAuditCollectors"
 >;
 
@@ -254,7 +254,7 @@ type DefinedPluginEntry = {
  *
  * Use this for provider, tool, command, service, memory, and context-engine
  * plugins. Channel plugins should use `defineChannelPluginEntry(...)` from
- * `openclaw/plugin-sdk/core` so they inherit the channel capability wiring.
+ * `opencli/plugin-sdk/core` so they inherit the channel capability wiring.
  */
 export function definePluginEntry({
   id,

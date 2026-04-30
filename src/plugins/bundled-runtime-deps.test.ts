@@ -45,7 +45,7 @@ const spawnSyncMock = vi.mocked(spawnSync);
 const tempDirs: string[] = [];
 
 function makeTempDir(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-runtime-deps-test-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "opencli-runtime-deps-test-"));
   tempDirs.push(dir);
   return dir;
 }
@@ -122,14 +122,14 @@ describe("resolveBundledRuntimeDepsNpmRunner", () => {
           npm_execpath: "/repo/evil/npm-cli.js",
           NPM_EXECPATH: "/repo/evil-uppercase/npm-cli.js",
         },
-        { cacheDir: "/opt/openclaw/runtime-cache" },
+        { cacheDir: "/opt/opencli/runtime-cache" },
       ),
     ).toEqual({
       COREPACK_ENABLE_DOWNLOAD_PROMPT: "0",
       NPM_CONFIG_IGNORE_SCRIPTS: "true",
       PATH: "/usr/bin:/bin",
       npm_config_audit: "false",
-      npm_config_cache: "/opt/openclaw/runtime-cache",
+      npm_config_cache: "/opt/opencli/runtime-cache",
       npm_config_dry_run: "false",
       npm_config_fetch_retries: "5",
       npm_config_fetch_retry_maxtimeout: "120000",
@@ -272,10 +272,10 @@ describe("installBundledRuntimeDeps", () => {
       throw error;
     });
 
-    expect(isWritableDirectory("/usr/lib/node_modules/openclaw")).toBe(false);
+    expect(isWritableDirectory("/usr/lib/node_modules/opencli")).toBe(false);
     expect(accessSpy).not.toHaveBeenCalled();
     expect(mkdirSpy).toHaveBeenCalledWith(
-      path.join("/usr/lib/node_modules/openclaw", ".openclaw-write-probe-"),
+      path.join("/usr/lib/node_modules/opencli", ".opencli-write-probe-"),
     );
   });
 
@@ -501,13 +501,13 @@ describe("installBundledRuntimeDeps", () => {
 
   it("anchors non-isolated external install roots with a package manifest", () => {
     const parentRoot = makeTempDir();
-    const installRoot = path.join(parentRoot, ".openclaw", "plugin-runtime-deps", "openclaw-test");
+    const installRoot = path.join(parentRoot, ".opencli", "plugin-runtime-deps", "opencli-test");
     fs.mkdirSync(path.join(parentRoot, "node_modules", "@grammyjs"), { recursive: true });
     spawnSyncMock.mockImplementation((_command, _args, options) => {
       const cwd = String(options?.cwd ?? "");
       expect(cwd).toBe(installRoot);
       expect(JSON.parse(fs.readFileSync(path.join(cwd, "package.json"), "utf8"))).toEqual({
-        name: "openclaw-runtime-deps-install",
+        name: "opencli-runtime-deps-install",
         private: true,
         dependencies: {
           "@grammyjs/runner": "^2.0.3",
@@ -551,7 +551,7 @@ describe("installBundledRuntimeDeps", () => {
       const cwd = String(options?.cwd ?? "");
       expect(args).toEqual(expect.arrayContaining(["install", "--ignore-scripts"]));
       expect(JSON.parse(fs.readFileSync(path.join(cwd, "package.json"), "utf8"))).toEqual({
-        name: "openclaw-runtime-deps-install",
+        name: "opencli-runtime-deps-install",
         private: true,
         dependencies: {
           "alpha-runtime": "1.0.0",
@@ -585,7 +585,7 @@ describe("installBundledRuntimeDeps", () => {
     spawnMock.mockImplementation((_command, _args, options) => {
       const cwd = String(options?.cwd ?? "");
       expect(JSON.parse(fs.readFileSync(path.join(cwd, "package.json"), "utf8"))).toEqual({
-        name: "openclaw-runtime-deps-install",
+        name: "opencli-runtime-deps-install",
         private: true,
         dependencies: {
           "beta-runtime": "2.0.0",
@@ -609,7 +609,7 @@ describe("installBundledRuntimeDeps", () => {
     });
 
     expect(JSON.parse(fs.readFileSync(path.join(installRoot, "package.json"), "utf8"))).toEqual({
-      name: "openclaw-runtime-deps-install",
+      name: "opencli-runtime-deps-install",
       private: true,
       dependencies: {
         "beta-runtime": "2.0.0",
@@ -621,7 +621,7 @@ describe("installBundledRuntimeDeps", () => {
     const installRoot = makeTempDir();
     writeInstalledPackage(installRoot, "alpha-runtime", "1.0.0");
     fs.writeFileSync(
-      path.join(installRoot, ".openclaw-runtime-deps.json"),
+      path.join(installRoot, ".opencli-runtime-deps.json"),
       `${JSON.stringify({ specs: ["alpha-runtime@1.0.0"] }, null, 2)}\n`,
       "utf8",
     );
@@ -651,13 +651,13 @@ describe("installBundledRuntimeDeps", () => {
       fs.existsSync(path.join(installRoot, "node_modules", "alpha-runtime", "package.json")),
     ).toBe(false);
     expect(JSON.parse(fs.readFileSync(path.join(installRoot, "package.json"), "utf8"))).toEqual({
-      name: "openclaw-runtime-deps-install",
+      name: "opencli-runtime-deps-install",
       private: true,
       dependencies: {
         "beta-runtime": "2.0.0",
       },
     });
-    expect(fs.existsSync(path.join(installRoot, ".openclaw-runtime-deps.json"))).toBe(false);
+    expect(fs.existsSync(path.join(installRoot, ".opencli-runtime-deps.json"))).toBe(false);
   });
 
   it("warns but still installs bundled runtime deps when disk space looks low", () => {
@@ -725,7 +725,7 @@ describe("installBundledRuntimeDeps", () => {
     expect(
       JSON.parse(fs.readFileSync(path.join(installExecutionRoot, "package.json"), "utf8")),
     ).toEqual({
-      name: "openclaw-runtime-deps-install",
+      name: "opencli-runtime-deps-install",
       private: true,
       dependencies: {
         tokenjuice: "0.6.1",
@@ -765,7 +765,7 @@ describe("installBundledRuntimeDeps", () => {
     writeInstalledPackage(pluginRoot, "alpha-runtime", "1.0.0");
     spawnSyncMock.mockImplementation((_command, args, options) => {
       const cwd = String(options?.cwd ?? "");
-      expect(cwd).toBe(path.join(pluginRoot, ".openclaw-install-stage"));
+      expect(cwd).toBe(path.join(pluginRoot, ".opencli-install-stage"));
       expect(args).toEqual(expect.arrayContaining(["install", "--ignore-scripts"]));
       writeInstalledPackage(cwd, "alpha-runtime", "1.0.0");
       writeInstalledPackage(cwd, "beta-runtime", "2.0.0");
@@ -799,7 +799,7 @@ describe("installBundledRuntimeDeps", () => {
     ).toEqual({ name: "alpha-runtime", version: "1.0.0" });
   });
 
-  it("uses an OpenClaw-owned npm cache for runtime dependency installs", () => {
+  it("uses an OpenCLI-owned npm cache for runtime dependency installs", () => {
     const installRoot = makeTempDir();
     spawnSyncMock.mockImplementation((_command, _args, options) => {
       writeInstalledPackage(String(options?.cwd ?? ""), "tokenjuice", "0.6.1");
@@ -830,7 +830,7 @@ describe("installBundledRuntimeDeps", () => {
     });
 
     expect(JSON.parse(fs.readFileSync(path.join(installRoot, "package.json"), "utf8"))).toEqual({
-      name: "openclaw-runtime-deps-install",
+      name: "opencli-runtime-deps-install",
       private: true,
       dependencies: {
         tokenjuice: "0.6.1",
@@ -843,7 +843,7 @@ describe("installBundledRuntimeDeps", () => {
         cwd: installRoot,
         env: expect.objectContaining({
           HOME: "/Users/alice",
-          npm_config_cache: path.join(installRoot, ".openclaw-npm-cache"),
+          npm_config_cache: path.join(installRoot, ".opencli-npm-cache"),
         }),
       }),
     );
@@ -888,7 +888,7 @@ describe("installBundledRuntimeDeps", () => {
 
   it("cleans an owned isolated execution root after copying node_modules back", () => {
     const installRoot = makeTempDir();
-    const installExecutionRoot = path.join(installRoot, ".openclaw-install-stage");
+    const installExecutionRoot = path.join(installRoot, ".opencli-install-stage");
     spawnSyncMock.mockImplementation((_command, _args, options) => {
       const cwd = String(options?.cwd ?? "");
       fs.mkdirSync(path.join(cwd, "node_modules", "tokenjuice"), { recursive: true });
@@ -935,7 +935,7 @@ describe("installBundledRuntimeDeps", () => {
     vi.spyOn(fs, "rmSync").mockImplementation((target, options) => {
       if (
         !blockedCleanup &&
-        path.basename(String(target)).startsWith(".openclaw-runtime-deps-copy-")
+        path.basename(String(target)).startsWith(".opencli-runtime-deps-copy-")
       ) {
         blockedCleanup = true;
         const error = new Error("Directory not empty") as NodeJS.ErrnoException;
@@ -1007,7 +1007,7 @@ describe("installBundledRuntimeDeps", () => {
 
     expect(() =>
       installBundledRuntimeDeps({
-        installRoot: "/tmp/openclaw",
+        installRoot: "/tmp/opencli",
         missingSpecs: ["browser-runtime@1.0.0"],
         env: {},
       }),
@@ -1215,7 +1215,7 @@ describe("scanBundledPluginRuntimeDeps config policy", () => {
 
   it("does not report already staged package-level runtime deps as missing", () => {
     const packageRoot = setupPolicyPackageRoot();
-    const env = { OPENCLAW_PLUGIN_STAGE_DIR: makeTempDir() };
+    const env = { OPENCLI_PLUGIN_STAGE_DIR: makeTempDir() };
     const installRoot = resolveBundledRuntimeDependencyPackageInstallRoot(packageRoot, { env });
     writeInstalledPackage(installRoot, "alpha-runtime", "1.0.0");
 
@@ -1232,7 +1232,7 @@ describe("scanBundledPluginRuntimeDeps config policy", () => {
 
   it("reports staged package-level runtime deps as missing when the version is stale", () => {
     const packageRoot = setupPolicyPackageRoot();
-    const env = { OPENCLAW_PLUGIN_STAGE_DIR: makeTempDir() };
+    const env = { OPENCLI_PLUGIN_STAGE_DIR: makeTempDir() };
     const installRoot = resolveBundledRuntimeDependencyPackageInstallRoot(packageRoot, { env });
     writeInstalledPackage(installRoot, "alpha-runtime", "0.9.0");
 
@@ -1257,7 +1257,7 @@ describe("scanBundledPluginRuntimeDeps config policy", () => {
       enabledByDefault: true,
       channels: ["alpha"],
     });
-    const manifestPath = path.join(pluginRoot, "openclaw.plugin.json");
+    const manifestPath = path.join(pluginRoot, "opencli.plugin.json");
     const readFileSyncSpy = vi.spyOn(fs, "readFileSync");
 
     scanBundledPluginRuntimeDeps({ packageRoot, config: {} });
@@ -1273,10 +1273,10 @@ describe("scanBundledPluginRuntimeDeps config policy", () => {
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
       JSON.stringify({
-        name: "openclaw",
+        name: "opencli",
         version: "2026.4.25",
         dependencies: { semver: "7.7.4", tslog: "^4.10.2" },
-        openclaw: {
+        opencli: {
           bundle: {
             mirroredRootRuntimeDependencies: ["semver", "tslog"],
           },
@@ -1293,7 +1293,7 @@ describe("scanBundledPluginRuntimeDeps config policy", () => {
     const result = scanBundledPluginRuntimeDeps({
       packageRoot,
       config: {},
-      env: { OPENCLAW_PLUGIN_STAGE_DIR: stageDir },
+      env: { OPENCLI_PLUGIN_STAGE_DIR: stageDir },
     });
 
     expect(result.deps.map((dep) => `${dep.name}@${dep.version}`)).toEqual([
@@ -1314,7 +1314,7 @@ describe("scanBundledPluginRuntimeDeps config policy", () => {
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
       JSON.stringify({
-        name: "openclaw",
+        name: "opencli",
         version: "2026.4.25",
         dependencies: { chokidar: "^5.0.0" },
       }),
@@ -1334,7 +1334,7 @@ describe("scanBundledPluginRuntimeDeps config policy", () => {
     const result = scanBundledPluginRuntimeDeps({
       packageRoot,
       config: {},
-      env: { OPENCLAW_PLUGIN_STAGE_DIR: stageDir },
+      env: { OPENCLI_PLUGIN_STAGE_DIR: stageDir },
     });
 
     expect(result.deps.map((dep) => `${dep.name}@${dep.version}`)).toEqual(["chokidar@^5.0.0"]);
@@ -1348,7 +1348,7 @@ describe("scanBundledPluginRuntimeDeps config policy", () => {
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
       JSON.stringify({
-        name: "openclaw",
+        name: "opencli",
         version: "2026.4.25",
         dependencies: { chokidar: "^5.0.0" },
       }),
@@ -1376,7 +1376,7 @@ describe("scanBundledPluginRuntimeDeps config policy", () => {
       config: {
         channels: { slack: { botToken: "xoxb-token" } },
       },
-      env: { OPENCLAW_PLUGIN_STAGE_DIR: stageDir },
+      env: { OPENCLI_PLUGIN_STAGE_DIR: stageDir },
     });
 
     expect(result.deps).toEqual([]);
@@ -1389,14 +1389,14 @@ describe("scanBundledPluginRuntimeDeps config policy", () => {
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
       JSON.stringify({
-        name: "openclaw",
+        name: "opencli",
         version: "2026.4.25",
         dependencies: {
           chalk: "^5.6.2",
           jiti: "^2.6.1",
           json5: "^2.2.3",
         },
-        openclaw: {
+        opencli: {
           bundle: {
             mirroredRootRuntimeDependencies: ["chalk", "jiti", "json5"],
           },
@@ -1417,7 +1417,7 @@ describe("scanBundledPluginRuntimeDeps config policy", () => {
     });
     fs.writeFileSync(
       path.join(pluginRoot, "setup-entry.js"),
-      `import "../../theme.js";\nimport "openclaw/plugin-sdk/setup";\n`,
+      `import "../../theme.js";\nimport "opencli/plugin-sdk/setup";\n`,
     );
     fs.mkdirSync(path.join(packageRoot, "dist", "plugin-sdk"), { recursive: true });
     fs.writeFileSync(
@@ -1437,7 +1437,7 @@ describe("scanBundledPluginRuntimeDeps config policy", () => {
       config: {
         channels: { whatsapp: { enabled: true } },
       },
-      env: { OPENCLAW_PLUGIN_STAGE_DIR: stageDir },
+      env: { OPENCLI_PLUGIN_STAGE_DIR: stageDir },
     });
 
     expect(result.deps.map((dep) => `${dep.name}@${dep.version}`)).toEqual([
@@ -1448,9 +1448,9 @@ describe("scanBundledPluginRuntimeDeps config policy", () => {
     ]);
     expect(result.deps.map((dep) => dep.pluginIds)).toEqual([
       ["whatsapp"],
-      ["openclaw-core"],
-      ["openclaw-core"],
-      ["openclaw-core"],
+      ["opencli-core"],
+      ["opencli-core"],
+      ["opencli-core"],
     ]);
     expect(result.missing.map((dep) => `${dep.name}@${dep.version}`)).toEqual([
       "@whiskeysockets/baileys@7.0.0-rc.9",
@@ -1466,10 +1466,10 @@ describe("scanBundledPluginRuntimeDeps config policy", () => {
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
       JSON.stringify({
-        name: "openclaw",
+        name: "opencli",
         version: "2026.4.25",
         dependencies: { semver: "7.7.4", tslog: "^4.10.2" },
-        openclaw: {
+        opencli: {
           bundle: {
             mirroredRootRuntimeDependencies: ["semver", "tslog"],
           },
@@ -1489,14 +1489,14 @@ describe("scanBundledPluginRuntimeDeps config policy", () => {
       config: {
         channels: { slack: { botToken: "xoxb-token" } },
       },
-      env: { OPENCLAW_PLUGIN_STAGE_DIR: stageDir },
+      env: { OPENCLI_PLUGIN_STAGE_DIR: stageDir },
     });
 
     expect(result.deps.map((dep) => `${dep.name}@${dep.version}`)).toEqual([
       "semver@7.7.4",
       "tslog@^4.10.2",
     ]);
-    expect(result.deps.map((dep) => dep.pluginIds)).toEqual([["openclaw-core"], ["openclaw-core"]]);
+    expect(result.deps.map((dep) => dep.pluginIds)).toEqual([["opencli-core"], ["opencli-core"]]);
     expect(result.missing.map((dep) => `${dep.name}@${dep.version}`)).toEqual([
       "semver@7.7.4",
       "tslog@^4.10.2",
@@ -1509,10 +1509,10 @@ describe("scanBundledPluginRuntimeDeps config policy", () => {
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
       JSON.stringify({
-        name: "openclaw",
+        name: "opencli",
         version: "2026.4.25",
         dependencies: { tslog: "^4.10.2" },
-        openclaw: {
+        opencli: {
           bundle: {
             mirroredRootRuntimeDependencies: ["tslog"],
           },
@@ -1529,11 +1529,11 @@ describe("scanBundledPluginRuntimeDeps config policy", () => {
     const result = scanBundledPluginRuntimeDeps({
       packageRoot,
       config: {},
-      env: { OPENCLAW_PLUGIN_STAGE_DIR: stageDir },
+      env: { OPENCLI_PLUGIN_STAGE_DIR: stageDir },
     });
 
     expect(result.deps.map((dep) => `${dep.name}@${dep.version}`)).toEqual(["tslog@^4.10.2"]);
-    expect(result.deps[0]?.pluginIds).toEqual(["logger-plugin", "openclaw-core"]);
+    expect(result.deps[0]?.pluginIds).toEqual(["logger-plugin", "opencli-core"]);
     expect(result.missing.map((dep) => `${dep.name}@${dep.version}`)).toEqual(["tslog@^4.10.2"]);
   });
 
@@ -1542,7 +1542,7 @@ describe("scanBundledPluginRuntimeDeps config policy", () => {
     const stageDir = makeTempDir();
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
-      JSON.stringify({ name: "openclaw", version: "2026.4.25" }),
+      JSON.stringify({ name: "opencli", version: "2026.4.25" }),
     );
     const pluginRoot = writeBundledPluginPackage({
       packageRoot,
@@ -1554,7 +1554,7 @@ describe("scanBundledPluginRuntimeDeps config policy", () => {
       },
       enabledByDefault: true,
     });
-    const env = { OPENCLAW_PLUGIN_STAGE_DIR: stageDir };
+    const env = { OPENCLI_PLUGIN_STAGE_DIR: stageDir };
     const installRoot = resolveBundledRuntimeDependencyInstallRoot(pluginRoot, { env });
     writeInstalledPackage(installRoot, "@lancedb/lancedb", "0.27.2");
     writeInstalledPackage(installRoot, "openai", "6.34.0");
@@ -1586,7 +1586,7 @@ describe("scanBundledPluginRuntimeDeps config policy", () => {
     const writableStageDir = makeTempDir();
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
-      JSON.stringify({ name: "openclaw", version: "2026.4.25" }),
+      JSON.stringify({ name: "opencli", version: "2026.4.25" }),
     );
     const pluginRoot = writeBundledPluginPackage({
       packageRoot,
@@ -1598,7 +1598,7 @@ describe("scanBundledPluginRuntimeDeps config policy", () => {
       enabledByDefault: true,
     });
     const env = {
-      OPENCLAW_PLUGIN_STAGE_DIR: [baselineStageDir, writableStageDir].join(path.delimiter),
+      OPENCLI_PLUGIN_STAGE_DIR: [baselineStageDir, writableStageDir].join(path.delimiter),
     };
     const installRootPlan = resolveBundledRuntimeDependencyInstallRootPlan(pluginRoot, { env });
     writeInstalledPackage(
@@ -1684,9 +1684,9 @@ describe("ensureBundledPluginRuntimeDeps", () => {
       path.join(pluginRoot, "package.json"),
       JSON.stringify({
         dependencies: {
-          "@openclaw/plugin-sdk": "workspace:*",
+          "@opencli/plugin-sdk": "workspace:*",
           "external-runtime": "^1.2.3",
-          openclaw: "workspace:*",
+          opencli: "workspace:*",
         },
       }),
     );
@@ -1721,10 +1721,10 @@ describe("ensureBundledPluginRuntimeDeps", () => {
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
       JSON.stringify({
-        name: "openclaw",
+        name: "opencli",
         version: "2026.4.25",
         dependencies: { tslog: "^4.10.2" },
-        openclaw: {
+        opencli: {
           bundle: {
             mirroredRootRuntimeDependencies: ["tslog"],
           },
@@ -1737,7 +1737,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
 
     const calls: BundledRuntimeDepsInstallParams[] = [];
     const result = ensureBundledPluginRuntimeDeps({
-      env: { OPENCLAW_PLUGIN_STAGE_DIR: stageDir },
+      env: { OPENCLI_PLUGIN_STAGE_DIR: stageDir },
       installDeps: (params) => {
         calls.push(params);
         writeInstalledPackage(params.installRoot, "tokenjuice", "0.6.1");
@@ -1747,7 +1747,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
     });
 
     const installRoot = resolveBundledRuntimeDependencyInstallRoot(pluginRoot, {
-      env: { OPENCLAW_PLUGIN_STAGE_DIR: stageDir },
+      env: { OPENCLI_PLUGIN_STAGE_DIR: stageDir },
     });
     expect(result).toEqual({
       installedSpecs: ["tslog@^4.10.2"],
@@ -1763,7 +1763,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
 
   it("uses external staging when a packaged plugin declares workspace:* deps", () => {
     // Regression guard for packaged/Docker bundled plugins whose `package.json`
-    // still lists `"@openclaw/plugin-sdk": "workspace:*"` (and similar) alongside
+    // still lists `"@opencli/plugin-sdk": "workspace:*"` (and similar) alongside
     // concrete runtime deps. Without a distinct execution root, `npm install`
     // would resolve the plugin's own cwd manifest and fail with
     // EUNSUPPORTEDPROTOCOL on the `workspace:` protocol.
@@ -1775,7 +1775,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
       path.join(pluginRoot, "package.json"),
       JSON.stringify({
         dependencies: {
-          "@openclaw/plugin-sdk": "workspace:*",
+          "@opencli/plugin-sdk": "workspace:*",
           "@anthropic-ai/sdk": "^0.50.0",
         },
       }),
@@ -1810,7 +1810,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
     const stageDir = makeTempDir();
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
-      JSON.stringify({ name: "openclaw", version: "2026.4.22" }),
+      JSON.stringify({ name: "opencli", version: "2026.4.22" }),
     );
     const pluginRoot = path.join(packageRoot, "dist", "extensions", "slack");
     fs.mkdirSync(pluginRoot, { recursive: true });
@@ -1823,7 +1823,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
       }),
     );
 
-    const env = { OPENCLAW_PLUGIN_STAGE_DIR: stageDir };
+    const env = { OPENCLI_PLUGIN_STAGE_DIR: stageDir };
     const calls: BundledRuntimeDepsInstallParams[] = [];
     const result = ensureBundledPluginRuntimeDeps({
       env,
@@ -1875,7 +1875,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
     const writableStageDir = makeTempDir();
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
-      JSON.stringify({ name: "openclaw", version: "2026.4.25" }),
+      JSON.stringify({ name: "opencli", version: "2026.4.25" }),
     );
     const pluginRoot = path.join(packageRoot, "dist", "extensions", "slack");
     fs.mkdirSync(pluginRoot, { recursive: true });
@@ -1889,7 +1889,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
       }),
     );
     const env = {
-      OPENCLAW_PLUGIN_STAGE_DIR: [baselineStageDir, writableStageDir].join(path.delimiter),
+      OPENCLI_PLUGIN_STAGE_DIR: [baselineStageDir, writableStageDir].join(path.delimiter),
     };
     const installRootPlan = resolveBundledRuntimeDependencyInstallRootPlan(pluginRoot, { env });
     const baselineRoot = installRootPlan.searchRoots[0] ?? baselineStageDir;
@@ -1930,7 +1930,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
     const stageDir = makeTempDir();
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
-      JSON.stringify({ name: "openclaw", version: "2026.4.22" }),
+      JSON.stringify({ name: "opencli", version: "2026.4.22" }),
     );
     const alphaRoot = path.join(packageRoot, "dist", "extensions", "alpha");
     const betaRoot = path.join(packageRoot, "dist", "extensions", "beta");
@@ -1945,7 +1945,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
       JSON.stringify({ dependencies: { "beta-runtime": "2.0.0" } }),
     );
 
-    const env = { OPENCLAW_PLUGIN_STAGE_DIR: stageDir };
+    const env = { OPENCLI_PLUGIN_STAGE_DIR: stageDir };
     const calls: BundledRuntimeDepsInstallParams[] = [];
     const installDeps = (params: BundledRuntimeDepsInstallParams) => {
       calls.push(params);
@@ -2003,7 +2003,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
     const stageDir = makeTempDir();
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
-      JSON.stringify({ name: "openclaw", version: "2026.4.22" }),
+      JSON.stringify({ name: "opencli", version: "2026.4.22" }),
     );
     const alphaRoot = path.join(packageRoot, "dist", "extensions", "alpha");
     const betaRoot = path.join(packageRoot, "dist", "extensions", "beta");
@@ -2018,7 +2018,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
       JSON.stringify({ dependencies: { "beta-runtime": "2.0.0" } }),
     );
 
-    const env = { OPENCLAW_PLUGIN_STAGE_DIR: stageDir };
+    const env = { OPENCLI_PLUGIN_STAGE_DIR: stageDir };
     const calls: BundledRuntimeDepsInstallParams[] = [];
     ensureBundledPluginRuntimeDeps({
       env,
@@ -2048,7 +2048,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
     const stageDir = makeTempDir();
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
-      JSON.stringify({ name: "openclaw", version: "2026.4.27" }),
+      JSON.stringify({ name: "opencli", version: "2026.4.27" }),
     );
     const browserRoot = writeBundledPluginPackage({
       packageRoot,
@@ -2062,7 +2062,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
       deps: { grammy: "1.37.0" },
       channels: ["telegram"],
     });
-    const env = { OPENCLAW_PLUGIN_STAGE_DIR: stageDir };
+    const env = { OPENCLI_PLUGIN_STAGE_DIR: stageDir };
     const installRoot = resolveBundledRuntimeDependencyInstallRoot(browserRoot, { env });
     writeInstalledPackage(installRoot, "browser-runtime", "1.0.0");
     writeInstalledPackage(installRoot, "grammy", "1.37.0");
@@ -2084,7 +2084,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
     });
 
     expect(result).toEqual({ installedSpecs: [] });
-    expect(fs.existsSync(path.join(installRoot, ".openclaw-runtime-deps.json"))).toBe(false);
+    expect(fs.existsSync(path.join(installRoot, ".opencli-runtime-deps.json"))).toBe(false);
   });
 
   it("does not install disabled channel deps during a package-level lazy plugin repair", () => {
@@ -2092,7 +2092,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
     const stageDir = makeTempDir();
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
-      JSON.stringify({ name: "openclaw", version: "2026.4.27" }),
+      JSON.stringify({ name: "opencli", version: "2026.4.27" }),
     );
     const acpxRoot = writeBundledPluginPackage({
       packageRoot,
@@ -2106,7 +2106,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
       deps: { "@larksuiteoapi/node-sdk": "^1.62.0" },
       channels: ["feishu"],
     });
-    const env = { OPENCLAW_PLUGIN_STAGE_DIR: stageDir };
+    const env = { OPENCLI_PLUGIN_STAGE_DIR: stageDir };
     const installRoot = resolveBundledRuntimeDependencyInstallRoot(acpxRoot, { env });
     const calls: BundledRuntimeDepsInstallParams[] = [];
 
@@ -2146,7 +2146,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
     const stageDir = makeTempDir();
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
-      JSON.stringify({ name: "openclaw", version: "2026.4.27" }),
+      JSON.stringify({ name: "opencli", version: "2026.4.27" }),
     );
     const alphaRoot = writeBundledPluginPackage({
       packageRoot,
@@ -2160,7 +2160,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
       deps: { "beta-runtime": "2.0.0" },
       enabledByDefault: true,
     });
-    const env = { OPENCLAW_PLUGIN_STAGE_DIR: stageDir };
+    const env = { OPENCLI_PLUGIN_STAGE_DIR: stageDir };
     const installRoot = resolveBundledRuntimeDependencyInstallRoot(alphaRoot, { env });
     writeInstalledPackage(installRoot, "alpha-runtime", "1.0.0");
     writeInstalledPackage(installRoot, "beta-runtime", "2.0.0");
@@ -2183,7 +2183,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
     const stageDir = makeTempDir();
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
-      JSON.stringify({ name: "openclaw", version: "2026.4.27" }),
+      JSON.stringify({ name: "opencli", version: "2026.4.27" }),
     );
     const pluginRoot = writeBundledPluginPackage({
       packageRoot,
@@ -2191,7 +2191,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
       deps: { "alpha-runtime": "2.0.0" },
       enabledByDefault: true,
     });
-    const env = { OPENCLAW_PLUGIN_STAGE_DIR: stageDir };
+    const env = { OPENCLI_PLUGIN_STAGE_DIR: stageDir };
     const installRoot = resolveBundledRuntimeDependencyInstallRoot(pluginRoot, { env });
     writeInstalledPackage(installRoot, "alpha-runtime", "1.0.0");
     writeInstalledPackage(installRoot, "beta-runtime", "1.0.0");
@@ -2223,7 +2223,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
     const stageDir = makeTempDir();
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
-      JSON.stringify({ name: "openclaw", version: "2026.4.27" }),
+      JSON.stringify({ name: "opencli", version: "2026.4.27" }),
     );
     const pluginRoot = writeBundledPluginPackage({
       packageRoot,
@@ -2231,7 +2231,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
       deps: { "alpha-runtime": "2.0.0" },
       enabledByDefault: true,
     });
-    const env = { OPENCLAW_PLUGIN_STAGE_DIR: stageDir };
+    const env = { OPENCLI_PLUGIN_STAGE_DIR: stageDir };
     const installRoot = resolveBundledRuntimeDependencyInstallRoot(pluginRoot, { env });
     writeInstalledPackage(installRoot, "alpha-runtime", "1.0.0");
     writeGeneratedRuntimeDepsManifest(installRoot, ["alpha-runtime@2.0.0"]);
@@ -2262,7 +2262,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
     const stageDir = makeTempDir();
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
-      JSON.stringify({ name: "openclaw", version: "2026.4.27" }),
+      JSON.stringify({ name: "opencli", version: "2026.4.27" }),
     );
     const pluginRoot = writeBundledPluginPackage({
       packageRoot,
@@ -2274,7 +2274,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
       },
       enabledByDefault: true,
     });
-    const env = { OPENCLAW_PLUGIN_STAGE_DIR: stageDir };
+    const env = { OPENCLI_PLUGIN_STAGE_DIR: stageDir };
     const installRoot = resolveBundledRuntimeDependencyInstallRoot(pluginRoot, { env });
     writeInstalledPackage(installRoot, "@lancedb/lancedb", "0.27.2");
     writeInstalledPackage(installRoot, "openai", "6.34.0");
@@ -2304,7 +2304,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
     const stageDir = makeTempDir();
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
-      JSON.stringify({ name: "openclaw", version: "2026.4.25" }),
+      JSON.stringify({ name: "opencli", version: "2026.4.25" }),
     );
     const pluginRoot = path.join(packageRoot, "dist", "extensions", "telegram");
     fs.mkdirSync(pluginRoot, { recursive: true });
@@ -2312,7 +2312,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
       path.join(pluginRoot, "package.json"),
       JSON.stringify({ dependencies: { grammy: "^1.42.0" } }),
     );
-    const env = { OPENCLAW_PLUGIN_STAGE_DIR: stageDir };
+    const env = { OPENCLI_PLUGIN_STAGE_DIR: stageDir };
     const installRoot = resolveBundledRuntimeDependencyInstallRoot(pluginRoot, { env });
     const mirroredPluginRoot = path.join(installRoot, "dist", "extensions", "telegram");
     fs.mkdirSync(mirroredPluginRoot, { recursive: true });
@@ -2329,7 +2329,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
 
     const nestedUnknownRoot = path.join(
       stageDir,
-      `openclaw-unknown-${createHash("sha256").update(path.resolve(installRoot)).digest("hex").slice(0, 12)}`,
+      `opencli-unknown-${createHash("sha256").update(path.resolve(installRoot)).digest("hex").slice(0, 12)}`,
     );
 
     expect(resolveBundledRuntimeDependencyInstallRoot(mirroredPluginRoot, { env })).toBe(
@@ -2355,7 +2355,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
     const stageDir = makeTempDir();
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
-      JSON.stringify({ name: "openclaw", version: "2026.4.25" }),
+      JSON.stringify({ name: "opencli", version: "2026.4.25" }),
     );
     const pluginRoot = path.join(packageRoot, "dist", "extensions", "telegram");
     fs.mkdirSync(pluginRoot, { recursive: true });
@@ -2363,7 +2363,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
       path.join(pluginRoot, "package.json"),
       JSON.stringify({ dependencies: { grammy: "^1.42.0" } }),
     );
-    const env = { OPENCLAW_PLUGIN_STAGE_DIR: stageDir };
+    const env = { OPENCLI_PLUGIN_STAGE_DIR: stageDir };
     const installRoot = resolveBundledRuntimeDependencyInstallRoot(pluginRoot, { env });
 
     const nestedPluginRoot = path.join(
@@ -2371,14 +2371,14 @@ describe("ensureBundledPluginRuntimeDeps", () => {
       "dist",
       "extensions",
       "node_modules",
-      "openclaw",
+      "opencli",
       "plugin-sdk",
     );
     fs.mkdirSync(nestedPluginRoot, { recursive: true });
 
     const resolved = resolveBundledRuntimeDependencyInstallRoot(nestedPluginRoot, { env });
     expect(resolved).toBe(installRoot);
-    expect(path.basename(resolved).startsWith("openclaw-unknown-")).toBe(false);
+    expect(path.basename(resolved).startsWith("opencli-unknown-")).toBe(false);
   });
 
   it("prunes stale unknown external runtime roots while keeping newest and locked roots", () => {
@@ -2389,7 +2389,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
       fs.mkdirSync(root, { recursive: true });
       fs.writeFileSync(path.join(root, "marker"), "ok\n");
       if (locked) {
-        const lockDir = path.join(root, ".openclaw-runtime-deps.lock");
+        const lockDir = path.join(root, ".opencli-runtime-deps.lock");
         fs.mkdirSync(lockDir, { recursive: true });
         fs.writeFileSync(
           path.join(lockDir, "owner.json"),
@@ -2400,13 +2400,13 @@ describe("ensureBundledPluginRuntimeDeps", () => {
       fs.utimesSync(root, mtime, mtime);
       return root;
     };
-    const newest = makeRoot("openclaw-unknown-newest", 1_000);
-    const stale = makeRoot("openclaw-unknown-stale", 120_000);
-    const locked = makeRoot("openclaw-unknown-locked", 120_000, true);
-    const versioned = makeRoot("openclaw-2026.4.25-versioned", 120_000);
+    const newest = makeRoot("opencli-unknown-newest", 1_000);
+    const stale = makeRoot("opencli-unknown-stale", 120_000);
+    const locked = makeRoot("opencli-unknown-locked", 120_000, true);
+    const versioned = makeRoot("opencli-2026.4.25-versioned", 120_000);
 
     const result = pruneUnknownBundledRuntimeDepsRoots({
-      env: { OPENCLAW_PLUGIN_STAGE_DIR: stageDir },
+      env: { OPENCLI_PLUGIN_STAGE_DIR: stageDir },
       nowMs,
       maxRootsToKeep: 1,
       minAgeMs: 60_000,
@@ -2423,7 +2423,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
     const packageRoot = makeTempDir();
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
-      JSON.stringify({ name: "openclaw", version: "2026.4.25" }),
+      JSON.stringify({ name: "opencli", version: "2026.4.25" }),
     );
     fs.writeFileSync(path.join(packageRoot, "pnpm-workspace.yaml"), "packages: []\n");
     fs.mkdirSync(path.join(packageRoot, "src"), { recursive: true });
@@ -2436,7 +2436,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
     );
     spawnSyncMock.mockImplementation((_command, _args, options) => {
       const cwd = String(options?.cwd);
-      expect(cwd).toBe(path.join(pluginRoot, ".openclaw-install-stage"));
+      expect(cwd).toBe(path.join(pluginRoot, ".opencli-install-stage"));
       const depRoot = path.join(cwd, "node_modules", "voice-runtime");
       fs.mkdirSync(depRoot, { recursive: true });
       fs.writeFileSync(
@@ -2480,7 +2480,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
     const stageDir = makeTempDir();
     fs.writeFileSync(
       path.join(packageRoot, "package.json"),
-      JSON.stringify({ name: "openclaw", version: "2026.4.22" }),
+      JSON.stringify({ name: "opencli", version: "2026.4.22" }),
     );
     const alphaRoot = path.join(packageRoot, "dist", "extensions", "alpha");
     const betaRoot = path.join(packageRoot, "dist", "extensions", "beta");
@@ -2495,7 +2495,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
       JSON.stringify({ dependencies: { "beta-runtime": "2.0.0" } }),
     );
 
-    const env = { OPENCLAW_PLUGIN_STAGE_DIR: stageDir };
+    const env = { OPENCLI_PLUGIN_STAGE_DIR: stageDir };
     const installRoot = resolveBundledRuntimeDependencyInstallRoot(alphaRoot, { env });
     fs.mkdirSync(path.join(installRoot, "node_modules", "alpha-runtime"), { recursive: true });
     fs.writeFileSync(
@@ -2503,7 +2503,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
       JSON.stringify({ name: "alpha-runtime", version: "1.0.0" }),
     );
     writeGeneratedRuntimeDepsManifest(installRoot, ["alpha-runtime@1.0.0"]);
-    expect(fs.existsSync(path.join(installRoot, ".openclaw-runtime-deps.json"))).toBe(false);
+    expect(fs.existsSync(path.join(installRoot, ".opencli-runtime-deps.json"))).toBe(false);
 
     const calls: BundledRuntimeDepsInstallParams[] = [];
     const result = ensureBundledPluginRuntimeDeps({
@@ -2566,7 +2566,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
 
   it("keeps async repair locks and activity active until npm staging settles", async () => {
     const installRoot = makeTempDir();
-    const lockDir = path.join(installRoot, ".openclaw-runtime-deps.lock");
+    const lockDir = path.join(installRoot, ".opencli-runtime-deps.lock");
     let releaseInstall!: () => void;
     const repair = repairBundledRuntimeDepsInstallRootAsync({
       installRoot,
@@ -2714,12 +2714,12 @@ describe("ensureBundledPluginRuntimeDeps", () => {
 
   it("includes runtime-deps lock owner details in timeout messages", () => {
     const message = bundledRuntimeDepsTesting.formatRuntimeDepsLockTimeoutMessage({
-      lockDir: "/tmp/openclaw-plugin/.openclaw-runtime-deps.lock",
+      lockDir: "/tmp/opencli-plugin/.opencli-runtime-deps.lock",
       owner: {
         pid: 0,
         createdAtMs: 1_000,
         ownerFileState: "invalid",
-        ownerFilePath: "/tmp/openclaw-plugin/.openclaw-runtime-deps.lock/owner.json",
+        ownerFilePath: "/tmp/opencli-plugin/.opencli-runtime-deps.lock/owner.json",
         ownerFileMtimeMs: 2_500,
         ownerFileIsSymlink: true,
         lockDirMtimeMs: 2_000,
@@ -2735,7 +2735,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
     expect(message).toContain("ownerAge=302000ms");
     expect(message).toContain("ownerFileAge=300500ms");
     expect(message).toContain("lockAge=301000ms");
-    expect(message).toContain(".openclaw-runtime-deps.lock/owner.json");
+    expect(message).toContain(".opencli-runtime-deps.lock/owner.json");
   });
 
   it("removes stale runtime-deps install locks before repairing deps", () => {
@@ -2751,7 +2751,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
       }),
     );
     const installRoot = resolveBundledRuntimeDependencyInstallRoot(pluginRoot, { env: {} });
-    const lockDir = path.join(installRoot, ".openclaw-runtime-deps.lock");
+    const lockDir = path.join(installRoot, ".opencli-runtime-deps.lock");
     fs.mkdirSync(lockDir, { recursive: true });
     fs.writeFileSync(path.join(lockDir, "owner.json"), JSON.stringify({ pid: 0, createdAtMs: 0 }));
 
@@ -2792,7 +2792,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
       }),
     );
     const installRoot = resolveBundledRuntimeDependencyInstallRoot(pluginRoot, { env: {} });
-    const lockDir = path.join(installRoot, ".openclaw-runtime-deps.lock");
+    const lockDir = path.join(installRoot, ".opencli-runtime-deps.lock");
     fs.mkdirSync(lockDir, { recursive: true });
     const ownerPath = path.join(lockDir, "owner.json");
     fs.writeFileSync(ownerPath, "{", "utf8");
@@ -2839,7 +2839,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
         }),
       );
       const installRoot = resolveBundledRuntimeDependencyInstallRoot(pluginRoot, { env: {} });
-      const lockDir = path.join(installRoot, ".openclaw-runtime-deps.lock");
+      const lockDir = path.join(installRoot, ".opencli-runtime-deps.lock");
       fs.mkdirSync(lockDir, { recursive: true });
       const ownerPath = path.join(lockDir, "owner.json");
       fs.symlinkSync("../missing-owner.json", ownerPath);
@@ -2880,8 +2880,8 @@ describe("ensureBundledPluginRuntimeDeps", () => {
       path.join(pluginRoot, "package.json"),
       JSON.stringify({
         dependencies: {
-          "@openclaw/plugin-sdk": "workspace:*",
-          openclaw: "workspace:*",
+          "@opencli/plugin-sdk": "workspace:*",
+          opencli: "workspace:*",
         },
       }),
     );
@@ -2916,7 +2916,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
 
     const calls: BundledRuntimeDepsInstallParams[] = [];
     const result = ensureBundledPluginRuntimeDeps({
-      env: { OPENCLAW_PLUGIN_STAGE_DIR: stageDir },
+      env: { OPENCLI_PLUGIN_STAGE_DIR: stageDir },
       installDeps: (params) => {
         calls.push(params);
         writeInstalledPackage(params.installRoot, "tokenjuice", "0.6.1");
@@ -2929,7 +2929,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
       installedSpecs: ["tokenjuice@0.6.1"],
     });
     const installRoot = resolveBundledRuntimeDependencyInstallRoot(pluginRoot, {
-      env: { OPENCLAW_PLUGIN_STAGE_DIR: stageDir },
+      env: { OPENCLI_PLUGIN_STAGE_DIR: stageDir },
     });
     expect(calls).toEqual([
       {
@@ -2952,7 +2952,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
     const pluginRoot = path.join(packageRoot, "extensions", "tokenjuice");
     fs.mkdirSync(pluginRoot, { recursive: true });
     fs.writeFileSync(
-      path.join(pluginRoot, ".openclaw-runtime-deps.json"),
+      path.join(pluginRoot, ".opencli-runtime-deps.json"),
       JSON.stringify({ specs: ["stale@9.9.9"] }),
     );
     writeGeneratedRuntimeDepsManifest(pluginRoot, ["tokenjuice@0.6.1"]);
@@ -2981,13 +2981,13 @@ describe("ensureBundledPluginRuntimeDeps", () => {
     expect(calls).toEqual([
       {
         installRoot: pluginRoot,
-        installExecutionRoot: path.join(pluginRoot, ".openclaw-install-stage"),
+        installExecutionRoot: path.join(pluginRoot, ".opencli-install-stage"),
         missingSpecs: ["tokenjuice@0.6.1"],
         installSpecs: ["tokenjuice@0.6.1"],
       },
     ]);
     expect(resolveBundledRuntimeDependencyInstallRoot(pluginRoot, { env: {} })).toBe(pluginRoot);
-    expect(fs.existsSync(path.join(pluginRoot, ".openclaw-runtime-deps.json"))).toBe(false);
+    expect(fs.existsSync(path.join(pluginRoot, ".opencli-runtime-deps.json"))).toBe(false);
   });
 
   it("removes stale source-checkout manifests even when runtime deps are present", () => {
@@ -3009,7 +3009,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
       JSON.stringify({ name: "tokenjuice", version: "0.6.1" }),
     );
     fs.writeFileSync(
-      path.join(pluginRoot, ".openclaw-runtime-deps.json"),
+      path.join(pluginRoot, ".opencli-runtime-deps.json"),
       JSON.stringify({ specs: ["stale@9.9.9"] }),
     );
     writeGeneratedRuntimeDepsManifest(pluginRoot, ["tokenjuice@0.6.1"]);
@@ -3024,7 +3024,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
     });
 
     expect(result).toEqual({ installedSpecs: [] });
-    expect(fs.existsSync(path.join(pluginRoot, ".openclaw-runtime-deps.json"))).toBe(false);
+    expect(fs.existsSync(path.join(pluginRoot, ".opencli-runtime-deps.json"))).toBe(false);
   });
 
   it("treats Docker build source trees without .git as source checkouts", () => {
@@ -3040,7 +3040,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
           acpx: "0.5.3",
         },
         devDependencies: {
-          "@openclaw/plugin-sdk": "workspace:*",
+          "@opencli/plugin-sdk": "workspace:*",
         },
       }),
     );
@@ -3061,7 +3061,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
     expect(calls).toEqual([
       {
         installRoot: pluginRoot,
-        installExecutionRoot: path.join(pluginRoot, ".openclaw-install-stage"),
+        installExecutionRoot: path.join(pluginRoot, ".opencli-install-stage"),
         missingSpecs: ["acpx@0.5.3"],
         installSpecs: ["acpx@0.5.3"],
       },
@@ -3093,7 +3093,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
     const calls: BundledRuntimeDepsInstallParams[] = [];
 
     const result = ensureBundledPluginRuntimeDeps({
-      env: { OPENCLAW_PLUGIN_STAGE_DIR: stageDir },
+      env: { OPENCLI_PLUGIN_STAGE_DIR: stageDir },
       installDeps: (params) => {
         calls.push(params);
       },
@@ -3107,7 +3107,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
     expect(calls).toEqual([
       {
         installRoot: resolveBundledRuntimeDependencyInstallRoot(pluginRoot, {
-          env: { OPENCLAW_PLUGIN_STAGE_DIR: stageDir },
+          env: { OPENCLI_PLUGIN_STAGE_DIR: stageDir },
         }),
         missingSpecs: ["tokenjuice@0.6.1"],
         installSpecs: ["tokenjuice@0.6.1"],
@@ -3140,7 +3140,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
 
     const calls: BundledRuntimeDepsInstallParams[] = [];
     const result = ensureBundledPluginRuntimeDeps({
-      env: { OPENCLAW_PLUGIN_STAGE_DIR: stageDir },
+      env: { OPENCLI_PLUGIN_STAGE_DIR: stageDir },
       installDeps: (params) => {
         calls.push(params);
       },
@@ -3152,7 +3152,7 @@ describe("ensureBundledPluginRuntimeDeps", () => {
       installedSpecs: ["tokenjuice@0.6.1"],
     });
     const installRoot = resolveBundledRuntimeDependencyInstallRoot(pluginRoot, {
-      env: { OPENCLAW_PLUGIN_STAGE_DIR: stageDir },
+      env: { OPENCLI_PLUGIN_STAGE_DIR: stageDir },
     });
     expect(calls).toEqual([
       {

@@ -2,7 +2,7 @@ import {
   createRateLimitRetryRunner,
   type RetryConfig,
   type RetryRunner,
-} from "openclaw/plugin-sdk/retry-runtime";
+} from "opencli/plugin-sdk/retry-runtime";
 import { RateLimitError } from "./internal/discord.js";
 
 export const DISCORD_RETRY_DEFAULTS = {

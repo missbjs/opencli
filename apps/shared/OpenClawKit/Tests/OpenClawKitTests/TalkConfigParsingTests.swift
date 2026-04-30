@@ -1,4 +1,4 @@
-import OpenClawKit
+import OpenCLIKit
 import Testing
 
 struct TalkConfigParsingTests {

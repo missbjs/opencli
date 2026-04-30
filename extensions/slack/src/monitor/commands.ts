@@ -1,5 +1,5 @@
-import type { SlackSlashCommandConfig } from "openclaw/plugin-sdk/config-types";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/text-runtime";
+import type { SlackSlashCommandConfig } from "opencli/plugin-sdk/config-types";
+import { normalizeOptionalString } from "opencli/plugin-sdk/text-runtime";
 
 /**
  * Strip Slack mentions (<@U123>, <@U123|name>) so command detection works on
@@ -20,9 +20,9 @@ export function resolveSlackSlashCommandConfig(
   raw?: SlackSlashCommandConfig,
 ): Required<SlackSlashCommandConfig> {
   const normalizedName = normalizeSlackSlashCommandName(
-    normalizeOptionalString(raw?.name) ?? "openclaw",
+    normalizeOptionalString(raw?.name) ?? "opencli",
   );
-  const name = normalizedName || "openclaw";
+  const name = normalizedName || "opencli";
   return {
     enabled: raw?.enabled === true,
     name,

@@ -51,7 +51,7 @@ async function withBundledRuntimeDepsInstallRootLockAsync<T>(
 
 function replaceNodeModulesDir(targetDir: string, sourceDir: string): void {
   const parentDir = path.dirname(targetDir);
-  const tempDir = fs.mkdtempSync(path.join(parentDir, ".openclaw-runtime-deps-copy-"));
+  const tempDir = fs.mkdtempSync(path.join(parentDir, ".opencli-runtime-deps-copy-"));
   const stagedDir = path.join(tempDir, "node_modules");
   try {
     fs.cpSync(sourceDir, stagedDir, { recursive: true });
@@ -162,7 +162,7 @@ function createBundledRuntimeDepsInstallContext(params: {
   }
   ensureNpmInstallExecutionManifest(installExecutionRoot, params.installSpecs);
   const installEnv = createBundledRuntimeDepsInstallEnv(params.env, {
-    cacheDir: path.join(installExecutionRoot, ".openclaw-npm-cache"),
+    cacheDir: path.join(installExecutionRoot, ".opencli-npm-cache"),
   });
   const runner = resolveBundledRuntimeDepsPackageManagerRunner({
     installExecutionRoot,

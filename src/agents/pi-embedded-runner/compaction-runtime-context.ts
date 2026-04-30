@@ -1,6 +1,6 @@
 import type { SourceReplyDeliveryMode } from "../../auto-reply/get-reply-options.types.js";
 import type { ReasoningLevel, ThinkLevel } from "../../auto-reply/thinking.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../../config/types.opencli.js";
 import type { ExecElevatedDefaults } from "../bash-tools.js";
 import type { SkillSnapshot } from "../skills.js";
 
@@ -15,7 +15,7 @@ export type EmbeddedCompactionRuntimeContext = {
   authProfileId?: string;
   workspaceDir: string;
   agentDir: string;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   skillsSnapshot?: SkillSnapshot;
   senderIsOwner?: boolean;
   senderId?: string;
@@ -34,7 +34,7 @@ export type EmbeddedCompactionRuntimeContext = {
  * caller-supplied provider/model and optionally applying runtime defaults.
  */
 export function resolveEmbeddedCompactionTarget(params: {
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   provider?: string | null;
   modelId?: string | null;
   authProfileId?: string | null;
@@ -81,7 +81,7 @@ export function buildEmbeddedCompactionRuntimeContext(params: {
   authProfileId?: string | null;
   workspaceDir: string;
   agentDir: string;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
   skillsSnapshot?: SkillSnapshot;
   senderIsOwner?: boolean;
   senderId?: string | null;

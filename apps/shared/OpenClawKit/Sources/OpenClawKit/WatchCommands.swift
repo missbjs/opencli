@@ -1,11 +1,11 @@
 import Foundation
 
-public enum OpenClawWatchCommand: String, Codable, Sendable {
+public enum OpenCLIWatchCommand: String, Codable, Sendable {
     case status = "watch.status"
     case notify = "watch.notify"
 }
 
-public enum OpenClawWatchPayloadType: String, Codable, Sendable, Equatable {
+public enum OpenCLIWatchPayloadType: String, Codable, Sendable, Equatable {
     case notify = "watch.notify"
     case reply = "watch.reply"
     case execApprovalPrompt = "watch.execApproval.prompt"
@@ -16,18 +16,18 @@ public enum OpenClawWatchPayloadType: String, Codable, Sendable, Equatable {
     case execApprovalSnapshotRequest = "watch.execApproval.snapshotRequest"
 }
 
-public enum OpenClawWatchRisk: String, Codable, Sendable, Equatable {
+public enum OpenCLIWatchRisk: String, Codable, Sendable, Equatable {
     case low
     case medium
     case high
 }
 
-public enum OpenClawWatchExecApprovalDecision: String, Codable, Sendable, Equatable {
+public enum OpenCLIWatchExecApprovalDecision: String, Codable, Sendable, Equatable {
     case allowOnce = "allow-once"
     case deny
 }
 
-public enum OpenClawWatchExecApprovalCloseReason: String, Codable, Sendable, Equatable {
+public enum OpenCLIWatchExecApprovalCloseReason: String, Codable, Sendable, Equatable {
     case expired
     case notFound = "not-found"
     case unavailable
@@ -35,7 +35,7 @@ public enum OpenClawWatchExecApprovalCloseReason: String, Codable, Sendable, Equ
     case resolved
 }
 
-public struct OpenClawWatchAction: Codable, Sendable, Equatable {
+public struct OpenCLIWatchAction: Codable, Sendable, Equatable {
     public var id: String
     public var label: String
     public var style: String?
@@ -47,7 +47,7 @@ public struct OpenClawWatchAction: Codable, Sendable, Equatable {
     }
 }
 
-public struct OpenClawWatchExecApprovalItem: Codable, Sendable, Equatable, Identifiable {
+public struct OpenCLIWatchExecApprovalItem: Codable, Sendable, Equatable, Identifiable {
     public var id: String
     public var commandText: String
     public var commandPreview: String?
@@ -55,8 +55,8 @@ public struct OpenClawWatchExecApprovalItem: Codable, Sendable, Equatable, Ident
     public var nodeId: String?
     public var agentId: String?
     public var expiresAtMs: Int?
-    public var allowedDecisions: [OpenClawWatchExecApprovalDecision]
-    public var risk: OpenClawWatchRisk?
+    public var allowedDecisions: [OpenCLIWatchExecApprovalDecision]
+    public var risk: OpenCLIWatchRisk?
 
     public init(
         id: String,
@@ -66,8 +66,8 @@ public struct OpenClawWatchExecApprovalItem: Codable, Sendable, Equatable, Ident
         nodeId: String? = nil,
         agentId: String? = nil,
         expiresAtMs: Int? = nil,
-        allowedDecisions: [OpenClawWatchExecApprovalDecision] = [],
-        risk: OpenClawWatchRisk? = nil)
+        allowedDecisions: [OpenCLIWatchExecApprovalDecision] = [],
+        risk: OpenCLIWatchRisk? = nil)
     {
         self.id = id
         self.commandText = commandText
@@ -81,15 +81,15 @@ public struct OpenClawWatchExecApprovalItem: Codable, Sendable, Equatable, Ident
     }
 }
 
-public struct OpenClawWatchExecApprovalPromptMessage: Codable, Sendable, Equatable {
-    public var type: OpenClawWatchPayloadType
-    public var approval: OpenClawWatchExecApprovalItem
+public struct OpenCLIWatchExecApprovalPromptMessage: Codable, Sendable, Equatable {
+    public var type: OpenCLIWatchPayloadType
+    public var approval: OpenCLIWatchExecApprovalItem
     public var sentAtMs: Int?
     public var deliveryId: String?
     public var resetResolvingState: Bool?
 
     public init(
-        approval: OpenClawWatchExecApprovalItem,
+        approval: OpenCLIWatchExecApprovalItem,
         sentAtMs: Int? = nil,
         deliveryId: String? = nil,
         resetResolvingState: Bool? = nil)
@@ -102,16 +102,16 @@ public struct OpenClawWatchExecApprovalPromptMessage: Codable, Sendable, Equatab
     }
 }
 
-public struct OpenClawWatchExecApprovalResolveMessage: Codable, Sendable, Equatable {
-    public var type: OpenClawWatchPayloadType
+public struct OpenCLIWatchExecApprovalResolveMessage: Codable, Sendable, Equatable {
+    public var type: OpenCLIWatchPayloadType
     public var approvalId: String
-    public var decision: OpenClawWatchExecApprovalDecision
+    public var decision: OpenCLIWatchExecApprovalDecision
     public var replyId: String
     public var sentAtMs: Int?
 
     public init(
         approvalId: String,
-        decision: OpenClawWatchExecApprovalDecision,
+        decision: OpenCLIWatchExecApprovalDecision,
         replyId: String,
         sentAtMs: Int? = nil)
     {
@@ -123,16 +123,16 @@ public struct OpenClawWatchExecApprovalResolveMessage: Codable, Sendable, Equata
     }
 }
 
-public struct OpenClawWatchExecApprovalResolvedMessage: Codable, Sendable, Equatable {
-    public var type: OpenClawWatchPayloadType
+public struct OpenCLIWatchExecApprovalResolvedMessage: Codable, Sendable, Equatable {
+    public var type: OpenCLIWatchPayloadType
     public var approvalId: String
-    public var decision: OpenClawWatchExecApprovalDecision?
+    public var decision: OpenCLIWatchExecApprovalDecision?
     public var resolvedAtMs: Int?
     public var source: String?
 
     public init(
         approvalId: String,
-        decision: OpenClawWatchExecApprovalDecision? = nil,
+        decision: OpenCLIWatchExecApprovalDecision? = nil,
         resolvedAtMs: Int? = nil,
         source: String? = nil)
     {
@@ -144,15 +144,15 @@ public struct OpenClawWatchExecApprovalResolvedMessage: Codable, Sendable, Equat
     }
 }
 
-public struct OpenClawWatchExecApprovalExpiredMessage: Codable, Sendable, Equatable {
-    public var type: OpenClawWatchPayloadType
+public struct OpenCLIWatchExecApprovalExpiredMessage: Codable, Sendable, Equatable {
+    public var type: OpenCLIWatchPayloadType
     public var approvalId: String
-    public var reason: OpenClawWatchExecApprovalCloseReason
+    public var reason: OpenCLIWatchExecApprovalCloseReason
     public var expiredAtMs: Int?
 
     public init(
         approvalId: String,
-        reason: OpenClawWatchExecApprovalCloseReason,
+        reason: OpenCLIWatchExecApprovalCloseReason,
         expiredAtMs: Int? = nil)
     {
         self.type = .execApprovalExpired
@@ -162,14 +162,14 @@ public struct OpenClawWatchExecApprovalExpiredMessage: Codable, Sendable, Equata
     }
 }
 
-public struct OpenClawWatchExecApprovalSnapshotMessage: Codable, Sendable, Equatable {
-    public var type: OpenClawWatchPayloadType
-    public var approvals: [OpenClawWatchExecApprovalItem]
+public struct OpenCLIWatchExecApprovalSnapshotMessage: Codable, Sendable, Equatable {
+    public var type: OpenCLIWatchPayloadType
+    public var approvals: [OpenCLIWatchExecApprovalItem]
     public var sentAtMs: Int?
     public var snapshotId: String?
 
     public init(
-        approvals: [OpenClawWatchExecApprovalItem],
+        approvals: [OpenCLIWatchExecApprovalItem],
         sentAtMs: Int? = nil,
         snapshotId: String? = nil)
     {
@@ -180,8 +180,8 @@ public struct OpenClawWatchExecApprovalSnapshotMessage: Codable, Sendable, Equat
     }
 }
 
-public struct OpenClawWatchExecApprovalSnapshotRequestMessage: Codable, Sendable, Equatable {
-    public var type: OpenClawWatchPayloadType
+public struct OpenCLIWatchExecApprovalSnapshotRequestMessage: Codable, Sendable, Equatable {
+    public var type: OpenCLIWatchPayloadType
     public var requestId: String
     public var sentAtMs: Int?
 
@@ -192,7 +192,7 @@ public struct OpenClawWatchExecApprovalSnapshotRequestMessage: Codable, Sendable
     }
 }
 
-public struct OpenClawWatchStatusPayload: Codable, Sendable, Equatable {
+public struct OpenCLIWatchStatusPayload: Codable, Sendable, Equatable {
     public var supported: Bool
     public var paired: Bool
     public var appInstalled: Bool
@@ -214,29 +214,29 @@ public struct OpenClawWatchStatusPayload: Codable, Sendable, Equatable {
     }
 }
 
-public struct OpenClawWatchNotifyParams: Codable, Sendable, Equatable {
+public struct OpenCLIWatchNotifyParams: Codable, Sendable, Equatable {
     public var title: String
     public var body: String
-    public var priority: OpenClawNotificationPriority?
+    public var priority: OpenCLINotificationPriority?
     public var promptId: String?
     public var sessionKey: String?
     public var kind: String?
     public var details: String?
     public var expiresAtMs: Int?
-    public var risk: OpenClawWatchRisk?
-    public var actions: [OpenClawWatchAction]?
+    public var risk: OpenCLIWatchRisk?
+    public var actions: [OpenCLIWatchAction]?
 
     public init(
         title: String,
         body: String,
-        priority: OpenClawNotificationPriority? = nil,
+        priority: OpenCLINotificationPriority? = nil,
         promptId: String? = nil,
         sessionKey: String? = nil,
         kind: String? = nil,
         details: String? = nil,
         expiresAtMs: Int? = nil,
-        risk: OpenClawWatchRisk? = nil,
-        actions: [OpenClawWatchAction]? = nil)
+        risk: OpenCLIWatchRisk? = nil,
+        actions: [OpenCLIWatchAction]? = nil)
     {
         self.title = title
         self.body = body
@@ -251,7 +251,7 @@ public struct OpenClawWatchNotifyParams: Codable, Sendable, Equatable {
     }
 }
 
-public struct OpenClawWatchNotifyPayload: Codable, Sendable, Equatable {
+public struct OpenCLIWatchNotifyPayload: Codable, Sendable, Equatable {
     public var deliveredImmediately: Bool
     public var queuedForDelivery: Bool
     public var transport: String

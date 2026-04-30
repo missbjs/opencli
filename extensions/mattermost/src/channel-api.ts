@@ -1,8 +1,8 @@
-export { createAccountStatusSink } from "openclaw/plugin-sdk/channel-lifecycle";
-export type { ChannelPlugin } from "openclaw/plugin-sdk/core";
-export { DEFAULT_ACCOUNT_ID } from "openclaw/plugin-sdk/core";
+export { createAccountStatusSink } from "opencli/plugin-sdk/channel-lifecycle";
+export type { ChannelPlugin } from "opencli/plugin-sdk/core";
+export { DEFAULT_ACCOUNT_ID } from "opencli/plugin-sdk/core";
 export {
   resolveAllowlistProviderRuntimeGroupPolicy,
   resolveDefaultGroupPolicy,
-} from "openclaw/plugin-sdk/runtime-group-policy";
-export { chunkTextForOutbound } from "openclaw/plugin-sdk/text-chunking";
+} from "opencli/plugin-sdk/runtime-group-policy";
+export { chunkTextForOutbound } from "opencli/plugin-sdk/text-chunking";

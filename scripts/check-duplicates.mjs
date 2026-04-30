@@ -17,7 +17,7 @@ const targets = [
   "qa",
   "security",
   "test",
-  "openclaw.mjs",
+  "opencli.mjs",
   "knip.config.ts",
   "tsdown.config.ts",
   "vitest.config.ts",

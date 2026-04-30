@@ -1,4 +1,4 @@
-import { resolveProviderRequestHeaders } from "openclaw/plugin-sdk/provider-http";
+import { resolveProviderRequestHeaders } from "opencli/plugin-sdk/provider-http";
 import {
   createRealtimeTranscriptionWebSocketSession,
   type RealtimeTranscriptionProviderConfig,
@@ -6,8 +6,8 @@ import {
   type RealtimeTranscriptionSession,
   type RealtimeTranscriptionSessionCreateRequest,
   type RealtimeTranscriptionWebSocketTransport,
-} from "openclaw/plugin-sdk/realtime-transcription";
-import { normalizeResolvedSecretInputString } from "openclaw/plugin-sdk/secret-input";
+} from "opencli/plugin-sdk/realtime-transcription";
+import { normalizeResolvedSecretInputString } from "opencli/plugin-sdk/secret-input";
 import {
   asFiniteNumber,
   readRealtimeErrorDetail,

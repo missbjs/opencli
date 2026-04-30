@@ -5,17 +5,17 @@ describe("buildVitestCapabilityShimAliasMap", () => {
   it("keeps scoped and unscoped capability shim aliases aligned", () => {
     const aliasMap = buildVitestCapabilityShimAliasMap();
 
-    expect(aliasMap["openclaw/plugin-sdk/config-runtime"]).toBe(
-      aliasMap["@openclaw/plugin-sdk/config-runtime"],
+    expect(aliasMap["opencli/plugin-sdk/config-runtime"]).toBe(
+      aliasMap["@opencli/plugin-sdk/config-runtime"],
     );
-    expect(aliasMap["openclaw/plugin-sdk/media-runtime"]).toBe(
-      aliasMap["@openclaw/plugin-sdk/media-runtime"],
+    expect(aliasMap["opencli/plugin-sdk/media-runtime"]).toBe(
+      aliasMap["@opencli/plugin-sdk/media-runtime"],
     );
-    expect(aliasMap["openclaw/plugin-sdk/provider-onboard"]).toBe(
-      aliasMap["@openclaw/plugin-sdk/provider-onboard"],
+    expect(aliasMap["opencli/plugin-sdk/provider-onboard"]).toBe(
+      aliasMap["@opencli/plugin-sdk/provider-onboard"],
     );
-    expect(aliasMap["openclaw/plugin-sdk/speech-core"]).toBe(
-      aliasMap["@openclaw/plugin-sdk/speech-core"],
+    expect(aliasMap["opencli/plugin-sdk/speech-core"]).toBe(
+      aliasMap["@opencli/plugin-sdk/speech-core"],
     );
   });
 });

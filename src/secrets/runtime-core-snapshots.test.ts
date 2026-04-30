@@ -44,12 +44,12 @@ type SecretsRuntimeEnvSnapshot = ReturnType<typeof captureEnv>;
 
 function beginSecretsRuntimeIsolationForTest(): SecretsRuntimeEnvSnapshot {
   const envSnapshot = captureEnv([
-    "OPENCLAW_BUNDLED_PLUGINS_DIR",
-    "OPENCLAW_DISABLE_BUNDLED_PLUGINS",
-    "OPENCLAW_VERSION",
+    "OPENCLI_BUNDLED_PLUGINS_DIR",
+    "OPENCLI_DISABLE_BUNDLED_PLUGINS",
+    "OPENCLI_VERSION",
   ]);
-  delete process.env.OPENCLAW_BUNDLED_PLUGINS_DIR;
-  delete process.env.OPENCLAW_VERSION;
+  delete process.env.OPENCLI_BUNDLED_PLUGINS_DIR;
+  delete process.env.OPENCLI_VERSION;
   return envSnapshot;
 }
 
@@ -79,8 +79,8 @@ describe("secrets runtime snapshot core lanes", () => {
   async function prepareOpenAiRuntimeSnapshot(params?: { includeAuthStoreRefs?: boolean }) {
     return withEnvAsync(
       {
-        OPENCLAW_BUNDLED_PLUGINS_DIR: undefined,
-        OPENCLAW_VERSION: undefined,
+        OPENCLI_BUNDLED_PLUGINS_DIR: undefined,
+        OPENCLI_VERSION: undefined,
       },
       async () =>
         prepareSecretsRuntimeSnapshot({
@@ -96,7 +96,7 @@ describe("secrets runtime snapshot core lanes", () => {
             },
           }),
           env: { OPENAI_API_KEY: "sk-runtime" },
-          agentDirs: ["/tmp/openclaw-agent-main"],
+          agentDirs: ["/tmp/opencli-agent-main"],
           includeAuthStoreRefs: params?.includeAuthStoreRefs,
           loadablePluginOrigins: new Map(),
           loadAuthStore: () =>
@@ -207,7 +207,7 @@ describe("secrets runtime snapshot core lanes", () => {
         OPENAI_API_KEY: "sk-env-openai",
         GITHUB_TOKEN: "ghp-env-token",
       },
-      agentDirs: ["/tmp/openclaw-agent-main"],
+      agentDirs: ["/tmp/opencli-agent-main"],
       loadablePluginOrigins: new Map(),
       loadAuthStore: () =>
         loadAuthStoreWithProfiles({
@@ -228,8 +228,8 @@ describe("secrets runtime snapshot core lanes", () => {
 
     expect(snapshot.warnings.map((warning) => warning.path)).toEqual(
       expect.arrayContaining([
-        "/tmp/openclaw-agent-main.auth-profiles.openai:default.key",
-        "/tmp/openclaw-agent-main.auth-profiles.github-copilot:default.token",
+        "/tmp/opencli-agent-main.auth-profiles.openai:default.key",
+        "/tmp/opencli-agent-main.auth-profiles.github-copilot:default.token",
       ]),
     );
     expect(snapshot.authStores[0]?.store.profiles["openai:default"]).toMatchObject({
@@ -248,7 +248,7 @@ describe("secrets runtime snapshot core lanes", () => {
       env: {
         OPENAI_API_KEY: "sk-env-openai",
       },
-      agentDirs: ["/tmp/openclaw-agent-main"],
+      agentDirs: ["/tmp/opencli-agent-main"],
       loadablePluginOrigins: new Map(),
       loadAuthStore: () =>
         loadAuthStoreWithProfiles({
@@ -286,7 +286,7 @@ describe("secrets runtime snapshot core lanes", () => {
     activateSecretsRuntimeSnapshot(prepared);
 
     expect(
-      ensureAuthProfileStore("/tmp/openclaw-agent-main").profiles["openai:default"],
+      ensureAuthProfileStore("/tmp/opencli-agent-main").profiles["openai:default"],
     ).toMatchObject({
       type: "api_key",
       key: "sk-runtime",

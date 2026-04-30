@@ -8,7 +8,7 @@ import {
   type SessionEntry,
   type SessionHeader,
 } from "@mariozechner/pi-coding-agent";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../../config/types.opencli.js";
 import { collectDuplicateUserMessageEntryIdsForCompaction } from "./compaction-duplicate-user-messages.js";
 
 type ReadonlySessionManagerForRotation = Pick<
@@ -26,7 +26,7 @@ export type CompactionTranscriptRotation = {
   entriesWritten?: number;
 };
 
-export function shouldRotateCompactionTranscript(config?: OpenClawConfig): boolean {
+export function shouldRotateCompactionTranscript(config?: OpenCLIConfig): boolean {
   return config?.agents?.defaults?.compaction?.truncateAfterCompaction === true;
 }
 

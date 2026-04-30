@@ -30,14 +30,14 @@ const hoisted = vi.hoisted(() => {
   }));
   const resolveAgentModelPrimaryValue = vi.fn(() => "");
   const normalizeProviderId = vi.fn((provider: string) => provider.toLowerCase());
-  const resolveOpenClawAgentDir = vi.fn(() => "/tmp/openclaw-state/agents/default/agent");
+  const resolveOpenCLIAgentDir = vi.fn(() => "/tmp/opencli-state/agents/default/agent");
   const isCliProvider = vi.fn(() => false);
   const resolveConfiguredModelRef = vi.fn(() => ({
     provider: "openai",
     model: "gpt-5.4",
   }));
   const resolveEmbeddedAgentRuntime = vi.fn(() => "pi");
-  const ensureOpenClawModelsJson = vi.fn(async () => undefined);
+  const ensureOpenCLIModelsJson = vi.fn(async () => undefined);
   return {
     startPluginServices,
     startGmailWatcherWithLogs,
@@ -59,11 +59,11 @@ const hoisted = vi.hoisted(() => {
     reconcilePendingSessionIdentities,
     resolveAgentModelPrimaryValue,
     normalizeProviderId,
-    resolveOpenClawAgentDir,
+    resolveOpenCLIAgentDir,
     isCliProvider,
     resolveConfiguredModelRef,
     resolveEmbeddedAgentRuntime,
-    ensureOpenClawModelsJson,
+    ensureOpenCLIModelsJson,
   };
 });
 
@@ -83,10 +83,10 @@ vi.mock("../config/paths.js", async () => {
   const actual = await vi.importActual<typeof import("../config/paths.js")>("../config/paths.js");
   return {
     ...actual,
-    STATE_DIR: "/tmp/openclaw-state",
-    resolveConfigPath: vi.fn(() => "/tmp/openclaw-state/openclaw.json"),
+    STATE_DIR: "/tmp/opencli-state",
+    resolveConfigPath: vi.fn(() => "/tmp/opencli-state/opencli.json"),
     resolveGatewayPort: vi.fn(() => 18789),
-    resolveStateDir: vi.fn(() => "/tmp/openclaw-state"),
+    resolveStateDir: vi.fn(() => "/tmp/opencli-state"),
   };
 });
 
@@ -150,11 +150,11 @@ vi.mock("../agents/provider-id.js", () => ({
 }));
 
 vi.mock("../agents/agent-paths.js", () => ({
-  resolveOpenClawAgentDir: hoisted.resolveOpenClawAgentDir,
+  resolveOpenCLIAgentDir: hoisted.resolveOpenCLIAgentDir,
 }));
 
 vi.mock("../agents/agent-scope.js", () => ({
-  resolveAgentWorkspaceDir: vi.fn(() => "/tmp/openclaw-workspace"),
+  resolveAgentWorkspaceDir: vi.fn(() => "/tmp/opencli-workspace"),
   resolveDefaultAgentId: vi.fn(() => "default"),
 }));
 
@@ -173,7 +173,7 @@ vi.mock("../agents/pi-embedded-runner/runtime.js", () => ({
 }));
 
 vi.mock("../agents/models-config.js", () => ({
-  ensureOpenClawModelsJson: hoisted.ensureOpenClawModelsJson,
+  ensureOpenCLIModelsJson: hoisted.ensureOpenCLIModelsJson,
 }));
 
 vi.mock("./server-tailscale.js", () => ({
@@ -190,8 +190,8 @@ type PostAttachRuntimeDeps = NonNullable<Parameters<typeof startGatewayPostAttac
 
 describe("startGatewayPostAttachRuntime", () => {
   beforeEach(() => {
-    vi.stubEnv("OPENCLAW_SKIP_CHANNELS", "0");
-    vi.stubEnv("OPENCLAW_SKIP_PROVIDERS", "0");
+    vi.stubEnv("OPENCLI_SKIP_CHANNELS", "0");
+    vi.stubEnv("OPENCLI_SKIP_PROVIDERS", "0");
     hoisted.startPluginServices.mockClear();
     hoisted.startGmailWatcherWithLogs.mockClear();
     hoisted.loadInternalHooks.mockClear();
@@ -213,14 +213,14 @@ describe("startGatewayPostAttachRuntime", () => {
     hoisted.resolveAgentModelPrimaryValue.mockReset();
     hoisted.resolveAgentModelPrimaryValue.mockReturnValue("");
     hoisted.normalizeProviderId.mockClear();
-    hoisted.resolveOpenClawAgentDir.mockClear();
+    hoisted.resolveOpenCLIAgentDir.mockClear();
     hoisted.isCliProvider.mockReset();
     hoisted.isCliProvider.mockReturnValue(false);
     hoisted.resolveConfiguredModelRef.mockClear();
     hoisted.resolveEmbeddedAgentRuntime.mockReset();
     hoisted.resolveEmbeddedAgentRuntime.mockReturnValue("pi");
-    hoisted.ensureOpenClawModelsJson.mockReset();
-    hoisted.ensureOpenClawModelsJson.mockResolvedValue(undefined);
+    hoisted.ensureOpenCLIModelsJson.mockReset();
+    hoisted.ensureOpenCLIModelsJson.mockResolvedValue(undefined);
   });
 
   afterEach(() => {
@@ -296,7 +296,7 @@ describe("startGatewayPostAttachRuntime", () => {
           memory: { backend: "qmd", qmd: { update: { startup: "idle", startupDelayMs: 25 } } },
         } as never,
         pluginRegistry: createPostAttachParams().pluginRegistry,
-        defaultWorkspaceDir: "/tmp/openclaw-workspace",
+        defaultWorkspaceDir: "/tmp/opencli-workspace",
         deps: {} as never,
         startChannels: vi.fn(async () => undefined),
         log: { warn: vi.fn() },
@@ -383,7 +383,7 @@ describe("startGatewayPostAttachRuntime", () => {
 
   it("starts channels without waiting for primary model prewarm completion", async () => {
     await withEnvAsync(
-      { OPENCLAW_SKIP_CHANNELS: undefined, OPENCLAW_SKIP_PROVIDERS: undefined },
+      { OPENCLI_SKIP_CHANNELS: undefined, OPENCLI_SKIP_PROVIDERS: undefined },
       async () => {
         let resolvePrewarm!: () => void;
         const prewarmPrimaryModel = vi.fn(
@@ -400,7 +400,7 @@ describe("startGatewayPostAttachRuntime", () => {
             agents: { defaults: { model: "openai/gpt-5.4" } },
           } as never,
           pluginRegistry: createPostAttachParams().pluginRegistry,
-          defaultWorkspaceDir: "/tmp/openclaw-workspace",
+          defaultWorkspaceDir: "/tmp/opencli-workspace",
           deps: {} as never,
           startChannels,
           prewarmPrimaryModel: prewarmPrimaryModel as never,
@@ -421,7 +421,7 @@ describe("startGatewayPostAttachRuntime", () => {
             expect(prewarmPrimaryModel).toHaveBeenCalledTimes(1);
             expect(prewarmPrimaryModel).toHaveBeenCalledWith(
               expect.objectContaining({
-                workspaceDir: "/tmp/openclaw-workspace",
+                workspaceDir: "/tmp/opencli-workspace",
               }),
             );
             expect(startChannels).toHaveBeenCalledTimes(1);
@@ -483,7 +483,7 @@ describe("startGatewayPostAttachRuntime", () => {
       await startGatewaySidecars({
         cfg,
         pluginRegistry: createPostAttachParams().pluginRegistry,
-        defaultWorkspaceDir: "/tmp/openclaw-workspace",
+        defaultWorkspaceDir: "/tmp/opencli-workspace",
         deps,
         startChannels: vi.fn(async () => undefined),
         log: { warn: vi.fn() },
@@ -510,7 +510,7 @@ describe("startGatewayPostAttachRuntime", () => {
         {
           cfg,
           deps,
-          workspaceDir: "/tmp/openclaw-workspace",
+          workspaceDir: "/tmp/opencli-workspace",
         },
       );
       expect(hoisted.triggerInternalHook).toHaveBeenCalledWith(hoisted.startupHookEvent);
@@ -533,7 +533,7 @@ describe("startGatewayPostAttachRuntime", () => {
         acp: { enabled: true, backend: "acpx" },
       } as never,
       pluginRegistry: createPostAttachParams().pluginRegistry,
-      defaultWorkspaceDir: "/tmp/openclaw-workspace",
+      defaultWorkspaceDir: "/tmp/opencli-workspace",
       deps: {} as never,
       startChannels: vi.fn(async () => undefined),
       log: { warn: vi.fn() },
@@ -600,7 +600,7 @@ describe("startGatewayPostAttachRuntime", () => {
     expect(ctx).toMatchObject({
       port: 18789,
       config: params.gatewayPluginConfigAtStart,
-      workspaceDir: "/tmp/openclaw-workspace",
+      workspaceDir: "/tmp/opencli-workspace",
     });
     expect(typeof ctx.getCron).toBe("function");
     const getCron = ctx.getCron;
@@ -714,7 +714,7 @@ function createPostAttachParams(overrides: Partial<PostAttachParams> = {}): Post
       ],
       typedHooks: [],
     } as never,
-    defaultWorkspaceDir: "/tmp/openclaw-workspace",
+    defaultWorkspaceDir: "/tmp/opencli-workspace",
     deps: {} as never,
     startChannels: vi.fn(async () => undefined),
     logHooks: {

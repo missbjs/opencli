@@ -1,7 +1,7 @@
 import { randomBytes } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
-import type { OpenClawConfig } from "../config/config.js";
+import type { OpenCLIConfig } from "../config/config.js";
 import { resolveStateDir } from "../config/paths.js";
 import { expandHomePrefix } from "../infra/home-dir.js";
 import {
@@ -191,7 +191,7 @@ function candidateToRecord(params: {
 }
 
 export async function listPendingCommitmentsForScope(params: {
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   scope: CommitmentScope;
   nowMs?: number;
   limit?: number;
@@ -214,7 +214,7 @@ export async function listPendingCommitmentsForScope(params: {
 }
 
 export async function upsertInferredCommitments(params: {
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   item: CommitmentExtractionItem;
   candidates: Array<{
     candidate: CommitmentCandidate;
@@ -288,7 +288,7 @@ function countSentCommitmentsForSession(params: {
 }
 
 export async function listDueCommitmentsForSession(params: {
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   agentId: string;
   sessionKey: string;
   nowMs?: number;
@@ -334,7 +334,7 @@ export async function listDueCommitmentsForSession(params: {
 }
 
 export async function listDueCommitmentSessionKeys(params: {
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   agentId: string;
   nowMs?: number;
   limit?: number;
@@ -371,7 +371,7 @@ export async function listDueCommitmentSessionKeys(params: {
 }
 
 export async function markCommitmentsAttempted(params: {
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   ids: string[];
   nowMs?: number;
 }): Promise<void> {
@@ -400,7 +400,7 @@ export async function markCommitmentsAttempted(params: {
 }
 
 export async function markCommitmentsStatus(params: {
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   ids: string[];
   status: Extract<CommitmentStatus, "sent" | "dismissed" | "expired">;
   nowMs?: number;
@@ -432,7 +432,7 @@ export async function markCommitmentsStatus(params: {
 }
 
 export async function listCommitments(params?: {
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   status?: CommitmentStatus;
   agentId?: string;
 }): Promise<CommitmentRecord[]> {

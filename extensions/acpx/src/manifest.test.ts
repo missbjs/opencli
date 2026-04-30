@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 type AcpxPackageManifest = {
   dependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;
-  openclaw?: {
+  opencli?: {
     bundle?: {
       stageRuntimeDependencies?: boolean;
     };
@@ -21,6 +21,6 @@ describe("acpx package manifest", () => {
     expect(packageJson.dependencies?.["@zed-industries/codex-acp"]).toBe("0.12.0");
     expect(packageJson.dependencies?.["@agentclientprotocol/claude-agent-acp"]).toBe("0.31.1");
     expect(packageJson.devDependencies?.["@agentclientprotocol/claude-agent-acp"]).toBeUndefined();
-    expect(packageJson.openclaw?.bundle?.stageRuntimeDependencies).toBe(true);
+    expect(packageJson.opencli?.bundle?.stageRuntimeDependencies).toBe(true);
   });
 });

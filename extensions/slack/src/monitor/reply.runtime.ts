@@ -9,4 +9,4 @@ export {
   resolveTextChunkLimit,
   settleReplyDispatcher,
   SILENT_REPLY_TOKEN,
-} from "openclaw/plugin-sdk/reply-runtime";
+} from "opencli/plugin-sdk/reply-runtime";

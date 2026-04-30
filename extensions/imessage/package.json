@@ -1,13 +1,13 @@
 {
-  "name": "@openclaw/imessage",
+  "name": "@opencli/imessage",
   "version": "2026.4.25",
   "private": true,
-  "description": "OpenClaw iMessage channel plugin",
+  "description": "OpenCLI iMessage channel plugin",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@opencli/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "opencli": {
     "extensions": [
       "./index.ts"
     ],

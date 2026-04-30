@@ -1,12 +1,12 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
-import { createTestPluginApi } from "openclaw/plugin-sdk/plugin-test-api";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
+import { createTestPluginApi } from "opencli/plugin-sdk/plugin-test-api";
 import {
   registerProviderPlugin,
   requireRegisteredProvider,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
-import * as providerAuth from "openclaw/plugin-sdk/provider-auth-runtime";
-import * as providerHttp from "openclaw/plugin-sdk/provider-http";
-import type { ProviderPlugin } from "openclaw/plugin-sdk/provider-model-shared";
+} from "opencli/plugin-sdk/plugin-test-runtime";
+import * as providerAuth from "opencli/plugin-sdk/provider-auth-runtime";
+import * as providerHttp from "opencli/plugin-sdk/provider-http";
+import type { ProviderPlugin } from "opencli/plugin-sdk/provider-model-shared";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { buildOpenAIImageGenerationProvider } from "./image-generation-provider.js";
 import plugin from "./index.js";
@@ -21,9 +21,9 @@ const runtimeMocks = vi.hoisted(() => ({
   refreshOpenAICodexToken: vi.fn(),
 }));
 
-vi.mock("openclaw/plugin-sdk/runtime-env", async () => {
-  const actual = await vi.importActual<typeof import("openclaw/plugin-sdk/runtime-env")>(
-    "openclaw/plugin-sdk/runtime-env",
+vi.mock("opencli/plugin-sdk/runtime-env", async () => {
+  const actual = await vi.importActual<typeof import("opencli/plugin-sdk/runtime-env")>(
+    "opencli/plugin-sdk/runtime-env",
   );
   return {
     ...actual,
@@ -290,7 +290,7 @@ describe("openai plugin", () => {
               },
             },
           },
-        } satisfies OpenClawConfig,
+        } satisfies OpenCLIConfig,
       }),
     ).rejects.toThrow("Blocked hostname or private/internal/special-use IP address");
 

@@ -4,7 +4,7 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 
 export function defaultLogRoot(): string {
-  return join(homedir(), ".openclaw", "tui-bridge");
+  return join(homedir(), ".opencli", "tui-bridge");
 }
 
 export function safeKey(sessionKey: string): string {

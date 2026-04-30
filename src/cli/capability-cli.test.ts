@@ -419,7 +419,7 @@ describe("capability cli", () => {
   });
 
   it("passes image files to local model probes", async () => {
-    const tempInput = path.join(os.tmpdir(), `openclaw-model-run-image-${Date.now()}.png`);
+    const tempInput = path.join(os.tmpdir(), `opencli-model-run-image-${Date.now()}.png`);
     await fs.writeFile(tempInput, Buffer.from(PNG_1X1_BASE64, "base64"));
 
     await runRegisteredCli({
@@ -464,7 +464,7 @@ describe("capability cli", () => {
   });
 
   it("passes image files to gateway model probes as attachments", async () => {
-    const tempInput = path.join(os.tmpdir(), `openclaw-model-run-gateway-image-${Date.now()}.png`);
+    const tempInput = path.join(os.tmpdir(), `opencli-model-run-gateway-image-${Date.now()}.png`);
     await fs.writeFile(tempInput, Buffer.from(PNG_1X1_BASE64, "base64"));
 
     await runRegisteredCli({
@@ -503,7 +503,7 @@ describe("capability cli", () => {
   });
 
   it("rejects non-image files for model probes", async () => {
-    const tempInput = path.join(os.tmpdir(), `openclaw-model-run-audio-${Date.now()}.mp3`);
+    const tempInput = path.join(os.tmpdir(), `opencli-model-run-audio-${Date.now()}.mp3`);
     await fs.writeFile(tempInput, Buffer.from("not really audio"));
 
     await expect(
@@ -798,7 +798,7 @@ describe("capability cli", () => {
       ],
     });
 
-    const tempOutput = path.join(os.tmpdir(), `openclaw-image-mismatch-${Date.now()}.png`);
+    const tempOutput = path.join(os.tmpdir(), `opencli-image-mismatch-${Date.now()}.png`);
     await fs.rm(tempOutput, { force: true });
     await fs.rm(tempOutput.replace(/\.png$/, ".jpg"), { force: true });
 
@@ -920,7 +920,7 @@ describe("capability cli", () => {
         },
       ],
     });
-    const inputPath = path.join(os.tmpdir(), `openclaw-image-edit-${Date.now()}.png`);
+    const inputPath = path.join(os.tmpdir(), `opencli-image-edit-${Date.now()}.png`);
     await fs.writeFile(inputPath, Buffer.from("png-input"));
 
     await runRegisteredCli({
@@ -1040,8 +1040,8 @@ describe("capability cli", () => {
       ],
     });
 
-    const tempInput = path.join(os.tmpdir(), `openclaw-image-edit-input-${Date.now()}.png`);
-    const tempOutput = path.join(os.tmpdir(), `openclaw-image-edit-output-${Date.now()}.png`);
+    const tempInput = path.join(os.tmpdir(), `opencli-image-edit-input-${Date.now()}.png`);
+    const tempOutput = path.join(os.tmpdir(), `opencli-image-edit-output-${Date.now()}.png`);
     await fs.writeFile(tempInput, Buffer.from(pngBase64, "base64"));
     await fs.rm(tempOutput, { force: true });
 
@@ -1135,7 +1135,7 @@ describe("capability cli", () => {
     );
     vi.stubGlobal("fetch", fetchMock);
 
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-video-generate-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "opencli-video-generate-"));
     const outputBase = path.join(tempDir, "result");
 
     await runRegisteredCli({

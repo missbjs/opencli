@@ -1,5 +1,5 @@
-import { normalizeHostname } from "openclaw/plugin-sdk/host-runtime";
-import { resolveRequestUrl } from "openclaw/plugin-sdk/request-url";
+import { normalizeHostname } from "opencli/plugin-sdk/host-runtime";
+import { resolveRequestUrl } from "opencli/plugin-sdk/request-url";
 import { formatSlackFileReference } from "../file-reference.js";
 import type { SlackAttachment, SlackFile } from "../types.js";
 export { MAX_SLACK_MEDIA_FILES, type SlackMediaResult } from "./media-types.js";

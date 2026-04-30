@@ -7,21 +7,21 @@ import { normalizeModelCatalog } from "../normalize.js";
 import { normalizeModelCatalogProviderId } from "../refs.js";
 import type { ModelCatalogProvider } from "../types.js";
 import type {
-  OpenClawProviderIndex,
-  OpenClawProviderIndexPluginInstall,
-  OpenClawProviderIndexPlugin,
-  OpenClawProviderIndexProviderAuthChoice,
-  OpenClawProviderIndexProvider,
+  OpenCLIProviderIndex,
+  OpenCLIProviderIndexPluginInstall,
+  OpenCLIProviderIndexPlugin,
+  OpenCLIProviderIndexProviderAuthChoice,
+  OpenCLIProviderIndexProvider,
 } from "./types.js";
 
-const OPENCLAW_PROVIDER_INDEX_VERSION = 1;
+const OPENCLI_PROVIDER_INDEX_VERSION = 1;
 
 function normalizeSafeKey(value: unknown): string {
   const key = normalizeOptionalString(value) ?? "";
   return key && !isBlockedObjectKey(key) ? key : "";
 }
 
-function normalizeInstall(value: unknown): OpenClawProviderIndexPluginInstall | undefined {
+function normalizeInstall(value: unknown): OpenCLIProviderIndexPluginInstall | undefined {
   if (!isRecord(value)) {
     return undefined;
   }
@@ -41,7 +41,7 @@ function normalizeInstall(value: unknown): OpenClawProviderIndexPluginInstall | 
   };
 }
 
-function normalizePlugin(value: unknown): OpenClawProviderIndexPlugin | undefined {
+function normalizePlugin(value: unknown): OpenCLIProviderIndexPlugin | undefined {
   if (!isRecord(value)) {
     return undefined;
   }
@@ -84,7 +84,7 @@ function normalizePreviewCatalog(params: {
 
 function normalizeOnboardingScopes(
   value: unknown,
-): OpenClawProviderIndexProviderAuthChoice["onboardingScopes"] | undefined {
+): OpenCLIProviderIndexProviderAuthChoice["onboardingScopes"] | undefined {
   const scopes = normalizeTrimmedStringList(value).filter(
     (scope): scope is "text-inference" | "image-generation" =>
       scope === "text-inference" || scope === "image-generation",
@@ -94,7 +94,7 @@ function normalizeOnboardingScopes(
 
 function normalizeAssistantVisibility(
   value: unknown,
-): OpenClawProviderIndexProviderAuthChoice["assistantVisibility"] | undefined {
+): OpenCLIProviderIndexProviderAuthChoice["assistantVisibility"] | undefined {
   return value === "visible" || value === "manual-only" ? value : undefined;
 }
 
@@ -106,7 +106,7 @@ function normalizeAuthChoice(params: {
   providerId: string;
   providerName: string;
   value: unknown;
-}): OpenClawProviderIndexProviderAuthChoice | undefined {
+}): OpenCLIProviderIndexProviderAuthChoice | undefined {
   if (!isRecord(params.value)) {
     return undefined;
   }
@@ -149,20 +149,20 @@ function normalizeAuthChoices(params: {
   providerId: string;
   providerName: string;
   value: unknown;
-}): readonly OpenClawProviderIndexProviderAuthChoice[] | undefined {
+}): readonly OpenCLIProviderIndexProviderAuthChoice[] | undefined {
   if (!Array.isArray(params.value)) {
     return undefined;
   }
   const choices = params.value
     .map((value) => normalizeAuthChoice({ ...params, value }))
-    .filter((choice): choice is OpenClawProviderIndexProviderAuthChoice => Boolean(choice));
+    .filter((choice): choice is OpenCLIProviderIndexProviderAuthChoice => Boolean(choice));
   return choices.length > 0 ? choices : undefined;
 }
 
 function normalizeProvider(
   rawProviderId: string,
   value: unknown,
-): OpenClawProviderIndexProvider | undefined {
+): OpenCLIProviderIndexProvider | undefined {
   if (!isRecord(value)) {
     return undefined;
   }
@@ -201,14 +201,14 @@ function normalizeProvider(
   };
 }
 
-export function normalizeOpenClawProviderIndex(value: unknown): OpenClawProviderIndex | undefined {
-  if (!isRecord(value) || value.version !== OPENCLAW_PROVIDER_INDEX_VERSION) {
+export function normalizeOpenCLIProviderIndex(value: unknown): OpenCLIProviderIndex | undefined {
+  if (!isRecord(value) || value.version !== OPENCLI_PROVIDER_INDEX_VERSION) {
     return undefined;
   }
   if (!isRecord(value.providers)) {
     return undefined;
   }
-  const providers: Record<string, OpenClawProviderIndexProvider> = {};
+  const providers: Record<string, OpenCLIProviderIndexProvider> = {};
   for (const [rawProviderId, rawProvider] of Object.entries(value.providers)) {
     const providerId = normalizeModelCatalogProviderId(rawProviderId);
     if (!providerId || isBlockedObjectKey(providerId)) {
@@ -220,7 +220,7 @@ export function normalizeOpenClawProviderIndex(value: unknown): OpenClawProvider
     }
   }
   return {
-    version: OPENCLAW_PROVIDER_INDEX_VERSION,
+    version: OPENCLI_PROVIDER_INDEX_VERSION,
     providers: Object.fromEntries(
       Object.entries(providers).toSorted(([left], [right]) => left.localeCompare(right)),
     ),

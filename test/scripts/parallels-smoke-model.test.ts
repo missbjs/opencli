@@ -86,7 +86,7 @@ describe("Parallels smoke model selection", () => {
   it("keeps provider auth and model defaults in the shared TypeScript helper", () => {
     const providerAuth = readFileSync(TS_PATHS.providerAuth, "utf8");
 
-    expect(providerAuth).toContain("OPENCLAW_PARALLELS_OPENAI_MODEL");
+    expect(providerAuth).toContain("OPENCLI_PARALLELS_OPENAI_MODEL");
     expect(providerAuth).toContain("openai/gpt-5.4");
     expect(providerAuth).toContain('authChoice: "openai-api-key"');
     expect(providerAuth).toContain('authChoice: "apiKey"');
@@ -120,7 +120,7 @@ describe("Parallels smoke model selection", () => {
     expect(packageArtifact).toContain("withPackageLock");
     expect(packageArtifact).toContain("Wait for Parallels package lock");
     expect(packageArtifact).toContain("export async function packageVersionFromTgz");
-    expect(packageArtifact).toContain("export async function packOpenClaw");
+    expect(packageArtifact).toContain("export async function packOpenCLI");
     expect(parallelsVm).toContain("export function resolveUbuntuVmName");
     expect(parallelsVm).toContain("export function waitForVmStatus");
     expect(hostServer).toContain("export async function startHostServer");
@@ -137,7 +137,7 @@ describe("Parallels smoke model selection", () => {
   });
 
   it("quotes shell args and resolves fuzzy snapshot hints through the shared TypeScript helper", () => {
-    const tempDir = mkdtempSync(join(tmpdir(), "openclaw-parallels-helper-"));
+    const tempDir = mkdtempSync(join(tmpdir(), "opencli-parallels-helper-"));
     const prlctlPath = join(tempDir, "prlctl");
     writeFileSync(
       prlctlPath,
@@ -177,7 +177,7 @@ console.log([snapshot.id, snapshot.state, snapshot.name].join("\\t"));
   });
 
   it("uses one Ubuntu VM fallback resolver for Linux lanes", () => {
-    const tempDir = mkdtempSync(join(tmpdir(), "openclaw-parallels-vm-helper-"));
+    const tempDir = mkdtempSync(join(tmpdir(), "opencli-parallels-vm-helper-"));
     const prlctlPath = join(tempDir, "prlctl");
     writeFileSync(
       prlctlPath,
@@ -327,7 +327,7 @@ console.log(resolveUbuntuVmName("Ubuntu missing"));
     expect(script).toContain("scripts/e2e/parallels/${platform}-smoke.ts");
     expect(script).toContain('"--model"');
     expect(script).toContain("this.auth.modelId");
-    expect(script).toContain("OPENCLAW_PARALLELS_LINUX_DISABLE_BONJOUR");
+    expect(script).toContain("OPENCLI_PARALLELS_LINUX_DISABLE_BONJOUR");
   });
 
   it("keeps aggregate update guest scripts isolated from the npm-update orchestrator", () => {
@@ -340,7 +340,7 @@ console.log(resolveUbuntuVmName("Ubuntu missing"));
     expect(orchestrator).not.toContain("Remove-FuturePluginEntries");
     expect(updateScripts).toContain("Remove-FuturePluginEntries");
     expect(updateScripts).toContain("scrub_future_plugin_entries");
-    expect(updateScripts).toContain("Invoke-OpenClaw update");
+    expect(updateScripts).toContain("Invoke-OpenCLI update");
     expect(updateScripts).toContain("Parallels npm update smoke test assistant.");
   });
 
@@ -359,7 +359,7 @@ console.log(resolveUbuntuVmName("Ubuntu missing"));
   it("keeps Windows gateway reachability on a real deadline with start recovery", () => {
     const script = readFileSync(TS_PATHS.windows, "utf8");
 
-    expect(script).toContain("OPENCLAW_PARALLELS_WINDOWS_GATEWAY_RECOVERY_AFTER_S");
+    expect(script).toContain("OPENCLI_PARALLELS_WINDOWS_GATEWAY_RECOVERY_AFTER_S");
     expect(script).toContain("Date.now() < deadline");
     expect(script).toContain("gateway start");
     expect(script).toContain("gateway-reachable recovery");
@@ -370,8 +370,8 @@ console.log(resolveUbuntuVmName("Ubuntu missing"));
 
     expect(script).toContain("guestPowerShellBackground");
     expect(script).toContain("Join-Path $env:TEMP");
-    expect(script).toContain("__OPENCLAW_BACKGROUND_DONE__");
-    expect(script).toContain("__OPENCLAW_LOG_OFFSET__");
+    expect(script).toContain("__OPENCLI_BACKGROUND_DONE__");
+    expect(script).toContain("__OPENCLI_LOG_OFFSET__");
     expect(script).toContain('start "" /min powershell.exe');
   });
 
@@ -379,7 +379,7 @@ console.log(resolveUbuntuVmName("Ubuntu missing"));
     const script = readFileSync(TS_PATHS.windows, "utf8");
 
     expect(script).toContain('guestPowerShellBackground(\n      "agent-turn"');
-    expect(script).toContain("OPENCLAW_PARALLELS_WINDOWS_AGENT_TIMEOUT_S");
+    expect(script).toContain("OPENCLI_PARALLELS_WINDOWS_AGENT_TIMEOUT_S");
     expect(script).toContain("finalAssistant(Raw|Visible)Text");
   });
 
@@ -391,15 +391,15 @@ console.log(resolveUbuntuVmName("Ubuntu missing"));
     expect(script).toContain("launch retry");
   });
 
-  it("resolves Windows OpenClaw commands without assuming the npm shim path", () => {
+  it("resolves Windows OpenCLI commands without assuming the npm shim path", () => {
     const powershell = readFileSync(TS_PATHS.powershell, "utf8");
     const windows = readFileSync(TS_PATHS.windows, "utf8");
 
-    expect(powershell).toContain("windowsOpenClawResolver");
-    expect(powershell).toContain("Resolve-OpenClawCommand");
-    expect(powershell).toContain("npm\\node_modules\\openclaw\\openclaw.mjs");
-    expect(windows).toContain("windowsOpenClawResolver");
-    expect(windows).toContain("Invoke-OpenClaw gateway");
-    expect(windows).not.toContain("Join-Path $env:APPDATA 'npm\\\\openclaw.cmd'");
+    expect(powershell).toContain("windowsOpenCLIResolver");
+    expect(powershell).toContain("Resolve-OpenCLICommand");
+    expect(powershell).toContain("npm\\node_modules\\opencli\\opencli.mjs");
+    expect(windows).toContain("windowsOpenCLIResolver");
+    expect(windows).toContain("Invoke-OpenCLI gateway");
+    expect(windows).not.toContain("Join-Path $env:APPDATA 'npm\\\\opencli.cmd'");
   });
 });

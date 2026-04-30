@@ -1,4 +1,4 @@
-import { createPluginSetupWizardStatus } from "openclaw/plugin-sdk/plugin-test-runtime";
+import { createPluginSetupWizardStatus } from "opencli/plugin-sdk/plugin-test-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ResolvedSynologyChatAccount } from "./types.js";
 
@@ -220,7 +220,7 @@ describe("createSynologyChatPlugin", () => {
 
       expect(mockSendMessage).toHaveBeenCalledWith(
         "https://nas/incoming",
-        "OpenClaw: your access has been approved.",
+        "OpenCLI: your access has been approved.",
         "USER1",
         true,
       );

@@ -1,7 +1,7 @@
 {
-  "name": "@openclaw/codex",
+  "name": "@opencli/codex",
   "version": "2026.4.25",
-  "description": "OpenClaw Codex harness and model provider plugin",
+  "description": "OpenCLI Codex harness and model provider plugin",
   "type": "module",
   "dependencies": {
     "@mariozechner/pi-coding-agent": "0.70.6",
@@ -11,9 +11,9 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@opencli/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "opencli": {
     "extensions": [
       "./index.ts"
     ],

@@ -3,4 +3,4 @@ export {
   hasConfiguredSecretInput,
   normalizeResolvedSecretInputString,
   normalizeSecretInputString,
-} from "openclaw/plugin-sdk/secret-input";
+} from "opencli/plugin-sdk/secret-input";

@@ -1,17 +1,17 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
 import {
   createEmptyPluginRegistry,
   setActivePluginRegistry,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
-import { clearSessionStoreCacheForTest } from "openclaw/plugin-sdk/session-store-runtime";
+} from "opencli/plugin-sdk/plugin-test-runtime";
+import { clearSessionStoreCacheForTest } from "opencli/plugin-sdk/session-store-runtime";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { ChannelType, type AutocompleteInteraction } from "../internal/discord.js";
 import { createNoopThreadBindingManager } from "./thread-bindings.js";
 
-type ConversationRuntimeModule = typeof import("openclaw/plugin-sdk/conversation-binding-runtime");
+type ConversationRuntimeModule = typeof import("opencli/plugin-sdk/conversation-binding-runtime");
 type ResolveConfiguredBindingRoute = ConversationRuntimeModule["resolveConfiguredBindingRoute"];
 type ConfiguredBindingRouteResult = ReturnType<ResolveConfiguredBindingRoute>;
 type EnsureConfiguredBindingRouteReady =
@@ -77,26 +77,26 @@ function createConfiguredRouteResult(
   };
 }
 
-vi.mock("openclaw/plugin-sdk/conversation-binding-runtime", async () => {
+vi.mock("opencli/plugin-sdk/conversation-binding-runtime", async () => {
   const { createConfiguredBindingConversationRuntimeModuleMock } =
     await import("../test-support/configured-binding-runtime.js");
   return await createConfiguredBindingConversationRuntimeModuleMock<
-    typeof import("openclaw/plugin-sdk/conversation-binding-runtime")
+    typeof import("opencli/plugin-sdk/conversation-binding-runtime")
   >(
     {
       ensureConfiguredBindingRouteReadyMock,
       resolveConfiguredBindingRouteMock,
     },
     () =>
-      vi.importActual<typeof import("openclaw/plugin-sdk/conversation-binding-runtime")>(
-        "openclaw/plugin-sdk/conversation-binding-runtime",
+      vi.importActual<typeof import("opencli/plugin-sdk/conversation-binding-runtime")>(
+        "opencli/plugin-sdk/conversation-binding-runtime",
       ),
   );
 });
 
-vi.mock("openclaw/plugin-sdk/agent-runtime", () => ({
+vi.mock("opencli/plugin-sdk/agent-runtime", () => ({
   normalizeProviderId: (value: string) => value.trim().toLowerCase(),
-  resolveDefaultModelForAgent: (params: { cfg: OpenClawConfig }) => {
+  resolveDefaultModelForAgent: (params: { cfg: OpenCLIConfig }) => {
     const configuredModel = params.cfg.agents?.defaults?.model;
     const primary =
       typeof configuredModel === "string"
@@ -116,17 +116,14 @@ vi.mock("openclaw/plugin-sdk/agent-runtime", () => ({
   },
 }));
 
-vi.mock("openclaw/plugin-sdk/models-provider-runtime", () => ({
+vi.mock("opencli/plugin-sdk/models-provider-runtime", () => ({
   buildModelsProviderData: buildModelsProviderDataMock,
 }));
 
-const STORE_PATH = path.join(
-  os.tmpdir(),
-  `openclaw-discord-think-autocomplete-${process.pid}.json`,
-);
+const STORE_PATH = path.join(os.tmpdir(), `opencli-discord-think-autocomplete-${process.pid}.json`);
 const SESSION_KEY = "agent:main:main";
-let findCommandByNativeName: typeof import("openclaw/plugin-sdk/command-auth").findCommandByNativeName;
-let resolveCommandArgChoices: typeof import("openclaw/plugin-sdk/command-auth").resolveCommandArgChoices;
+let findCommandByNativeName: typeof import("opencli/plugin-sdk/command-auth").findCommandByNativeName;
+let resolveCommandArgChoices: typeof import("opencli/plugin-sdk/command-auth").resolveCommandArgChoices;
 let resolveDiscordNativeChoiceContext: typeof import("./native-command-ui.js").resolveDiscordNativeChoiceContext;
 
 function installProviderThinkingRegistryForTest(): void {
@@ -167,7 +164,7 @@ function installProviderThinkingRegistryForTest(): void {
 async function loadDiscordThinkAutocompleteModulesForTest() {
   vi.resetModules();
   installProviderThinkingRegistryForTest();
-  const commandAuth = await import("openclaw/plugin-sdk/command-auth");
+  const commandAuth = await import("opencli/plugin-sdk/command-auth");
   const nativeCommandUi = await import("./native-command-ui.js");
   return {
     findCommandByNativeName: commandAuth.findCommandByNativeName,
@@ -251,7 +248,7 @@ describe("discord native /think autocomplete", () => {
       session: {
         store: STORE_PATH,
       },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
   }
 
   it("uses the session override context for /think choices", async () => {

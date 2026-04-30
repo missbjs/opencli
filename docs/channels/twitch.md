@@ -1,17 +1,17 @@
 ---
 summary: "Twitch chat bot configuration and setup"
 read_when:
-  - Setting up Twitch chat integration for OpenClaw
+  - Setting up Twitch chat integration for OpenCLI
 title: "Twitch"
 sidebarTitle: "Twitch"
 ---
 
-Twitch chat support via IRC connection. OpenClaw connects as a Twitch user (bot account) to receive and send messages in channels.
+Twitch chat support via IRC connection. OpenCLI connects as a Twitch user (bot account) to receive and send messages in channels.
 
 ## Bundled plugin
 
 <Note>
-Twitch ships as a bundled plugin in current OpenClaw releases, so normal packaged builds do not need a separate install.
+Twitch ships as a bundled plugin in current OpenCLI releases, so normal packaged builds do not need a separate install.
 </Note>
 
 If you are on an older build or a custom install that excludes Twitch, install a current npm package when one is published:
@@ -19,18 +19,18 @@ If you are on an older build or a custom install that excludes Twitch, install a
 <Tabs>
   <Tab title="npm registry">
     ```bash
-    openclaw plugins install @openclaw/twitch
+    opencli plugins install @opencli/twitch
     ```
   </Tab>
   <Tab title="Local checkout">
     ```bash
-    openclaw plugins install ./path/to/local/twitch-plugin
+    opencli plugins install ./path/to/local/twitch-plugin
     ```
   </Tab>
 </Tabs>
 
-If npm reports the OpenClaw-owned package as deprecated, use a current packaged
-OpenClaw build or the local checkout path until a newer npm package is
+If npm reports the OpenCLI-owned package as deprecated, use a current packaged
+OpenCLI build or the local checkout path until a newer npm package is
 published.
 
 Details: [Plugins](/tools/plugin)
@@ -39,7 +39,7 @@ Details: [Plugins](/tools/plugin)
 
 <Steps>
   <Step title="Ensure plugin is available">
-    Current packaged OpenClaw releases already bundle it. Older/custom installs can add it manually with the commands above.
+    Current packaged OpenCLI releases already bundle it. Older/custom installs can add it manually with the commands above.
   </Step>
   <Step title="Create a Twitch bot account">
     Create a dedicated Twitch account for the bot (or use an existing account).
@@ -56,7 +56,7 @@ Details: [Plugins](/tools/plugin)
     Use [https://www.streamweasels.com/tools/convert-twitch-username-to-user-id/](https://www.streamweasels.com/tools/convert-twitch-username-to-user-id/) to convert a username to a Twitch user ID.
   </Step>
   <Step title="Configure the token">
-    - Env: `OPENCLAW_TWITCH_ACCESS_TOKEN=...` (default account only)
+    - Env: `OPENCLI_TWITCH_ACCESS_TOKEN=...` (default account only)
     - Or config: `channels.twitch.accessToken`
 
     If both are set, config takes precedence (env fallback is default-account only).
@@ -78,8 +78,8 @@ Minimal config:
   channels: {
     twitch: {
       enabled: true,
-      username: "openclaw", // Bot's Twitch account
-      accessToken: "oauth:abc123...", // OAuth Access Token (or use OPENCLAW_TWITCH_ACCESS_TOKEN env var)
+      username: "opencli", // Bot's Twitch account
+      accessToken: "oauth:abc123...", // OAuth Access Token (or use OPENCLI_TWITCH_ACCESS_TOKEN env var)
       clientId: "xyz789...", // Client ID from Token Generator
       channel: "vevisk", // Which Twitch channel's chat to join (required)
       allowFrom: ["123456789"], // (recommended) Your Twitch user ID only - get it from https://www.streamweasels.com/tools/convert-twitch-username-to-user-id/
@@ -114,7 +114,7 @@ No manual app registration needed. Tokens expire after several hours.
 <Tabs>
   <Tab title="Env var (default account only)">
     ```bash
-    OPENCLAW_TWITCH_ACCESS_TOKEN=oauth:abc123...
+    OPENCLI_TWITCH_ACCESS_TOKEN=oauth:abc123...
     ```
   </Tab>
   <Tab title="Config">
@@ -123,7 +123,7 @@ No manual app registration needed. Tokens expire after several hours.
       channels: {
         twitch: {
           enabled: true,
-          username: "openclaw",
+          username: "opencli",
           accessToken: "oauth:abc123...",
           clientId: "xyz789...",
           channel: "vevisk",
@@ -189,13 +189,13 @@ Example (one bot account in two channels):
     twitch: {
       accounts: {
         channel1: {
-          username: "openclaw",
+          username: "opencli",
           accessToken: "oauth:abc123...",
           clientId: "xyz789...",
           channel: "vevisk",
         },
         channel2: {
-          username: "openclaw",
+          username: "opencli",
           accessToken: "oauth:def456...",
           clientId: "uvw012...",
           channel: "secondchannel",
@@ -271,8 +271,8 @@ Each account needs its own token (one token per channel).
 First, run diagnostic commands:
 
 ```bash
-openclaw doctor
-openclaw channels status --probe
+opencli doctor
+opencli channels status --probe
 ```
 
 <AccordionGroup>
@@ -362,7 +362,7 @@ Full example:
   channels: {
     twitch: {
       enabled: true,
-      username: "openclaw",
+      username: "opencli",
       accessToken: "oauth:abc123...",
       clientId: "xyz789...",
       channel: "vevisk",

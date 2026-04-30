@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { OpenCLIConfig } from "../../config/config.js";
 import { resetPluginRuntimeStateForTest } from "../../plugins/runtime.js";
 
 describe("group runtime loading", () => {
@@ -47,7 +47,7 @@ describe("group runtime loading", () => {
     expect(toolOnlyContext).not.toContain('reply with exactly "NO_REPLY"');
     expect(
       groups.buildGroupIntro({
-        cfg: {} as OpenClawConfig,
+        cfg: {} as OpenCLIConfig,
         sessionCtx: { Provider: "whatsapp" },
         defaultActivation: "mention",
         silentToken: "NO_REPLY",
@@ -78,7 +78,7 @@ describe("group runtime loading", () => {
         silentReplyRewrite: true,
         silentToken: "NO_REPLY",
       }),
-    ).toContain("so OpenClaw can send a short fallback reply");
+    ).toContain("so OpenCLI can send a short fallback reply");
 
     expect(
       groups.buildDirectChatContext({
@@ -180,7 +180,7 @@ describe("group runtime loading", () => {
               },
             },
           },
-        } as unknown as OpenClawConfig,
+        } as unknown as OpenCLIConfig,
         ctx: {
           Provider: "slack",
           From: "slack:channel:C123",
@@ -220,7 +220,7 @@ describe("group runtime loading", () => {
               },
             },
           },
-        } as unknown as OpenClawConfig,
+        } as unknown as OpenCLIConfig,
         ctx: {
           Provider: "discord",
           From: "discord:channel:C1",
@@ -262,7 +262,7 @@ describe("group runtime loading", () => {
               },
             },
           },
-        } as unknown as OpenClawConfig,
+        } as unknown as OpenCLIConfig,
         ctx: {
           Provider: "discord",
           From: "discord:channel:C1",

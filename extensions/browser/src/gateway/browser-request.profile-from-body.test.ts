@@ -8,10 +8,10 @@ const { loadConfigMock, isNodeCommandAllowedMock, resolveNodeCommandAllowlistMoc
   }),
 );
 
-vi.mock("openclaw/plugin-sdk/runtime-config-snapshot", async () => {
-  const actual = await vi.importActual<
-    typeof import("openclaw/plugin-sdk/runtime-config-snapshot")
-  >("openclaw/plugin-sdk/runtime-config-snapshot");
+vi.mock("opencli/plugin-sdk/runtime-config-snapshot", async () => {
+  const actual = await vi.importActual<typeof import("opencli/plugin-sdk/runtime-config-snapshot")>(
+    "opencli/plugin-sdk/runtime-config-snapshot",
+  );
   return {
     ...actual,
     loadConfig: loadConfigMock,

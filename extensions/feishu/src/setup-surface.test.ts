@@ -4,7 +4,7 @@ import {
   createPluginSetupWizardStatus,
   createTestWizardPrompter,
   runSetupWizardConfigure,
-} from "openclaw/plugin-sdk/plugin-test-runtime";
+} from "opencli/plugin-sdk/plugin-test-runtime";
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("./probe.js", () => ({

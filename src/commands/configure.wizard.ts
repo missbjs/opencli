@@ -7,7 +7,7 @@ import { commitConfigWithPendingPluginInstalls } from "../cli/plugins-install-re
 import { readConfigFileSnapshot, resolveGatewayPort } from "../config/config.js";
 import { logConfigUpdated } from "../config/logging.js";
 import { ConfigMutationConflictError } from "../config/mutate.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { ensureControlUiAssetsBuilt } from "../infra/control-ui-assets.js";
 import { resolvePluginContributionOwners } from "../plugins/plugin-registry.js";
 import type { RuntimeEnv } from "../runtime.js";
@@ -84,7 +84,7 @@ function mergeWizardConfigOntoLatest(current: unknown, base: unknown, next: unkn
 }
 
 async function resolveGatewaySecretInputForWizard(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   value: unknown;
   path: string;
 }): Promise<string | undefined> {
@@ -101,7 +101,7 @@ async function resolveGatewaySecretInputForWizard(params: {
 }
 
 async function runGatewayHealthCheck(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   runtime: RuntimeEnv;
   port: number;
 }): Promise<void> {
@@ -124,8 +124,8 @@ async function runGatewayHealthCheck(params: {
     value: params.cfg.gateway?.auth?.password,
     path: "gateway.auth.password",
   });
-  const token = process.env.OPENCLAW_GATEWAY_TOKEN ?? configuredToken;
-  const password = process.env.OPENCLAW_GATEWAY_PASSWORD ?? configuredPassword;
+  const token = process.env.OPENCLI_GATEWAY_TOKEN ?? configuredToken;
+  const password = process.env.OPENCLI_GATEWAY_PASSWORD ?? configuredPassword;
 
   await waitForGatewayReachable({
     url: wsUrl,
@@ -141,8 +141,8 @@ async function runGatewayHealthCheck(params: {
     note(
       [
         "Docs:",
-        "https://docs.openclaw.ai/gateway/health",
-        "https://docs.openclaw.ai/gateway/troubleshooting",
+        "https://docs.opencli.ai/gateway/health",
+        "https://docs.opencli.ai/gateway/troubleshooting",
       ].join("\n"),
       "Health check help",
     );
@@ -183,7 +183,7 @@ async function promptChannelMode(runtime: RuntimeEnv): Promise<ChannelsWizardMod
         {
           value: "remove",
           label: "Remove channel config",
-          hint: "Delete channel tokens/settings from openclaw.json",
+          hint: "Delete channel tokens/settings from opencli.json",
         },
       ],
       initialValue: "configure",
@@ -193,11 +193,11 @@ async function promptChannelMode(runtime: RuntimeEnv): Promise<ChannelsWizardMod
 }
 
 async function promptWebToolsConfig(
-  nextConfig: OpenClawConfig,
+  nextConfig: OpenCLIConfig,
   runtime: RuntimeEnv,
   prompter: ReturnType<typeof createClackPrompter>,
-): Promise<OpenClawConfig> {
-  type WebSearchConfig = NonNullable<NonNullable<OpenClawConfig["tools"]>["web"]>["search"];
+): Promise<OpenCLIConfig> {
+  type WebSearchConfig = NonNullable<NonNullable<OpenCLIConfig["tools"]>["web"]>["search"];
   const existingSearch = nextConfig.tools?.web?.search;
   const existingFetch = nextConfig.tools?.web?.fetch;
   const { isCodexNativeWebSearchRelevant } = await import("../agents/codex-native-web-search.js");
@@ -212,7 +212,7 @@ async function promptWebToolsConfig(
     [
       "Web search lets your agent look things up online using the `web_search` tool.",
       "Choose a managed provider now, and Codex-capable models can also use native Codex web search.",
-      "Docs: https://docs.openclaw.ai/tools/web",
+      "Docs: https://docs.opencli.ai/tools/web",
     ].join("\n"),
     "Web search",
   );
@@ -310,7 +310,7 @@ async function promptWebToolsConfig(
           [
             "No web search providers are currently available under this plugin policy.",
             "Enable plugins or remove deny rules, then rerun configure.",
-            "Docs: https://docs.openclaw.ai/tools/web",
+            "Docs: https://docs.opencli.ai/tools/web",
           ].join("\n"),
           "Web search",
         );
@@ -365,12 +365,12 @@ export async function runConfigureWizard(
   runtime: RuntimeEnv = defaultRuntime,
 ) {
   try {
-    intro(opts.command === "update" ? "OpenClaw update wizard" : "OpenClaw configure");
+    intro(opts.command === "update" ? "OpenCLI update wizard" : "OpenCLI configure");
     const prompter = createClackPrompter();
 
     const snapshot = await readConfigFileSnapshot();
     let currentBaseHash = snapshot.hash;
-    const baseConfig: OpenClawConfig = snapshot.valid
+    const baseConfig: OpenCLIConfig = snapshot.valid
       ? (snapshot.sourceConfig ?? snapshot.config)
       : {};
 
@@ -382,14 +382,14 @@ export async function runConfigureWizard(
           [
             ...snapshot.issues.map((iss) => `- ${iss.path}: ${iss.message}`),
             "",
-            "Docs: https://docs.openclaw.ai/gateway/configuration",
+            "Docs: https://docs.opencli.ai/gateway/configuration",
           ].join("\n"),
           "Config issues",
         );
       }
       if (!snapshot.valid) {
         outro(
-          `Config invalid. Run \`${formatCliCommand("openclaw doctor")}\` to repair it, then re-run configure.`,
+          `Config invalid. Run \`${formatCliCommand("opencli doctor")}\` to repair it, then re-run configure.`,
         );
         runtime.exit(1);
         return;
@@ -413,8 +413,8 @@ export async function runConfigureWizard(
       ]);
       return probeGatewayReachable({
         url: localUrl,
-        token: process.env.OPENCLAW_GATEWAY_TOKEN ?? baseLocalProbeToken,
-        password: process.env.OPENCLAW_GATEWAY_PASSWORD ?? baseLocalProbePassword,
+        token: process.env.OPENCLI_GATEWAY_TOKEN ?? baseLocalProbeToken,
+        password: process.env.OPENCLI_GATEWAY_PASSWORD ?? baseLocalProbePassword,
         timeoutMs: GATEWAY_HINT_PROBE_TIMEOUT_MS,
       });
     })();
@@ -532,7 +532,7 @@ export async function runConfigureWizard(
               diskConfig,
               mergeBaseConfig,
               nextConfig,
-            ) as OpenClawConfig;
+            ) as OpenCLIConfig;
             continue;
           }
           throw err;
@@ -768,21 +768,21 @@ export async function runConfigureWizard(
       tlsEnabled: nextConfig.gateway?.tls?.enabled === true,
     });
     const newPassword =
-      process.env.OPENCLAW_GATEWAY_PASSWORD ??
+      process.env.OPENCLI_GATEWAY_PASSWORD ??
       (await resolveGatewaySecretInputForWizard({
         cfg: nextConfig,
         value: nextConfig.gateway?.auth?.password,
         path: "gateway.auth.password",
       }));
     const oldPassword =
-      process.env.OPENCLAW_GATEWAY_PASSWORD ??
+      process.env.OPENCLI_GATEWAY_PASSWORD ??
       (await resolveGatewaySecretInputForWizard({
         cfg: baseConfig,
         value: baseConfig.gateway?.auth?.password,
         path: "gateway.auth.password",
       }));
     const token =
-      process.env.OPENCLAW_GATEWAY_TOKEN ??
+      process.env.OPENCLI_GATEWAY_TOKEN ??
       (await resolveGatewaySecretInputForWizard({
         cfg: nextConfig,
         value: nextConfig.gateway?.auth?.token,
@@ -810,7 +810,7 @@ export async function runConfigureWizard(
         `Web UI: ${links.httpUrl}`,
         `Gateway WS: ${links.wsUrl}`,
         gatewayStatusLine,
-        "Docs: https://docs.openclaw.ai/web/control-ui",
+        "Docs: https://docs.opencli.ai/web/control-ui",
       ].join("\n"),
       "Control UI",
     );

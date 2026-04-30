@@ -1,15 +1,12 @@
-import { describeAccountSnapshot } from "openclaw/plugin-sdk/account-helpers";
+import { describeAccountSnapshot } from "opencli/plugin-sdk/account-helpers";
 import {
   adaptScopedAccountAccessor,
   createScopedChannelConfigAdapter,
-} from "openclaw/plugin-sdk/channel-config-helpers";
-import { createRestrictSendersChannelSecurity } from "openclaw/plugin-sdk/channel-policy";
-import { createChannelPluginBase, getChatChannelMeta } from "openclaw/plugin-sdk/core";
-import type { ChannelPlugin } from "openclaw/plugin-sdk/core";
-import {
-  normalizeE164,
-  normalizeStringifiedOptionalString,
-} from "openclaw/plugin-sdk/text-runtime";
+} from "opencli/plugin-sdk/channel-config-helpers";
+import { createRestrictSendersChannelSecurity } from "opencli/plugin-sdk/channel-policy";
+import { createChannelPluginBase, getChatChannelMeta } from "opencli/plugin-sdk/core";
+import type { ChannelPlugin } from "opencli/plugin-sdk/core";
+import { normalizeE164, normalizeStringifiedOptionalString } from "opencli/plugin-sdk/text-runtime";
 import {
   listSignalAccountIds,
   resolveDefaultSignalAccountId,

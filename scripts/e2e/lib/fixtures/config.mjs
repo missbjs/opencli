@@ -2,7 +2,7 @@ import path from "node:path";
 import { requireArg, writeJson } from "./common.mjs";
 
 function writeConfig(kind) {
-  const configPath = requireArg(process.env.OPENCLAW_CONFIG_PATH, "OPENCLAW_CONFIG_PATH");
+  const configPath = requireArg(process.env.OPENCLI_CONFIG_PATH, "OPENCLI_CONFIG_PATH");
   const port = Number(process.env.PORT ?? 18789);
   const config =
     kind === "config-reload"
@@ -24,7 +24,7 @@ function writeConfig(kind) {
               port,
               auth: {
                 mode: "token",
-                token: requireArg(process.env.OPENCLAW_GATEWAY_TOKEN, "OPENCLAW_GATEWAY_TOKEN"),
+                token: requireArg(process.env.OPENCLI_GATEWAY_TOKEN, "OPENCLI_GATEWAY_TOKEN"),
               },
               controlUi: { enabled: false },
             },
@@ -45,7 +45,7 @@ function writeConfig(kind) {
 }
 
 function writeOpenAiWebSearchMinimalConfig() {
-  writeJson(path.join(process.env.OPENCLAW_STATE_DIR, "openclaw.json"), {
+  writeJson(path.join(process.env.OPENCLI_STATE_DIR, "opencli.json"), {
     agents: {
       defaults: {
         model: { primary: "openai/gpt-5" },
@@ -81,15 +81,12 @@ function writeOpenAiWebSearchMinimalConfig() {
     },
     tools: { web: { search: { enabled: true, maxResults: 3 } } },
     plugins: { enabled: true, allow: ["openai"], entries: { openai: { enabled: true } } },
-    gateway: { auth: { mode: "token", token: process.env.OPENCLAW_GATEWAY_TOKEN } },
+    gateway: { auth: { mode: "token", token: process.env.OPENCLI_GATEWAY_TOKEN } },
   });
 }
 
 function writeOpenWebUiConfig([openaiApiKey]) {
-  const batchPath = requireArg(
-    process.env.OPENCLAW_CONFIG_BATCH_PATH,
-    "OPENCLAW_CONFIG_BATCH_PATH",
-  );
+  const batchPath = requireArg(process.env.OPENCLI_CONFIG_BATCH_PATH, "OPENCLI_CONFIG_BATCH_PATH");
   writeJson(batchPath, [
     { path: "models.providers.openai.apiKey", value: requireArg(openaiApiKey, "OpenAI API key") },
     {
@@ -101,9 +98,9 @@ function writeOpenWebUiConfig([openaiApiKey]) {
     { path: "gateway.mode", value: "local" },
     { path: "gateway.bind", value: "lan" },
     { path: "gateway.auth.mode", value: "token" },
-    { path: "gateway.auth.token", value: process.env.OPENCLAW_GATEWAY_TOKEN },
+    { path: "gateway.auth.token", value: process.env.OPENCLI_GATEWAY_TOKEN },
     { path: "gateway.http.endpoints.chatCompletions.enabled", value: true },
-    { path: "agents.defaults.model.primary", value: process.env.OPENCLAW_OPENWEBUI_MODEL },
+    { path: "agents.defaults.model.primary", value: process.env.OPENCLI_OPENWEBUI_MODEL },
   ]);
 }
 

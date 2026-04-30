@@ -1,6 +1,6 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import type { PluginRuntime } from "./runtime/types.js";
-import type { OpenClawPluginApi, PluginLogger } from "./types.js";
+import type { OpenCLIPluginApi, PluginLogger } from "./types.js";
 
 export type BuildPluginApiParams = {
   id: string;
@@ -9,15 +9,15 @@ export type BuildPluginApiParams = {
   description?: string;
   source: string;
   rootDir?: string;
-  registrationMode: OpenClawPluginApi["registrationMode"];
-  config: OpenClawConfig;
+  registrationMode: OpenCLIPluginApi["registrationMode"];
+  config: OpenCLIConfig;
   pluginConfig?: Record<string, unknown>;
   runtime: PluginRuntime;
   logger: PluginLogger;
   resolvePath: (input: string) => string;
   handlers?: Partial<
     Pick<
-      OpenClawPluginApi,
+      OpenCLIPluginApi,
       | "registerTool"
       | "registerHook"
       | "registerHttpRoute"
@@ -76,80 +76,80 @@ export type BuildPluginApiParams = {
   >;
 };
 
-const noopRegisterTool: OpenClawPluginApi["registerTool"] = () => {};
-const noopRegisterHook: OpenClawPluginApi["registerHook"] = () => {};
-const noopRegisterHttpRoute: OpenClawPluginApi["registerHttpRoute"] = () => {};
-const noopRegisterChannel: OpenClawPluginApi["registerChannel"] = () => {};
-const noopRegisterGatewayMethod: OpenClawPluginApi["registerGatewayMethod"] = () => {};
-const noopRegisterCli: OpenClawPluginApi["registerCli"] = () => {};
-const noopRegisterReload: OpenClawPluginApi["registerReload"] = () => {};
-const noopRegisterNodeHostCommand: OpenClawPluginApi["registerNodeHostCommand"] = () => {};
-const noopRegisterSecurityAuditCollector: OpenClawPluginApi["registerSecurityAuditCollector"] =
+const noopRegisterTool: OpenCLIPluginApi["registerTool"] = () => {};
+const noopRegisterHook: OpenCLIPluginApi["registerHook"] = () => {};
+const noopRegisterHttpRoute: OpenCLIPluginApi["registerHttpRoute"] = () => {};
+const noopRegisterChannel: OpenCLIPluginApi["registerChannel"] = () => {};
+const noopRegisterGatewayMethod: OpenCLIPluginApi["registerGatewayMethod"] = () => {};
+const noopRegisterCli: OpenCLIPluginApi["registerCli"] = () => {};
+const noopRegisterReload: OpenCLIPluginApi["registerReload"] = () => {};
+const noopRegisterNodeHostCommand: OpenCLIPluginApi["registerNodeHostCommand"] = () => {};
+const noopRegisterSecurityAuditCollector: OpenCLIPluginApi["registerSecurityAuditCollector"] =
   () => {};
-const noopRegisterService: OpenClawPluginApi["registerService"] = () => {};
-const noopRegisterGatewayDiscoveryService: OpenClawPluginApi["registerGatewayDiscoveryService"] =
+const noopRegisterService: OpenCLIPluginApi["registerService"] = () => {};
+const noopRegisterGatewayDiscoveryService: OpenCLIPluginApi["registerGatewayDiscoveryService"] =
   () => {};
-const noopRegisterCliBackend: OpenClawPluginApi["registerCliBackend"] = () => {};
-const noopRegisterTextTransforms: OpenClawPluginApi["registerTextTransforms"] = () => {};
-const noopRegisterConfigMigration: OpenClawPluginApi["registerConfigMigration"] = () => {};
-const noopRegisterMigrationProvider: OpenClawPluginApi["registerMigrationProvider"] = () => {};
-const noopRegisterAutoEnableProbe: OpenClawPluginApi["registerAutoEnableProbe"] = () => {};
-const noopRegisterProvider: OpenClawPluginApi["registerProvider"] = () => {};
-const noopRegisterSpeechProvider: OpenClawPluginApi["registerSpeechProvider"] = () => {};
-const noopRegisterRealtimeTranscriptionProvider: OpenClawPluginApi["registerRealtimeTranscriptionProvider"] =
+const noopRegisterCliBackend: OpenCLIPluginApi["registerCliBackend"] = () => {};
+const noopRegisterTextTransforms: OpenCLIPluginApi["registerTextTransforms"] = () => {};
+const noopRegisterConfigMigration: OpenCLIPluginApi["registerConfigMigration"] = () => {};
+const noopRegisterMigrationProvider: OpenCLIPluginApi["registerMigrationProvider"] = () => {};
+const noopRegisterAutoEnableProbe: OpenCLIPluginApi["registerAutoEnableProbe"] = () => {};
+const noopRegisterProvider: OpenCLIPluginApi["registerProvider"] = () => {};
+const noopRegisterSpeechProvider: OpenCLIPluginApi["registerSpeechProvider"] = () => {};
+const noopRegisterRealtimeTranscriptionProvider: OpenCLIPluginApi["registerRealtimeTranscriptionProvider"] =
   () => {};
-const noopRegisterRealtimeVoiceProvider: OpenClawPluginApi["registerRealtimeVoiceProvider"] =
+const noopRegisterRealtimeVoiceProvider: OpenCLIPluginApi["registerRealtimeVoiceProvider"] =
   () => {};
-const noopRegisterMediaUnderstandingProvider: OpenClawPluginApi["registerMediaUnderstandingProvider"] =
+const noopRegisterMediaUnderstandingProvider: OpenCLIPluginApi["registerMediaUnderstandingProvider"] =
   () => {};
-const noopRegisterImageGenerationProvider: OpenClawPluginApi["registerImageGenerationProvider"] =
+const noopRegisterImageGenerationProvider: OpenCLIPluginApi["registerImageGenerationProvider"] =
   () => {};
-const noopRegisterVideoGenerationProvider: OpenClawPluginApi["registerVideoGenerationProvider"] =
+const noopRegisterVideoGenerationProvider: OpenCLIPluginApi["registerVideoGenerationProvider"] =
   () => {};
-const noopRegisterMusicGenerationProvider: OpenClawPluginApi["registerMusicGenerationProvider"] =
+const noopRegisterMusicGenerationProvider: OpenCLIPluginApi["registerMusicGenerationProvider"] =
   () => {};
-const noopRegisterWebFetchProvider: OpenClawPluginApi["registerWebFetchProvider"] = () => {};
-const noopRegisterWebSearchProvider: OpenClawPluginApi["registerWebSearchProvider"] = () => {};
-const noopRegisterInteractiveHandler: OpenClawPluginApi["registerInteractiveHandler"] = () => {};
-const noopOnConversationBindingResolved: OpenClawPluginApi["onConversationBindingResolved"] =
+const noopRegisterWebFetchProvider: OpenCLIPluginApi["registerWebFetchProvider"] = () => {};
+const noopRegisterWebSearchProvider: OpenCLIPluginApi["registerWebSearchProvider"] = () => {};
+const noopRegisterInteractiveHandler: OpenCLIPluginApi["registerInteractiveHandler"] = () => {};
+const noopOnConversationBindingResolved: OpenCLIPluginApi["onConversationBindingResolved"] =
   () => {};
-const noopRegisterCommand: OpenClawPluginApi["registerCommand"] = () => {};
-const noopRegisterContextEngine: OpenClawPluginApi["registerContextEngine"] = () => {};
-const noopRegisterCompactionProvider: OpenClawPluginApi["registerCompactionProvider"] = () => {};
-const noopRegisterAgentHarness: OpenClawPluginApi["registerAgentHarness"] = () => {};
-const noopRegisterCodexAppServerExtensionFactory: OpenClawPluginApi["registerCodexAppServerExtensionFactory"] =
+const noopRegisterCommand: OpenCLIPluginApi["registerCommand"] = () => {};
+const noopRegisterContextEngine: OpenCLIPluginApi["registerContextEngine"] = () => {};
+const noopRegisterCompactionProvider: OpenCLIPluginApi["registerCompactionProvider"] = () => {};
+const noopRegisterAgentHarness: OpenCLIPluginApi["registerAgentHarness"] = () => {};
+const noopRegisterCodexAppServerExtensionFactory: OpenCLIPluginApi["registerCodexAppServerExtensionFactory"] =
   () => {};
-const noopRegisterAgentToolResultMiddleware: OpenClawPluginApi["registerAgentToolResultMiddleware"] =
+const noopRegisterAgentToolResultMiddleware: OpenCLIPluginApi["registerAgentToolResultMiddleware"] =
   () => {};
-const noopRegisterSessionExtension: OpenClawPluginApi["registerSessionExtension"] = () => {};
-const noopEnqueueNextTurnInjection: OpenClawPluginApi["enqueueNextTurnInjection"] = async (
+const noopRegisterSessionExtension: OpenCLIPluginApi["registerSessionExtension"] = () => {};
+const noopEnqueueNextTurnInjection: OpenCLIPluginApi["enqueueNextTurnInjection"] = async (
   injection,
 ) => ({ enqueued: false, id: "", sessionKey: injection.sessionKey });
-const noopRegisterTrustedToolPolicy: OpenClawPluginApi["registerTrustedToolPolicy"] = () => {};
-const noopRegisterToolMetadata: OpenClawPluginApi["registerToolMetadata"] = () => {};
-const noopRegisterControlUiDescriptor: OpenClawPluginApi["registerControlUiDescriptor"] = () => {};
-const noopRegisterRuntimeLifecycle: OpenClawPluginApi["registerRuntimeLifecycle"] = () => {};
-const noopRegisterAgentEventSubscription: OpenClawPluginApi["registerAgentEventSubscription"] =
+const noopRegisterTrustedToolPolicy: OpenCLIPluginApi["registerTrustedToolPolicy"] = () => {};
+const noopRegisterToolMetadata: OpenCLIPluginApi["registerToolMetadata"] = () => {};
+const noopRegisterControlUiDescriptor: OpenCLIPluginApi["registerControlUiDescriptor"] = () => {};
+const noopRegisterRuntimeLifecycle: OpenCLIPluginApi["registerRuntimeLifecycle"] = () => {};
+const noopRegisterAgentEventSubscription: OpenCLIPluginApi["registerAgentEventSubscription"] =
   () => {};
-const noopSetRunContext: OpenClawPluginApi["setRunContext"] = () => false;
-const noopGetRunContext: OpenClawPluginApi["getRunContext"] = () => undefined;
-const noopClearRunContext: OpenClawPluginApi["clearRunContext"] = () => {};
-const noopRegisterSessionSchedulerJob: OpenClawPluginApi["registerSessionSchedulerJob"] = () =>
+const noopSetRunContext: OpenCLIPluginApi["setRunContext"] = () => false;
+const noopGetRunContext: OpenCLIPluginApi["getRunContext"] = () => undefined;
+const noopClearRunContext: OpenCLIPluginApi["clearRunContext"] = () => {};
+const noopRegisterSessionSchedulerJob: OpenCLIPluginApi["registerSessionSchedulerJob"] = () =>
   undefined;
-const noopRegisterDetachedTaskRuntime: OpenClawPluginApi["registerDetachedTaskRuntime"] = () => {};
-const noopRegisterMemoryCapability: OpenClawPluginApi["registerMemoryCapability"] = () => {};
-const noopRegisterMemoryPromptSection: OpenClawPluginApi["registerMemoryPromptSection"] = () => {};
-const noopRegisterMemoryPromptSupplement: OpenClawPluginApi["registerMemoryPromptSupplement"] =
+const noopRegisterDetachedTaskRuntime: OpenCLIPluginApi["registerDetachedTaskRuntime"] = () => {};
+const noopRegisterMemoryCapability: OpenCLIPluginApi["registerMemoryCapability"] = () => {};
+const noopRegisterMemoryPromptSection: OpenCLIPluginApi["registerMemoryPromptSection"] = () => {};
+const noopRegisterMemoryPromptSupplement: OpenCLIPluginApi["registerMemoryPromptSupplement"] =
   () => {};
-const noopRegisterMemoryCorpusSupplement: OpenClawPluginApi["registerMemoryCorpusSupplement"] =
+const noopRegisterMemoryCorpusSupplement: OpenCLIPluginApi["registerMemoryCorpusSupplement"] =
   () => {};
-const noopRegisterMemoryFlushPlan: OpenClawPluginApi["registerMemoryFlushPlan"] = () => {};
-const noopRegisterMemoryRuntime: OpenClawPluginApi["registerMemoryRuntime"] = () => {};
-const noopRegisterMemoryEmbeddingProvider: OpenClawPluginApi["registerMemoryEmbeddingProvider"] =
+const noopRegisterMemoryFlushPlan: OpenCLIPluginApi["registerMemoryFlushPlan"] = () => {};
+const noopRegisterMemoryRuntime: OpenCLIPluginApi["registerMemoryRuntime"] = () => {};
+const noopRegisterMemoryEmbeddingProvider: OpenCLIPluginApi["registerMemoryEmbeddingProvider"] =
   () => {};
-const noopOn: OpenClawPluginApi["on"] = () => {};
+const noopOn: OpenCLIPluginApi["on"] = () => {};
 
-export function buildPluginApi(params: BuildPluginApiParams): OpenClawPluginApi {
+export function buildPluginApi(params: BuildPluginApiParams): OpenCLIPluginApi {
   const handlers = params.handlers ?? {};
   return {
     id: params.id,

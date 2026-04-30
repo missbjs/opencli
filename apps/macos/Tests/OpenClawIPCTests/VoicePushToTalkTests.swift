@@ -1,5 +1,5 @@
 import Testing
-@testable import OpenClaw
+@testable import OpenCLI
 
 struct VoicePushToTalkTests {
     @Test func `delta trims committed prefix`() {

@@ -41,13 +41,13 @@ Restart the gateway after changing flags.
 ## Env override (one-off)
 
 ```bash
-OPENCLAW_DIAGNOSTICS=telegram.http,telegram.payload
+OPENCLI_DIAGNOSTICS=telegram.http,telegram.payload
 ```
 
 Disable all flags:
 
 ```bash
-OPENCLAW_DIAGNOSTICS=0
+OPENCLI_DIAGNOSTICS=0
 ```
 
 ## Timeline artifacts
@@ -56,9 +56,9 @@ The `timeline` flag writes structured startup and runtime timing events for
 external QA harnesses:
 
 ```bash
-OPENCLAW_DIAGNOSTICS=timeline \
-OPENCLAW_DIAGNOSTICS_TIMELINE_PATH=/tmp/openclaw-timeline.jsonl \
-openclaw gateway run
+OPENCLI_DIAGNOSTICS=timeline \
+OPENCLI_DIAGNOSTICS_TIMELINE_PATH=/tmp/opencli-timeline.jsonl \
+opencli gateway run
 ```
 
 You can also enable it in config:
@@ -72,16 +72,16 @@ You can also enable it in config:
 ```
 
 The timeline file path still comes from
-`OPENCLAW_DIAGNOSTICS_TIMELINE_PATH`. When `timeline` is enabled only from
-config, the earliest config-loading spans are not emitted because OpenClaw has
+`OPENCLI_DIAGNOSTICS_TIMELINE_PATH`. When `timeline` is enabled only from
+config, the earliest config-loading spans are not emitted because OpenCLI has
 not read config yet; subsequent startup spans use the config flag.
 
-`OPENCLAW_DIAGNOSTICS=1`, `OPENCLAW_DIAGNOSTICS=all`, and
-`OPENCLAW_DIAGNOSTICS=*` also enable the timeline because they enable every
+`OPENCLI_DIAGNOSTICS=1`, `OPENCLI_DIAGNOSTICS=all`, and
+`OPENCLI_DIAGNOSTICS=*` also enable the timeline because they enable every
 diagnostics flag. Prefer `timeline` when you only want the JSONL timing
 artifact.
 
-Timeline records use the `openclaw.diagnostics.v1` envelope. Events can include
+Timeline records use the `opencli.diagnostics.v1` envelope. Events can include
 process ids, phase names, span names, durations, plugin ids, dependency counts,
 event-loop delay samples, provider operation names, child-process exit state,
 and startup error names/messages. Treat timeline files as local diagnostics
@@ -92,7 +92,7 @@ artifacts; review them before sharing outside your machine.
 Flags emit logs into the standard diagnostics log file. By default:
 
 ```
-/tmp/openclaw/openclaw-YYYY-MM-DD.log
+/tmp/opencli/opencli-YYYY-MM-DD.log
 ```
 
 If you set `logging.file`, use that path instead. Logs are JSONL (one JSON object per line). Redaction still applies based on `logging.redactSensitive`.
@@ -102,22 +102,22 @@ If you set `logging.file`, use that path instead. Logs are JSONL (one JSON objec
 Pick the latest log file:
 
 ```bash
-ls -t /tmp/openclaw/openclaw-*.log | head -n 1
+ls -t /tmp/opencli/opencli-*.log | head -n 1
 ```
 
 Filter for Telegram HTTP diagnostics:
 
 ```bash
-rg "telegram http error" /tmp/openclaw/openclaw-*.log
+rg "telegram http error" /tmp/opencli/opencli-*.log
 ```
 
 Or tail while reproducing:
 
 ```bash
-tail -f /tmp/openclaw/openclaw-$(date +%F).log | rg "telegram http error"
+tail -f /tmp/opencli/opencli-$(date +%F).log | rg "telegram http error"
 ```
 
-For remote gateways, you can also use `openclaw logs --follow` (see [/cli/logs](/cli/logs)).
+For remote gateways, you can also use `opencli logs --follow` (see [/cli/logs](/cli/logs)).
 
 ## Notes
 

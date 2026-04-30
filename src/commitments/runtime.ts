@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import path from "node:path";
 import { resolveAgentWorkspaceDir } from "../agents/agent-scope.js";
 import { runEmbeddedPiAgent, type EmbeddedPiRunResult } from "../agents/pi-embedded.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { OpenCLIConfig } from "../config/config.js";
 import { resolveStateDir } from "../config/paths.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { normalizeOptionalString } from "../shared/string-coerce.js";
@@ -22,7 +22,7 @@ import type {
 type TimerHandle = ReturnType<typeof setTimeout>;
 
 export type CommitmentExtractionEnqueueInput = CommitmentScope & {
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   nowMs?: number;
   userText: string;
   assistantText?: string;
@@ -32,7 +32,7 @@ export type CommitmentExtractionEnqueueInput = CommitmentScope & {
 
 export type CommitmentExtractionRuntime = {
   extractBatch?: (params: {
-    cfg?: OpenClawConfig;
+    cfg?: OpenCLIConfig;
     items: CommitmentExtractionItem[];
   }) => Promise<CommitmentExtractionBatchResult>;
   setTimer?: (callback: () => void, delayMs: number) => TimerHandle;
@@ -43,7 +43,7 @@ export type CommitmentExtractionRuntime = {
 const log = createSubsystemLogger("commitments");
 
 let runtime: CommitmentExtractionRuntime = {};
-let queue: Array<Omit<CommitmentExtractionItem, "existingPending"> & { cfg?: OpenClawConfig }> = [];
+let queue: Array<Omit<CommitmentExtractionItem, "existingPending"> & { cfg?: OpenCLIConfig }> = [];
 let timer: TimerHandle | null = null;
 let draining = false;
 
@@ -154,7 +154,7 @@ function joinPayloadText(result: EmbeddedPiRunResult): string {
 }
 
 async function defaultExtractBatch(params: {
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   items: CommitmentExtractionItem[];
 }): Promise<CommitmentExtractionBatchResult> {
   const cfg = params.cfg ?? {};
@@ -188,7 +188,7 @@ async function defaultExtractBatch(params: {
 }
 
 async function hydrateBatch(
-  batch: Array<Omit<CommitmentExtractionItem, "existingPending"> & { cfg?: OpenClawConfig }>,
+  batch: Array<Omit<CommitmentExtractionItem, "existingPending"> & { cfg?: OpenCLIConfig }>,
 ): Promise<CommitmentExtractionItem[]> {
   return Promise.all(
     batch.map(async (item) =>

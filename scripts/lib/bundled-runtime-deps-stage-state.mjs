@@ -79,7 +79,7 @@ export function sanitizeTempPrefixSegment(value) {
 }
 
 export function makePluginOwnedTempDir(pluginDir, label) {
-  return makeOwnedTempDir(pluginDir, `.openclaw-runtime-deps-${label}-`);
+  return makeOwnedTempDir(pluginDir, `.opencli-runtime-deps-${label}-`);
 }
 
 export function assertPathIsNotSymlink(targetPath, label) {
@@ -101,7 +101,7 @@ export function replaceDirAtomically(targetPath, sourcePath) {
   fs.mkdirSync(targetParentDir, { recursive: true });
   const backupPath = makeTempDir(
     targetParentDir,
-    `.openclaw-runtime-deps-backup-${sanitizeTempPrefixSegment(path.basename(targetPath))}-`,
+    `.opencli-runtime-deps-backup-${sanitizeTempPrefixSegment(path.basename(targetPath))}-`,
   );
   removePathIfExists(backupPath, { retryTransient: true });
 
@@ -151,7 +151,7 @@ export function writeJsonAtomically(targetPath, value) {
   fs.mkdirSync(targetParentDir, { recursive: true });
   const tempDir = makeOwnedTempDir(
     targetParentDir,
-    `.openclaw-runtime-deps-stamp-${sanitizeTempPrefixSegment(path.basename(targetPath))}-`,
+    `.opencli-runtime-deps-stamp-${sanitizeTempPrefixSegment(path.basename(targetPath))}-`,
   );
   const tempPath = path.join(tempDir, path.basename(targetPath));
   try {
@@ -199,7 +199,7 @@ export function removeStaleRuntimeDepsTempDirs(pluginDir) {
     return;
   }
   for (const entry of fs.readdirSync(pluginDir, { withFileTypes: true })) {
-    if (entry.name.startsWith(".openclaw-runtime-deps-")) {
+    if (entry.name.startsWith(".opencli-runtime-deps-")) {
       const targetPath = path.join(pluginDir, entry.name);
       if (!shouldRemoveRuntimeDepsTempDir(targetPath)) {
         continue;

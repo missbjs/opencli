@@ -6,7 +6,7 @@ import {
 import { getChannelPlugin, normalizeChannelId } from "../../channels/plugins/index.js";
 import type { ChannelPlugin } from "../../channels/plugins/types.plugin.js";
 import type { ChannelId } from "../../channels/plugins/types.public.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../../config/types.opencli.js";
 import type { RuntimeEnv } from "../../runtime.js";
 import { normalizeOptionalLowercaseString } from "../../shared/string-coerce.js";
 import { createClackPrompter } from "../../wizard/clack-prompter.js";
@@ -26,7 +26,7 @@ type ChannelPluginSnapshot = {
 };
 
 type ResolveInstallableChannelPluginResult = {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   channelId?: ChannelId;
   plugin?: ChannelPlugin;
   catalogEntry?: ChannelPluginCatalogEntry;
@@ -34,7 +34,7 @@ type ResolveInstallableChannelPluginResult = {
   pluginInstalled: boolean;
 };
 
-function resolveWorkspaceDir(cfg: OpenClawConfig) {
+function resolveWorkspaceDir(cfg: OpenCLIConfig) {
   return resolveAgentWorkspaceDir(cfg, resolveDefaultAgentId(cfg));
 }
 
@@ -52,7 +52,7 @@ function resolveResolvedChannelId(params: {
   return normalizeChannelId(params.catalogEntry.id) ?? (params.catalogEntry.id as ChannelId);
 }
 
-export function resolveCatalogChannelEntry(raw: string, cfg: OpenClawConfig | null) {
+export function resolveCatalogChannelEntry(raw: string, cfg: OpenCLIConfig | null) {
   const trimmed = normalizeOptionalLowercaseString(raw);
   if (!trimmed) {
     return undefined;
@@ -84,7 +84,7 @@ function findScopedChannelPlugin(
 }
 
 function loadScopedChannelPlugin(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   runtime: RuntimeEnv;
   channelId: ChannelId;
   pluginId?: string;
@@ -101,7 +101,7 @@ function loadScopedChannelPlugin(params: {
 }
 
 export async function resolveInstallableChannelPlugin(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   runtime: RuntimeEnv;
   rawChannel?: string | null;
   channelId?: ChannelId;

@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { resolveConversationIdFromTargets } from "../infra/outbound/conversation-id.js";
 import { normalizeConversationTargetRef } from "../infra/outbound/session-binding-normalization.js";
 import { stringifyRouteThreadId } from "../plugin-sdk/channel-route.js";
@@ -40,7 +40,7 @@ export type ConversationResolution = {
 };
 
 export type ResolveCommandConversationResolutionInput = {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   channel?: string | null;
   accountId?: string | null;
   chatType?: string | null;
@@ -58,7 +58,7 @@ export type ResolveCommandConversationResolutionInput = {
 };
 
 export type ResolveInboundConversationResolutionInput = {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   channel?: string | null;
   accountId?: string | null;
   to?: string | null;
@@ -156,7 +156,7 @@ function normalizeResolutionTarget(params: {
 function resolveBindingAccountId(params: {
   rawAccountId?: string | null;
   plugin?: ChannelPlugin;
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
 }): string {
   return (
     normalizeOptionalString(params.rawAccountId) ||

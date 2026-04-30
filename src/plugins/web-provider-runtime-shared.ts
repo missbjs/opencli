@@ -1,7 +1,7 @@
 import { withActivatedPluginIds } from "./activation-context.js";
 import {
   isPluginRegistryLoadInFlight,
-  loadOpenClawPlugins,
+  loadOpenCLIPlugins,
   resolveCompatibleRuntimePluginRegistry,
   resolveRuntimePluginRegistry,
 } from "./loader.js";
@@ -126,7 +126,7 @@ export function resolvePluginWebProviders<TEntry>(
         return bundledArtifactProviders;
       }
     }
-    const registry = loadOpenClawPlugins(
+    const registry = loadOpenCLIPlugins(
       buildPluginRuntimeLoadOptionsFromValues(
         {
           config: withActivatedPluginIds({
@@ -161,7 +161,7 @@ export function resolvePluginWebProviders<TEntry>(
     return [];
   }
   return deps.mapRegistryProviders({
-    registry: loadOpenClawPlugins(loadOptions),
+    registry: loadOpenCLIPlugins(loadOptions),
     onlyPluginIds: params.onlyPluginIds,
   });
 }

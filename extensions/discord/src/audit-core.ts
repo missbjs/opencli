@@ -1,10 +1,10 @@
 import type {
   DiscordGuildChannelConfig,
   DiscordGuildEntry,
-  OpenClawConfig,
-} from "openclaw/plugin-sdk/config-types";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { isRecord, normalizeOptionalString } from "openclaw/plugin-sdk/text-runtime";
+  OpenCLIConfig,
+} from "opencli/plugin-sdk/config-types";
+import { formatErrorMessage } from "opencli/plugin-sdk/error-runtime";
+import { isRecord, normalizeOptionalString } from "opencli/plugin-sdk/text-runtime";
 
 export type DiscordChannelPermissionsAuditEntry = {
   channelId: string;
@@ -77,14 +77,14 @@ export function collectDiscordAuditChannelIdsForGuilds(
 }
 
 export async function auditDiscordChannelPermissionsWithFetcher(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   token: string;
   accountId?: string | null;
   channelIds: string[];
   timeoutMs: number;
   fetchChannelPermissions: (
     channelId: string,
-    params: { cfg: OpenClawConfig; token: string; accountId?: string },
+    params: { cfg: OpenCLIConfig; token: string; accountId?: string },
   ) => Promise<{
     permissions: string[];
   }>;

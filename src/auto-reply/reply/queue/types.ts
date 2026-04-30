@@ -2,7 +2,7 @@ import type { ExecToolDefaults } from "../../../agents/bash-tools.js";
 import type { SkillSnapshot } from "../../../agents/skills.js";
 import type { SilentReplyPromptMode } from "../../../agents/system-prompt.types.js";
 import type { SessionEntry } from "../../../config/sessions.js";
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../../../config/types.opencli.js";
 import type { PromptImageOrderEntry } from "../../../media/prompt-image-order.js";
 import type { InputProvenance } from "../../../sessions/input-provenance.js";
 import type { SourceReplyDeliveryMode } from "../../get-reply-options.types.js";
@@ -68,7 +68,7 @@ export type FollowupRun = {
     traceAuthorized?: boolean;
     sessionFile: string;
     workspaceDir: string;
-    config: OpenClawConfig;
+    config: OpenCLIConfig;
     skillsSnapshot?: SkillSnapshot;
     provider: string;
     model: string;
@@ -102,7 +102,7 @@ export type FollowupRun = {
 };
 
 export type ResolveQueueSettingsParams = {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   channel?: string;
   sessionEntry?: SessionEntry;
   inlineMode?: QueueMode;

@@ -10,6 +10,6 @@ export {
   WEBHOOK_IN_FLIGHT_DEFAULTS,
   WEBHOOK_RATE_LIMIT_DEFAULTS,
   type WebhookInFlightLimiter,
-} from "openclaw/plugin-sdk/webhook-ingress";
-export { resolveConfiguredSecretInputString } from "openclaw/plugin-sdk/secret-input-runtime";
-export type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
+} from "opencli/plugin-sdk/webhook-ingress";
+export { resolveConfiguredSecretInputString } from "opencli/plugin-sdk/secret-input-runtime";
+export type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";

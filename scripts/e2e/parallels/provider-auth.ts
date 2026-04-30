@@ -28,7 +28,7 @@ export function resolveProviderAuth(input: {
       authKeyFlag: "anthropic-api-key",
       modelId:
         input.modelId ||
-        process.env.OPENCLAW_PARALLELS_ANTHROPIC_MODEL ||
+        process.env.OPENCLI_PARALLELS_ANTHROPIC_MODEL ||
         "anthropic/claude-sonnet-4-6",
     },
     minimax: {
@@ -36,13 +36,13 @@ export function resolveProviderAuth(input: {
       authChoice: "minimax-global-api",
       authKeyFlag: "minimax-api-key",
       modelId:
-        input.modelId || process.env.OPENCLAW_PARALLELS_MINIMAX_MODEL || "minimax/MiniMax-M2.7",
+        input.modelId || process.env.OPENCLI_PARALLELS_MINIMAX_MODEL || "minimax/MiniMax-M2.7",
     },
     openai: {
       apiKeyEnv: input.apiKeyEnv || "OPENAI_API_KEY",
       authChoice: "openai-api-key",
       authKeyFlag: "openai-api-key",
-      modelId: input.modelId || process.env.OPENCLAW_PARALLELS_OPENAI_MODEL || "openai/gpt-5.4",
+      modelId: input.modelId || process.env.OPENCLI_PARALLELS_OPENAI_MODEL || "openai/gpt-5.4",
     },
   };
   const resolved = providerDefaults[input.provider];
@@ -94,10 +94,10 @@ export function resolveLatestVersion(versionOverride = ""): string {
     "npm",
     [
       "view",
-      "openclaw",
+      "opencli",
       "version",
       "--userconfig",
-      mkdtempSync(path.join(tmpdir(), "openclaw-npm-")),
+      mkdtempSync(path.join(tmpdir(), "opencli-npm-")),
     ],
     {
       quiet: true,

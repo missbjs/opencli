@@ -1,4 +1,4 @@
-import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
+import { definePluginEntry } from "opencli/plugin-sdk/plugin-entry";
 import { createTuiCommand } from "./src/commands.js";
 import { handleTuiInboundClaim } from "./src/inbound-claim.js";
 

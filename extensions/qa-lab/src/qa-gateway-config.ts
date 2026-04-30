@@ -1,5 +1,5 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
-import type { ModelProviderConfig } from "openclaw/plugin-sdk/provider-model-shared";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
+import type { ModelProviderConfig } from "opencli/plugin-sdk/provider-model-shared";
 import {
   defaultQaModelForMode,
   normalizeQaProviderMode,
@@ -54,7 +54,7 @@ export function buildQaGatewayConfig(params: {
   liveProviderConfigs?: Record<string, ModelProviderConfig>;
   fastMode?: boolean;
   thinkingDefault?: QaThinkingLevel;
-}): OpenClawConfig {
+}): OpenCLIConfig {
   const providerBaseUrl = params.providerBaseUrl ?? "http://127.0.0.1:44080/v1";
   const providerMode = normalizeQaProviderMode(params.providerMode ?? DEFAULT_QA_PROVIDER_MODE);
   const provider = getQaProvider(providerMode);
@@ -248,5 +248,5 @@ export function buildQaGatewayConfig(params: {
     },
     ...(params.transportConfig?.channels ? { channels: params.transportConfig.channels } : {}),
     ...(params.transportConfig?.messages ? { messages: params.transportConfig.messages } : {}),
-  } satisfies OpenClawConfig;
+  } satisfies OpenCLIConfig;
 }

@@ -1,7 +1,7 @@
 import Foundation
-import OpenClawKit
+import OpenCLIKit
 import Testing
-@testable import OpenClaw
+@testable import OpenCLI
 
 struct MacNodeModeCoordinatorTests {
     @Test func `remote mode does not advertise browser proxy`() {
@@ -12,10 +12,10 @@ struct MacNodeModeCoordinatorTests {
             connectionMode: .remote)
         let commands = MacNodeModeCoordinator.resolvedCommands(caps: caps)
 
-        #expect(!caps.contains(OpenClawCapability.browser.rawValue))
-        #expect(!commands.contains(OpenClawBrowserCommand.proxy.rawValue))
-        #expect(commands.contains(OpenClawCanvasCommand.present.rawValue))
-        #expect(commands.contains(OpenClawSystemCommand.notify.rawValue))
+        #expect(!caps.contains(OpenCLICapability.browser.rawValue))
+        #expect(!commands.contains(OpenCLIBrowserCommand.proxy.rawValue))
+        #expect(commands.contains(OpenCLICanvasCommand.present.rawValue))
+        #expect(commands.contains(OpenCLISystemCommand.notify.rawValue))
     }
 
     @Test func `local mode advertises browser proxy when enabled`() {
@@ -26,7 +26,7 @@ struct MacNodeModeCoordinatorTests {
             connectionMode: .local)
         let commands = MacNodeModeCoordinator.resolvedCommands(caps: caps)
 
-        #expect(caps.contains(OpenClawCapability.browser.rawValue))
-        #expect(commands.contains(OpenClawBrowserCommand.proxy.rawValue))
+        #expect(caps.contains(OpenCLICapability.browser.rawValue))
+        #expect(commands.contains(OpenCLIBrowserCommand.proxy.rawValue))
     }
 }

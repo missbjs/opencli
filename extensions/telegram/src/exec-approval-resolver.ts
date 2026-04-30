@@ -1,9 +1,9 @@
-import { resolveApprovalOverGateway } from "openclaw/plugin-sdk/approval-gateway-runtime";
-import type { ExecApprovalReplyDecision } from "openclaw/plugin-sdk/approval-reply-runtime";
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
+import { resolveApprovalOverGateway } from "opencli/plugin-sdk/approval-gateway-runtime";
+import type { ExecApprovalReplyDecision } from "opencli/plugin-sdk/approval-reply-runtime";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
 
 export type ResolveTelegramExecApprovalParams = {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   approvalId: string;
   decision: ExecApprovalReplyDecision;
   senderId?: string | null;

@@ -9,8 +9,8 @@ import {
   type CommandArgDefinition,
   type CommandArgValues,
   type CommandArgs,
-} from "openclaw/plugin-sdk/command-auth";
-import { chunkItems } from "openclaw/plugin-sdk/text-runtime";
+} from "opencli/plugin-sdk/command-auth";
+import { chunkItems } from "opencli/plugin-sdk/text-runtime";
 import {
   Button,
   Row,

@@ -23,8 +23,8 @@ function runtimeExtensionsLengthMismatchMessage(params: {
   extensionsLength: number;
 }): string {
   return (
-    `package.json openclaw.runtimeExtensions length (${params.runtimeExtensionsLength}) ` +
-    `must match openclaw.extensions length (${params.extensionsLength})`
+    `package.json opencli.runtimeExtensions length (${params.runtimeExtensionsLength}) ` +
+    `must match opencli.extensions length (${params.extensionsLength})`
   );
 }
 

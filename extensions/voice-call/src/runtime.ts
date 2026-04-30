@@ -1,5 +1,5 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
+import { formatErrorMessage } from "opencli/plugin-sdk/error-runtime";
 import {
   consultRealtimeVoiceAgent,
   REALTIME_VOICE_AGENT_CONSULT_TOOL_NAME,
@@ -7,7 +7,7 @@ import {
   resolveRealtimeVoiceAgentConsultToolsAllow,
   type RealtimeVoiceAgentConsultTranscriptEntry,
   type ResolvedRealtimeVoiceProvider,
-} from "openclaw/plugin-sdk/realtime-voice";
+} from "opencli/plugin-sdk/realtime-voice";
 import type { VoiceCallConfig } from "./config.js";
 import { resolveVoiceCallConfig, validateProviderConfig } from "./config.js";
 import type { CoreAgentDeps, CoreConfig } from "./core-bridge.js";
@@ -262,7 +262,7 @@ async function resolveProvider(config: VoiceCallConfig): Promise<VoiceCallProvid
 
 async function resolveRealtimeProvider(params: {
   config: VoiceCallConfig;
-  fullConfig: OpenClawConfig;
+  fullConfig: OpenCLIConfig;
 }): Promise<ResolvedRealtimeProvider> {
   const { resolveConfiguredRealtimeVoiceProvider } = await loadRealtimeVoiceRuntime();
   return resolveConfiguredRealtimeVoiceProvider({
@@ -275,7 +275,7 @@ async function resolveRealtimeProvider(params: {
 export async function createVoiceCallRuntime(params: {
   config: VoiceCallConfig;
   coreConfig: CoreConfig;
-  fullConfig?: OpenClawConfig;
+  fullConfig?: OpenCLIConfig;
   agentRuntime: CoreAgentDeps;
   ttsRuntime?: TelephonyTtsRuntime;
   logger?: Logger;
@@ -289,7 +289,7 @@ export async function createVoiceCallRuntime(params: {
   };
 
   const config = resolveVoiceCallConfig(rawConfig);
-  const cfg = fullConfig ?? (coreConfig as OpenClawConfig);
+  const cfg = fullConfig ?? (coreConfig as OpenCLIConfig);
 
   if (!config.enabled) {
     throw new Error("Voice call disabled. Enable the plugin entry in config.");
@@ -319,7 +319,7 @@ export async function createVoiceCallRuntime(params: {
     manager,
     provider,
     coreConfig,
-    fullConfig ?? (coreConfig as OpenClawConfig),
+    fullConfig ?? (coreConfig as OpenCLIConfig),
     agentRuntime,
   );
   if (realtimeProvider) {

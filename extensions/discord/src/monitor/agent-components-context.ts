@@ -1,6 +1,6 @@
 import { ChannelType } from "discord-api-types/v10";
-import { resolveAgentRoute } from "openclaw/plugin-sdk/routing";
-import { logError } from "openclaw/plugin-sdk/text-runtime";
+import { resolveAgentRoute } from "opencli/plugin-sdk/routing";
+import { logError } from "opencli/plugin-sdk/text-runtime";
 import {
   type AgentComponentContext,
   type AgentComponentInteraction,

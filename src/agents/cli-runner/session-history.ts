@@ -5,7 +5,7 @@ import {
   resolveSessionFilePath,
   resolveSessionFilePathOptions,
 } from "../../config/sessions/paths.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../../config/types.opencli.js";
 import { resolveSessionAgentIds } from "../agent-scope.js";
 import {
   limitAgentHookHistoryMessages,
@@ -79,7 +79,7 @@ export function buildCliSessionHistoryPrompt(params: {
     .trim();
   const renderedHistory =
     renderedHistoryRaw.length > maxHistoryChars
-      ? `${renderedHistoryRaw.slice(0, maxHistoryChars).trimEnd()}\n[OpenClaw reseed history truncated]`
+      ? `${renderedHistoryRaw.slice(0, maxHistoryChars).trimEnd()}\n[OpenCLI reseed history truncated]`
       : renderedHistoryRaw;
 
   if (!renderedHistory) {
@@ -87,7 +87,7 @@ export function buildCliSessionHistoryPrompt(params: {
   }
 
   return [
-    "Continue this conversation using the OpenClaw transcript below as prior session history.",
+    "Continue this conversation using the OpenCLI transcript below as prior session history.",
     "Treat it as authoritative context for this fresh CLI session.",
     "",
     "<conversation_history>",
@@ -118,7 +118,7 @@ function resolveSafeCliSessionFile(params: {
   sessionFile: string;
   sessionKey?: string;
   agentId?: string;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
 }): { sessionFile: string; sessionsDir: string } {
   const { defaultAgentId, sessionAgentId } = resolveSessionAgentIds({
     sessionKey: params.sessionKey,
@@ -145,7 +145,7 @@ function loadCliSessionEntries(params: {
   sessionFile: string;
   sessionKey?: string;
   agentId?: string;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
 }): unknown[] {
   try {
     const { sessionFile, sessionsDir } = resolveSafeCliSessionFile(params);
@@ -173,7 +173,7 @@ export function loadCliSessionHistoryMessages(params: {
   sessionFile: string;
   sessionKey?: string;
   agentId?: string;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
 }): unknown[] {
   const history = loadCliSessionEntries(params).flatMap((entry) => {
     const candidate = entry as HistoryEntry;
@@ -187,7 +187,7 @@ export function loadCliSessionReseedMessages(params: {
   sessionFile: string;
   sessionKey?: string;
   agentId?: string;
-  config?: OpenClawConfig;
+  config?: OpenCLIConfig;
 }): unknown[] {
   const entries = loadCliSessionEntries(params);
   const latestCompactionIndex = entries.findLastIndex((entry) => {

@@ -3,7 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 import { resetConfigRuntimeState, setRuntimeConfigSnapshot } from "../config/config.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { OpenCLIConfig } from "../config/config.js";
 import type { SessionEntry } from "../config/sessions.js";
 import { createEmptyPluginRegistry } from "../plugins/registry-empty.js";
 import { resetPluginRuntimeStateForTest, setActivePluginRegistry } from "../plugins/runtime.js";
@@ -46,20 +46,20 @@ function createSymlinkOrSkip(targetPath: string, linkPath: string): boolean {
   }
 }
 
-function createSingleAgentAvatarConfig(workspace: string): OpenClawConfig {
+function createSingleAgentAvatarConfig(workspace: string): OpenCLIConfig {
   return {
     session: { mainKey: "main" },
     agents: {
       list: [{ id: "main", default: true, workspace, identity: { avatar: "avatar-link.png" } }],
     },
-  } as OpenClawConfig;
+  } as OpenCLIConfig;
 }
 
 function createModelDefaultsConfig(params: {
   primary: string;
   models?: Record<string, Record<string, never>>;
   agentRuntime?: { id: string; fallback?: "pi" | "none" };
-}): OpenClawConfig {
+}): OpenCLIConfig {
   return {
     agents: {
       defaults: {
@@ -68,7 +68,7 @@ function createModelDefaultsConfig(params: {
         agentRuntime: params.agentRuntime,
       },
     },
-  } as OpenClawConfig;
+  } as OpenCLIConfig;
 }
 
 describe("gateway session utils", () => {
@@ -233,7 +233,7 @@ describe("gateway session utils", () => {
           thinkingDefault: "high",
         },
       },
-    } as OpenClawConfig);
+    } as OpenCLIConfig);
 
     expect(defaults).toMatchObject({
       modelProvider: "openai-codex",
@@ -262,7 +262,7 @@ describe("gateway session utils", () => {
           },
         ],
       },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
 
     const row = buildGatewaySessionRow({
       cfg,
@@ -291,7 +291,7 @@ describe("gateway session utils", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
 
     const row = buildGatewaySessionRow({
       cfg,
@@ -320,7 +320,7 @@ describe("gateway session utils", () => {
     const cfg = {
       session: { mainKey: "work" },
       agents: { list: [{ id: "ops", default: true }] },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
     expect(resolveSessionStoreKey({ cfg, sessionKey: "main" })).toBe("agent:ops:work");
     expect(resolveSessionStoreKey({ cfg, sessionKey: "work" })).toBe("agent:ops:work");
     expect(resolveSessionStoreKey({ cfg, sessionKey: "agent:ops:main" })).toBe("agent:ops:work");
@@ -334,7 +334,7 @@ describe("gateway session utils", () => {
     const cfg = {
       session: { mainKey: "work" },
       agents: { list: [{ id: "ops", default: true }] },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
     expect(resolveSessionStoreKey({ cfg, sessionKey: "agent:main:discord:direct:u1" })).toBe(
       "agent:main:discord:direct:u1",
     );
@@ -344,7 +344,7 @@ describe("gateway session utils", () => {
     const cfg = {
       session: { mainKey: "work" },
       agents: { list: [{ id: "ops", default: true }] },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
     const legacyMainAlias = resolveSessionStoreKey({ cfg, sessionKey: "agent:main:main" });
 
     expect(legacyMainAlias).toBe("agent:ops:work");
@@ -359,7 +359,7 @@ describe("gateway session utils", () => {
     const cfg = {
       session: { mainKey: "main" },
       agents: { list: [{ id: "ops", default: true }] },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
     expect(resolveSessionStoreKey({ cfg, sessionKey: "discord:group:123" })).toBe(
       "agent:ops:discord:group:123",
     );
@@ -372,7 +372,7 @@ describe("gateway session utils", () => {
     const cfg = {
       session: { mainKey: "main" },
       agents: { list: [{ id: "ops" }, { id: "review" }] },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
     expect(resolveSessionStoreKey({ cfg, sessionKey: "main" })).toBe("agent:ops:main");
     expect(resolveSessionStoreKey({ cfg, sessionKey: "discord:group:123" })).toBe(
       "agent:ops:discord:group:123",
@@ -382,7 +382,7 @@ describe("gateway session utils", () => {
   test("resolveSessionStoreKey falls back to main when agents.list is missing", () => {
     const cfg = {
       session: { mainKey: "work" },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
     expect(resolveSessionStoreKey({ cfg, sessionKey: "main" })).toBe("agent:main:work");
     expect(resolveSessionStoreKey({ cfg, sessionKey: "thread-1" })).toBe("agent:main:thread-1");
   });
@@ -391,7 +391,7 @@ describe("gateway session utils", () => {
     const cfg = {
       session: { mainKey: "main" },
       agents: { list: [{ id: "ops", default: true }] },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
     expect(resolveSessionStoreKey({ cfg, sessionKey: "CoP" })).toBe(
       resolveSessionStoreKey({ cfg, sessionKey: "cop" }),
     );
@@ -406,7 +406,7 @@ describe("gateway session utils", () => {
     const cfg = {
       session: { scope: "global", mainKey: "work" },
       agents: { list: [{ id: "ops", default: true }] },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
     expect(resolveSessionStoreKey({ cfg, sessionKey: "main" })).toBe("global");
     const target = resolveGatewaySessionStoreTarget({ cfg, key: "main" });
     expect(target.canonicalKey).toBe("global");
@@ -416,14 +416,14 @@ describe("gateway session utils", () => {
   test("resolveGatewaySessionStoreTarget uses canonical key for main alias", () => {
     const storeTemplate = path.join(
       os.tmpdir(),
-      "openclaw-session-utils",
+      "opencli-session-utils",
       "{agentId}",
       "sessions.json",
     );
     const cfg = {
       session: { mainKey: "main", store: storeTemplate },
       agents: { list: [{ id: "ops", default: true }] },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
     const target = resolveGatewaySessionStoreTarget({ cfg, key: "main" });
     expect(target.canonicalKey).toBe("agent:ops:main");
     expect(target.storeKeys).toEqual(expect.arrayContaining(["agent:ops:main", "main"]));
@@ -441,7 +441,7 @@ describe("gateway session utils", () => {
     const cfg = {
       session: { mainKey: "main", store: storePath },
       agents: { list: [{ id: "ops", default: true }] },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
     const target = resolveGatewaySessionStoreTarget({ cfg, key: "agent:ops:mysession" });
     expect(target.canonicalKey).toBe("agent:ops:mysession");
     expect(target.storeKeys).toEqual(
@@ -466,7 +466,7 @@ describe("gateway session utils", () => {
     const cfg = {
       session: { mainKey: "main", store: storePath },
       agents: { list: [{ id: "ops", default: true }] },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
     const target = resolveGatewaySessionStoreTarget({ cfg, key: "agent:ops:mysession" });
     expect(target.storeKeys).toEqual(
       expect.arrayContaining(["agent:ops:mysession", "agent:ops:MySession"]),
@@ -484,7 +484,7 @@ describe("gateway session utils", () => {
     const cfg = {
       session: { mainKey: "work", store: storePath },
       agents: { list: [{ id: "ops", default: true }] },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
     const target = resolveGatewaySessionStoreTarget({ cfg, key: "agent:ops:main" });
     expect(target.canonicalKey).toBe("agent:ops:work");
     expect(target.storeKeys).toEqual(expect.arrayContaining(["agent:ops:MAIN"]));
@@ -509,7 +509,7 @@ describe("gateway session utils", () => {
           store: path.join(stateDir, "agents", "{agentId}", "sessions", "sessions.json"),
         },
         agents: { list: [{ id: "main", default: true }] },
-      } as OpenClawConfig;
+      } as OpenCLIConfig;
 
       const target = resolveGatewaySessionStoreTarget({ cfg, key: "agent:retired-agent:main" });
 
@@ -537,7 +537,7 @@ describe("gateway session utils", () => {
             store: path.join(stateDir, "agents", "{agentId}", "sessions", "sessions.json"),
           },
           agents: { list: [{ id: "main", default: true }] },
-        } as OpenClawConfig;
+        } as OpenCLIConfig;
         setRuntimeConfigSnapshot(cfg, cfg);
 
         const loaded = loadSessionEntry("agent:retired-agent:main");
@@ -584,7 +584,7 @@ describe("gateway session utils", () => {
         const cfg = {
           session: { mainKey: "main", store: storeTemplate },
           agents: { list: [{ id: "ops", default: true }] },
-        } as OpenClawConfig;
+        } as OpenCLIConfig;
         setRuntimeConfigSnapshot(cfg, cfg);
 
         const target = resolveGatewaySessionStoreTarget({ cfg, key: "agent:main:main" });
@@ -635,7 +635,7 @@ describe("gateway session utils", () => {
         const cfg = {
           session: { mainKey: "work", store: storeTemplate },
           agents: { list: [{ id: "ops", default: true }] },
-        } as OpenClawConfig;
+        } as OpenCLIConfig;
         setRuntimeConfigSnapshot(cfg, cfg);
 
         const loaded = loadSessionEntry("agent:main:work");
@@ -674,7 +674,7 @@ describe("gateway session utils", () => {
             store: path.join(stateDir, "agents", "{agentId}", "sessions", "sessions.json"),
           },
           agents: { list: [{ id: "main", default: true }] },
-        } as OpenClawConfig;
+        } as OpenCLIConfig;
         setRuntimeConfigSnapshot(cfg, cfg);
 
         const loaded = loadSessionEntry("agent:main:main");
@@ -725,7 +725,7 @@ describe("gateway session utils", () => {
             store: path.join(stateDir, "agents", "{agentId}", "sessions", "sessions.json"),
           },
           agents: { list: [{ id: "main", default: true }] },
-        } as OpenClawConfig;
+        } as OpenCLIConfig;
         setRuntimeConfigSnapshot(cfg, cfg);
 
         const loaded = loadSessionEntry("agent:main:main");
@@ -756,7 +756,7 @@ describe("gateway session utils", () => {
     const cfg = {
       session: { mainKey: "main" },
       agents: { list: [{ id: "main", default: true }] },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
     const store: Record<string, SessionEntry> = {
       "agent:main:Main": {
         sessionId: "sess-stale",
@@ -785,7 +785,7 @@ describe("gateway session utils", () => {
     const cfg = {
       session: { mainKey: "main" },
       agents: { list: [{ id: "main", default: true }] },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
     const store: Record<string, SessionEntry> = {
       "agent:main:main": {
         sessionId: "sess-stale",
@@ -846,14 +846,14 @@ describe("gateway session utils", () => {
   });
 
   test("listAgentsForGateway keeps explicit agents.list scope over disk-only agents (scope boundary)", async () => {
-    await withStateDirEnv("openclaw-agent-list-scope-", async ({ stateDir }) => {
+    await withStateDirEnv("opencli-agent-list-scope-", async ({ stateDir }) => {
       fs.mkdirSync(path.join(stateDir, "agents", "main"), { recursive: true });
       fs.mkdirSync(path.join(stateDir, "agents", "codex"), { recursive: true });
 
       const cfg = {
         session: { mainKey: "main" },
         agents: { list: [{ id: "main", default: true }] },
-      } as OpenClawConfig;
+      } as OpenCLIConfig;
 
       const { agents } = listAgentsForGateway(cfg);
       expect(agents.map((agent) => agent.id)).toEqual(["main"]);
@@ -874,7 +874,7 @@ describe("gateway session utils", () => {
         },
         list: [{ id: "main", default: true, agentRuntime: { id: "claude-cli", fallback: "none" } }],
       },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
 
     const result = listAgentsForGateway(cfg);
     expect(result.agents[0]).toMatchObject({
@@ -893,8 +893,8 @@ describe("gateway session utils", () => {
   });
 
   test("listAgentsForGateway reports effective env runtime fallback override", () => {
-    const previousFallback = process.env.OPENCLAW_AGENT_HARNESS_FALLBACK;
-    process.env.OPENCLAW_AGENT_HARNESS_FALLBACK = "pi";
+    const previousFallback = process.env.OPENCLI_AGENT_HARNESS_FALLBACK;
+    process.env.OPENCLI_AGENT_HARNESS_FALLBACK = "pi";
     try {
       const cfg = {
         session: { mainKey: "main" },
@@ -904,7 +904,7 @@ describe("gateway session utils", () => {
           },
           list: [{ id: "main", default: true }],
         },
-      } as OpenClawConfig;
+      } as OpenCLIConfig;
 
       const result = listAgentsForGateway(cfg);
       expect(result.agents[0]).toMatchObject({
@@ -917,9 +917,9 @@ describe("gateway session utils", () => {
       });
     } finally {
       if (previousFallback === undefined) {
-        delete process.env.OPENCLAW_AGENT_HARNESS_FALLBACK;
+        delete process.env.OPENCLI_AGENT_HARNESS_FALLBACK;
       } else {
-        process.env.OPENCLAW_AGENT_HARNESS_FALLBACK = previousFallback;
+        process.env.OPENCLI_AGENT_HARNESS_FALLBACK = previousFallback;
       }
     }
   });
@@ -933,7 +933,7 @@ describe("gateway session utils", () => {
         },
         list: [{ id: "main", default: true, agentRuntime: { fallback: "none" } }],
       },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
 
     const result = listAgentsForGateway(cfg);
     expect(result.agents[0]).toMatchObject({
@@ -967,7 +967,7 @@ describe("gateway session utils", () => {
           },
         ],
       },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
 
     const result = listAgentsForGateway(cfg);
     const ops = result.agents.find((agent) => agent.id === "ops");
@@ -1193,7 +1193,7 @@ describe("listSessionsFromStore selected model display", () => {
 });
 
 describe("resolveSessionModelIdentityRef", () => {
-  const resolveLegacyIdentityRef = (cfg: OpenClawConfig, modelProvider?: string) =>
+  const resolveLegacyIdentityRef = (cfg: OpenCLIConfig, modelProvider?: string) =>
     resolveSessionModelIdentityRef(cfg, {
       sessionId: "legacy-session",
       updatedAt: Date.now(),
@@ -1234,7 +1234,7 @@ describe("resolveSessionModelIdentityRef", () => {
           models: [{ id: "qwen-max" }],
         },
       },
-    } as unknown as OpenClawConfig["models"];
+    } as unknown as OpenCLIConfig["models"];
 
     const resolved = resolveSessionModelIdentityRef(cfg, {
       sessionId: "custom-provider-runtime-model",
@@ -1273,7 +1273,7 @@ describe("resolveSessionModelIdentityRef", () => {
           models: [{ id: "qwen-max" }],
         },
       },
-    } as unknown as OpenClawConfig["models"];
+    } as unknown as OpenCLIConfig["models"];
 
     const resolved = resolveSessionModelIdentityRef(cfg, {
       sessionId: "ambiguous-custom-provider-runtime-model",

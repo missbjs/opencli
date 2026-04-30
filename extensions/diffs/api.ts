@@ -1,10 +1,10 @@
-export type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
+export type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
 export {
   definePluginEntry,
   type AnyAgentTool,
-  type OpenClawPluginApi,
-  type OpenClawPluginConfigSchema,
-  type OpenClawPluginToolContext,
+  type OpenCLIPluginApi,
+  type OpenCLIPluginConfigSchema,
+  type OpenCLIPluginToolContext,
   type PluginLogger,
-} from "openclaw/plugin-sdk/plugin-entry";
-export { resolvePreferredOpenClawTmpDir } from "openclaw/plugin-sdk/temp-path";
+} from "opencli/plugin-sdk/plugin-entry";
+export { resolvePreferredOpenCLITmpDir } from "opencli/plugin-sdk/temp-path";

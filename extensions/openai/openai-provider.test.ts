@@ -13,9 +13,8 @@ vi.mock("./openai-codex-provider.runtime.js", () => ({
   refreshOpenAICodexToken: mocks.refreshOpenAICodexToken,
 }));
 
-vi.mock("openclaw/plugin-sdk/provider-stream-family", async (importOriginal) => {
-  const actual =
-    await importOriginal<typeof import("openclaw/plugin-sdk/provider-stream-family")>();
+vi.mock("opencli/plugin-sdk/provider-stream-family", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("opencli/plugin-sdk/provider-stream-family")>();
   const wrapStreamFn: NonNullable<typeof actual.OPENAI_RESPONSES_STREAM_HOOKS.wrapStreamFn> = (
     ctx,
   ) => {

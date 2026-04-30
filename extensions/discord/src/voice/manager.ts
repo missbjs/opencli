@@ -1,9 +1,9 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
-import type { DiscordAccountConfig } from "openclaw/plugin-sdk/config-types";
-import { resolveAgentRoute } from "openclaw/plugin-sdk/routing";
-import { createSubsystemLogger } from "openclaw/plugin-sdk/runtime-env";
-import type { RuntimeEnv } from "openclaw/plugin-sdk/runtime-env";
-import { formatErrorMessage } from "openclaw/plugin-sdk/ssrf-runtime";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
+import type { DiscordAccountConfig } from "opencli/plugin-sdk/config-types";
+import { resolveAgentRoute } from "opencli/plugin-sdk/routing";
+import { createSubsystemLogger } from "opencli/plugin-sdk/runtime-env";
+import type { RuntimeEnv } from "opencli/plugin-sdk/runtime-env";
+import { formatErrorMessage } from "opencli/plugin-sdk/ssrf-runtime";
 import { resolveDiscordAccountAllowFrom } from "../accounts.js";
 import { type Client, ReadyListener } from "../internal/discord.js";
 import type { VoicePlugin } from "../internal/voice.js";
@@ -55,7 +55,7 @@ export class DiscordVoiceManager {
   constructor(
     private params: {
       client: Client;
-      cfg: OpenClawConfig;
+      cfg: OpenCLIConfig;
       discordConfig: DiscordAccountConfig;
       accountId: string;
       runtime: RuntimeEnv;

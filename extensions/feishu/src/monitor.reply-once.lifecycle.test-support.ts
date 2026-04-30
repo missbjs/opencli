@@ -1,4 +1,4 @@
-import { createRuntimeEnv } from "openclaw/plugin-sdk/plugin-test-runtime";
+import { createRuntimeEnv } from "opencli/plugin-sdk/plugin-test-runtime";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import "./lifecycle.test-support.js";
 import {
@@ -30,7 +30,7 @@ const {
 let lastRuntime = createRuntimeEnv();
 let lifecycleCore: ReturnType<typeof installFeishuLifecycleReplyRuntime>;
 const handleMessageMock = vi.fn();
-const originalStateDir = process.env.OPENCLAW_STATE_DIR;
+const originalStateDir = process.env.OPENCLI_STATE_DIR;
 const lifecycleConfig = createFeishuLifecycleConfig({
   accountId: "acct-lifecycle",
   appId: "cli_test",
@@ -68,7 +68,7 @@ describe("Feishu reply-once lifecycle", () => {
     resetFeishuLifecycleTestMocks();
     handleMessageMock.mockReset();
     lastRuntime = createRuntimeEnv();
-    setFeishuLifecycleStateDir("openclaw-feishu-lifecycle");
+    setFeishuLifecycleStateDir("opencli-feishu-lifecycle");
 
     createFeishuReplyDispatcherMock.mockReturnValue(createFeishuLifecycleReplyDispatcher());
 

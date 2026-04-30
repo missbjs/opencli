@@ -1,4 +1,4 @@
-import { getSessionBindingService } from "openclaw/plugin-sdk/session-binding-runtime";
+import { getSessionBindingService } from "opencli/plugin-sdk/session-binding-runtime";
 import {
   resolveMatrixApprovalReactionTarget,
   unregisterMatrixApprovalReactionTarget,

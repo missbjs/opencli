@@ -10,7 +10,7 @@ import {
 import { getCachedPluginJitiLoader, type PluginJitiLoaderCache } from "./jiti-loader-cache.js";
 import type { PluginConfigUiHint } from "./manifest-types.js";
 import type {
-  OpenClawPackageManifest,
+  OpenCLIPackageManifest,
   PluginManifest,
   PluginManifestChannelConfig,
 } from "./manifest.js";
@@ -108,9 +108,9 @@ function loadChannelConfigSurfaceModuleSync(modulePath: string): ChannelConfigSu
 }
 
 function resolvePackageChannelMeta(
-  packageManifest: OpenClawPackageManifest | undefined,
+  packageManifest: OpenCLIPackageManifest | undefined,
   channelId: string,
-): OpenClawPackageManifest["channel"] | undefined {
+): OpenCLIPackageManifest["channel"] | undefined {
   const channelMeta = packageManifest?.channel;
   return channelMeta?.id?.trim() === channelId ? channelMeta : undefined;
 }
@@ -118,7 +118,7 @@ function resolvePackageChannelMeta(
 export function collectBundledChannelConfigs(params: {
   pluginDir: string;
   manifest: PluginManifest;
-  packageManifest?: OpenClawPackageManifest;
+  packageManifest?: OpenCLIPackageManifest;
 }): Record<string, PluginManifestChannelConfig> | undefined {
   const channelIds = normalizeBundledPluginStringList(params.manifest.channels);
   const existingChannelConfigs: Record<string, PluginManifestChannelConfig> =

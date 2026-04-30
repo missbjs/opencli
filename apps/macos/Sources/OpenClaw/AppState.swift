@@ -1,7 +1,7 @@
 import AppKit
 import Foundation
 import Observation
-import OpenClawKit
+import OpenCLIKit
 import ServiceManagement
 import SwiftUI
 
@@ -355,7 +355,7 @@ final class AppState {
             UserDefaults.standard.set(IconOverrideSelection.system.rawValue, forKey: iconOverrideKey)
         }
 
-        let configRoot = OpenClawConfigFile.loadDict()
+        let configRoot = OpenCLIConfigFile.loadDict()
         let configRemoteUrl = GatewayRemoteConfig.resolveUrlString(root: configRoot)
         let configRemoteToken = GatewayRemoteConfig.resolveTokenValue(root: configRoot)
         let configRemoteTransport = GatewayRemoteConfig.resolveTransport(root: configRoot)
@@ -451,8 +451,8 @@ final class AppState {
         let preservePort: Bool = if LoopbackHost.isLoopbackHost(host) {
             true
         } else if let expectedRemoteHost {
-            OpenClawConfigFile.canonicalHostForComparison(host) ==
-                OpenClawConfigFile.canonicalHostForComparison(expectedRemoteHost)
+            OpenCLIConfigFile.canonicalHostForComparison(host) ==
+                OpenCLIConfigFile.canonicalHostForComparison(expectedRemoteHost)
         } else {
             false
         }
@@ -537,7 +537,7 @@ final class AppState {
     }
 
     private func startConfigWatcher() {
-        let configUrl = OpenClawConfigFile.url()
+        let configUrl = OpenCLIConfigFile.url()
         self.configWatcher = ConfigFileWatcher(url: configUrl) { [weak self] in
             Task { @MainActor in
                 self?.applyConfigFromDisk()
@@ -547,7 +547,7 @@ final class AppState {
     }
 
     private func applyConfigFromDisk() {
-        let root = OpenClawConfigFile.loadDict()
+        let root = OpenCLIConfigFile.loadDict()
         self.applyConfigOverrides(root)
     }
 
@@ -686,7 +686,7 @@ final class AppState {
 
         // Keep app-only connection settings local to avoid overwriting remote gateway config.
         let synced = Self.syncedGatewayRoot(
-            currentRoot: OpenClawConfigFile.loadDict(),
+            currentRoot: OpenCLIConfigFile.loadDict(),
             draft: .init(
                 connectionMode: self.connectionMode,
                 remoteTransport: self.remoteTransport,
@@ -696,7 +696,7 @@ final class AppState {
                 remoteToken: self.remoteToken,
                 remoteTokenDirty: self.remoteTokenDirty))
         guard synced.changed else { return }
-        OpenClawConfigFile.saveDict(synced.root)
+        OpenCLIConfigFile.saveDict(synced.root)
     }
 
     func triggerVoiceEars(ttl: TimeInterval? = 5) {
@@ -842,7 +842,7 @@ extension AppState {
         state.remoteUrl = "wss://gateway.example.ts.net"
         state.remoteToken = "example-token"
         state.remoteIdentity = "~/.ssh/id_ed25519"
-        state.remoteProjectRoot = "~/Projects/openclaw"
+        state.remoteProjectRoot = "~/Projects/opencli"
         state.remoteCliPath = ""
         return state
     }

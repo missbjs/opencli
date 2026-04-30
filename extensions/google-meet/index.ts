@@ -1,12 +1,12 @@
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
+import { formatErrorMessage } from "opencli/plugin-sdk/error-runtime";
 import {
   callGatewayFromCli,
   ErrorCodes,
   errorShape,
   type GatewayRequestHandlerOptions,
-} from "openclaw/plugin-sdk/gateway-runtime";
-import { definePluginEntry, type OpenClawPluginApi } from "openclaw/plugin-sdk/plugin-entry";
-import { normalizeOptionalString } from "openclaw/plugin-sdk/text-runtime";
+} from "opencli/plugin-sdk/gateway-runtime";
+import { definePluginEntry, type OpenCLIPluginApi } from "opencli/plugin-sdk/plugin-entry";
+import { normalizeOptionalString } from "opencli/plugin-sdk/text-runtime";
 import { Type } from "typebox";
 import {
   buildGoogleMeetCalendarDayWindow,
@@ -69,7 +69,7 @@ const googleMeetConfigSchema = {
     },
     "chrome.autoJoin": {
       label: "Auto Join Guest Screen",
-      help: "Best-effort guest-name fill and Join Now click through OpenClaw browser automation.",
+      help: "Best-effort guest-name fill and Join Now click through OpenCLI browser automation.",
     },
     "chrome.waitForInCallMs": {
       label: "Wait For In-Call (ms)",
@@ -132,7 +132,7 @@ const googleMeetConfigSchema = {
     },
     "realtime.agentId": {
       label: "Realtime Consult Agent",
-      help: 'OpenClaw agent id used by openclaw_agent_consult. Defaults to "main".',
+      help: 'OpenCLI agent id used by opencli_agent_consult. Defaults to "main".',
       advanced: true,
     },
     "realtime.toolPolicy": {
@@ -371,7 +371,7 @@ async function callGoogleMeetGatewayFromTool(params: {
 
 async function createMeetFromParams(params: {
   config: GoogleMeetConfig;
-  runtime: OpenClawPluginApi["runtime"];
+  runtime: OpenCLIPluginApi["runtime"];
   raw: Record<string, unknown>;
 }) {
   const create = await import("./src/create.js");
@@ -380,7 +380,7 @@ async function createMeetFromParams(params: {
 
 async function createAndJoinMeetFromParams(params: {
   config: GoogleMeetConfig;
-  runtime: OpenClawPluginApi["runtime"];
+  runtime: OpenCLIPluginApi["runtime"];
   raw: Record<string, unknown>;
   ensureRuntime: () => Promise<GoogleMeetRuntime>;
 }) {
@@ -558,7 +558,7 @@ export default definePluginEntry({
   name: "Google Meet",
   description: "Join Google Meet calls through Chrome or Twilio transports",
   configSchema: googleMeetConfigSchema,
-  register(api: OpenClawPluginApi) {
+  register(api: OpenCLIPluginApi) {
     const config = googleMeetConfigSchema.parse(api.pluginConfig);
     let runtime: GoogleMeetRuntime | null = null;
 

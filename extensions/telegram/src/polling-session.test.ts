@@ -1,4 +1,4 @@
-import type { ChannelAccountSnapshot } from "openclaw/plugin-sdk/channel-contract";
+import type { ChannelAccountSnapshot } from "opencli/plugin-sdk/channel-contract";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const runMock = vi.hoisted(() => vi.fn());
@@ -23,7 +23,7 @@ vi.mock("./api-logging.js", () => ({
   withTelegramApiErrorLogging: async ({ fn }: { fn: () => Promise<unknown> }) => await fn(),
 }));
 
-vi.mock("openclaw/plugin-sdk/runtime-env", () => ({
+vi.mock("opencli/plugin-sdk/runtime-env", () => ({
   computeBackoff: computeBackoffMock,
   formatDurationPrecise: vi.fn((ms: number) => `${ms}ms`),
   sleepWithAbort: sleepWithAbortMock,
@@ -309,7 +309,7 @@ describe("TelegramPollingSession", () => {
     await session.runUntilAbort();
 
     // Offset confirmation was removed because it could self-conflict with the runner.
-    // OpenClaw middleware still skips duplicates using the persisted update offset.
+    // OpenCLI middleware still skips duplicates using the persisted update offset.
     expect(bot.api.getUpdates).not.toHaveBeenCalled();
   });
 
@@ -1021,7 +1021,7 @@ describe("TelegramPollingSession", () => {
     await session.runUntilAbort();
 
     expect(log).toHaveBeenCalledWith(
-      expect.stringContaining("Another OpenClaw gateway, script, or Telegram poller"),
+      expect.stringContaining("Another OpenCLI gateway, script, or Telegram poller"),
     );
   });
 

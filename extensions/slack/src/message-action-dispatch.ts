@@ -1,10 +1,10 @@
 import type { AgentToolResult } from "@mariozechner/pi-agent-core";
-import type { ChannelMessageActionContext } from "openclaw/plugin-sdk/channel-contract";
+import type { ChannelMessageActionContext } from "opencli/plugin-sdk/channel-contract";
 import {
   normalizeInteractiveReply,
   normalizeMessagePresentation,
-} from "openclaw/plugin-sdk/interactive-runtime";
-import { readNumberParam, readStringParam } from "openclaw/plugin-sdk/param-readers";
+} from "opencli/plugin-sdk/interactive-runtime";
+import { readNumberParam, readStringParam } from "opencli/plugin-sdk/param-readers";
 import { buildSlackInteractiveBlocks, buildSlackPresentationBlocks } from "./blocks-render.js";
 
 type SlackActionInvoke = (

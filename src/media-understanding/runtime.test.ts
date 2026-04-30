@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.js";
+import type { OpenCLIConfig } from "../config/types.js";
 import type { MediaAttachment, MediaUnderstandingOutput } from "../media-understanding/types.js";
 import { describeImageFile, runMediaUnderstandingFile } from "./runtime.js";
 
@@ -55,7 +55,7 @@ describe("media-understanding runtime", () => {
               },
             },
           },
-        } as OpenClawConfig,
+        } as OpenCLIConfig,
         agentDir: "/tmp/agent",
       }),
     ).resolves.toEqual({
@@ -88,7 +88,7 @@ describe("media-understanding runtime", () => {
       describeImageFile({
         filePath: "/tmp/sample.jpg",
         mime: "image/jpeg",
-        cfg: {} as OpenClawConfig,
+        cfg: {} as OpenCLIConfig,
         agentDir: "/tmp/agent",
       }),
     ).resolves.toEqual({
@@ -128,7 +128,7 @@ describe("media-understanding runtime", () => {
             },
           },
         },
-      } as OpenClawConfig,
+      } as OpenCLIConfig,
       agentDir: "/tmp/agent",
       prompt: "Count visible buttons",
       timeoutMs: 90_000,
@@ -176,7 +176,7 @@ describe("media-understanding runtime", () => {
         capability: "audio",
         filePath: "/tmp/sample.ogg",
         mime: "audio/ogg",
-        cfg: {} as OpenClawConfig,
+        cfg: {} as OpenCLIConfig,
         agentDir: "/tmp/agent",
       }),
     ).rejects.toThrow("Audio transcription response missing text");

@@ -6,13 +6,13 @@ const readJson = (file) => JSON.parse(fs.readFileSync(file, "utf8"));
 
 function assertOnboardState() {
   const home = process.argv[3];
-  const stateDir = path.join(home, ".openclaw");
-  const configPath = path.join(stateDir, "openclaw.json");
+  const stateDir = path.join(home, ".opencli");
+  const configPath = path.join(stateDir, "opencli.json");
   const agentDir = path.join(stateDir, "agents", "main", "agent");
   const authPath = path.join(agentDir, "auth-profiles.json");
 
   if (!fs.existsSync(configPath)) {
-    throw new Error("onboard did not write openclaw.json");
+    throw new Error("onboard did not write opencli.json");
   }
   if (!fs.existsSync(agentDir)) {
     throw new Error("onboard did not create main agent dir");
@@ -24,14 +24,14 @@ function assertOnboardState() {
   if (!authRaw.includes("OPENAI_API_KEY")) {
     throw new Error("auth profile did not persist OPENAI_API_KEY env ref");
   }
-  if (authRaw.includes("sk-openclaw-npm-onboard-e2e")) {
+  if (authRaw.includes("sk-opencli-npm-onboard-e2e")) {
     throw new Error("auth profile persisted the raw OpenAI test key");
   }
 }
 
 function configureMockModel() {
   const mockPort = Number(process.argv[3]);
-  const configPath = path.join(process.env.HOME, ".openclaw", "openclaw.json");
+  const configPath = path.join(process.env.HOME, ".opencli", "opencli.json");
   const cfg = readJson(configPath);
   const modelRef = "openai/gpt-5.5";
   const cost = { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 };
@@ -84,7 +84,7 @@ function configureMockModel() {
 function assertChannelConfig() {
   const channel = process.argv[3];
   const token = process.argv[4];
-  const configPath = path.join(process.env.HOME, ".openclaw", "openclaw.json");
+  const configPath = path.join(process.env.HOME, ".opencli", "opencli.json");
   const cfg = readJson(configPath);
   const entry = cfg.channels?.[channel];
   if (!entry || entry.enabled === false) {
@@ -98,7 +98,7 @@ function assertChannelConfig() {
 function assertAgentTurn() {
   const marker = process.argv[3];
   const logPath = process.argv[4];
-  const output = fs.readFileSync("/tmp/openclaw-agent.combined", "utf8");
+  const output = fs.readFileSync("/tmp/opencli-agent.combined", "utf8");
   if (!output.includes(marker)) {
     throw new Error(`agent JSON did not contain success marker. Output: ${output}`);
   }

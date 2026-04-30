@@ -1,16 +1,16 @@
 {
-  "name": "@openclaw/skill-workshop",
+  "name": "@opencli/skill-workshop",
   "version": "2026.4.25",
   "private": true,
-  "description": "OpenClaw skill workshop plugin",
+  "description": "OpenCLI skill workshop plugin",
   "type": "module",
   "dependencies": {
     "typebox": "1.1.34"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@opencli/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "opencli": {
     "extensions": [
       "./index.ts"
     ]

@@ -1,12 +1,12 @@
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
 const resolveGatewayLogPathsMock = vi.fn(() => ({
-  logDir: "C:\\tmp\\openclaw-state\\logs",
-  stdoutPath: "C:\\tmp\\openclaw-state\\logs\\gateway.log",
-  stderrPath: "C:\\tmp\\openclaw-state\\logs\\gateway.err.log",
+  logDir: "C:\\tmp\\opencli-state\\logs",
+  stdoutPath: "C:\\tmp\\opencli-state\\logs\\gateway.log",
+  stderrPath: "C:\\tmp\\opencli-state\\logs\\gateway.err.log",
 }));
 const resolveGatewayRestartLogPathMock = vi.fn(
-  () => "C:\\tmp\\openclaw-state\\logs\\gateway-restart.log",
+  () => "C:\\tmp\\opencli-state\\logs\\gateway-restart.log",
 );
 
 vi.mock("./restart-logs.js", () => ({
@@ -25,13 +25,13 @@ describe("buildPlatformRuntimeLogHints", () => {
     expect(
       buildPlatformRuntimeLogHints({
         platform: "darwin",
-        systemdServiceName: "openclaw-gateway",
-        windowsTaskName: "OpenClaw Gateway",
+        systemdServiceName: "opencli-gateway",
+        windowsTaskName: "OpenCLI Gateway",
       }),
     ).toEqual([
-      "Launchd stdout (if installed): /tmp/openclaw-state/logs/gateway.log",
-      "Launchd stderr (if installed): /tmp/openclaw-state/logs/gateway.err.log",
-      "Restart attempts: /tmp/openclaw-state/logs/gateway-restart.log",
+      "Launchd stdout (if installed): /tmp/opencli-state/logs/gateway.log",
+      "Launchd stderr (if installed): /tmp/opencli-state/logs/gateway.err.log",
+      "Restart attempts: /tmp/opencli-state/logs/gateway-restart.log",
     ]);
   });
 });

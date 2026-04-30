@@ -1,5 +1,5 @@
-import { describeProviderContracts } from "openclaw/plugin-sdk/provider-test-contracts";
-import { describeWebSearchProviderContracts } from "openclaw/plugin-sdk/provider-test-contracts";
+import { describeProviderContracts } from "opencli/plugin-sdk/provider-test-contracts";
+import { describeWebSearchProviderContracts } from "opencli/plugin-sdk/provider-test-contracts";
 
 for (const providerId of [
   "anthropic",

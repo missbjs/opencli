@@ -24,7 +24,7 @@ describe("mirrored root runtime dependency drift guard", () => {
       if (fs.existsSync(candidate)) {
         try {
           const data = JSON.parse(fs.readFileSync(candidate, "utf8")) as { name?: string };
-          if (data.name === "openclaw") {
+          if (data.name === "opencli") {
             return dir;
           }
         } catch {
@@ -37,7 +37,7 @@ describe("mirrored root runtime dependency drift guard", () => {
       }
       dir = parent;
     }
-    throw new Error("could not locate openclaw repo root from test file");
+    throw new Error("could not locate opencli repo root from test file");
   }
 
   function readPackageJsonDeps(packageJsonPath: string): Set<string> {
@@ -65,13 +65,13 @@ describe("mirrored root runtime dependency drift guard", () => {
 
   function readMirroredRootRuntimeDeps(repoRoot: string): Set<string> {
     const parsed = JSON.parse(fs.readFileSync(path.join(repoRoot, "package.json"), "utf8")) as {
-      openclaw?: {
+      opencli?: {
         bundle?: {
           mirroredRootRuntimeDependencies?: unknown;
         };
       };
     };
-    const deps = parsed.openclaw?.bundle?.mirroredRootRuntimeDependencies;
+    const deps = parsed.opencli?.bundle?.mirroredRootRuntimeDependencies;
     return new Set(Array.isArray(deps) ? deps.filter((dep) => typeof dep === "string") : []);
   }
 
@@ -181,7 +181,7 @@ describe("mirrored root runtime dependency drift guard", () => {
         if (nodeBuiltins.has(packageName)) {
           continue;
         }
-        if (packageName === "openclaw" || packageName.startsWith("@openclaw/")) {
+        if (packageName === "opencli" || packageName.startsWith("@opencli/")) {
           continue;
         }
         if (mirroredCore.has(packageName) || extensionDeps.has(packageName)) {
@@ -209,9 +209,9 @@ describe("mirrored root runtime dependency drift guard", () => {
       throw new Error(
         [
           "Bare imports found in src/ that are root-package runtime deps but are neither",
-          "in package.json openclaw.bundle.mirroredRootRuntimeDependencies nor declared by any extension's package.json.",
+          "in package.json opencli.bundle.mirroredRootRuntimeDependencies nor declared by any extension's package.json.",
           "These will be missing from the runtime-deps mirror at gateway start and Node",
-          "will fail to resolve them. Either add the package to openclaw.bundle.mirroredRootRuntimeDependencies,",
+          "will fail to resolve them. Either add the package to opencli.bundle.mirroredRootRuntimeDependencies,",
           "declare it under an owning extension's dependencies, or add it to",
           "KNOWN_UNMIRRORED_BARE_IMPORTS in this test with a comment explaining why.",
           "",

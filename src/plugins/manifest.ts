@@ -30,7 +30,7 @@ import {
 import type { PluginConfigUiHint } from "./manifest-types.js";
 import type { PluginKind } from "./plugin-kind.types.js";
 
-export const PLUGIN_MANIFEST_FILENAME = "openclaw.plugin.json";
+export const PLUGIN_MANIFEST_FILENAME = "opencli.plugin.json";
 export const PLUGIN_MANIFEST_FILENAMES = [PLUGIN_MANIFEST_FILENAME] as const;
 export const MAX_PLUGIN_MANIFEST_BYTES = 256 * 1024;
 const MAX_PLUGIN_MANIFEST_LOAD_CACHE_ENTRIES = 512;
@@ -156,7 +156,7 @@ export type PluginManifestActivationCapability = "provider" | "channel" | "tool"
 export type PluginManifestActivation = {
   /**
    * Explicit Gateway startup activation. Every plugin should set this as
-   * OpenClaw moves away from implicit startup sidecar loading. Set true when
+   * OpenCLI moves away from implicit startup sidecar loading. Set true when
    * the plugin must be imported during Gateway startup; set false to opt out
    * of the deprecated implicit startup sidecar fallback when no other
    * activation trigger matches.
@@ -228,7 +228,7 @@ export type PluginManifestSetup = {
 };
 
 export type PluginManifestQaRunner = {
-  /** Subcommand mounted beneath `openclaw qa`, for example `matrix`. */
+  /** Subcommand mounted beneath `opencli qa`, for example `matrix`. */
   commandName: string;
   /** Optional user-facing help text for fallback host stubs. */
   description?: string;
@@ -1452,7 +1452,7 @@ export function loadPluginManifest(
   });
 }
 
-// package.json "openclaw" metadata (used for setup/catalog)
+// package.json "opencli" metadata (used for setup/catalog)
 export type PluginPackageChannel = {
   id?: string;
   label?: string;
@@ -1514,7 +1514,7 @@ export type PluginPackageInstall = {
   allowInvalidConfigRecovery?: boolean;
 };
 
-export type OpenClawPackageStartup = {
+export type OpenCLIPackageStartup = {
   /**
    * Opt-in for channel plugins whose `setupEntry` fully covers the gateway
    * startup surface needed before the server starts listening.
@@ -1522,21 +1522,21 @@ export type OpenClawPackageStartup = {
   deferConfiguredChannelFullLoadUntilAfterListen?: boolean;
 };
 
-export type OpenClawPackageSetupFeatures = {
+export type OpenCLIPackageSetupFeatures = {
   configPromotion?: boolean;
   legacyStateMigrations?: boolean;
   legacySessionSurfaces?: boolean;
 };
 
-export type OpenClawPackageManifest = {
+export type OpenCLIPackageManifest = {
   extensions?: string[];
   runtimeExtensions?: string[];
   setupEntry?: string;
   runtimeSetupEntry?: string;
-  setupFeatures?: OpenClawPackageSetupFeatures;
+  setupFeatures?: OpenCLIPackageSetupFeatures;
   channel?: PluginPackageChannel;
   install?: PluginPackageInstall;
-  startup?: OpenClawPackageStartup;
+  startup?: OpenCLIPackageStartup;
 };
 
 export const DEFAULT_PLUGIN_ENTRY_CANDIDATES = [
@@ -1557,11 +1557,11 @@ export type PackageManifest = {
   name?: string;
   version?: string;
   description?: string;
-} & Partial<Record<ManifestKey, OpenClawPackageManifest>>;
+} & Partial<Record<ManifestKey, OpenCLIPackageManifest>>;
 
 export function getPackageManifestMetadata(
   manifest: PackageManifest | undefined,
-): OpenClawPackageManifest | undefined {
+): OpenCLIPackageManifest | undefined {
   if (!manifest) {
     return undefined;
   }

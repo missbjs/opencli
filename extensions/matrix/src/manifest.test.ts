@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 type MatrixPackageManifest = {
   dependencies?: Record<string, string>;
-  openclaw?: {
+  opencli?: {
     bundle?: {
       stageRuntimeDependencies?: boolean;
     };
@@ -17,6 +17,6 @@ describe("matrix package manifest", () => {
     ) as MatrixPackageManifest;
 
     expect(packageJson.dependencies?.["fake-indexeddb"]).toBeDefined();
-    expect(packageJson.openclaw?.bundle?.stageRuntimeDependencies).toBe(true);
+    expect(packageJson.opencli?.bundle?.stageRuntimeDependencies).toBe(true);
   });
 });

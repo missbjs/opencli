@@ -55,7 +55,7 @@ without breaking the request-driven path.
 
 The watcher needs to send and edit chat messages from outside an
 `inbound_claim` handler — i.e. driven by a timer, not a request. We do not
-yet know how openclaw exposes this to plugins.
+yet know how opencli exposes this to plugins.
 
 **Investigate:**
 
@@ -275,7 +275,7 @@ suppressPreviewWindow(sessionKey, cfg.settleMaxMs);
 
 ### 4.3 Config schema additions
 
-`extensions/tui-bridge/openclaw.plugin.json` `configSchema.properties`:
+`extensions/tui-bridge/opencli.plugin.json` `configSchema.properties`:
 
 ```json
 "watcher": {
@@ -402,7 +402,7 @@ NEW:
   extensions/tui-bridge/src/duration.test.ts
 
 MODIFY:
-  extensions/tui-bridge/openclaw.plugin.json     (configSchema.watcher)
+  extensions/tui-bridge/opencli.plugin.json     (configSchema.watcher)
   extensions/tui-bridge/src/types.ts             (WatcherConfig, resolveConfig)
   extensions/tui-bridge/src/process-pool.ts      (onDataExtra/onExitExtra hooks, snapshotReply)
   extensions/tui-bridge/src/inbound-claim.ts     (call suppressPreviewWindow)

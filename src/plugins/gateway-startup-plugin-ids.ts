@@ -3,7 +3,7 @@ import {
   listExplicitlyDisabledChannelIdsForConfig,
   listPotentialConfiguredChannelIds,
 } from "../channels/config-presence.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import {
   DEFAULT_MEMORY_DREAMING_PLUGIN_ID,
   resolveMemoryDreamingConfig,
@@ -24,7 +24,7 @@ import {
 import { loadPluginRegistrySnapshot } from "./plugin-registry-snapshot.js";
 
 const DISABLE_LEGACY_IMPLICIT_STARTUP_SIDECARS_ENV =
-  "OPENCLAW_DISABLE_LEGACY_IMPLICIT_STARTUP_SIDECARS";
+  "OPENCLI_DISABLE_LEGACY_IMPLICIT_STARTUP_SIDECARS";
 
 function isTruthyEnvValue(value: string | undefined): boolean {
   const normalized = value?.trim().toLowerCase();
@@ -49,7 +49,7 @@ function isConfigActivationValueEnabled(value: unknown): boolean {
   return true;
 }
 
-function listPotentialEnabledChannelIds(config: OpenClawConfig, env: NodeJS.ProcessEnv): string[] {
+function listPotentialEnabledChannelIds(config: OpenCLIConfig, env: NodeJS.ProcessEnv): string[] {
   const disabled = new Set(listExplicitlyDisabledChannelIdsForConfig(config));
   return listPotentialConfiguredChannelIds(config, env, { includePersistedAuthState: false })
     .map((id) => normalizeOptionalLowercaseString(id) ?? "")
@@ -72,7 +72,7 @@ function isDeprecatedLegacyImplicitStartupSidecar(params: {
   return params.plugin.startup.sidecar && params.manifest?.activation?.onStartup === undefined;
 }
 
-function resolveGatewayStartupDreamingPluginIds(config: OpenClawConfig): Set<string> {
+function resolveGatewayStartupDreamingPluginIds(config: OpenCLIConfig): Set<string> {
   const dreamingConfig = resolveMemoryDreamingConfig({
     pluginConfig: resolveMemoryDreamingPluginConfig(config),
     cfg: config,
@@ -84,7 +84,7 @@ function resolveGatewayStartupDreamingPluginIds(config: OpenClawConfig): Set<str
 }
 
 function resolveMemorySlotStartupPluginId(params: {
-  activationSourceConfig: OpenClawConfig;
+  activationSourceConfig: OpenCLIConfig;
   activationSourcePlugins: ReturnType<typeof normalizePluginsConfigWithRegistry>;
   normalizePluginId: (pluginId: string) => string;
 }): string | undefined {
@@ -178,7 +178,7 @@ function findManifestPlugin(
 
 function hasConfiguredActivationPath(params: {
   manifest: PluginManifestRecord | undefined;
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
 }): boolean {
   const paths = params.manifest?.activation?.onConfigPaths;
   if (!paths?.length) {
@@ -195,7 +195,7 @@ function hasConfiguredActivationPath(params: {
 function canStartConfiguredRootPlugin(params: {
   plugin: InstalledPluginIndexRecord;
   manifest: PluginManifestRecord | undefined;
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   pluginsConfig: ReturnType<typeof normalizePluginsConfigWithRegistry>;
   activationSourcePlugins: ReturnType<typeof normalizePluginsConfigWithRegistry>;
 }): boolean {
@@ -225,11 +225,11 @@ function canStartConfiguredRootPlugin(params: {
 
 function canStartConfiguredChannelPlugin(params: {
   plugin: InstalledPluginIndexRecord;
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   pluginsConfig: ReturnType<typeof normalizePluginsConfigWithRegistry>;
   activationSource: {
     plugins: ReturnType<typeof normalizePluginsConfigWithRegistry>;
-    rootConfig?: OpenClawConfig;
+    rootConfig?: OpenCLIConfig;
   };
   manifestLookup: ManifestRegistryLookup;
 }): boolean {
@@ -272,7 +272,7 @@ function canStartConfiguredChannelPlugin(params: {
 }
 
 export function resolveChannelPluginIds(params: {
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
 }): string[] {
@@ -301,7 +301,7 @@ export function resolveChannelPluginIdsFromRegistry(params: {
 }
 
 export function resolveConfiguredDeferredChannelPluginIdsFromRegistry(params: {
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   env: NodeJS.ProcessEnv;
   index: ReturnType<typeof loadPluginRegistrySnapshot>;
   manifestRegistry: PluginManifestRegistry;
@@ -339,7 +339,7 @@ export function resolveConfiguredDeferredChannelPluginIdsFromRegistry(params: {
 }
 
 export function resolveConfiguredDeferredChannelPluginIds(params: {
-  config: OpenClawConfig;
+  config: OpenCLIConfig;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
 }): string[] {
@@ -364,8 +364,8 @@ export function resolveConfiguredDeferredChannelPluginIds(params: {
 }
 
 export function resolveGatewayStartupPluginIdsFromRegistry(params: {
-  config: OpenClawConfig;
-  activationSourceConfig?: OpenClawConfig;
+  config: OpenCLIConfig;
+  activationSourceConfig?: OpenCLIConfig;
   env: NodeJS.ProcessEnv;
   index: ReturnType<typeof loadPluginRegistrySnapshot>;
   manifestRegistry: PluginManifestRegistry;
@@ -475,8 +475,8 @@ export function resolveGatewayStartupPluginIdsFromRegistry(params: {
 }
 
 export function resolveGatewayStartupPluginIds(params: {
-  config: OpenClawConfig;
-  activationSourceConfig?: OpenClawConfig;
+  config: OpenCLIConfig;
+  activationSourceConfig?: OpenCLIConfig;
   workspaceDir?: string;
   env: NodeJS.ProcessEnv;
 }): string[] {

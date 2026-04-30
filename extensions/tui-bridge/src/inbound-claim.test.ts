@@ -4,8 +4,8 @@ import { join } from "node:path";
 import type {
   PluginHookInboundClaimContext,
   PluginHookInboundClaimEvent,
-} from "openclaw/plugin-sdk/plugin-entry";
-import type { PluginConversationBinding } from "openclaw/plugin-sdk/plugin-entry";
+} from "opencli/plugin-sdk/plugin-entry";
+import type { PluginConversationBinding } from "opencli/plugin-sdk/plugin-entry";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { createBindingData } from "./binding-data.js";
 import { handleTuiInboundClaim } from "./inbound-claim.js";

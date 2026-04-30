@@ -67,7 +67,7 @@ describe("resolveTsdownBuildInvocation", () => {
   });
 
   it("prunes stale hashed root chunk files but keeps stable aliases and nested assets", async () => {
-    const rootDir = createTempDir("openclaw-tsdown-build-");
+    const rootDir = createTempDir("opencli-tsdown-build-");
     const distDir = path.join(rootDir, "dist");
     const distRuntimeDir = path.join(rootDir, "dist-runtime");
     await fsPromises.mkdir(path.join(distDir, "control-ui"), { recursive: true });
@@ -107,9 +107,9 @@ describe("resolveTsdownBuildInvocation", () => {
   });
 
   it("cleans tsdown output roots before using tsdown --no-clean without deleting staged runtime deps", async () => {
-    const rootDir = createTempDir("openclaw-tsdown-clean-");
+    const rootDir = createTempDir("opencli-tsdown-clean-");
     const distFile = path.join(rootDir, "dist", "stale.js");
-    const pluginManifest = path.join(rootDir, "extensions", "telegram", "openclaw.plugin.json");
+    const pluginManifest = path.join(rootDir, "extensions", "telegram", "opencli.plugin.json");
     const pluginSourceManifest = path.join(rootDir, "extensions", "telegram", "package.json");
     const pluginGeneratedFile = path.join(rootDir, "dist", "extensions", "telegram", "index.js");
     const pluginRuntimeDepFile = path.join(
@@ -161,7 +161,7 @@ describe("resolveTsdownBuildInvocation", () => {
     await fsPromises.writeFile(pluginManifest, '{"id":"telegram"}\n');
     await fsPromises.writeFile(
       pluginSourceManifest,
-      '{"openclaw":{"bundle":{"stageRuntimeDependencies":true}}}\n',
+      '{"opencli":{"bundle":{"stageRuntimeDependencies":true}}}\n',
     );
     await fsPromises.writeFile(pluginGeneratedFile, "generated\n");
     await fsPromises.writeFile(pluginRuntimeDepFile, "{}\n");
@@ -244,7 +244,7 @@ describe("runTsdownBuildInvocation", () => {
       {
         stdout: output.sink,
         stderr: output.sink,
-        env: { ...process.env, OPENCLAW_TSDOWN_HEARTBEAT_MS: "0" },
+        env: { ...process.env, OPENCLI_TSDOWN_HEARTBEAT_MS: "0" },
       },
     );
 
@@ -253,7 +253,7 @@ describe("runTsdownBuildInvocation", () => {
     expect(output.chunks.join("")).toContain("stdout-ok");
   });
 
-  it("terminates the child when OPENCLAW_TSDOWN_TIMEOUT_MS elapses", async () => {
+  it("terminates the child when OPENCLI_TSDOWN_TIMEOUT_MS elapses", async () => {
     const output = createWriteSink();
     const result = await runTsdownBuildInvocation(
       {
@@ -270,8 +270,8 @@ describe("runTsdownBuildInvocation", () => {
         stderr: output.sink,
         env: {
           ...process.env,
-          OPENCLAW_TSDOWN_HEARTBEAT_MS: "0",
-          OPENCLAW_TSDOWN_TIMEOUT_MS: "50",
+          OPENCLI_TSDOWN_HEARTBEAT_MS: "0",
+          OPENCLI_TSDOWN_TIMEOUT_MS: "50",
         },
       },
     );

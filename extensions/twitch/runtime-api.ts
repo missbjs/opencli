@@ -14,9 +14,9 @@ export type {
   ChannelResolveKind,
   ChannelResolveResult,
   ChannelStatusAdapter,
-} from "openclaw/plugin-sdk/channel-contract";
-export type { ChannelPlugin } from "openclaw/plugin-sdk/channel-core";
-export type { OutboundDeliveryResult } from "openclaw/plugin-sdk/channel-send-result";
-export type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
-export type { RuntimeEnv } from "openclaw/plugin-sdk/runtime";
-export type { WizardPrompter } from "openclaw/plugin-sdk/setup";
+} from "opencli/plugin-sdk/channel-contract";
+export type { ChannelPlugin } from "opencli/plugin-sdk/channel-core";
+export type { OutboundDeliveryResult } from "opencli/plugin-sdk/channel-send-result";
+export type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
+export type { RuntimeEnv } from "opencli/plugin-sdk/runtime";
+export type { WizardPrompter } from "opencli/plugin-sdk/setup";

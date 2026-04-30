@@ -35,7 +35,7 @@ jobs:
         with:
           client-id: ${{ env.CLAWSWEEPER_APP_CLIENT_ID }}
           private-key: ${{ secrets.CLAWSWEEPER_APP_PRIVATE_KEY }}
-          owner: openclaw
+          owner: opencli
           repositories: clawsweeper
           permission-contents: write
 
@@ -61,12 +61,12 @@ jobs:
             --arg source_action "$SOURCE_ACTION" \
             --argjson supersedes_in_progress "$SUPERSEDES_IN_PROGRESS" \
             '{event_type:"clawsweeper_item",client_payload:{target_repo:$target_repo,item_number:$item_number,item_kind:$item_kind,source_event:$source_event,source_action:$source_action,supersedes_in_progress:$supersedes_in_progress}}')"
-          if gh api repos/openclaw/clawsweeper/dispatches \
+          if gh api repos/opencli/clawsweeper/dispatches \
             --method POST \
             --input - <<< "$payload"; then
             echo "Dispatched ClawSweeper review."
           else
-            echo "::warning::Skipping ClawSweeper dispatch because the configured credential could not dispatch to openclaw/clawsweeper."
+            echo "::warning::Skipping ClawSweeper dispatch because the configured credential could not dispatch to opencli/clawsweeper."
           fi
 
       - name: Dispatch ClawSweeper commit review
@@ -94,10 +94,10 @@ jobs:
             --arg ref "$SOURCE_REF" \
             --argjson create_checks "$create_checks" \
             '{event_type:"clawsweeper_commit_review",client_payload:{target_repo:$target_repo,before_sha:$before_sha,after_sha:$after_sha,ref:$ref,enabled:true,create_checks:$create_checks}}')"
-          if gh api repos/openclaw/clawsweeper/dispatches \
+          if gh api repos/opencli/clawsweeper/dispatches \
             --method POST \
             --input - <<< "$payload"; then
             echo "Dispatched ClawSweeper commit review."
           else
-            echo "::warning::Skipping ClawSweeper commit dispatch because the configured credential could not dispatch to openclaw/clawsweeper."
+            echo "::warning::Skipping ClawSweeper commit dispatch because the configured credential could not dispatch to opencli/clawsweeper."
           fi

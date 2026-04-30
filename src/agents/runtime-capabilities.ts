@@ -1,5 +1,5 @@
 import { resolveChannelCapabilities } from "../config/channel-capabilities.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { normalizeOptionalLowercaseString } from "../shared/string-coerce.js";
 import { resolveChannelPromptCapabilities } from "./channel-tools.js";
 
@@ -25,7 +25,7 @@ export function mergeRuntimeCapabilities(
 }
 
 export function collectRuntimeChannelCapabilities(params: {
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   channel?: string | null;
   accountId?: string | null;
 }): string[] | undefined {

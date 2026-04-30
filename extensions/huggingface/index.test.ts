@@ -1,4 +1,4 @@
-import { createTestPluginApi } from "openclaw/plugin-sdk/plugin-test-api";
+import { createTestPluginApi } from "opencli/plugin-sdk/plugin-test-api";
 import { describe, expect, it, vi } from "vitest";
 
 const buildHuggingfaceProviderMock = vi.hoisted(() =>

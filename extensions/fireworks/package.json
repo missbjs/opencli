@@ -1,16 +1,16 @@
 {
-  "name": "@openclaw/fireworks-provider",
+  "name": "@opencli/fireworks-provider",
   "version": "2026.4.25",
   "private": true,
-  "description": "OpenClaw Fireworks provider plugin",
+  "description": "OpenCLI Fireworks provider plugin",
   "type": "module",
   "dependencies": {
     "@mariozechner/pi-ai": "0.70.6"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@opencli/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "opencli": {
     "extensions": [
       "./index.ts"
     ]

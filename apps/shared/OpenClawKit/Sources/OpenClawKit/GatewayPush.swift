@@ -1,4 +1,4 @@
-import OpenClawProtocol
+import OpenCLIProtocol
 
 /// Server-push messages from the gateway websocket.
 ///

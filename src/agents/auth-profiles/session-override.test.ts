@@ -1,11 +1,11 @@
 import fs from "node:fs/promises";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { SessionEntry } from "../../config/sessions/types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../../config/types.opencli.js";
 import {
-  type OpenClawTestState,
-  withOpenClawTestState,
-} from "../../test-utils/openclaw-test-state.js";
+  type OpenCLITestState,
+  withOpenCLITestState,
+} from "../../test-utils/opencli-test-state.js";
 import { resolveSessionAuthProfileOverride } from "./session-override.js";
 import type { AuthProfileStore } from "./types.js";
 
@@ -54,11 +54,11 @@ vi.mock("./usage.js", () => ({
   isProfileInCooldown: authStoreMocks.isProfileInCooldown,
 }));
 
-async function withAuthState<T>(run: (state: OpenClawTestState) => Promise<T>): Promise<T> {
-  return await withOpenClawTestState(
+async function withAuthState<T>(run: (state: OpenCLITestState) => Promise<T>): Promise<T> {
+  return await withOpenCLITestState(
     {
       layout: "state-only",
-      prefix: "openclaw-auth-",
+      prefix: "opencli-auth-",
     },
     run,
   );
@@ -108,7 +108,7 @@ describe("resolveSessionAuthProfileOverride", () => {
       const sessionStore = { "agent:main:main": sessionEntry };
 
       const resolved = await resolveSessionAuthProfileOverride({
-        cfg: {} as OpenClawConfig,
+        cfg: {} as OpenCLIConfig,
         provider: "openrouter",
         agentDir,
         sessionEntry,
@@ -142,7 +142,7 @@ describe("resolveSessionAuthProfileOverride", () => {
       const sessionStore = { "agent:main:main": sessionEntry };
 
       const resolved = await resolveSessionAuthProfileOverride({
-        cfg: {} as OpenClawConfig,
+        cfg: {} as OpenCLIConfig,
         provider: "z.ai",
         agentDir,
         sessionEntry,
@@ -189,7 +189,7 @@ describe("resolveSessionAuthProfileOverride", () => {
       const sessionStore = { "agent:main:main": sessionEntry };
 
       const resolved = await resolveSessionAuthProfileOverride({
-        cfg: {} as OpenClawConfig,
+        cfg: {} as OpenCLIConfig,
         provider: "openai-codex",
         agentDir,
         sessionEntry,
@@ -232,7 +232,7 @@ describe("resolveSessionAuthProfileOverride", () => {
       const sessionStore = { "agent:main:main": sessionEntry };
 
       const resolved = await resolveSessionAuthProfileOverride({
-        cfg: {} as OpenClawConfig,
+        cfg: {} as OpenCLIConfig,
         provider: "codex-cli",
         agentDir,
         sessionEntry,

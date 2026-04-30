@@ -4,7 +4,7 @@ import { normalizeReplyPayload } from "../../auto-reply/reply/normalize-reply.js
 import type { ThinkLevel, VerboseLevel } from "../../auto-reply/thinking.js";
 import { resolveSessionTranscriptFile } from "../../config/sessions/transcript.js";
 import type { SessionEntry } from "../../config/sessions/types.js";
-import type { OpenClawConfig } from "../../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../../config/types.opencli.js";
 import { emitAgentEvent } from "../../infra/agent-events.js";
 import { createSubsystemLogger } from "../../logging/subsystem.js";
 import { annotateInterSessionPromptText } from "../../sessions/input-provenance.js";
@@ -188,7 +188,7 @@ export async function persistAcpTurnTranscript(params: {
     ...params,
     assistant: {
       api: "openai-responses",
-      provider: "openclaw",
+      provider: "opencli",
       model: "acp-runtime",
     },
   });
@@ -236,7 +236,7 @@ export function runAgentAttempt(params: {
   providerOverride: string;
   modelOverride: string;
   originalProvider: string;
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   sessionEntry: SessionEntry | undefined;
   sessionId: string;
   sessionKey: string | undefined;
@@ -510,7 +510,7 @@ export function runAgentAttempt(params: {
 }
 
 function resolveSessionPinnedAgentHarnessId(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   sessionAgentId: string;
   sessionEntry?: SessionEntry;
   sessionHasHistory?: boolean;
@@ -534,7 +534,7 @@ function resolveSessionPinnedAgentHarnessId(params: {
 }
 
 function resolveConfiguredAgentHarnessId(params: {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   sessionAgentId: string;
   sessionKey: string;
 }): string | undefined {

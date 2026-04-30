@@ -33,44 +33,44 @@ const BLOCKED_WORKSPACE_DOTENV_KEYS = new Set([
   "NPM_EXECPATH",
   "OPENAI_API_KEY",
   "OPENAI_API_KEYS",
-  "OPENCLAW_AGENT_DIR",
-  "OPENCLAW_ALLOW_INSECURE_PRIVATE_WS",
-  "OPENCLAW_ALLOW_PROJECT_LOCAL_BIN",
-  "OPENCLAW_BROWSER_EXECUTABLE_PATH",
-  "OPENCLAW_BROWSER_CONTROL_MODULE",
-  "OPENCLAW_BUNDLED_HOOKS_DIR",
-  "OPENCLAW_BUNDLED_PLUGINS_DIR",
-  "OPENCLAW_BUNDLED_SKILLS_DIR",
-  "OPENCLAW_CACHE_TRACE",
-  "OPENCLAW_CACHE_TRACE_FILE",
-  "OPENCLAW_CACHE_TRACE_MESSAGES",
-  "OPENCLAW_CACHE_TRACE_PROMPT",
-  "OPENCLAW_CACHE_TRACE_SYSTEM",
-  "OPENCLAW_CONFIG_PATH",
-  "OPENCLAW_GATEWAY_PASSWORD",
-  "OPENCLAW_GATEWAY_PORT",
-  "OPENCLAW_GATEWAY_SECRET",
-  "OPENCLAW_GATEWAY_TOKEN",
-  "OPENCLAW_GATEWAY_URL",
-  "OPENCLAW_HOME",
-  "OPENCLAW_LIVE_ANTHROPIC_KEY",
-  "OPENCLAW_LIVE_ANTHROPIC_KEYS",
-  "OPENCLAW_LIVE_GEMINI_KEY",
-  "OPENCLAW_LIVE_OPENAI_KEY",
-  "OPENCLAW_MPM_CATALOG_PATHS",
-  "OPENCLAW_NODE_EXEC_FALLBACK",
-  "OPENCLAW_NODE_EXEC_HOST",
-  "OPENCLAW_OAUTH_DIR",
-  "OPENCLAW_PINNED_PYTHON",
-  "OPENCLAW_PINNED_WRITE_PYTHON",
-  "OPENCLAW_PLUGIN_CATALOG_PATHS",
-  "OPENCLAW_PROFILE",
-  "OPENCLAW_RAW_STREAM",
-  "OPENCLAW_RAW_STREAM_PATH",
-  "OPENCLAW_SHOW_SECRETS",
-  "OPENCLAW_SKIP_BROWSER_CONTROL_SERVER",
-  "OPENCLAW_STATE_DIR",
-  "OPENCLAW_TEST_TAILSCALE_BINARY",
+  "OPENCLI_AGENT_DIR",
+  "OPENCLI_ALLOW_INSECURE_PRIVATE_WS",
+  "OPENCLI_ALLOW_PROJECT_LOCAL_BIN",
+  "OPENCLI_BROWSER_EXECUTABLE_PATH",
+  "OPENCLI_BROWSER_CONTROL_MODULE",
+  "OPENCLI_BUNDLED_HOOKS_DIR",
+  "OPENCLI_BUNDLED_PLUGINS_DIR",
+  "OPENCLI_BUNDLED_SKILLS_DIR",
+  "OPENCLI_CACHE_TRACE",
+  "OPENCLI_CACHE_TRACE_FILE",
+  "OPENCLI_CACHE_TRACE_MESSAGES",
+  "OPENCLI_CACHE_TRACE_PROMPT",
+  "OPENCLI_CACHE_TRACE_SYSTEM",
+  "OPENCLI_CONFIG_PATH",
+  "OPENCLI_GATEWAY_PASSWORD",
+  "OPENCLI_GATEWAY_PORT",
+  "OPENCLI_GATEWAY_SECRET",
+  "OPENCLI_GATEWAY_TOKEN",
+  "OPENCLI_GATEWAY_URL",
+  "OPENCLI_HOME",
+  "OPENCLI_LIVE_ANTHROPIC_KEY",
+  "OPENCLI_LIVE_ANTHROPIC_KEYS",
+  "OPENCLI_LIVE_GEMINI_KEY",
+  "OPENCLI_LIVE_OPENAI_KEY",
+  "OPENCLI_MPM_CATALOG_PATHS",
+  "OPENCLI_NODE_EXEC_FALLBACK",
+  "OPENCLI_NODE_EXEC_HOST",
+  "OPENCLI_OAUTH_DIR",
+  "OPENCLI_PINNED_PYTHON",
+  "OPENCLI_PINNED_WRITE_PYTHON",
+  "OPENCLI_PLUGIN_CATALOG_PATHS",
+  "OPENCLI_PROFILE",
+  "OPENCLI_RAW_STREAM",
+  "OPENCLI_RAW_STREAM_PATH",
+  "OPENCLI_SHOW_SECRETS",
+  "OPENCLI_SKIP_BROWSER_CONTROL_SERVER",
+  "OPENCLI_STATE_DIR",
+  "OPENCLI_TEST_TAILSCALE_BINARY",
   "PI_CODING_AGENT_DIR",
   "PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH",
   "SYNOLOGY_CHAT_INCOMING_URL",
@@ -86,13 +86,13 @@ const BLOCKED_WORKSPACE_DOTENV_PREFIXES = [
   "ANTHROPIC_API_KEY_",
   "CLAWHUB_",
   "OPENAI_API_KEY_",
-  // Workspace .env is untrusted; reserve the full OpenClaw runtime namespace
-  // for shell/global config so new OPENCLAW_* controls are fail-closed by default.
-  "OPENCLAW_",
-  "OPENCLAW_CLAWHUB_",
-  "OPENCLAW_DISABLE_",
-  "OPENCLAW_SKIP_",
-  "OPENCLAW_UPDATE_",
+  // Workspace .env is untrusted; reserve the full OpenCLI runtime namespace
+  // for shell/global config so new OPENCLI_* controls are fail-closed by default.
+  "OPENCLI_",
+  "OPENCLI_CLAWHUB_",
+  "OPENCLI_DISABLE_",
+  "OPENCLI_SKIP_",
+  "OPENCLI_UPDATE_",
 ];
 
 function shouldBlockWorkspaceRuntimeDotEnvKey(key: string): boolean {
@@ -100,7 +100,7 @@ function shouldBlockWorkspaceRuntimeDotEnvKey(key: string): boolean {
 }
 
 function shouldBlockRuntimeDotEnvKey(key: string): boolean {
-  // The global ~/.openclaw/.env (or OPENCLAW_STATE_DIR/.env) is a trusted
+  // The global ~/.opencli/.env (or OPENCLI_STATE_DIR/.env) is a trusted
   // operator-controlled runtime surface. Workspace .env is untrusted and gets
   // the strict blocklist, but the trusted global fallback is allowed to set
   // runtime vars like proxy/base-url/auth values.
@@ -252,11 +252,11 @@ export function loadGlobalRuntimeDotEnvFiles(opts?: { quiet?: boolean; stateEnvP
   const stateEnvPath = opts?.stateEnvPath ?? path.join(resolveConfigDir(process.env), ".env");
   const defaultStateEnvPath = path.join(
     resolveRequiredHomeDir(process.env, os.homedir),
-    ".openclaw",
+    ".opencli",
     ".env",
   );
   const hasExplicitNonDefaultStateDir =
-    process.env.OPENCLAW_STATE_DIR?.trim() !== undefined &&
+    process.env.OPENCLI_STATE_DIR?.trim() !== undefined &&
     path.resolve(stateEnvPath) !== path.resolve(defaultStateEnvPath);
   const parsedFiles = [
     readDotEnvFile({
@@ -271,7 +271,7 @@ export function loadGlobalRuntimeDotEnvFiles(opts?: { quiet?: boolean; stateEnvP
         filePath: path.join(
           resolveRequiredHomeDir(process.env, os.homedir),
           ".config",
-          "openclaw",
+          "opencli",
           "gateway.env",
         ),
         shouldBlockKey: shouldBlockRuntimeDotEnvKey,
@@ -288,7 +288,7 @@ export function loadDotEnv(opts?: { quiet?: boolean }) {
   const cwdEnvPath = path.join(process.cwd(), ".env");
   loadWorkspaceDotEnvFile(cwdEnvPath, { quiet });
 
-  // Then load global fallback: ~/.openclaw/.env (or OPENCLAW_STATE_DIR/.env),
+  // Then load global fallback: ~/.opencli/.env (or OPENCLI_STATE_DIR/.env),
   // without overriding any env vars already present.
   loadGlobalRuntimeDotEnvFiles({ quiet });
 }

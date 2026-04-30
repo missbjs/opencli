@@ -5,16 +5,16 @@ import { afterEach, describe, expect, it } from "vitest";
 import { normalizeProviderModelIdWithManifest } from "./manifest-model-id-normalization.js";
 
 const ORIGINAL_ENV = {
-  OPENCLAW_STATE_DIR: process.env.OPENCLAW_STATE_DIR,
-  OPENCLAW_HOME: process.env.OPENCLAW_HOME,
-  OPENCLAW_DISABLE_BUNDLED_PLUGINS: process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS,
-  OPENCLAW_BUNDLED_PLUGINS_DIR: process.env.OPENCLAW_BUNDLED_PLUGINS_DIR,
+  OPENCLI_STATE_DIR: process.env.OPENCLI_STATE_DIR,
+  OPENCLI_HOME: process.env.OPENCLI_HOME,
+  OPENCLI_DISABLE_BUNDLED_PLUGINS: process.env.OPENCLI_DISABLE_BUNDLED_PLUGINS,
+  OPENCLI_BUNDLED_PLUGINS_DIR: process.env.OPENCLI_BUNDLED_PLUGINS_DIR,
 } as const;
 
 const tempDirs: string[] = [];
 
 function makeTempDir(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-model-id-normalization-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "opencli-model-id-normalization-"));
   tempDirs.push(dir);
   return dir;
 }
@@ -50,7 +50,7 @@ function writeInstallIndex(params: { stateDir: string; pluginDir: string }): voi
 function writeNormalizerManifest(params: { pluginDir: string; prefix: string }): void {
   fs.mkdirSync(params.pluginDir, { recursive: true });
   fs.writeFileSync(
-    path.join(params.pluginDir, "openclaw.plugin.json"),
+    path.join(params.pluginDir, "opencli.plugin.json"),
     JSON.stringify({
       id: "normalizer",
       modelIdNormalization: {
@@ -86,10 +86,10 @@ describe("manifest model id normalization", () => {
     writeInstallIndex({ stateDir: stateDirA, pluginDir: pluginDirA });
     writeNormalizerManifest({ pluginDir: pluginDirA, prefix: "alpha" });
 
-    process.env.OPENCLAW_STATE_DIR = stateDirA;
-    process.env.OPENCLAW_HOME = undefined;
-    process.env.OPENCLAW_DISABLE_BUNDLED_PLUGINS = "1";
-    process.env.OPENCLAW_BUNDLED_PLUGINS_DIR = undefined;
+    process.env.OPENCLI_STATE_DIR = stateDirA;
+    process.env.OPENCLI_HOME = undefined;
+    process.env.OPENCLI_DISABLE_BUNDLED_PLUGINS = "1";
+    process.env.OPENCLI_BUNDLED_PLUGINS_DIR = undefined;
 
     expect(normalizeDemoModel()).toBe("alpha/demo-model");
 
@@ -101,7 +101,7 @@ describe("manifest model id normalization", () => {
     writeInstallIndex({ stateDir: stateDirB, pluginDir: pluginDirB });
     writeNormalizerManifest({ pluginDir: pluginDirB, prefix: "charlie" });
 
-    process.env.OPENCLAW_STATE_DIR = stateDirB;
+    process.env.OPENCLI_STATE_DIR = stateDirB;
     expect(normalizeDemoModel()).toBe("charlie/demo-model");
   });
 });

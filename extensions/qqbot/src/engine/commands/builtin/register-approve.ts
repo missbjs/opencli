@@ -33,12 +33,12 @@ export function registerApproveCommands(registry: SlashCommandRegistry): void {
           ``,
           `\`\`\`shell`,
           `# 开启审批（白名单模式）`,
-          `openclaw config set tools.exec.security allowlist`,
-          `openclaw config set tools.exec.ask on-miss`,
+          `opencli config set tools.exec.security allowlist`,
+          `opencli config set tools.exec.ask on-miss`,
           ``,
           `# 关闭审批`,
-          `openclaw config set tools.exec.security full`,
-          `openclaw config set tools.exec.ask off`,
+          `opencli config set tools.exec.security full`,
+          `opencli config set tools.exec.ask off`,
           `\`\`\``,
         ].join("\n");
       }

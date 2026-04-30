@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import type { AuthProfileStore } from "./auth-profiles.js";
 import { hasAuthForModelProvider } from "./model-provider-auth.js";
 
@@ -25,7 +25,7 @@ describe("model provider auth availability", () => {
     expect(
       hasAuthForModelProvider({
         provider: "amazon-bedrock",
-        cfg: {} as OpenClawConfig,
+        cfg: {} as OpenCLIConfig,
         env: {},
         store: emptyStore,
       }),
@@ -43,7 +43,7 @@ describe("model provider auth availability", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
 
     expect(
       hasAuthForModelProvider({
@@ -66,7 +66,7 @@ describe("model provider auth availability", () => {
           },
         },
       },
-    } as OpenClawConfig;
+    } as OpenCLIConfig;
 
     expect(
       hasAuthForModelProvider({

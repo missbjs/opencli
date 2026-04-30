@@ -11,13 +11,13 @@ const writeJson = (filename, contents) =>
 
 fs.mkdirSync(pluginDir, { recursive: true });
 writeJson("package.json", {
-  name: "@openclaw/load-failure-alpha",
+  name: "@opencli/load-failure-alpha",
   version: "2026.4.21",
   private: true,
   type: "module",
-  openclaw: { extensions: ["./index.js"], setupEntry: "./setup-entry.js" },
+  opencli: { extensions: ["./index.js"], setupEntry: "./setup-entry.js" },
 });
-writeJson("openclaw.plugin.json", {
+writeJson("opencli.plugin.json", {
   id: "load-failure-alpha",
   channels: ["load-failure-alpha"],
   configSchema: { type: "object", additionalProperties: false, properties: {} },

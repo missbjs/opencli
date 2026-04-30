@@ -1,13 +1,13 @@
-import { formatErrorMessage } from "openclaw/plugin-sdk/error-runtime";
-import { assertOkOrThrowProviderError } from "openclaw/plugin-sdk/provider-http";
-import { normalizeResolvedSecretInputString } from "openclaw/plugin-sdk/secret-input";
+import { formatErrorMessage } from "opencli/plugin-sdk/error-runtime";
+import { assertOkOrThrowProviderError } from "opencli/plugin-sdk/provider-http";
+import { normalizeResolvedSecretInputString } from "opencli/plugin-sdk/secret-input";
 import type {
   SpeechDirectiveTokenParseContext,
   SpeechProviderConfig,
   SpeechProviderOverrides,
   SpeechProviderPlugin,
   SpeechVoiceOption,
-} from "openclaw/plugin-sdk/speech";
+} from "opencli/plugin-sdk/speech";
 import {
   asBoolean,
   asFiniteNumber,
@@ -17,12 +17,12 @@ import {
   normalizeSeed,
   requireInRange,
   trimToUndefined,
-} from "openclaw/plugin-sdk/speech";
+} from "opencli/plugin-sdk/speech";
 import {
   fetchWithSsrFGuard,
   ssrfPolicyFromHttpBaseUrlAllowedHostname,
-} from "openclaw/plugin-sdk/ssrf-runtime";
-import { normalizeLowercaseStringOrEmpty } from "openclaw/plugin-sdk/text-runtime";
+} from "opencli/plugin-sdk/ssrf-runtime";
+import { normalizeLowercaseStringOrEmpty } from "opencli/plugin-sdk/text-runtime";
 import { resolveElevenLabsApiKeyWithProfileFallback } from "./config-api.js";
 import { isValidElevenLabsVoiceId, normalizeElevenLabsBaseUrl } from "./shared.js";
 import { elevenLabsTTS } from "./tts.js";

@@ -1,4 +1,4 @@
-import type { ChannelConfigUiHint } from "openclaw/plugin-sdk/channel-core";
+import type { ChannelConfigUiHint } from "opencli/plugin-sdk/channel-core";
 
 export const discordChannelConfigUiHints = {
   "": {
@@ -91,7 +91,7 @@ export const discordChannelConfigUiHints = {
   },
   "eventQueue.listenerTimeout": {
     label: "Discord EventQueue Listener Timeout (ms)",
-    help: "Canonical Discord listener timeout control in ms for gateway normalization/enqueue handlers. Default is 120000 in OpenClaw; set per account via channels.discord.accounts.<id>.eventQueue.listenerTimeout.",
+    help: "Canonical Discord listener timeout control in ms for gateway normalization/enqueue handlers. Default is 120000 in OpenCLI; set per account via channels.discord.accounts.<id>.eventQueue.listenerTimeout.",
   },
   "eventQueue.maxQueueSize": {
     label: "Discord EventQueue Max Queue Size",
@@ -139,7 +139,7 @@ export const discordChannelConfigUiHints = {
   },
   gatewayInfoTimeoutMs: {
     label: "Discord Gateway Metadata Timeout (ms)",
-    help: "Timeout for Discord /gateway/bot metadata lookup before falling back to the default gateway URL. Default is 30000; OPENCLAW_DISCORD_GATEWAY_INFO_TIMEOUT_MS can override when config is unset.",
+    help: "Timeout for Discord /gateway/bot metadata lookup before falling back to the default gateway URL. Default is 30000; OPENCLI_DISCORD_GATEWAY_INFO_TIMEOUT_MS can override when config is unset.",
   },
   "voice.enabled": {
     label: "Discord Voice Enabled",

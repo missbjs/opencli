@@ -1,9 +1,5 @@
-import { resolveFetch } from "openclaw/plugin-sdk/fetch-runtime";
-import {
-  resolveRetryConfig,
-  retryAsync,
-  type RetryConfig,
-} from "openclaw/plugin-sdk/retry-runtime";
+import { resolveFetch } from "opencli/plugin-sdk/fetch-runtime";
+import { resolveRetryConfig, retryAsync, type RetryConfig } from "opencli/plugin-sdk/retry-runtime";
 import { isDiscordHtmlResponseBody, summarizeDiscordResponseBody } from "./error-body.js";
 
 const DISCORD_API_BASE = "https://discord.com/api/v10";

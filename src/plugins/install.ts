@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { packageNameMatchesId } from "../infra/install-safe-path.js";
 import { type NpmIntegrityDrift, type NpmSpecResolution } from "../infra/install-source-utils.js";
-import { resolveOpenClawPackageRootSync } from "../infra/openclaw-root.js";
+import { resolveOpenCLIPackageRootSync } from "../infra/opencli-root.js";
 import { normalizeOptionalString } from "../shared/string-coerce.js";
 import { resolveUserPath } from "../utils.js";
 import {
@@ -41,10 +41,10 @@ type PackageManifest = PluginPackageManifest & {
 };
 
 const MISSING_EXTENSIONS_ERROR =
-  'package.json missing openclaw.extensions; update the plugin package to include openclaw.extensions (for example ["./dist/index.js"]). See https://docs.openclaw.ai/help/troubleshooting#plugin-install-fails-with-missing-openclaw-extensions';
+  'package.json missing opencli.extensions; update the plugin package to include opencli.extensions (for example ["./dist/index.js"]). See https://docs.opencli.ai/help/troubleshooting#plugin-install-fails-with-missing-opencli-extensions';
 const PLUGIN_ARCHIVE_ROOT_MARKERS = [
   "package.json",
-  "openclaw.plugin.json",
+  "opencli.plugin.json",
   ".codex-plugin/plugin.json",
   ".claude-plugin/plugin.json",
   ".cursor-plugin/plugin.json",
@@ -55,10 +55,10 @@ export const PLUGIN_INSTALL_ERROR_CODE = {
   INVALID_MIN_HOST_VERSION: "invalid_min_host_version",
   UNKNOWN_HOST_VERSION: "unknown_host_version",
   INCOMPATIBLE_HOST_VERSION: "incompatible_host_version",
-  MISSING_OPENCLAW_EXTENSIONS: "missing_openclaw_extensions",
+  MISSING_OPENCLI_EXTENSIONS: "missing_opencli_extensions",
   MISSING_PLUGIN_MANIFEST: "missing_plugin_manifest",
-  EMPTY_OPENCLAW_EXTENSIONS: "empty_openclaw_extensions",
-  INVALID_OPENCLAW_EXTENSIONS: "invalid_openclaw_extensions",
+  EMPTY_OPENCLI_EXTENSIONS: "empty_opencli_extensions",
+  INVALID_OPENCLI_EXTENSIONS: "invalid_opencli_extensions",
   NPM_PACKAGE_NOT_FOUND: "npm_package_not_found",
   PLUGIN_ID_MISMATCH: "plugin_id_mismatch",
   SECURITY_SCAN_BLOCKED: "security_scan_blocked",
@@ -95,7 +95,7 @@ type PluginInstallPolicyRequest = {
 
 const defaultLogger: PluginInstallLogger = {};
 
-function ensureOpenClawExtensions(params: { manifest: PackageManifest }):
+function ensureOpenCLIExtensions(params: { manifest: PackageManifest }):
   | {
       ok: true;
       entries: string[];
@@ -110,14 +110,14 @@ function ensureOpenClawExtensions(params: { manifest: PackageManifest }):
     return {
       ok: false,
       error: MISSING_EXTENSIONS_ERROR,
-      code: PLUGIN_INSTALL_ERROR_CODE.MISSING_OPENCLAW_EXTENSIONS,
+      code: PLUGIN_INSTALL_ERROR_CODE.MISSING_OPENCLI_EXTENSIONS,
     };
   }
   if (resolved.status === "empty") {
     return {
       ok: false,
-      error: "package.json openclaw.extensions is empty",
-      code: PLUGIN_INSTALL_ERROR_CODE.EMPTY_OPENCLAW_EXTENSIONS,
+      error: "package.json opencli.extensions is empty",
+      code: PLUGIN_INSTALL_ERROR_CODE.EMPTY_OPENCLI_EXTENSIONS,
     };
   }
   return {
@@ -283,7 +283,7 @@ async function runInstallSourceScan(params: {
   } catch (err) {
     return {
       ok: false,
-      error: `${params.subject} installation blocked: code safety scan failed (${String(err)}). Run "openclaw security audit --deep" for details.`,
+      error: `${params.subject} installation blocked: code safety scan failed (${String(err)}). Run "opencli security audit --deep" for details.`,
       code: PLUGIN_INSTALL_ERROR_CODE.SECURITY_SCAN_FAILED,
     };
   }
@@ -528,34 +528,34 @@ async function detectNativePackageInstallSource(packageDir: string): Promise<boo
 
   try {
     const manifest = await runtime.readJsonFile<PackageManifest>(manifestPath);
-    return ensureOpenClawExtensions({ manifest }).ok;
+    return ensureOpenCLIExtensions({ manifest }).ok;
   } catch {
     return false;
   }
 }
 
 /**
- * After the staged plugin tree has been scanned, symlink the host openclaw
+ * After the staged plugin tree has been scanned, symlink the host opencli
  * package for plugins that declare it as a peer dependency.
  */
-async function linkOpenClawPeerDependencies(params: {
+async function linkOpenCLIPeerDependencies(params: {
   installedDir: string;
   peerDependencies: Record<string, string>;
   logger: PluginInstallLogger;
 }): Promise<void> {
-  const peers = Object.keys(params.peerDependencies).filter((name) => name === "openclaw");
+  const peers = Object.keys(params.peerDependencies).filter((name) => name === "opencli");
   if (peers.length === 0) {
     return;
   }
 
-  const hostRoot = resolveOpenClawPackageRootSync({
+  const hostRoot = resolveOpenCLIPackageRootSync({
     argv1: process.argv[1],
     moduleUrl: import.meta.url,
     cwd: process.cwd(),
   });
   if (!hostRoot) {
     params.logger.warn?.(
-      "Could not locate openclaw package root to symlink peerDependencies; plugin may fail to resolve openclaw at runtime.",
+      "Could not locate opencli package root to symlink peerDependencies; plugin may fail to resolve opencli at runtime.",
     );
     return;
   }
@@ -601,7 +601,7 @@ async function installPluginFromPackageDir(
     return { ok: false, error: `invalid package.json: ${String(err)}` };
   }
 
-  const extensionsResult = ensureOpenClawExtensions({
+  const extensionsResult = ensureOpenCLIExtensions({
     manifest,
   });
   if (!extensionsResult.ok) {
@@ -616,15 +616,15 @@ async function installPluginFromPackageDir(
   const pkgName = normalizeOptionalString(manifest.name) ?? "";
   const npmPluginId = pkgName || "plugin";
 
-  // Prefer the canonical `id` from openclaw.plugin.json over the npm package name.
+  // Prefer the canonical `id` from opencli.plugin.json over the npm package name.
   // This avoids a latent key-mismatch bug: if the manifest id (e.g. "memory-cognee")
-  // differs from the npm package name (e.g. "cognee-openclaw"), the plugin registry
+  // differs from the npm package name (e.g. "cognee-opencli"), the plugin registry
   // uses the manifest id as the authoritative key, so the config entry must match it.
   const ocManifestResult = runtime.loadPluginManifest(params.packageDir);
   if (!ocManifestResult.ok && params.requirePluginManifest) {
     return {
       ok: false,
-      error: `package missing valid openclaw.plugin.json: ${ocManifestResult.error}`,
+      error: `package missing valid opencli.plugin.json: ${ocManifestResult.error}`,
       code: PLUGIN_INSTALL_ERROR_CODE.MISSING_PLUGIN_MANIFEST,
     };
   }
@@ -668,20 +668,20 @@ async function installPluginFromPackageDir(
     if (minHostVersionCheck.kind === "invalid") {
       return {
         ok: false,
-        error: `invalid package.json openclaw.install.minHostVersion: ${minHostVersionCheck.error}`,
+        error: `invalid package.json opencli.install.minHostVersion: ${minHostVersionCheck.error}`,
         code: PLUGIN_INSTALL_ERROR_CODE.INVALID_MIN_HOST_VERSION,
       };
     }
     if (minHostVersionCheck.kind === "unknown_host_version") {
       return {
         ok: false,
-        error: `plugin "${pluginId}" requires OpenClaw >=${minHostVersionCheck.requirement.minimumLabel}, but this host version could not be determined. Re-run from a released build or set OPENCLAW_VERSION and retry.`,
+        error: `plugin "${pluginId}" requires OpenCLI >=${minHostVersionCheck.requirement.minimumLabel}, but this host version could not be determined. Re-run from a released build or set OPENCLI_VERSION and retry.`,
         code: PLUGIN_INSTALL_ERROR_CODE.UNKNOWN_HOST_VERSION,
       };
     }
     return {
       ok: false,
-      error: `plugin "${pluginId}" requires OpenClaw >=${minHostVersionCheck.requirement.minimumLabel}, but this host is ${minHostVersionCheck.currentVersion}. Upgrade OpenClaw and retry.`,
+      error: `plugin "${pluginId}" requires OpenCLI >=${minHostVersionCheck.requirement.minimumLabel}, but this host is ${minHostVersionCheck.currentVersion}. Upgrade OpenCLI and retry.`,
       code: PLUGIN_INSTALL_ERROR_CODE.INCOMPATIBLE_HOST_VERSION,
     };
   }
@@ -695,7 +695,7 @@ async function installPluginFromPackageDir(
     return {
       ok: false,
       error: extensionValidation.error,
-      code: PLUGIN_INSTALL_ERROR_CODE.INVALID_OPENCLAW_EXTENSIONS,
+      code: PLUGIN_INSTALL_ERROR_CODE.INVALID_OPENCLI_EXTENSIONS,
     };
   }
 
@@ -755,7 +755,7 @@ async function installPluginFromPackageDir(
     afterInstall: async (installedDir) => {
       // Run the dependency-tree security scan BEFORE linking peer deps.
       // The scan rejects any node_modules/ symlink whose target resolves
-      // outside the install root — a rule our trusted host-openclaw link
+      // outside the install root — a rule our trusted host-opencli link
       // would fail by design. Running the scan first also keeps the check
       // honest against malicious plugins, because any pre-existing symlink
       // smuggled in by the source would still be present when we walk.
@@ -771,7 +771,7 @@ async function installPluginFromPackageDir(
       if (scanResult) {
         return scanResult;
       }
-      await linkOpenClawPeerDependencies({
+      await linkOpenCLIPeerDependencies({
         installedDir,
         peerDependencies: peerDeps,
         logger,
@@ -802,7 +802,7 @@ export async function installPluginFromArchive(
 
   return await runtime.withExtractedArchiveRoot({
     archivePath,
-    tempDirPrefix: "openclaw-plugin-",
+    tempDirPrefix: "opencli-plugin-",
     timeoutMs,
     logger,
     rootMarkers: PLUGIN_ARCHIVE_ROOT_MARKERS,
@@ -975,7 +975,7 @@ export async function installPluginFromNpmSpec(
     requestedSpecifier: spec,
   };
   const flowResult = await runtime.installFromNpmSpecArchiveWithInstaller({
-    tempDirPrefix: "openclaw-npm-pack-",
+    tempDirPrefix: "opencli-npm-pack-",
     spec,
     timeoutMs,
     expectedIntegrity: params.expectedIntegrity,

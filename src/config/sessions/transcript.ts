@@ -187,7 +187,7 @@ export async function appendAssistantMessageToSessionTranscript(params: {
       role: "assistant" as const,
       content: [{ type: "text", text: mirrorText }],
       api: "openai-responses",
-      provider: "openclaw",
+      provider: "opencli",
       model: "delivery-mirror",
       usage: {
         input: 0,
@@ -325,7 +325,7 @@ async function transcriptHasIdempotencyKey(
 }
 
 function isRedundantDeliveryMirror(message: SessionTranscriptAssistantMessage): boolean {
-  return message.provider === "openclaw" && message.model === "delivery-mirror";
+  return message.provider === "opencli" && message.model === "delivery-mirror";
 }
 
 function extractAssistantMessageText(message: SessionTranscriptAssistantMessage): string | null {

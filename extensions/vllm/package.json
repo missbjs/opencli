@@ -1,13 +1,13 @@
 {
-  "name": "@openclaw/vllm-provider",
+  "name": "@opencli/vllm-provider",
   "version": "2026.4.25",
   "private": true,
-  "description": "OpenClaw vLLM provider plugin",
+  "description": "OpenCLI vLLM provider plugin",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@opencli/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "opencli": {
     "extensions": [
       "./index.ts"
     ]

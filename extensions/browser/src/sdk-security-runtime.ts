@@ -1,4 +1,4 @@
-export { createSubsystemLogger } from "openclaw/plugin-sdk/logging-core";
+export { createSubsystemLogger } from "opencli/plugin-sdk/logging-core";
 export {
   ensurePortAvailable,
   extractErrorCode,
@@ -14,11 +14,11 @@ export {
   openFileWithinRoot,
   redactSensitiveText,
   resolvePinnedHostnameWithPolicy,
-  resolvePreferredOpenClawTmpDir,
+  resolvePreferredOpenCLITmpDir,
   safeEqualSecret,
   SafeOpenError,
   SsrFBlockedError,
   wrapExternalContent,
   writeFileFromPathWithinRoot,
-} from "openclaw/plugin-sdk/security-runtime";
-export type { LookupFn, SsrFPolicy } from "openclaw/plugin-sdk/security-runtime";
+} from "opencli/plugin-sdk/security-runtime";
+export type { LookupFn, SsrFPolicy } from "opencli/plugin-sdk/security-runtime";

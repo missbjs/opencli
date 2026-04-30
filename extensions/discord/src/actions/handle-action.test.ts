@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const runtimeModule = await import("./runtime.js");
@@ -23,7 +23,7 @@ describe("handleDiscordMessageAction", () => {
       },
       cfg: {
         channels: { discord: { token: "tok", actions: { moderation: true } } },
-      } as OpenClawConfig,
+      } as OpenCLIConfig,
       requesterSenderId: "trusted-sender-id",
       toolContext: { currentChannelProvider: "discord" },
     });
@@ -55,7 +55,7 @@ describe("handleDiscordMessageAction", () => {
       },
       cfg: {
         channels: { discord: { token: "tok" } },
-      } as OpenClawConfig,
+      } as OpenCLIConfig,
       toolContext: { currentMessageId: "9001" },
     });
 
@@ -79,7 +79,7 @@ describe("handleDiscordMessageAction", () => {
       },
       cfg: {
         channels: { discord: { token: "tok" } },
-      } as OpenClawConfig,
+      } as OpenCLIConfig,
       toolContext: {
         currentChannelProvider: "discord",
         currentChannelId: "user:U1",
@@ -107,7 +107,7 @@ describe("handleDiscordMessageAction", () => {
       },
       cfg: {
         channels: { discord: { token: "tok" } },
-      } as OpenClawConfig,
+      } as OpenCLIConfig,
       toolContext: {
         currentChannelProvider: "discord",
         currentChannelId: "channel:123",
@@ -134,7 +134,7 @@ describe("handleDiscordMessageAction", () => {
         },
         cfg: {
           channels: { discord: { token: "tok" } },
-        } as OpenClawConfig,
+        } as OpenCLIConfig,
         toolContext: {
           currentChannelProvider: "telegram",
           currentChannelId: "channel:123",
@@ -154,7 +154,7 @@ describe("handleDiscordMessageAction", () => {
         },
         cfg: {
           channels: { discord: { token: "tok" } },
-        } as OpenClawConfig,
+        } as OpenCLIConfig,
         toolContext: {
           currentChannelProvider: "telegram",
           currentChannelId: "user:U1",
@@ -176,7 +176,7 @@ describe("handleDiscordMessageAction", () => {
         },
         cfg: {
           channels: { discord: { token: "tok" } },
-        } as OpenClawConfig,
+        } as OpenCLIConfig,
       }),
     ).rejects.toThrow(/messageId required/i);
 

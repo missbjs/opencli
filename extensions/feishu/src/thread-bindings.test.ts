@@ -1,11 +1,11 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk/config-types";
-import { getSessionBindingService } from "openclaw/plugin-sdk/conversation-runtime";
+import type { OpenCLIConfig } from "opencli/plugin-sdk/config-types";
+import { getSessionBindingService } from "opencli/plugin-sdk/conversation-runtime";
 import { beforeEach, describe, expect, it } from "vitest";
 import { __testing, createFeishuThreadBindingManager } from "./thread-bindings.js";
 
 const baseCfg = {
   session: { mainKey: "main", scope: "per-sender" },
-} satisfies OpenClawConfig;
+} satisfies OpenCLIConfig;
 
 describe("Feishu thread bindings", () => {
   beforeEach(() => {

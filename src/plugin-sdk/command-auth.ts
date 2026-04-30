@@ -3,7 +3,7 @@ import {
   buildCommandsMessagePaginated as buildCommandsMessagePaginatedCompat,
   buildHelpMessage as buildHelpMessageCompat,
 } from "../auto-reply/command-status-builders.js";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { resolveDmGroupAccessWithLists } from "../security/dm-policy-shared.js";
 export { buildCommandsPaginationKeyboard } from "./telegram-command-ui.js";
 export {
@@ -89,7 +89,7 @@ export { resolveStoredModelOverride } from "../auto-reply/reply/stored-model-ove
 export type { StoredModelOverride } from "../auto-reply/reply/stored-model-override.js";
 
 export type ResolveSenderCommandAuthorizationParams = {
-  cfg: OpenClawConfig;
+  cfg: OpenCLIConfig;
   rawBody: string;
   isGroup: boolean;
   dmPolicy: string;
@@ -98,7 +98,7 @@ export type ResolveSenderCommandAuthorizationParams = {
   senderId: string;
   isSenderAllowed: (senderId: string, allowFrom: string[]) => boolean;
   readAllowFromStore: () => Promise<string[]>;
-  shouldComputeCommandAuthorized: (rawBody: string, cfg: OpenClawConfig) => boolean;
+  shouldComputeCommandAuthorized: (rawBody: string, cfg: OpenCLIConfig) => boolean;
   resolveCommandAuthorizedFromAuthorizers: (params: {
     useAccessGroups: boolean;
     authorizers: Array<{ configured: boolean; allowed: boolean }>;
@@ -106,7 +106,7 @@ export type ResolveSenderCommandAuthorizationParams = {
 };
 
 export type CommandAuthorizationRuntime = {
-  shouldComputeCommandAuthorized: (rawBody: string, cfg: OpenClawConfig) => boolean;
+  shouldComputeCommandAuthorized: (rawBody: string, cfg: OpenCLIConfig) => boolean;
   resolveCommandAuthorizedFromAuthorizers: (params: {
     useAccessGroups: boolean;
     authorizers: Array<{ configured: boolean; allowed: boolean }>;
@@ -201,21 +201,21 @@ export async function resolveSenderCommandAuthorization(
   };
 }
 
-/** @deprecated Use `openclaw/plugin-sdk/command-status` instead. */
+/** @deprecated Use `opencli/plugin-sdk/command-status` instead. */
 export function buildCommandsMessage(
   ...args: Parameters<typeof buildCommandsMessageCompat>
 ): ReturnType<typeof buildCommandsMessageCompat> {
   return buildCommandsMessageCompat(...args);
 }
 
-/** @deprecated Use `openclaw/plugin-sdk/command-status` instead. */
+/** @deprecated Use `opencli/plugin-sdk/command-status` instead. */
 export function buildCommandsMessagePaginated(
   ...args: Parameters<typeof buildCommandsMessagePaginatedCompat>
 ): ReturnType<typeof buildCommandsMessagePaginatedCompat> {
   return buildCommandsMessagePaginatedCompat(...args);
 }
 
-/** @deprecated Use `openclaw/plugin-sdk/command-status` instead. */
+/** @deprecated Use `opencli/plugin-sdk/command-status` instead. */
 export function buildHelpMessage(
   ...args: Parameters<typeof buildHelpMessageCompat>
 ): ReturnType<typeof buildHelpMessageCompat> {

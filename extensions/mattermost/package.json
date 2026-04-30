@@ -1,24 +1,24 @@
 {
-  "name": "@openclaw/mattermost",
+  "name": "@opencli/mattermost",
   "version": "2026.4.25",
-  "description": "OpenClaw Mattermost channel plugin",
+  "description": "OpenCLI Mattermost channel plugin",
   "type": "module",
   "dependencies": {
     "ws": "^8.20.0"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*",
-    "openclaw": "workspace:*"
+    "@opencli/plugin-sdk": "workspace:*",
+    "opencli": "workspace:*"
   },
   "peerDependencies": {
-    "openclaw": ">=2026.4.25"
+    "opencli": ">=2026.4.25"
   },
   "peerDependenciesMeta": {
-    "openclaw": {
+    "opencli": {
       "optional": true
     }
   },
-  "openclaw": {
+  "opencli": {
     "extensions": [
       "./index.ts"
     ],
@@ -33,7 +33,7 @@
       "order": 65
     },
     "install": {
-      "npmSpec": "@openclaw/mattermost",
+      "npmSpec": "@opencli/mattermost",
       "defaultChoice": "npm",
       "minHostVersion": ">=2026.4.10"
     }

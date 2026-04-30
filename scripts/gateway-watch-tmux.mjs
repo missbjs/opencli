@@ -8,16 +8,16 @@ const TMUX_ATTACH_DISABLE_VALUES = new Set(["0", "false", "no", "off"]);
 const TMUX_ATTACH_FORCE_VALUES = new Set(["1", "true", "yes", "on"]);
 const DEFAULT_PROFILE_NAME = "main";
 const RAW_WATCH_SCRIPT = "scripts/watch-node.mjs";
-const TMUX_CWD_ENV_KEY = "OPENCLAW_GATEWAY_WATCH_CWD";
-const TMUX_CWD_OPTION_KEY = "@openclaw.gateway_watch.cwd";
+const TMUX_CWD_ENV_KEY = "OPENCLI_GATEWAY_WATCH_CWD";
+const TMUX_CWD_OPTION_KEY = "@opencli.gateway_watch.cwd";
 const TMUX_CHILD_ENV_KEYS = [
   "NODE_OPTIONS",
-  "OPENCLAW_CONFIG_PATH",
-  "OPENCLAW_GATEWAY_PORT",
-  "OPENCLAW_HOME",
-  "OPENCLAW_PROFILE",
-  "OPENCLAW_SKIP_CHANNELS",
-  "OPENCLAW_STATE_DIR",
+  "OPENCLI_CONFIG_PATH",
+  "OPENCLI_GATEWAY_PORT",
+  "OPENCLI_HOME",
+  "OPENCLI_PROFILE",
+  "OPENCLI_SKIP_CHANNELS",
+  "OPENCLI_STATE_DIR",
 ];
 
 const sanitizeSessionPart = (value) => {
@@ -48,12 +48,12 @@ const readArgValue = (args, flag) => {
 
 export const resolveGatewayWatchTmuxSessionName = ({ args = [], env = process.env } = {}) => {
   const profile =
-    env.OPENCLAW_PROFILE ||
+    env.OPENCLI_PROFILE ||
     readArgValue(args, "--profile") ||
     (args.includes("--dev") ? "dev" : null);
-  const port = env.OPENCLAW_GATEWAY_PORT || readArgValue(args, "--port");
+  const port = env.OPENCLI_GATEWAY_PORT || readArgValue(args, "--port");
   const parts = [
-    "openclaw",
+    "opencli",
     "gateway",
     "watch",
     sanitizeSessionPart(profile ?? DEFAULT_PROFILE_NAME),
@@ -76,8 +76,8 @@ export const buildGatewayWatchTmuxCommand = ({
   const shell = resolveShell(env);
   const childEnv = [
     "env",
-    `OPENCLAW_GATEWAY_WATCH_TMUX_CHILD=1`,
-    `OPENCLAW_GATEWAY_WATCH_SESSION=${sessionName}`,
+    `OPENCLI_GATEWAY_WATCH_TMUX_CHILD=1`,
+    `OPENCLI_GATEWAY_WATCH_SESSION=${sessionName}`,
     ...TMUX_CHILD_ENV_KEYS.flatMap((key) =>
       env[key] == null || env[key] === "" ? [] : [`${key}=${env[key]}`],
     ),
@@ -112,7 +112,7 @@ const runTmux = (spawnSyncImpl, args, options = {}) =>
   });
 
 const log = (stderr, message) => {
-  stderr.write(`[openclaw] ${message}\n`);
+  stderr.write(`[opencli] ${message}\n`);
 };
 
 const getTmuxErrorText = (result) =>
@@ -122,7 +122,7 @@ const isMissingTmuxTarget = (result) =>
   /can't find (?:session|window|pane)|no current target/i.test(getTmuxErrorText(result));
 
 const shouldAttachTmux = ({ env, stdinIsTTY, stdoutIsTTY }) => {
-  const raw = String(env.OPENCLAW_GATEWAY_WATCH_ATTACH ?? "").toLowerCase();
+  const raw = String(env.OPENCLI_GATEWAY_WATCH_ATTACH ?? "").toLowerCase();
   if (TMUX_ATTACH_FORCE_VALUES.has(raw)) {
     return true;
   }
@@ -166,7 +166,7 @@ export const runGatewayWatchTmuxMain = (params = {}) => {
     stdoutIsTTY: params.stdoutIsTTY ?? process.stdout.isTTY,
   };
 
-  if (TMUX_DISABLE_VALUES.has(String(deps.env.OPENCLAW_GATEWAY_WATCH_TMUX ?? "").toLowerCase())) {
+  if (TMUX_DISABLE_VALUES.has(String(deps.env.OPENCLI_GATEWAY_WATCH_TMUX ?? "").toLowerCase())) {
     return runForegroundWatcher({
       args: deps.args,
       cwd: deps.cwd,
@@ -176,7 +176,7 @@ export const runGatewayWatchTmuxMain = (params = {}) => {
     });
   }
 
-  if (deps.env.OPENCLAW_GATEWAY_WATCH_TMUX_CHILD === "1") {
+  if (deps.env.OPENCLI_GATEWAY_WATCH_TMUX_CHILD === "1") {
     return runForegroundWatcher({
       args: deps.args,
       cwd: deps.cwd,

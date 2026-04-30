@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../../config/config.js";
+import type { OpenCLIConfig } from "../../config/config.js";
 import { resolveSessionKeyForRequest } from "./session.js";
 
 const mocks = vi.hoisted(() => ({
@@ -28,12 +28,12 @@ vi.mock("../../config/sessions/paths.js", () => ({
 }));
 
 vi.mock("../../agents/agent-scope.js", async () => {
-  const { normalizeAgentId } = await vi.importActual<
-    typeof import("../../routing/session-key.js")
-  >("../../routing/session-key.js");
+  const { normalizeAgentId } = await vi.importActual<typeof import("../../routing/session-key.js")>(
+    "../../routing/session-key.js",
+  );
   return {
     listAgentIds: mocks.listAgentIds,
-    resolveDefaultAgentId: (cfg: OpenClawConfig) => {
+    resolveDefaultAgentId: (cfg: OpenCLIConfig) => {
       const agents = cfg.agents?.list ?? [];
       return normalizeAgentId(agents.find((agent) => agent?.default)?.id ?? agents[0]?.id);
     },
@@ -69,7 +69,7 @@ describe("resolveSessionKeyForRequest", () => {
     mocks.resolveExplicitAgentSessionKey.mockReturnValue(undefined);
   });
 
-  const baseCfg: OpenClawConfig = {};
+  const baseCfg: OpenCLIConfig = {};
 
   it("returns sessionKey when --to resolves a session key via context", async () => {
     mocks.resolveStorePath.mockReturnValue(MAIN_STORE_PATH);
@@ -94,7 +94,7 @@ describe("resolveSessionKeyForRequest", () => {
     const result = resolveSessionKeyForRequest({
       cfg: {
         agents: { list: [{ id: "mybot", default: true }] },
-      } satisfies OpenClawConfig,
+      } satisfies OpenCLIConfig,
       to: "+15551234567",
     });
 
@@ -116,7 +116,7 @@ describe("resolveSessionKeyForRequest", () => {
     const result = resolveSessionKeyForRequest({
       cfg: {
         agents: { list: [{ id: "mybot", default: true }] },
-      } satisfies OpenClawConfig,
+      } satisfies OpenCLIConfig,
       to: "+15551234567",
     });
 
@@ -138,7 +138,7 @@ describe("resolveSessionKeyForRequest", () => {
       cfg: {
         agents: { list: [{ id: "mybot", default: true }] },
         session: { store: SHARED_STORE_PATH },
-      } satisfies OpenClawConfig,
+      } satisfies OpenCLIConfig,
       to: "+15551234567",
     });
 
@@ -165,7 +165,7 @@ describe("resolveSessionKeyForRequest", () => {
     const result = resolveSessionKeyForRequest({
       cfg: {
         agents: { list: [{ id: "mybot", default: true }] },
-      } satisfies OpenClawConfig,
+      } satisfies OpenCLIConfig,
       to: "+15551234567",
     });
 

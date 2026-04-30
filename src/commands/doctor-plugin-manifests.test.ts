@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { cleanupTrackedTempDirs } from "../plugins/test-helpers/fs-fixtures.js";
 import type { RuntimeEnv } from "../runtime.js";
 import {
@@ -15,12 +15,12 @@ const tempDirs: string[] = [];
 function makeTrustedBundledPluginsDir() {
   const fixturesRoot = path.join(process.cwd(), "dist", "extensions");
   fs.mkdirSync(fixturesRoot, { recursive: true });
-  const dir = fs.mkdtempSync(path.join(fixturesRoot, "openclaw-doctor-plugin-manifests-"));
+  const dir = fs.mkdtempSync(path.join(fixturesRoot, "opencli-doctor-plugin-manifests-"));
   tempDirs.push(dir);
   return dir;
 }
 
-function configWithPluginLoadPath(pluginRoot: string): OpenClawConfig {
+function configWithPluginLoadPath(pluginRoot: string): OpenCLIConfig {
   return {
     plugins: {
       load: {
@@ -32,7 +32,7 @@ function configWithPluginLoadPath(pluginRoot: string): OpenClawConfig {
 
 function writeManifest(dir: string, manifest: Record<string, unknown>) {
   fs.writeFileSync(
-    path.join(dir, "openclaw.plugin.json"),
+    path.join(dir, "opencli.plugin.json"),
     `${JSON.stringify(manifest, null, 2)}\n`,
     "utf-8",
   );
@@ -43,9 +43,9 @@ function writePackageJson(dir: string) {
     path.join(dir, "package.json"),
     `${JSON.stringify(
       {
-        name: "@openclaw/test-plugin",
+        name: "@opencli/test-plugin",
         version: "1.0.0",
-        openclaw: {
+        opencli: {
           extensions: ["./index.ts"],
         },
       },
@@ -143,7 +143,7 @@ describe("doctor plugin manifest legacy contract repair", () => {
       note: vi.fn(),
     });
 
-    const next = JSON.parse(fs.readFileSync(path.join(root, "openclaw.plugin.json"), "utf-8")) as {
+    const next = JSON.parse(fs.readFileSync(path.join(root, "opencli.plugin.json"), "utf-8")) as {
       speechProviders?: string[];
       mediaUnderstandingProviders?: string[];
       contracts?: Record<string, string[]>;

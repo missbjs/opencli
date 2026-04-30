@@ -22,8 +22,8 @@ describe("bundled package channel metadata", () => {
     const root = makeTempRepoRoot(tempDirs, "bpcm-");
     const extensionsRoot = path.join(root, "dist", "extensions");
     writeJsonFile(path.join(extensionsRoot, "matrix", "package.json"), {
-      name: "@openclaw/matrix",
-      openclaw: {
+      name: "@opencli/matrix",
+      opencli: {
         channel: {
           id: "matrix",
           label: "Matrix",
@@ -56,8 +56,8 @@ describe("bundled package channel metadata", () => {
     vi.mocked(resolveBundledPluginsDir).mockReturnValue(extensionsRoot);
 
     writeJsonFile(packagePath, {
-      name: "@openclaw/matrix",
-      openclaw: {
+      name: "@opencli/matrix",
+      opencli: {
         channel: {
           id: "matrix",
           label: "Before",
@@ -67,8 +67,8 @@ describe("bundled package channel metadata", () => {
     expect(findBundledPackageChannelMetadata("matrix")?.label).toBe("Before");
 
     writeJsonFile(packagePath, {
-      name: "@openclaw/matrix",
-      openclaw: {
+      name: "@opencli/matrix",
+      opencli: {
         channel: {
           id: "matrix",
           label: "After",

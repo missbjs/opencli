@@ -1,11 +1,11 @@
 import fs from "node:fs/promises";
 import type { ConnectionOptions } from "node:tls";
-import type { PinnedDispatcherPolicy } from "openclaw/plugin-sdk/ssrf-dispatcher";
+import type { PinnedDispatcherPolicy } from "opencli/plugin-sdk/ssrf-dispatcher";
 import {
   buildHostnameAllowlistPolicyFromSuffixAllowlist,
   fetchWithSsrFGuard,
-} from "openclaw/plugin-sdk/ssrf-runtime";
-import { resolveUserPath } from "openclaw/plugin-sdk/text-runtime";
+} from "opencli/plugin-sdk/ssrf-runtime";
+import { resolveUserPath } from "opencli/plugin-sdk/text-runtime";
 import type { ResolvedGoogleChatAccount } from "./accounts.js";
 
 type ProxyRule = RegExp | URL | string;

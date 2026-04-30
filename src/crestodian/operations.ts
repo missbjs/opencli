@@ -92,7 +92,7 @@ const CONFIG_SET_RE =
 const CONFIG_SET_REF_RE =
   /^(?:config\s+set-ref|set\s+secretref|set\s+secret\s+ref)\s+(?<path>[A-Za-z0-9_.[\]-]+)\s+(?:(?<source>env|file|exec)\s+)?(?<id>\S+)(?:\s+provider\s+(?<provider>[A-Za-z0-9_-]+))?$/i;
 const SETUP_RE =
-  /^(?:setup(?!\s+agent\b)|set\s+me\s+up|set\s+up\s+openclaw|onboard|onboard\s+me|bootstrap|first\s+run)(?:\b|$)/i;
+  /^(?:setup(?!\s+agent\b)|set\s+me\s+up|set\s+up\s+opencli|onboard|onboard\s+me|bootstrap|first\s+run)(?:\b|$)/i;
 
 const OPENAI_API_DEFAULT_MODEL_REF = `${DEFAULT_PROVIDER}/${DEFAULT_MODEL}`;
 const ANTHROPIC_API_DEFAULT_MODEL_REF = "anthropic/claude-opus-4-7";
@@ -291,7 +291,7 @@ function formatSetupPlanDescription(
 ): string {
   const workspace = shortenHomePath(resolveUserPath(operation.workspace ?? process.cwd()));
   const model = operation.model ? ` and default model ${operation.model}` : "";
-  return `bootstrap OpenClaw setup for workspace ${workspace}${model}`;
+  return `bootstrap OpenCLI setup for workspace ${workspace}${model}`;
 }
 
 function chooseSetupModel(

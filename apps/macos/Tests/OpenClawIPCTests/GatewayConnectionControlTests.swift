@@ -1,8 +1,8 @@
 import Foundation
-import OpenClawKit
+import OpenCLIKit
 import Testing
-@testable import OpenClaw
-@testable import OpenClawIPC
+@testable import OpenCLI
+@testable import OpenCLIIPC
 
 private final class FakeWebSocketTask: WebSocketTasking, @unchecked Sendable {
     var state: URLSessionTask.State = .running

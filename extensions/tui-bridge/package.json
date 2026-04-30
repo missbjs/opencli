@@ -1,5 +1,5 @@
 {
-  "name": "@openclaw/tui-bridge",
+  "name": "@opencli/tui-bridge",
   "version": "0.1.0",
   "description": "Bind a chat conversation to a long-lived TUI process (e.g. claude, aider) and pipe stdin/stdout between them",
   "type": "module",
@@ -9,9 +9,9 @@
     "strip-ansi": "6.0.1"
   },
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@opencli/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "opencli": {
     "extensions": [
       "./index.ts"
     ],

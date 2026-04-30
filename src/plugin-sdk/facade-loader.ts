@@ -20,7 +20,7 @@ const jitiLoaders: PluginJitiLoaderCache = new Map();
 const loadedFacadeModules = new Map<string, unknown>();
 const loadedFacadePluginIds = new Set<string>();
 let facadeLoaderJitiFactory: PluginJitiLoaderFactory | undefined;
-let cachedOpenClawPackageRoot: string | undefined;
+let cachedOpenCLIPackageRoot: string | undefined;
 
 function getJitiFactory() {
   if (facadeLoaderJitiFactory) {
@@ -31,16 +31,16 @@ function getJitiFactory() {
   return facadeLoaderJitiFactory;
 }
 
-function getOpenClawPackageRoot() {
-  if (cachedOpenClawPackageRoot) {
-    return cachedOpenClawPackageRoot;
+function getOpenCLIPackageRoot() {
+  if (cachedOpenCLIPackageRoot) {
+    return cachedOpenCLIPackageRoot;
   }
-  cachedOpenClawPackageRoot =
+  cachedOpenCLIPackageRoot =
     resolveLoaderPackageRoot({
       modulePath: fileURLToPath(import.meta.url),
       moduleUrl: import.meta.url,
     }) ?? fileURLToPath(new URL("../..", import.meta.url));
-  return cachedOpenClawPackageRoot;
+  return cachedOpenCLIPackageRoot;
 }
 
 function resolveFacadeModuleLocation(params: {
@@ -52,7 +52,7 @@ function resolveFacadeModuleLocation(params: {
   return resolveBundledFacadeModuleLocation({
     ...params,
     currentModulePath: CURRENT_MODULE_PATH,
-    packageRoot: getOpenClawPackageRoot(),
+    packageRoot: getOpenCLIPackageRoot(),
     bundledPluginsDir,
   });
 }
@@ -174,8 +174,8 @@ export function loadFacadeModuleAtLocationSync<T extends object>(params: {
     absolutePath: location.modulePath,
     rootPath: location.boundaryRoot,
     boundaryLabel:
-      location.boundaryRoot === getOpenClawPackageRoot()
-        ? "OpenClaw package root"
+      location.boundaryRoot === getOpenCLIPackageRoot()
+        ? "OpenCLI package root"
         : (() => {
             const bundledDir = resolveBundledPluginsDir();
             return bundledDir && path.resolve(location.boundaryRoot) === path.resolve(bundledDir)
@@ -264,8 +264,8 @@ export async function loadBundledPluginPublicSurfaceModule<T extends object>(par
     absolutePath: preparedLocation.modulePath,
     rootPath: preparedLocation.boundaryRoot,
     boundaryLabel:
-      preparedLocation.boundaryRoot === getOpenClawPackageRoot()
-        ? "OpenClaw package root"
+      preparedLocation.boundaryRoot === getOpenCLIPackageRoot()
+        ? "OpenCLI package root"
         : "plugin root",
     rejectHardlinks: false,
   });
@@ -302,7 +302,7 @@ export function resetFacadeLoaderStateForTest(): void {
   loadedFacadePluginIds.clear();
   jitiLoaders.clear();
   facadeLoaderJitiFactory = undefined;
-  cachedOpenClawPackageRoot = undefined;
+  cachedOpenCLIPackageRoot = undefined;
 }
 
 export function setFacadeLoaderJitiFactoryForTest(

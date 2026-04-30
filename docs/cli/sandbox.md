@@ -9,7 +9,7 @@ Manage sandbox runtimes for isolated agent execution.
 
 ## Overview
 
-OpenClaw can run agents in isolated sandbox runtimes for security. The `sandbox` commands help you inspect and recreate those runtimes after updates or configuration changes.
+OpenCLI can run agents in isolated sandbox runtimes for security. The `sandbox` commands help you inspect and recreate those runtimes after updates or configuration changes.
 
 Today that usually means:
 
@@ -20,30 +20,30 @@ Today that usually means:
 For `ssh` and OpenShell `remote`, recreate matters more than with Docker:
 
 - the remote workspace is canonical after the initial seed
-- `openclaw sandbox recreate` deletes that canonical remote workspace for the selected scope
+- `opencli sandbox recreate` deletes that canonical remote workspace for the selected scope
 - next use seeds it again from the current local workspace
 
 ## Commands
 
-### `openclaw sandbox explain`
+### `opencli sandbox explain`
 
 Inspect the **effective** sandbox mode/scope/workspace access, sandbox tool policy, and elevated gates (with fix-it config key paths).
 
 ```bash
-openclaw sandbox explain
-openclaw sandbox explain --session agent:main:main
-openclaw sandbox explain --agent work
-openclaw sandbox explain --json
+opencli sandbox explain
+opencli sandbox explain --session agent:main:main
+opencli sandbox explain --agent work
+opencli sandbox explain --json
 ```
 
-### `openclaw sandbox list`
+### `opencli sandbox list`
 
 List all sandbox runtimes with their status and configuration.
 
 ```bash
-openclaw sandbox list
-openclaw sandbox list --browser  # List only browser containers
-openclaw sandbox list --json     # JSON output
+opencli sandbox list
+opencli sandbox list --browser  # List only browser containers
+opencli sandbox list --json     # JSON output
 ```
 
 **Output includes:**
@@ -55,16 +55,16 @@ openclaw sandbox list --json     # JSON output
 - Idle time (time since last use)
 - Associated session/agent
 
-### `openclaw sandbox recreate`
+### `opencli sandbox recreate`
 
 Remove sandbox runtimes to force recreation with updated config.
 
 ```bash
-openclaw sandbox recreate --all                # Recreate all containers
-openclaw sandbox recreate --session main       # Specific session
-openclaw sandbox recreate --agent mybot        # Specific agent
-openclaw sandbox recreate --browser            # Only browser containers
-openclaw sandbox recreate --all --force        # Skip confirmation
+opencli sandbox recreate --all                # Recreate all containers
+opencli sandbox recreate --session main       # Specific session
+opencli sandbox recreate --agent mybot        # Specific agent
+opencli sandbox recreate --browser            # Only browser containers
+opencli sandbox recreate --all --force        # Skip confirmation
 ```
 
 **Options:**
@@ -85,14 +85,14 @@ Runtimes are automatically recreated when the agent is next used.
 
 ```bash
 # Pull new image
-docker pull openclaw-sandbox:latest
-docker tag openclaw-sandbox:latest openclaw-sandbox:bookworm-slim
+docker pull opencli-sandbox:latest
+docker tag opencli-sandbox:latest opencli-sandbox:bookworm-slim
 
 # Update config to use new image
 # Edit config: agents.defaults.sandbox.docker.image (or agents.list[].sandbox.docker.image)
 
 # Recreate containers
-openclaw sandbox recreate --all
+opencli sandbox recreate --all
 ```
 
 ### After changing sandbox configuration
@@ -101,7 +101,7 @@ openclaw sandbox recreate --all
 # Edit config: agents.defaults.sandbox.* (or agents.list[].sandbox.*)
 
 # Recreate to apply new config
-openclaw sandbox recreate --all
+opencli sandbox recreate --all
 ```
 
 ### After changing SSH target or SSH auth material
@@ -114,7 +114,7 @@ openclaw sandbox recreate --all
 # - agents.defaults.sandbox.ssh.identityFile / certificateFile / knownHostsFile
 # - agents.defaults.sandbox.ssh.identityData / certificateData / knownHostsData
 
-openclaw sandbox recreate --all
+opencli sandbox recreate --all
 ```
 
 For the core `ssh` backend, recreate deletes the per-scope remote workspace root
@@ -129,7 +129,7 @@ on the SSH target. The next run seeds it again from the local workspace.
 # - plugins.entries.openshell.config.mode
 # - plugins.entries.openshell.config.policy
 
-openclaw sandbox recreate --all
+opencli sandbox recreate --all
 ```
 
 For OpenShell `remote` mode, recreate deletes the canonical remote workspace
@@ -138,16 +138,16 @@ for that scope. The next run seeds it again from the local workspace.
 ### After changing setupCommand
 
 ```bash
-openclaw sandbox recreate --all
+opencli sandbox recreate --all
 # or just one agent:
-openclaw sandbox recreate --agent family
+opencli sandbox recreate --agent family
 ```
 
 ### For a specific agent only
 
 ```bash
 # Update only one agent's containers
-openclaw sandbox recreate --agent alfred
+opencli sandbox recreate --agent alfred
 ```
 
 ## Why this is needed
@@ -158,15 +158,15 @@ When you update sandbox configuration:
 - Runtimes are only pruned after 24h of inactivity.
 - Regularly-used agents keep old runtimes alive indefinitely.
 
-Use `openclaw sandbox recreate` to force removal of old runtimes. They are recreated automatically with current settings when next needed.
+Use `opencli sandbox recreate` to force removal of old runtimes. They are recreated automatically with current settings when next needed.
 
 <Tip>
-Prefer `openclaw sandbox recreate` over manual backend-specific cleanup. It uses the Gateway's runtime registry and avoids mismatches when scope or session keys change.
+Prefer `opencli sandbox recreate` over manual backend-specific cleanup. It uses the Gateway's runtime registry and avoids mismatches when scope or session keys change.
 </Tip>
 
 ## Configuration
 
-Sandbox settings live in `~/.openclaw/openclaw.json` under `agents.defaults.sandbox` (per-agent overrides go in `agents.list[].sandbox`):
+Sandbox settings live in `~/.opencli/opencli.json` under `agents.defaults.sandbox` (per-agent overrides go in `agents.list[].sandbox`):
 
 ```jsonc
 {
@@ -177,8 +177,8 @@ Sandbox settings live in `~/.openclaw/openclaw.json` under `agents.defaults.sand
         "backend": "docker", // docker, ssh, openshell
         "scope": "agent", // session, agent, shared
         "docker": {
-          "image": "openclaw-sandbox:bookworm-slim",
-          "containerPrefix": "openclaw-sbx-",
+          "image": "opencli-sandbox:bookworm-slim",
+          "containerPrefix": "opencli-sbx-",
           // ... more Docker options
         },
         "prune": {

@@ -20,16 +20,16 @@ describe("parallels npm update smoke", () => {
     expect(script).toContain("scrub_future_plugin_entries");
     expect(script).toContain("delete plugins.entries.feishu");
     expect(script).toContain("delete plugins.entries.whatsapp");
-    expect(script).toContain("Remove-FuturePluginEntries\nStop-OpenClawGatewayProcesses");
-    expect(script).toContain("scrub_future_plugin_entries\nstop_openclaw_gateway_processes");
-    expect(script).toContain("$env:OPENCLAW_DISABLE_BUNDLED_PLUGINS = '1'");
+    expect(script).toContain("Remove-FuturePluginEntries\nStop-OpenCLIGatewayProcesses");
+    expect(script).toContain("scrub_future_plugin_entries\nstop_opencli_gateway_processes");
+    expect(script).toContain("$env:OPENCLI_DISABLE_BUNDLED_PLUGINS = '1'");
     expect(script).toContain(
-      "OPENCLAW_DISABLE_BUNDLED_PLUGINS=1 /opt/homebrew/bin/openclaw update --tag",
+      "OPENCLI_DISABLE_BUNDLED_PLUGINS=1 /opt/homebrew/bin/opencli update --tag",
     );
-    expect(script).toContain("OPENCLAW_DISABLE_BUNDLED_PLUGINS=1 openclaw update --tag");
+    expect(script).toContain("OPENCLI_DISABLE_BUNDLED_PLUGINS=1 opencli update --tag");
     expect(script).toContain(
-      "OPENCLAW_DISABLE_BUNDLED_PLUGINS=1 /opt/homebrew/bin/openclaw gateway stop",
+      "OPENCLI_DISABLE_BUNDLED_PLUGINS=1 /opt/homebrew/bin/opencli gateway stop",
     );
-    expect(script).toContain("OPENCLAW_DISABLE_BUNDLED_PLUGINS=1 openclaw gateway stop");
+    expect(script).toContain("OPENCLI_DISABLE_BUNDLED_PLUGINS=1 opencli gateway stop");
   });
 });

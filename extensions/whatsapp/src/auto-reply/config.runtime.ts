@@ -10,13 +10,13 @@ export {
   resolveThreadFlag,
   resolveChannelResetConfig,
   updateLastRoute,
-} from "openclaw/plugin-sdk/session-store-runtime";
+} from "opencli/plugin-sdk/session-store-runtime";
 export {
   getRuntimeConfig,
   getRuntimeConfigSourceSnapshot,
-} from "openclaw/plugin-sdk/runtime-config-snapshot";
-export { resolveChannelContextVisibilityMode } from "openclaw/plugin-sdk/context-visibility-runtime";
+} from "opencli/plugin-sdk/runtime-config-snapshot";
+export { resolveChannelContextVisibilityMode } from "opencli/plugin-sdk/context-visibility-runtime";
 export {
   resolveChannelGroupPolicy,
   resolveChannelGroupRequireMention,
-} from "openclaw/plugin-sdk/channel-policy";
+} from "opencli/plugin-sdk/channel-policy";

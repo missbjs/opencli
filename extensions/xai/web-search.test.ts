@@ -1,7 +1,7 @@
-import { createTestWizardPrompter } from "openclaw/plugin-sdk/plugin-test-runtime";
-import { NON_ENV_SECRETREF_MARKER } from "openclaw/plugin-sdk/provider-auth-runtime";
-import { createNonExitingRuntime } from "openclaw/plugin-sdk/runtime-env";
-import { withEnv, withEnvAsync } from "openclaw/plugin-sdk/test-env";
+import { createTestWizardPrompter } from "opencli/plugin-sdk/plugin-test-runtime";
+import { NON_ENV_SECRETREF_MARKER } from "opencli/plugin-sdk/provider-auth-runtime";
+import { createNonExitingRuntime } from "opencli/plugin-sdk/runtime-env";
+import { withEnv, withEnvAsync } from "opencli/plugin-sdk/test-env";
 import { describe, expect, it, vi } from "vitest";
 import { resolveXaiCatalogEntry } from "./model-definitions.js";
 import { isModernXaiModel, resolveXaiForwardCompatModel } from "./provider-models.js";
@@ -106,7 +106,7 @@ describe("xai web search config resolution", () => {
         throw new Error("expected xai web search tool");
       }
 
-      await expect(maybeTool.execute({ query: "OpenClaw" })).resolves.toMatchObject({
+      await expect(maybeTool.execute({ query: "OpenCLI" })).resolves.toMatchObject({
         error: "missing_xai_api_key",
       });
     });

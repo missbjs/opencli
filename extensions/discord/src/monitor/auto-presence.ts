@@ -5,12 +5,12 @@ import {
   resolveProfilesUnavailableReason,
   type AuthProfileFailureReason,
   type AuthProfileStore,
-} from "openclaw/plugin-sdk/agent-runtime";
+} from "opencli/plugin-sdk/agent-runtime";
 import type {
   DiscordAccountConfig,
   DiscordAutoPresenceConfig,
-} from "openclaw/plugin-sdk/config-types";
-import { warn } from "openclaw/plugin-sdk/runtime-env";
+} from "opencli/plugin-sdk/config-types";
+import { warn } from "opencli/plugin-sdk/runtime-env";
 import type { Activity, UpdatePresenceData } from "../internal/gateway.js";
 import { resolveDiscordPresenceUpdate } from "./presence.js";
 

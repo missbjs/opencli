@@ -1,17 +1,17 @@
 import { StickerFormatType, type APIAttachment, type APIStickerItem } from "discord-api-types/v10";
-import { getFileExtension } from "openclaw/plugin-sdk/media-mime";
+import { getFileExtension } from "opencli/plugin-sdk/media-mime";
 import {
   fetchRemoteMedia,
   saveMediaBuffer,
   type FetchLike,
-} from "openclaw/plugin-sdk/media-runtime";
-import { buildMediaPayload } from "openclaw/plugin-sdk/reply-payload";
-import { logVerbose } from "openclaw/plugin-sdk/runtime-env";
-import type { SsrFPolicy } from "openclaw/plugin-sdk/ssrf-runtime";
+} from "opencli/plugin-sdk/media-runtime";
+import { buildMediaPayload } from "opencli/plugin-sdk/reply-payload";
+import { logVerbose } from "opencli/plugin-sdk/runtime-env";
+import type { SsrFPolicy } from "opencli/plugin-sdk/ssrf-runtime";
 import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
-} from "openclaw/plugin-sdk/text-runtime";
+} from "opencli/plugin-sdk/text-runtime";
 import type { Message } from "../internal/discord.js";
 import {
   resolveDiscordMessageSnapshots,

@@ -1,8 +1,8 @@
-import type { OpenClawConfig } from "../../../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../../../config/types.opencli.js";
 import { normalizeBaseCompatibilityConfigValues } from "./legacy-config-compatibility-base.js";
 
-export function normalizeRuntimeCompatibilityConfigValues(cfg: OpenClawConfig): {
-  config: OpenClawConfig;
+export function normalizeRuntimeCompatibilityConfigValues(cfg: OpenCLIConfig): {
+  config: OpenCLIConfig;
   changes: string[];
 } {
   const changes: string[] = [];

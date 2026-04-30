@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import {
-  planOpenClawModelsJson,
-  planOpenClawModelsJsonWithDeps,
+  planOpenCLIModelsJson,
+  planOpenCLIModelsJsonWithDeps,
   type ResolveImplicitProvidersForModelsJson,
 } from "./models-config.plan.js";
 import type { ProviderConfig } from "./models-config.providers.secrets.js";
@@ -65,7 +65,7 @@ describe("models-config", () => {
   });
 
   it("does not override explicit github-copilot provider config", async () => {
-    const plan = await planOpenClawModelsJson({
+    const plan = await planOpenCLIModelsJson({
       cfg: {
         models: {
           providers: {
@@ -77,7 +77,7 @@ describe("models-config", () => {
           },
         },
       },
-      agentDir: "/tmp/openclaw-agent",
+      agentDir: "/tmp/opencli-agent",
       env: {} as NodeJS.ProcessEnv,
       existingRaw: "",
       existingParsed: null,
@@ -103,7 +103,7 @@ describe("models-config", () => {
       },
     );
 
-    const plan = await planOpenClawModelsJsonWithDeps(
+    const plan = await planOpenCLIModelsJsonWithDeps(
       {
         cfg: {
           models: {
@@ -116,7 +116,7 @@ describe("models-config", () => {
             },
           },
         },
-        agentDir: "/tmp/openclaw-agent",
+        agentDir: "/tmp/opencli-agent",
         env: { VLLM_API_KEY: "test-vllm-key" } as NodeJS.ProcessEnv,
         existingRaw: "",
         existingParsed: null,
@@ -163,7 +163,7 @@ describe("models-config", () => {
       2,
     )}\n`;
 
-    const plan = await planOpenClawModelsJsonWithDeps(
+    const plan = await planOpenCLIModelsJsonWithDeps(
       {
         cfg: {
           models: {
@@ -179,7 +179,7 @@ describe("models-config", () => {
             },
           },
         },
-        agentDir: "/tmp/openclaw-agent",
+        agentDir: "/tmp/opencli-agent",
         env: {} as NodeJS.ProcessEnv,
         existingRaw: existingContents,
         existingParsed: JSON.parse(existingContents),
@@ -248,10 +248,10 @@ function createCopilotImplicitResolver(
 }
 
 async function planCopilotWithImplicitProvider(params: { provider: ProviderConfig }) {
-  return await planOpenClawModelsJsonWithDeps(
+  return await planOpenCLIModelsJsonWithDeps(
     {
       cfg: { models: { providers: {} } },
-      agentDir: "/tmp/openclaw-agent",
+      agentDir: "/tmp/opencli-agent",
       env: {} as NodeJS.ProcessEnv,
       existingRaw: "",
       existingParsed: null,

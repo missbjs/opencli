@@ -140,8 +140,8 @@ describe("runDaemonRestart health checks", () => {
   });
 
   beforeEach(() => {
-    envSnapshot = captureEnv(["OPENCLAW_CONTAINER_HINT", "OPENCLAW_PROFILE"]);
-    delete process.env.OPENCLAW_CONTAINER_HINT;
+    envSnapshot = captureEnv(["OPENCLI_CONTAINER_HINT", "OPENCLI_PROFILE"]);
+    delete process.env.OPENCLI_CONTAINER_HINT;
     service.readCommand.mockReset();
     service.restart.mockReset();
     runServiceStart.mockReset();
@@ -162,7 +162,7 @@ describe("runDaemonRestart health checks", () => {
     recoverInstalledLaunchAgent.mockReset();
 
     service.readCommand.mockResolvedValue({
-      programArguments: ["openclaw", "gateway", "--port", "18789"],
+      programArguments: ["opencli", "gateway", "--port", "18789"],
       environment: {},
     });
     service.restart.mockResolvedValue({ outcome: "completed" });
@@ -282,8 +282,8 @@ describe("runDaemonRestart health checks", () => {
     await expect(runDaemonRestart({ json: true })).rejects.toMatchObject({
       message: "Gateway restart timed out after 60s waiting for health checks.",
       hints: [
-        formatCliCommand("openclaw gateway status --deep"),
-        formatCliCommand("openclaw doctor"),
+        formatCliCommand("opencli gateway status --deep"),
+        formatCliCommand("opencli doctor"),
       ],
     });
     expect(terminateStaleGatewayPids).not.toHaveBeenCalled();
@@ -327,8 +327,8 @@ describe("runDaemonRestart health checks", () => {
       message:
         "Gateway restart failed after 13s: service stayed stopped and health checks never came up.",
       hints: [
-        formatCliCommand("openclaw gateway status --deep"),
-        formatCliCommand("openclaw doctor"),
+        formatCliCommand("opencli gateway status --deep"),
+        formatCliCommand("opencli doctor"),
       ],
     });
     expect(terminateStaleGatewayPids).not.toHaveBeenCalled();

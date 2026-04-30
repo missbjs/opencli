@@ -5,16 +5,16 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import { captureFullEnv } from "../test-utils/env.js";
 
 const spawnMock = vi.hoisted(() => vi.fn());
-const resolvePreferredOpenClawTmpDirMock = vi.hoisted(() => vi.fn(() => os.tmpdir()));
+const resolvePreferredOpenCLITmpDirMock = vi.hoisted(() => vi.fn(() => os.tmpdir()));
 const resolveTaskScriptPathMock = vi.hoisted(() =>
   vi.fn((env: Record<string, string | undefined>) => {
     const home = env.USERPROFILE || env.HOME || os.homedir();
-    return path.join(home, ".openclaw", "gateway.cmd");
+    return path.join(home, ".opencli", "gateway.cmd");
   }),
 );
 
 vi.mock("node:child_process", async () => {
-  const { mockNodeBuiltinModule } = await import("openclaw/plugin-sdk/test-node-mocks");
+  const { mockNodeBuiltinModule } = await import("opencli/plugin-sdk/test-node-mocks");
   return mockNodeBuiltinModule(
     () => vi.importActual<typeof import("node:child_process")>("node:child_process"),
     {
@@ -22,8 +22,8 @@ vi.mock("node:child_process", async () => {
     },
   );
 });
-vi.mock("./tmp-openclaw-dir.js", () => ({
-  resolvePreferredOpenClawTmpDir: () => resolvePreferredOpenClawTmpDirMock(),
+vi.mock("./tmp-opencli-dir.js", () => ({
+  resolvePreferredOpenCLITmpDir: () => resolvePreferredOpenCLITmpDirMock(),
 }));
 vi.mock("../daemon/schtasks.js", () => ({
   resolveTaskScriptPath: (env: Record<string, string | undefined>) =>
@@ -72,12 +72,12 @@ describe("relaunchGatewayScheduledTask", () => {
 
   beforeEach(() => {
     spawnMock.mockReset();
-    resolvePreferredOpenClawTmpDirMock.mockReset();
-    resolvePreferredOpenClawTmpDirMock.mockReturnValue(os.tmpdir());
+    resolvePreferredOpenCLITmpDirMock.mockReset();
+    resolvePreferredOpenCLITmpDirMock.mockReturnValue(os.tmpdir());
     resolveTaskScriptPathMock.mockReset();
     resolveTaskScriptPathMock.mockImplementation((env: Record<string, string | undefined>) => {
       const home = env.USERPROFILE || env.HOME || os.homedir();
-      return path.join(home, ".openclaw", "gateway.cmd");
+      return path.join(home, ".opencli", "gateway.cmd");
     });
   });
 
@@ -90,12 +90,12 @@ describe("relaunchGatewayScheduledTask", () => {
       return { unref };
     });
 
-    const result = relaunchGatewayScheduledTask({ OPENCLAW_PROFILE: "work" });
+    const result = relaunchGatewayScheduledTask({ OPENCLI_PROFILE: "work" });
 
     expect(result).toMatchObject({
       ok: true,
       method: "schtasks",
-      tried: expect.arrayContaining(['schtasks /Run /TN "OpenClaw Gateway (work)"']),
+      tried: expect.arrayContaining(['schtasks /Run /TN "OpenCLI Gateway (work)"']),
     });
     expect(result.tried).toContain(`cmd.exe /d /s /c ${seenCommandArg}`);
     expect(spawnMock).toHaveBeenCalledWith(
@@ -115,26 +115,26 @@ describe("relaunchGatewayScheduledTask", () => {
     expect(script).toContain("timeout /t 1 /nobreak >nul");
     expect(script).toContain("gateway-restart.log");
     expect(script).toContain(
-      'openclaw restart attempt source=windows-task-handoff target="OpenClaw Gateway (work)"',
+      'opencli restart attempt source=windows-task-handoff target="OpenCLI Gateway (work)"',
     );
-    expect(script).toContain('schtasks /Run /TN "OpenClaw Gateway (work)" >>');
+    expect(script).toContain('schtasks /Run /TN "OpenCLI Gateway (work)" >>');
     expect(script).toContain('del "%~f0" >nul 2>&1');
   });
 
-  it("prefers OPENCLAW_WINDOWS_TASK_NAME overrides", () => {
+  it("prefers OPENCLI_WINDOWS_TASK_NAME overrides", () => {
     spawnMock.mockImplementation((_file: string, args: string[]) => {
       createdScriptPaths.add(decodeCmdPathArg(args[3]));
       return { unref: vi.fn() };
     });
 
     relaunchGatewayScheduledTask({
-      OPENCLAW_PROFILE: "work",
-      OPENCLAW_WINDOWS_TASK_NAME: "OpenClaw Gateway (custom)",
+      OPENCLI_PROFILE: "work",
+      OPENCLI_WINDOWS_TASK_NAME: "OpenCLI Gateway (custom)",
     });
 
     const scriptPath = [...createdScriptPaths][0];
     const script = fs.readFileSync(scriptPath, "utf8");
-    expect(script).toContain('schtasks /Run /TN "OpenClaw Gateway (custom)" >>');
+    expect(script).toContain('schtasks /Run /TN "OpenCLI Gateway (custom)" >>');
   });
 
   it("returns failed when the helper cannot be spawned", () => {
@@ -142,7 +142,7 @@ describe("relaunchGatewayScheduledTask", () => {
       throw new Error("spawn failed");
     });
 
-    const result = relaunchGatewayScheduledTask({ OPENCLAW_PROFILE: "work" });
+    const result = relaunchGatewayScheduledTask({ OPENCLI_PROFILE: "work" });
 
     expect(result.ok).toBe(false);
     expect(result.method).toBe("schtasks");
@@ -151,12 +151,12 @@ describe("relaunchGatewayScheduledTask", () => {
 
   it("quotes the cmd /c script path when temp paths contain metacharacters", () => {
     const unref = vi.fn();
-    const metacharTmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw&(restart)-"));
+    const metacharTmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "opencli&(restart)-"));
     createdTmpDirs.add(metacharTmpDir);
-    resolvePreferredOpenClawTmpDirMock.mockReturnValue(metacharTmpDir);
+    resolvePreferredOpenCLITmpDirMock.mockReturnValue(metacharTmpDir);
     spawnMock.mockReturnValue({ unref });
 
-    relaunchGatewayScheduledTask({ OPENCLAW_PROFILE: "work" });
+    relaunchGatewayScheduledTask({ OPENCLI_PROFILE: "work" });
 
     expect(spawnMock).toHaveBeenCalledWith(
       "cmd.exe",
@@ -166,7 +166,7 @@ describe("relaunchGatewayScheduledTask", () => {
   });
 
   it("includes startup fallback", () => {
-    const taskScriptDir = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-state-"));
+    const taskScriptDir = fs.mkdtempSync(path.join(os.tmpdir(), "opencli-state-"));
     createdTmpDirs.add(taskScriptDir);
     const taskScriptPath = path.join(taskScriptDir, "gateway.cmd");
     fs.writeFileSync(taskScriptPath, "@echo off\r\nrem placeholder\r\n", "utf8");
@@ -177,7 +177,7 @@ describe("relaunchGatewayScheduledTask", () => {
       return { unref: vi.fn() };
     });
 
-    const result = relaunchGatewayScheduledTask({ OPENCLAW_PROFILE: "work" });
+    const result = relaunchGatewayScheduledTask({ OPENCLI_PROFILE: "work" });
 
     expect(result.ok).toBe(true);
     const scriptPath = [...createdScriptPaths][0];

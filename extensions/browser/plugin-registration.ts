@@ -1,17 +1,17 @@
 import type {
   AnyAgentTool,
-  OpenClawPluginApi,
-  OpenClawPluginNodeHostCommand,
-  OpenClawPluginSecurityAuditCollector,
-  OpenClawPluginService,
-  OpenClawPluginToolContext,
-  OpenClawPluginToolFactory,
-} from "openclaw/plugin-sdk/plugin-entry";
+  OpenCLIPluginApi,
+  OpenCLIPluginNodeHostCommand,
+  OpenCLIPluginSecurityAuditCollector,
+  OpenCLIPluginService,
+  OpenCLIPluginToolContext,
+  OpenCLIPluginToolFactory,
+} from "opencli/plugin-sdk/plugin-entry";
 import { BrowserToolSchema } from "./src/browser-tool.schema.js";
 
 const BROWSER_CLI_DESCRIPTOR = {
   name: "browser",
-  description: "Manage OpenClaw's dedicated browser (Chrome/Chromium)",
+  description: "Manage OpenCLI's dedicated browser (Chrome/Chromium)",
   hasSubcommands: true,
 };
 
@@ -27,8 +27,8 @@ function createLazyBrowserTool(opts?: {
     label: "Browser",
     name: "browser",
     description: [
-      "Control the browser via OpenClaw's browser control server (status/start/stop/profiles/tabs/open/snapshot/screenshot/actions).",
-      "Browser choice: omit profile by default for the isolated OpenClaw-managed browser (`openclaw`).",
+      "Control the browser via OpenCLI's browser control server (status/start/stop/profiles/tabs/open/snapshot/screenshot/actions).",
+      "Browser choice: omit profile by default for the isolated OpenCLI-managed browser (`opencli`).",
       'For the logged-in user browser, use profile="user". A supported Chromium-based browser (v144+) must be running on the selected host or browser node. Use only when existing logins/cookies matter and the user is present.',
       'For profile="user" or other existing-session profiles, omit timeoutMs on act:type, evaluate, hover, scrollIntoView, drag, select, and fill; that driver rejects per-call timeout overrides for those actions.',
       'When a node-hosted browser proxy is available, the tool may auto-route to it. Pin a node with node=<id|name> or target="node".',
@@ -50,7 +50,7 @@ function createLazyBrowserTool(opts?: {
 
 export const browserPluginReload = { restartPrefixes: ["browser"] };
 
-export const browserPluginNodeHostCommands: OpenClawPluginNodeHostCommand[] = [
+export const browserPluginNodeHostCommands: OpenCLIPluginNodeHostCommand[] = [
   {
     command: "browser.proxy",
     cap: "browser",
@@ -61,15 +61,15 @@ export const browserPluginNodeHostCommands: OpenClawPluginNodeHostCommand[] = [
   },
 ];
 
-export const browserSecurityAuditCollectors: OpenClawPluginSecurityAuditCollector[] = [
+export const browserSecurityAuditCollectors: OpenCLIPluginSecurityAuditCollector[] = [
   async (ctx) => {
     const { collectBrowserSecurityAuditFindings } = await import("./register.runtime.js");
     return collectBrowserSecurityAuditFindings(ctx);
   },
 ];
 
-function createLazyBrowserPluginService(): OpenClawPluginService {
-  let service: OpenClawPluginService | null = null;
+function createLazyBrowserPluginService(): OpenCLIPluginService {
+  let service: OpenCLIPluginService | null = null;
   const loadService = async () => {
     if (!service) {
       const { createBrowserPluginService } = await import("./register.runtime.js");
@@ -92,13 +92,13 @@ function createLazyBrowserPluginService(): OpenClawPluginService {
   };
 }
 
-export function registerBrowserPlugin(api: OpenClawPluginApi) {
-  api.registerTool(((ctx: OpenClawPluginToolContext) =>
+export function registerBrowserPlugin(api: OpenCLIPluginApi) {
+  api.registerTool(((ctx: OpenCLIPluginToolContext) =>
     createLazyBrowserTool({
       sandboxBridgeUrl: ctx.browser?.sandboxBridgeUrl,
       allowHostControl: ctx.browser?.allowHostControl,
       agentSessionKey: ctx.sessionKey,
-    })) as OpenClawPluginToolFactory);
+    })) as OpenCLIPluginToolFactory);
   api.registerCli(
     async ({ program }) => {
       const { registerBrowserCli } = await import("./src/cli/browser-cli.js");

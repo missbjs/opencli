@@ -1,12 +1,12 @@
 {
-  "name": "@openclaw/irc",
+  "name": "@opencli/irc",
   "version": "2026.4.25",
-  "description": "OpenClaw IRC channel plugin",
+  "description": "OpenCLI IRC channel plugin",
   "type": "module",
   "devDependencies": {
-    "@openclaw/plugin-sdk": "workspace:*"
+    "@opencli/plugin-sdk": "workspace:*"
   },
-  "openclaw": {
+  "opencli": {
     "extensions": [
       "./index.ts"
     ],

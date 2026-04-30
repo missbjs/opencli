@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/types.openclaw.js";
+import type { OpenCLIConfig } from "../config/types.opencli.js";
 import {
   withBundledPluginAllowlistCompat,
   withBundledPluginEnablementCompat,
@@ -9,9 +9,9 @@ import { resolveManifestContractRuntimePluginResolution } from "./manifest-contr
 import type { MigrationProviderPlugin } from "./types.js";
 
 function resolveMigrationProviderConfig(params: {
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   bundledCompatPluginIds: string[];
-}): OpenClawConfig | undefined {
+}): OpenCLIConfig | undefined {
   const allowlistCompat = withBundledPluginAllowlistCompat({
     config: params.cfg,
     pluginIds: params.bundledCompatPluginIds,
@@ -35,7 +35,7 @@ function findMigrationProviderById(
 }
 
 function resolveMigrationProviderRegistry(params: {
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
   pluginIds: string[];
   bundledCompatPluginIds: string[];
 }) {
@@ -65,7 +65,7 @@ function mergeMigrationProviders(
 
 export function resolvePluginMigrationProvider(params: {
   providerId: string;
-  cfg?: OpenClawConfig;
+  cfg?: OpenCLIConfig;
 }): MigrationProviderPlugin | undefined {
   const activeRegistry = resolveRuntimePluginRegistry();
   const activeProvider = findMigrationProviderById(
@@ -95,7 +95,7 @@ export function resolvePluginMigrationProvider(params: {
 
 export function resolvePluginMigrationProviders(
   params: {
-    cfg?: OpenClawConfig;
+    cfg?: OpenCLIConfig;
   } = {},
 ): MigrationProviderPlugin[] {
   const activeRegistry = resolveRuntimePluginRegistry();

@@ -8,58 +8,58 @@ import {
 
 describe("command-registration-policy", () => {
   it("matches primary command registration policy", () => {
-    expect(shouldRegisterPrimaryCommandOnly(["node", "openclaw", "status"])).toBe(true);
-    expect(shouldRegisterPrimaryCommandOnly(["node", "openclaw", "status", "--help"])).toBe(true);
-    expect(shouldRegisterPrimaryCommandOnly(["node", "openclaw", "-V"])).toBe(false);
-    expect(shouldRegisterPrimaryCommandOnly(["node", "openclaw", "acp", "-v"])).toBe(true);
+    expect(shouldRegisterPrimaryCommandOnly(["node", "opencli", "status"])).toBe(true);
+    expect(shouldRegisterPrimaryCommandOnly(["node", "opencli", "status", "--help"])).toBe(true);
+    expect(shouldRegisterPrimaryCommandOnly(["node", "opencli", "-V"])).toBe(false);
+    expect(shouldRegisterPrimaryCommandOnly(["node", "opencli", "acp", "-v"])).toBe(true);
   });
 
   it("matches plugin registration skip policy", () => {
     expect(
       shouldSkipPluginCommandRegistration({
-        argv: ["node", "openclaw", "--help"],
+        argv: ["node", "opencli", "--help"],
         primary: null,
         hasBuiltinPrimary: false,
       }),
     ).toBe(true);
     expect(
       shouldSkipPluginCommandRegistration({
-        argv: ["node", "openclaw", "config", "--help"],
+        argv: ["node", "opencli", "config", "--help"],
         primary: "config",
         hasBuiltinPrimary: true,
       }),
     ).toBe(true);
     expect(
       shouldSkipPluginCommandRegistration({
-        argv: ["node", "openclaw", "voicecall", "--help"],
+        argv: ["node", "opencli", "voicecall", "--help"],
         primary: "voicecall",
         hasBuiltinPrimary: false,
       }),
     ).toBe(false);
     expect(
       shouldSkipPluginCommandRegistration({
-        argv: ["node", "openclaw", "help", "--help"],
+        argv: ["node", "opencli", "help", "--help"],
         primary: "help",
         hasBuiltinPrimary: false,
       }),
     ).toBe(true);
     expect(
       shouldSkipPluginCommandRegistration({
-        argv: ["node", "openclaw", "help", "voicecall"],
+        argv: ["node", "opencli", "help", "voicecall"],
         primary: "help",
         hasBuiltinPrimary: false,
       }),
     ).toBe(false);
     expect(
       shouldSkipPluginCommandRegistration({
-        argv: ["node", "openclaw", "tools", "effective"],
+        argv: ["node", "opencli", "tools", "effective"],
         primary: "tools",
         hasBuiltinPrimary: false,
       }),
     ).toBe(true);
     expect(
       shouldSkipPluginCommandRegistration({
-        argv: ["node", "openclaw", "googlemeet", "login"],
+        argv: ["node", "opencli", "googlemeet", "login"],
         primary: "googlemeet",
         hasBuiltinPrimary: false,
       }),
@@ -67,15 +67,15 @@ describe("command-registration-policy", () => {
   });
 
   it("matches lazy subcommand registration policy", () => {
-    expect(shouldEagerRegisterSubcommands({ OPENCLAW_DISABLE_LAZY_SUBCOMMANDS: "1" })).toBe(true);
-    expect(shouldEagerRegisterSubcommands({ OPENCLAW_DISABLE_LAZY_SUBCOMMANDS: "0" })).toBe(false);
-    expect(shouldRegisterPrimarySubcommandOnly(["node", "openclaw", "acp"], {})).toBe(true);
-    expect(shouldRegisterPrimarySubcommandOnly(["node", "openclaw", "acp", "--help"], {})).toBe(
+    expect(shouldEagerRegisterSubcommands({ OPENCLI_DISABLE_LAZY_SUBCOMMANDS: "1" })).toBe(true);
+    expect(shouldEagerRegisterSubcommands({ OPENCLI_DISABLE_LAZY_SUBCOMMANDS: "0" })).toBe(false);
+    expect(shouldRegisterPrimarySubcommandOnly(["node", "opencli", "acp"], {})).toBe(true);
+    expect(shouldRegisterPrimarySubcommandOnly(["node", "opencli", "acp", "--help"], {})).toBe(
       true,
     );
     expect(
-      shouldRegisterPrimarySubcommandOnly(["node", "openclaw", "acp"], {
-        OPENCLAW_DISABLE_LAZY_SUBCOMMANDS: "1",
+      shouldRegisterPrimarySubcommandOnly(["node", "opencli", "acp"], {
+        OPENCLI_DISABLE_LAZY_SUBCOMMANDS: "1",
       }),
     ).toBe(false);
   });
