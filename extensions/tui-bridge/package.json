@@ -1,0 +1,22 @@
+{
+  "name": "@openclaw/tui-bridge",
+  "version": "0.1.0",
+  "description": "Bind a chat conversation to a long-lived TUI process (e.g. claude, aider) and pipe stdin/stdout between them",
+  "type": "module",
+  "dependencies": {
+    "@lydell/node-pty": "1.2.0-beta.12",
+    "@xterm/headless": "5.5.0",
+    "strip-ansi": "6.0.1"
+  },
+  "devDependencies": {
+    "@openclaw/plugin-sdk": "workspace:*"
+  },
+  "openclaw": {
+    "extensions": [
+      "./index.ts"
+    ],
+    "bundle": {
+      "stageRuntimeDependencies": true
+    }
+  }
+}

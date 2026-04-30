@@ -1,0 +1,89 @@
+{
+  "id": "tui-bridge",
+  "name": "TUI Bridge",
+  "description": "Run any TUI/CLI process as the chat backend. Each conversation owns one long-lived PTY-spawned process; user messages are written to its stdin and screen output is streamed back as chat messages.",
+  "activation": {
+    "onStartup": false
+  },
+  "commandAliases": [
+    {
+      "name": "tui",
+      "kind": "runtime-slash",
+      "cliCommand": "plugins"
+    }
+  ],
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "defaultMode": {
+        "type": "string",
+        "enum": ["txt", "tui"],
+        "default": "txt",
+        "description": "Default output mode for new sessions. txt strips ANSI and streams raw bytes; tui renders into an xterm-headless screen and emits a snapshot on settle."
+      },
+      "settleIdleMs": {
+        "type": "number",
+        "minimum": 50,
+        "default": 600,
+        "description": "Idle gap that marks the TUI's output as 'settled' and ready to send to chat."
+      },
+      "settleMaxMs": {
+        "type": "number",
+        "minimum": 500,
+        "default": 30000,
+        "description": "Hard cap on how long we wait for output to settle before forcing a flush."
+      },
+      "cols": {
+        "type": "number",
+        "minimum": 20,
+        "default": 100,
+        "description": "Terminal columns for spawned PTYs."
+      },
+      "rows": {
+        "type": "number",
+        "minimum": 5,
+        "default": 30,
+        "description": "Terminal rows for spawned PTYs."
+      },
+      "logDir": {
+        "type": "string",
+        "description": "Override directory for per-session logs. Defaults to ~/.openclaw/tui-bridge/."
+      },
+      "allowedCommands": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "If set, only these binary names (first arg of /tui start) may be spawned. Empty/unset means all binaries are allowed."
+      }
+    }
+  },
+  "configMetadata": {
+    "defaultMode": {
+      "label": "Default Output Mode"
+    },
+    "settleIdleMs": {
+      "label": "Settle Idle Window (ms)",
+      "advanced": true
+    },
+    "settleMaxMs": {
+      "label": "Settle Hard Cap (ms)",
+      "advanced": true
+    },
+    "cols": {
+      "label": "PTY Columns",
+      "advanced": true
+    },
+    "rows": {
+      "label": "PTY Rows",
+      "advanced": true
+    },
+    "logDir": {
+      "label": "Log Directory",
+      "advanced": true
+    },
+    "allowedCommands": {
+      "label": "Allowed Binaries",
+      "help": "Restrict which executables /tui start can launch. If empty, any binary on PATH is allowed."
+    }
+  }
+}
