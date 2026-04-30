@@ -93,10 +93,11 @@ describe("handleTuiInboundClaim", () => {
   it("writes to an existing session and returns the PTY output", async () => {
     const sessionKey = `claim-happy-${process.pid}-${Date.now()}`;
     liveKeys.add(sessionKey);
+    const catLikeArgs = ["-e", "process.stdin.pipe(process.stdout); setInterval(() => {}, 1e9);"];
     await startSession({
       sessionKey,
-      command: "/usr/bin/cat",
-      args: [],
+      command: process.execPath,
+      args: catLikeArgs,
       cwd: process.cwd(),
       mode: "txt",
       cols: 80,
@@ -104,8 +105,8 @@ describe("handleTuiInboundClaim", () => {
       logRoot,
     });
     const data = createBindingData({
-      command: "/usr/bin/cat",
-      args: [],
+      command: process.execPath,
+      args: catLikeArgs,
       cwd: process.cwd(),
       mode: "txt",
     });
@@ -131,8 +132,8 @@ describe("handleTuiInboundClaim", () => {
     expect(getSession(sessionKey)).toBeUndefined();
 
     const data = createBindingData({
-      command: "/usr/bin/cat",
-      args: [],
+      command: process.execPath,
+      args: ["-e", "process.stdin.pipe(process.stdout); setInterval(() => {}, 1e9);"],
       cwd: process.cwd(),
       mode: "txt",
     });
@@ -153,10 +154,11 @@ describe("handleTuiInboundClaim", () => {
   it("reports exit code when the bound process has already exited", async () => {
     const sessionKey = `claim-exit-${process.pid}-${Date.now()}`;
     liveKeys.add(sessionKey);
+    const exitArgs = ["-e", "process.exit(0)"];
     const session = await startSession({
       sessionKey,
-      command: "/bin/sh",
-      args: ["-c", "exit 0"],
+      command: process.execPath,
+      args: exitArgs,
       cwd: process.cwd(),
       mode: "txt",
       cols: 80,
@@ -169,8 +171,8 @@ describe("handleTuiInboundClaim", () => {
     });
 
     const data = createBindingData({
-      command: "/bin/sh",
-      args: ["-c", "exit 0"],
+      command: process.execPath,
+      args: exitArgs,
       cwd: process.cwd(),
       mode: "txt",
     });

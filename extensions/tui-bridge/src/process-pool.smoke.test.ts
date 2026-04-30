@@ -29,18 +29,30 @@ describe("tui-bridge process-pool smoke", () => {
     const sessionKey = track(`smoke-echo-${process.pid}-${Date.now()}`);
     const session = await startSession({
       sessionKey,
-      command: "/usr/bin/echo",
-      args: ["hello-from-pty"],
-      cwd: logRoot,
+      command: process.execPath,
+      // Linger so the PTY (ConPTY on Windows) has time to expose pid before exit.
+      args: [
+        "-e",
+        "process.stdout.write('hello-from-pty\\n'); setTimeout(() => process.exit(0), 500);",
+      ],
+      cwd: process.cwd(),
       mode: "txt",
       cols: 80,
       rows: 24,
       logRoot,
     });
 
+    // ConPTY assigns pid asynchronously; allow a beat before asserting.
+    for (let i = 0; i < 40 && !(session.pty.pid > 0); i++) {
+      await new Promise((r) => setTimeout(r, 25));
+    }
     expect(session.pty.pid).toBeGreaterThan(0);
     expect(getSession(sessionKey)).toBe(session);
 
+    // Wait for exit so exitInfo is populated before we assert on it.
+    for (let i = 0; i < 80 && !session.exitInfo; i++) {
+      await new Promise((r) => setTimeout(r, 25));
+    }
     await waitForSettle(session, { idleMs: 200, maxMs: 4000 });
 
     expect(session.exitInfo).toBeDefined();
@@ -57,9 +69,9 @@ describe("tui-bridge process-pool smoke", () => {
     const sessionKey = track(`smoke-stop-${process.pid}-${Date.now()}`);
     const session = await startSession({
       sessionKey,
-      // `cat` with no args blocks reading from stdin -- a long-lived process
-      command: "/usr/bin/cat",
-      args: [],
+      // node piping stdin to stdout blocks reading from stdin -- a long-lived process
+      command: process.execPath,
+      args: ["-e", "process.stdin.pipe(process.stdout); setInterval(() => {}, 1e9);"],
       cwd: logRoot,
       mode: "txt",
       cols: 80,

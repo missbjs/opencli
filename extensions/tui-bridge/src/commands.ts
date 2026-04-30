@@ -36,7 +36,6 @@ export function createTuiCommand(options: {
   return {
     name: "tui",
     description: "Bind a chat to a long-lived TUI process and pipe stdin/stdout.",
-    ownership: "reserved",
     acceptsArgs: true,
     requireAuth: true,
     handler: (ctx) => handleTuiCommand(ctx, options),
@@ -47,7 +46,7 @@ export async function handleTuiCommand(
   ctx: PluginCommandContext,
   options: { pluginConfig?: unknown } = {},
 ): Promise<PluginCommandResult> {
-  const args = parseArgs(ctx.argString ?? "");
+  const args = parseArgs(ctx.args ?? "");
   const sub = (args.shift() ?? "help").toLowerCase();
   const cfg = resolveConfig(options.pluginConfig);
 
@@ -114,7 +113,7 @@ export async function handleTuiCommand(
   if (sub === "send" || sub === "sendln") {
     const session = getSession(sessionKey);
     if (!session) return { text: "No TUI bound to this conversation." };
-    const payload = (ctx.argString ?? "").replace(/^\s*\S+\s*/, "");
+    const payload = (ctx.args ?? "").replace(/^\s*\S+\s*/, "");
     writeStdin(session, sub === "sendln" ? `${payload}\n` : payload);
     await waitForSettle(session, { idleMs: cfg.settleIdleMs, maxMs: cfg.settleMaxMs });
     return { text: readReply(session) || "(no output)" };

@@ -1,7 +1,43 @@
+import { statSync } from "node:fs";
 import { appendFile } from "node:fs/promises";
+import { delimiter, isAbsolute, join } from "node:path";
+import { platform } from "node:os";
 import { ensureSessionDir, sessionLogPath } from "./persistence.js";
 import { createTuiScreen, scrubTxt, type TuiScreen } from "./screen.js";
 import type { TuiMode } from "./types.js";
+
+/**
+ * Resolve a bare command name to a full path on Windows so ConPTY can spawn
+ * it. ConPTY (via @lydell/node-pty) does not search PATH/PATHEXT the way the
+ * shell does — passing a bare "cmd" or "bash" returns "File not found".
+ *
+ * No-op on non-Windows or when the command already contains a path separator
+ * or is absolute. If no match is found, returns the input unchanged so the
+ * eventual spawn error is the upstream one (not a custom message).
+ */
+export function resolveExecutable(
+  cmd: string,
+  env: Record<string, string | undefined> = process.env,
+): string {
+  if (platform() !== "win32") return cmd;
+  if (cmd.includes("/") || cmd.includes("\\") || isAbsolute(cmd)) return cmd;
+
+  const pathEntries = (env.PATH ?? env.Path ?? "").split(delimiter).filter(Boolean);
+  const pathExt = (env.PATHEXT ?? ".COM;.EXE;.BAT;.CMD").split(";").filter(Boolean);
+  // Try the bare name first (in case the user passed "foo.exe"), then each PATHEXT.
+  const exts = ["", ...pathExt];
+  for (const dir of pathEntries) {
+    for (const ext of exts) {
+      const candidate = join(dir, cmd + ext);
+      try {
+        if (statSync(candidate).isFile()) return candidate;
+      } catch {
+        // not present in this directory; keep searching
+      }
+    }
+  }
+  return cmd;
+}
 
 type PtyDisposable = { dispose: () => void };
 type PtyExitEvent = { exitCode: number; signal?: number };
@@ -94,7 +130,8 @@ export async function startSession(params: StartParams): Promise<Session> {
   for (const [k, v] of Object.entries(process.env)) {
     if (typeof v === "string") env[k] = v;
   }
-  const pty = spawn(params.command, params.args, {
+  const resolvedCommand = resolveExecutable(params.command, env);
+  const pty = spawn(resolvedCommand, params.args, {
     name: "xterm-256color",
     cols: params.cols,
     rows: params.rows,

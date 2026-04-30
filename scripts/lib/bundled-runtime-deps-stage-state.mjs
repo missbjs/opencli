@@ -106,13 +106,35 @@ export function replaceDirAtomically(targetPath, sourcePath) {
   removePathIfExists(backupPath, { retryTransient: true });
 
   let movedExistingTarget = false;
+  // Windows: AV/indexers can hold transient handles on freshly-written files,
+  // so wrap the directory swaps in a short retry loop on EPERM/EBUSY/ENOTEMPTY.
+  const renameWithRetry = (from, to) => {
+    let lastError;
+    for (let attempt = 0; attempt < 10; attempt++) {
+      try {
+        fs.renameSync(from, to);
+        return;
+      } catch (err) {
+        lastError = err;
+        const code = err && err.code;
+        if (code !== "EPERM" && code !== "EBUSY" && code !== "ENOTEMPTY" && code !== "EACCES") {
+          throw err;
+        }
+        const waitMs = 100 * (attempt + 1);
+        const end = Date.now() + waitMs;
+        // eslint-disable-next-line no-empty
+        while (Date.now() < end) {}
+      }
+    }
+    throw lastError;
+  };
   try {
     if (fs.existsSync(targetPath)) {
-      fs.renameSync(targetPath, backupPath);
+      renameWithRetry(targetPath, backupPath);
       writeRuntimeDepsTempOwner(backupPath);
       movedExistingTarget = true;
     }
-    fs.renameSync(sourcePath, targetPath);
+    renameWithRetry(sourcePath, targetPath);
     removeOwnedTempPathBestEffort(backupPath);
   } catch (error) {
     if (movedExistingTarget && !fs.existsSync(targetPath) && fs.existsSync(backupPath)) {

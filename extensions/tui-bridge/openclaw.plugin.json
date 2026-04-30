@@ -3,7 +3,7 @@
   "name": "TUI Bridge",
   "description": "Run any TUI/CLI process as the chat backend. Each conversation owns one long-lived PTY-spawned process; user messages are written to its stdin and screen output is streamed back as chat messages.",
   "activation": {
-    "onStartup": false
+    "onStartup": true
   },
   "commandAliases": [
     {
