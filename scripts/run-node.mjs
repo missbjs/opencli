@@ -801,7 +801,10 @@ const writeBuildStamp = (deps) => {
 const shouldSkipCleanWatchRuntimeSync = (deps) => deps.env.OPENCLI_WATCH_MODE === "1";
 
 const isGatewayClientCommand = (args) =>
-  args[0] === "gateway" && (args[1] === "call" || args[1] === "status");
+  (args[0] === "gateway" && (args[1] === "call" || args[1] === "status")) ||
+  args[0] === "chat" ||
+  args[0] === "tui" ||
+  args[0] === "terminal";
 
 const shouldUseExistingDistForGatewayClient = (deps, buildRequirement) =>
   buildRequirement.reason === "dirty_watched_tree" &&
