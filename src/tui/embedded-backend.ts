@@ -1,9 +1,10 @@
 import { randomUUID } from "node:crypto";
-import { agentCommandFromIngress } from "../agents/agent-command.js";
 import { resolveSessionAgentId } from "../agents/agent-scope.js";
 import { DEFAULT_PROVIDER } from "../agents/defaults.js";
 import { buildAllowedModelSet, resolveThinkingDefault } from "../agents/model-selection.js";
-import { createDefaultDeps } from "../cli/deps.js";
+import { dispatchInboundMessage } from "../auto-reply/dispatch.js";
+import { createReplyDispatcher } from "../auto-reply/reply/reply-dispatcher.js";
+import type { MsgContext } from "../auto-reply/templating.js";
 import { getRuntimeConfig } from "../config/config.js";
 import { updateSessionStore } from "../config/sessions.js";
 import {
@@ -80,30 +81,6 @@ function resolveBtwQuestion(message: string): string | undefined {
   return question ? question : undefined;
 }
 
-function payloadText(parts: unknown): string {
-  if (!Array.isArray(parts)) {
-    return "";
-  }
-  return parts
-    .map((part) => {
-      if (!part || typeof part !== "object") {
-        return "";
-      }
-      const payload = part as { text?: unknown };
-      return typeof payload.text === "string" ? payload.text.trim() : "";
-    })
-    .filter(Boolean)
-    .join("\n\n")
-    .trim();
-}
-
-function timeoutSecondsFromMs(timeoutMs?: number): string | undefined {
-  if (typeof timeoutMs !== "number" || !Number.isFinite(timeoutMs) || timeoutMs < 0) {
-    return undefined;
-  }
-  return String(Math.max(0, Math.ceil(timeoutMs / 1000)));
-}
-
 export class EmbeddedTuiBackend implements TuiBackend {
   readonly connection = { url: "local embedded" };
 
@@ -112,7 +89,6 @@ export class EmbeddedTuiBackend implements TuiBackend {
   onDisconnected?: (reason: string) => void;
   onGap?: (info: { expected: number; received: number }) => void;
 
-  private readonly deps = createDefaultDeps();
   private readonly runs = new Map<string, LocalRunState>();
   private unsubscribe?: () => void;
   private previousRuntimeLog?: typeof defaultRuntime.log;
@@ -519,41 +495,65 @@ export class EmbeddedTuiBackend implements TuiBackend {
     controller: AbortController;
   }) {
     try {
-      const { cfg, canonicalKey, entry } = loadSessionEntry(params.sessionKey);
-      const result = await agentCommandFromIngress(
-        {
-          message: injectTimestamp(params.message, timestampOptsFromConfig(cfg)),
-          sessionKey: canonicalKey,
-          ...(entry?.sessionId ? { sessionId: entry.sessionId } : {}),
-          thinking: params.thinking,
-          deliver: params.deliver,
-          channel: INTERNAL_MESSAGE_CHANNEL,
-          runContext: {
-            messageChannel: INTERNAL_MESSAGE_CHANNEL,
-          },
-          timeout: timeoutSecondsFromMs(params.timeoutMs),
-          runId: params.runId,
-          abortSignal: params.controller.signal,
-          senderIsOwner: true,
-          allowModelOverride: false,
+      const { cfg, canonicalKey } = loadSessionEntry(params.sessionKey);
+      const stamped = injectTimestamp(params.message, timestampOptsFromConfig(cfg));
+      const ctx: MsgContext = {
+        Body: params.message,
+        BodyForAgent: stamped,
+        BodyForCommands: params.message,
+        RawBody: params.message,
+        CommandBody: params.message,
+        SessionKey: canonicalKey,
+        Provider: INTERNAL_MESSAGE_CHANNEL,
+        Surface: INTERNAL_MESSAGE_CHANNEL,
+        ChatType: "direct",
+        CommandAuthorized: true,
+        MessageSid: params.runId,
+        GatewayClientScopes: [],
+      };
+
+      const collected: string[] = [];
+      const dispatcher = createReplyDispatcher({
+        deliver: async (payload, info) => {
+          if (info.kind !== "final" && info.kind !== "block") {
+            return;
+          }
+          if (typeof payload.text === "string" && payload.text.trim()) {
+            collected.push(payload.text.trim());
+          }
         },
-        silentRuntime,
-        this.deps,
-      );
+      });
+
+      try {
+        await dispatchInboundMessage({
+          ctx,
+          cfg,
+          dispatcher,
+          replyOptions: {
+            runId: params.runId,
+            abortSignal: params.controller.signal,
+          },
+        });
+      } finally {
+        dispatcher.markComplete();
+        await dispatcher.waitForIdle();
+      }
+
       const run = this.runs.get(params.runId);
       if (!run) {
         return;
       }
 
+      const finalText = collected.join("\n\n").trim();
+
       if (run.isBtw) {
-        const text = payloadText(result?.payloads);
-        if (run.question && text) {
+        if (run.question && finalText) {
           this.emit("chat.side_result", {
             kind: "btw",
             runId: params.runId,
             sessionKey: run.sessionKey,
             question: run.question,
-            text,
+            text: finalText,
           });
         }
         this.emitChatFinal(params.runId, run);
@@ -561,9 +561,8 @@ export class EmbeddedTuiBackend implements TuiBackend {
       }
 
       if (!run.finalSent) {
-        const normalizedText = payloadText(result?.payloads);
-        if (normalizedText && !run.buffer) {
-          run.buffer = normalizedText;
+        if (finalText && !run.buffer) {
+          run.buffer = finalText;
         }
         this.emitChatFinal(params.runId, run);
       }

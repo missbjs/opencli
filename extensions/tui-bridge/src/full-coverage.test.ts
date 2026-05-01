@@ -356,7 +356,7 @@ describe("slash command surface", () => {
       expect(restart.text).toMatch(/Bound this conversation to TUI .*bash/i);
 
       // Wait briefly for ConPTY to assign new pid
-      for (let i = 0; i < 40 && !(getSession(liveSessionKey!)?.pty.pid > 0); i++) {
+      for (let i = 0; i < 40 && !((getSession(liveSessionKey!)?.pty.pid ?? 0) > 0); i++) {
         await new Promise((r) => setTimeout(r, 25));
       }
       const secondSession = getSession(liveSessionKey!);

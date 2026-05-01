@@ -2,12 +2,18 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { isEmbeddedMode, setEmbeddedMode } from "../infra/embedded-mode.js";
 import { defaultRuntime } from "../runtime.js";
 
-const agentCommandFromIngressMock = vi.fn();
 let registeredListener: ((evt: unknown) => void) | undefined;
-
-vi.mock("../agents/agent-command.js", () => ({
-  agentCommandFromIngress: (...args: unknown[]) => agentCommandFromIngressMock(...args),
-}));
+let lastDispatcher:
+  | {
+      sendToolResult: () => void;
+      sendBlockReply: (payload: { text?: string }) => void;
+      sendFinalReply: (payload: { text?: string }) => void;
+      markComplete: () => void;
+      waitForIdle: () => Promise<void>;
+    }
+  | undefined;
+let dispatchResolve: (() => void) | undefined;
+let dispatchReject: ((err: unknown) => void) | undefined;
 
 vi.mock("../infra/agent-events.js", () => ({
   onAgentEvent: (listener: (evt: unknown) => void) => {
@@ -20,8 +26,39 @@ vi.mock("../infra/agent-events.js", () => ({
   },
 }));
 
-vi.mock("../cli/deps.js", () => ({
-  createDefaultDeps: () => ({}),
+const dispatchInboundMessageMock = vi.fn(async (params: any) => {
+  return new Promise<void>((resolve, reject) => {
+    dispatchResolve = resolve;
+    dispatchReject = reject;
+    const signal = params.replyOptions?.abortSignal;
+    if (signal?.aborted) {
+      reject(new Error("aborted"));
+      return;
+    }
+    signal?.addEventListener("abort", () => reject(new Error("aborted")), { once: true });
+  });
+});
+
+vi.mock("../auto-reply/dispatch.js", () => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dispatchInboundMessage: (arg: any) => dispatchInboundMessageMock(arg),
+}));
+
+vi.mock("../auto-reply/reply/reply-dispatcher.js", () => ({
+  createReplyDispatcher: (options: any) => {
+    const dispatcher = {
+      sendToolResult: () => {},
+      sendBlockReply: (payload: any) => options.deliver?.(payload, { kind: "block" }),
+      sendFinalReply: (payload: any) => options.deliver?.(payload, { kind: "final" }),
+      waitForIdle: () => Promise.resolve(),
+      getQueuedCounts: () => ({ tool: 0, block: 0, final: 0 }),
+      getCancelledCounts: () => ({ tool: 0, block: 0, final: 0 }),
+      getFailedCounts: () => ({ tool: 0, block: 0, final: 0 }),
+      markComplete: () => {},
+    };
+    lastDispatcher = dispatcher;
+    return dispatcher;
+  },
 }));
 
 vi.mock("../config/sessions.js", () => ({
@@ -112,16 +149,6 @@ vi.mock("../gateway/server-methods/agent-timestamp.js", () => ({
   timestampOptsFromConfig: () => ({}),
 }));
 
-function deferred<T>() {
-  let resolve!: (value: T) => void;
-  let reject!: (error?: unknown) => void;
-  const promise = new Promise<T>((res, rej) => {
-    resolve = res;
-    reject = rej;
-  });
-  return { promise, resolve, reject };
-}
-
 async function flushMicrotasks() {
   await Promise.resolve();
   await Promise.resolve();
@@ -132,14 +159,18 @@ describe("EmbeddedTuiBackend", () => {
   const originalRuntimeError = defaultRuntime.error;
 
   beforeEach(() => {
-    agentCommandFromIngressMock.mockReset();
+    dispatchInboundMessageMock.mockClear();
     registeredListener = undefined;
+    lastDispatcher = undefined;
+    dispatchResolve = undefined;
+    dispatchReject = undefined;
     setEmbeddedMode(false);
     defaultRuntime.log = originalRuntimeLog;
     defaultRuntime.error = originalRuntimeError;
   });
 
   afterEach(() => {
+    dispatchResolve?.();
     setEmbeddedMode(false);
     defaultRuntime.log = originalRuntimeLog;
     defaultRuntime.error = originalRuntimeError;
@@ -147,12 +178,6 @@ describe("EmbeddedTuiBackend", () => {
 
   it("bridges assistant and lifecycle events into chat events", async () => {
     const { EmbeddedTuiBackend } = await import("./embedded-backend.js");
-    const pending = deferred<{
-      payloads: Array<{ text: string }>;
-      meta: Record<string, unknown>;
-    }>();
-    agentCommandFromIngressMock.mockReturnValueOnce(pending.promise);
-
     const backend = new EmbeddedTuiBackend();
     const events: Array<{ event: string; payload: unknown }> = [];
     const onConnected = vi.fn();
@@ -182,7 +207,7 @@ describe("EmbeddedTuiBackend", () => {
       data: { phase: "end", stopReason: "stop" },
     });
 
-    pending.resolve({ payloads: [{ text: "hello" }], meta: {} });
+    dispatchResolve?.();
     await flushMicrotasks();
 
     expect(events).toEqual([
@@ -234,12 +259,6 @@ describe("EmbeddedTuiBackend", () => {
 
   it("keeps final short replies like No after suppressing lead-fragment deltas", async () => {
     const { EmbeddedTuiBackend } = await import("./embedded-backend.js");
-    const pending = deferred<{
-      payloads: Array<{ text: string }>;
-      meta: Record<string, unknown>;
-    }>();
-    agentCommandFromIngressMock.mockReturnValueOnce(pending.promise);
-
     const backend = new EmbeddedTuiBackend();
     const events: Array<{ event: string; payload: unknown }> = [];
     backend.onEvent = (evt) => {
@@ -264,7 +283,7 @@ describe("EmbeddedTuiBackend", () => {
       data: { phase: "end", stopReason: "stop" },
     });
 
-    pending.resolve({ payloads: [{ text: "No" }], meta: {} });
+    dispatchResolve?.();
     await flushMicrotasks();
 
     const chatPayloads = events
@@ -291,11 +310,6 @@ describe("EmbeddedTuiBackend", () => {
 
   it("emits side-result events for local /btw runs", async () => {
     const { EmbeddedTuiBackend } = await import("./embedded-backend.js");
-    agentCommandFromIngressMock.mockResolvedValueOnce({
-      payloads: [{ text: "nothing important" }],
-      meta: {},
-    });
-
     const backend = new EmbeddedTuiBackend();
     const events: Array<{ event: string; payload: unknown }> = [];
     backend.onEvent = (evt) => {
@@ -308,6 +322,9 @@ describe("EmbeddedTuiBackend", () => {
       message: "/btw what changed?",
       runId: "run-btw-1",
     });
+
+    lastDispatcher?.sendFinalReply({ text: "nothing important" });
+    dispatchResolve?.();
     await flushMicrotasks();
 
     expect(events).toEqual([
@@ -334,12 +351,6 @@ describe("EmbeddedTuiBackend", () => {
 
   it("registers tool-first local runs before forwarding agent events", async () => {
     const { EmbeddedTuiBackend } = await import("./embedded-backend.js");
-    const pending = deferred<{
-      payloads: Array<{ text: string }>;
-      meta: Record<string, unknown>;
-    }>();
-    agentCommandFromIngressMock.mockReturnValueOnce(pending.promise);
-
     const backend = new EmbeddedTuiBackend();
     const events: Array<{ event: string; payload: unknown }> = [];
     backend.onEvent = (evt) => {
@@ -358,7 +369,8 @@ describe("EmbeddedTuiBackend", () => {
       stream: "tool",
       data: { phase: "start", toolCallId: "tc-tool-first", name: "exec" },
     });
-    pending.resolve({ payloads: [{ text: "done" }], meta: {} });
+    lastDispatcher?.sendFinalReply({ text: "done" });
+    dispatchResolve?.();
     await flushMicrotasks();
 
     expect(events).toEqual([
@@ -401,16 +413,6 @@ describe("EmbeddedTuiBackend", () => {
 
   it("aborts active local runs", async () => {
     const { EmbeddedTuiBackend } = await import("./embedded-backend.js");
-    let capturedSignal: AbortSignal | undefined;
-    agentCommandFromIngressMock.mockImplementationOnce((opts: { abortSignal?: AbortSignal }) => {
-      capturedSignal = opts.abortSignal;
-      return new Promise((_, reject) => {
-        opts.abortSignal?.addEventListener("abort", () => reject(new Error("aborted")), {
-          once: true,
-        });
-      });
-    });
-
     const backend = new EmbeddedTuiBackend();
     backend.start();
     await backend.sendChat({
@@ -419,6 +421,10 @@ describe("EmbeddedTuiBackend", () => {
       runId: "run-abort-1",
     });
 
+    const signal = dispatchInboundMessageMock.mock.calls[0]?.[0]?.replyOptions?.abortSignal as
+      | AbortSignal
+      | undefined;
+
     const result = await backend.abortChat({
       sessionKey: "agent:main:main",
       runId: "run-abort-1",
@@ -426,7 +432,7 @@ describe("EmbeddedTuiBackend", () => {
     await flushMicrotasks();
 
     expect(result).toEqual({ ok: true, aborted: true });
-    expect(capturedSignal?.aborted).toBe(true);
+    expect(signal?.aborted).toBe(true);
   });
 
   it("restores embedded mode and runtime loggers on stop", async () => {

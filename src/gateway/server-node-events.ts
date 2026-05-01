@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import type { MsgContext } from "../auto-reply/templating.js";
 import type { OpenCLIConfig } from "../config/types.opencli.js";
 import { updatePairedDeviceMetadata } from "../infra/device-pairing.js";
 import { formatErrorMessage } from "../infra/errors.js";
@@ -12,14 +13,16 @@ import {
   normalizeLowercaseStringOrEmpty,
   normalizeOptionalString,
 } from "../shared/string-coerce.js";
+import { INTERNAL_MESSAGE_CHANNEL } from "../utils/message-channel.js";
 import type { NodeEvent, NodeEventContext } from "./server-node-events-types.js";
 import {
-  agentCommandFromIngress,
   buildOutboundSessionContext,
   createOutboundSendDeps,
   defaultRuntime,
   deleteMediaBuffer,
   deliverOutboundPayloads,
+  dispatchInboundMessage,
+  createReplyDispatcher,
   enqueueSystemEvent,
   formatForLog,
   getRuntimeConfig,
@@ -405,26 +408,36 @@ export const handleNodeEvent = async (
         clientRunId: `voice-${randomUUID()}`,
       });
 
-      void agentCommandFromIngress(
-        {
-          runId,
-          message: text,
-          sessionId,
-          sessionKey: canonicalKey,
-          thinking: "low",
-          deliver: false,
-          messageChannel: "node",
-          inputProvenance: {
-            kind: "external_user",
-            sourceChannel: "voice",
-            sourceTool: "gateway.voice.transcript",
-          },
-          senderIsOwner: false,
-          allowModelOverride: false,
+      const msgCtx: MsgContext = {
+        Body: text,
+        BodyForAgent: text,
+        BodyForCommands: text,
+        RawBody: text,
+        CommandBody: text,
+        SessionKey: canonicalKey,
+        Provider: INTERNAL_MESSAGE_CHANNEL,
+        Surface: INTERNAL_MESSAGE_CHANNEL,
+        ChatType: "direct",
+        CommandAuthorized: true,
+        MessageSid: runId,
+        GatewayClientScopes: [],
+        InputProvenance: {
+          kind: "external_user",
+          sourceChannel: "voice",
+          sourceTool: "gateway.voice.transcript",
         },
-        defaultRuntime,
-        ctx.deps,
-      ).catch((err) => {
+      };
+
+      const dispatcher = createReplyDispatcher({
+        deliver: async () => {},
+      });
+
+      void dispatchInboundMessage({
+        ctx: msgCtx,
+        cfg,
+        dispatcher,
+        replyOptions: { runId },
+      }).catch((err) => {
         ctx.logGateway.warn(`agent failed node=${nodeId}: ${formatForLog(err)}`);
       });
       return undefined;
@@ -576,27 +589,51 @@ export const handleNodeEvent = async (
         );
       }
 
-      void agentCommandFromIngress(
-        {
-          runId: sessionId,
-          message,
-          images,
-          imageOrder,
-          sessionId,
-          sessionKey: canonicalKey,
-          thinking: link?.thinking ?? undefined,
-          deliver,
-          to: deliveryTo,
-          channel: deliveryChannel,
-          timeout:
-            typeof link?.timeoutSeconds === "number" ? link.timeoutSeconds.toString() : undefined,
-          messageChannel: "node",
-          senderIsOwner: false,
-          allowModelOverride: false,
-        },
-        defaultRuntime,
-        ctx.deps,
-      ).catch((err) => {
+      const msgCtx: MsgContext = {
+        Body: message,
+        BodyForAgent: message,
+        BodyForCommands: message,
+        RawBody: message,
+        CommandBody: message,
+        SessionKey: canonicalKey,
+        Provider: INTERNAL_MESSAGE_CHANNEL,
+        Surface: INTERNAL_MESSAGE_CHANNEL,
+        ChatType: "direct",
+        CommandAuthorized: true,
+        MessageSid: sessionId,
+        GatewayClientScopes: [],
+      };
+      if (deliveryChannel) {
+        msgCtx.OriginatingChannel = deliveryChannel;
+      }
+      if (deliveryTo) {
+        msgCtx.OriginatingTo = deliveryTo;
+      }
+      if (deliver) {
+        msgCtx.ExplicitDeliverRoute = true;
+      }
+
+      const dispatcher = createReplyDispatcher({
+        deliver: async () => {},
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const replyOptions: { runId: string; images?: any[]; imageOrder?: any[] } = {
+        runId: sessionId,
+      };
+      if (images.length > 0) {
+        replyOptions.images = images;
+      }
+      if (imageOrder.length > 0) {
+        replyOptions.imageOrder = imageOrder;
+      }
+
+      void dispatchInboundMessage({
+        ctx: msgCtx,
+        cfg,
+        dispatcher,
+        replyOptions,
+      }).catch((err) => {
         ctx.logGateway.warn(`agent failed node=${nodeId}: ${formatForLog(err)}`);
       });
       return undefined;

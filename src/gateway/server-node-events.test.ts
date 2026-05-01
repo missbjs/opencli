@@ -38,7 +38,10 @@ const buildSessionLookup = (
   legacyKey: undefined,
 });
 
-const ingressAgentCommandMock = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
+const dispatchInboundMessageMock = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
+const createReplyDispatcherMock = vi.hoisted(() =>
+  vi.fn().mockReturnValue({ markComplete: () => {}, waitForIdle: () => Promise.resolve() }),
+);
 const registerApnsRegistrationMock = vi.hoisted(() => vi.fn());
 const loadOrCreateDeviceIdentityMock = vi.hoisted(() =>
   vi.fn(() => ({
@@ -65,7 +68,8 @@ const updatePairedDeviceMetadataMock = vi.hoisted(() => vi.fn().mockResolvedValu
 const updatePairedNodeMetadataMock = vi.hoisted(() => vi.fn().mockResolvedValue(true));
 
 const runtimeMocks = vi.hoisted(() => ({
-  agentCommandFromIngress: ingressAgentCommandMock,
+  dispatchInboundMessage: dispatchInboundMessageMock,
+  createReplyDispatcher: createReplyDispatcherMock,
   buildOutboundSessionContext: vi.fn(({ sessionKey }: { sessionKey: string }) => ({
     key: sessionKey,
     agentId: "main",
@@ -153,7 +157,8 @@ import {
 const enqueueSystemEventMock = runtimeMocks.enqueueSystemEvent;
 const requestHeartbeatNowMock = runtimeMocks.requestHeartbeatNow;
 const loadConfigMock = runtimeMocks.getRuntimeConfig;
-const agentCommandMock = runtimeMocks.agentCommandFromIngress;
+const dispatchInboundMessageVi = runtimeMocks.dispatchInboundMessage;
+const createReplyDispatcherVi = runtimeMocks.createReplyDispatcher;
 const updateSessionStoreMock = runtimeMocks.updateSessionStore;
 const loadSessionEntryMock = runtimeMocks.loadSessionEntry;
 const registerApnsRegistrationVi = runtimeMocks.registerApnsRegistration;
@@ -517,9 +522,10 @@ describe("node exec events", () => {
 
 describe("voice transcript events", () => {
   beforeEach(() => {
-    agentCommandMock.mockClear();
+    dispatchInboundMessageVi.mockClear();
+    createReplyDispatcherVi.mockClear();
     updateSessionStoreMock.mockClear();
-    agentCommandMock.mockResolvedValue({ status: "ok" } as never);
+    dispatchInboundMessageVi.mockResolvedValue({ status: "ok" } as never);
     updateSessionStoreMock.mockImplementation(async (_storePath, update) => {
       update({});
     });
@@ -544,7 +550,7 @@ describe("voice transcript events", () => {
       payloadJSON: JSON.stringify(payload),
     });
 
-    expect(agentCommandMock).toHaveBeenCalledTimes(1);
+    expect(dispatchInboundMessageVi).toHaveBeenCalledTimes(1);
     expect(addChatRun).toHaveBeenCalledTimes(1);
     expect(updateSessionStoreMock).toHaveBeenCalledTimes(1);
   });
@@ -569,7 +575,7 @@ describe("voice transcript events", () => {
       }),
     });
 
-    expect(agentCommandMock).toHaveBeenCalledTimes(2);
+    expect(dispatchInboundMessageVi).toHaveBeenCalledTimes(2);
     expect(updateSessionStoreMock).toHaveBeenCalledTimes(2);
   });
 
@@ -586,22 +592,22 @@ describe("voice transcript events", () => {
       }),
     });
 
-    expect(agentCommandMock).toHaveBeenCalledTimes(1);
-    const [opts] = agentCommandMock.mock.calls[0] ?? [];
-    expect(opts).toMatchObject({
-      message: "check provenance",
-      deliver: false,
-      messageChannel: "node",
-      inputProvenance: {
+    expect(dispatchInboundMessageVi).toHaveBeenCalledTimes(1);
+    expect(createReplyDispatcherVi).toHaveBeenCalledTimes(1);
+    const [params] = dispatchInboundMessageVi.mock.calls[0] ?? [];
+    expect(params.ctx).toMatchObject({
+      Body: "check provenance",
+      Provider: "webchat",
+      Surface: "webchat",
+      InputProvenance: {
         kind: "external_user",
         sourceChannel: "voice",
         sourceTool: "gateway.voice.transcript",
       },
     });
-    expect(typeof opts.runId).toBe("string");
-    expect(opts.runId).not.toBe(opts.sessionId);
+    expect(typeof params.replyOptions.runId).toBe("string");
     expect(addChatRun).toHaveBeenCalledWith(
-      opts.runId,
+      params.replyOptions.runId,
       expect.objectContaining({ clientRunId: expect.stringMatching(/^voice-/) }),
     );
   });
@@ -621,7 +627,7 @@ describe("voice transcript events", () => {
     });
     await Promise.resolve();
 
-    expect(agentCommandMock).toHaveBeenCalledTimes(1);
+    expect(dispatchInboundMessageVi).toHaveBeenCalledTimes(1);
     expect(warn).toHaveBeenCalledWith(expect.stringContaining("voice session-store update failed"));
   });
 
@@ -861,7 +867,8 @@ describe("notifications changed events", () => {
 
 describe("agent request events", () => {
   beforeEach(() => {
-    agentCommandMock.mockClear();
+    dispatchInboundMessageVi.mockClear();
+    createReplyDispatcherVi.mockClear();
     parseMessageWithAttachmentsMock.mockReset();
     updateSessionStoreMock.mockClear();
     loadSessionEntryMock.mockClear();
@@ -873,7 +880,7 @@ describe("agent request events", () => {
       imageOrder: [],
       offloadedRefs: [],
     });
-    agentCommandMock.mockResolvedValue({ status: "ok" } as never);
+    dispatchInboundMessageVi.mockResolvedValue({ status: "ok" } as never);
     updateSessionStoreMock.mockImplementation(async (_storePath, update) => {
       update({});
     });
@@ -894,15 +901,16 @@ describe("agent request events", () => {
       }),
     });
 
-    expect(agentCommandMock).toHaveBeenCalledTimes(1);
-    const [opts] = agentCommandMock.mock.calls[0] ?? [];
-    expect(opts).toMatchObject({
-      message: "summarize this",
-      sessionKey: "agent:main:main",
-      deliver: false,
-      channel: undefined,
-      to: undefined,
+    expect(dispatchInboundMessageVi).toHaveBeenCalledTimes(1);
+    expect(createReplyDispatcherVi).toHaveBeenCalledTimes(1);
+    const [params] = dispatchInboundMessageVi.mock.calls[0] ?? [];
+    expect(params.ctx).toMatchObject({
+      Body: "summarize this",
+      SessionKey: "agent:main:main",
     });
+    expect(params.ctx.OriginatingChannel).toBeUndefined();
+    expect(params.ctx.OriginatingTo).toBeUndefined();
+    expect(params.ctx.ExplicitDeliverRoute).toBeUndefined();
     expect(warn).toHaveBeenCalledWith(
       expect.stringContaining("agent delivery disabled node=node-route-miss"),
     );
@@ -928,16 +936,17 @@ describe("agent request events", () => {
       }),
     });
 
-    expect(agentCommandMock).toHaveBeenCalledTimes(1);
-    const [opts] = agentCommandMock.mock.calls[0] ?? [];
-    expect(opts).toMatchObject({
-      message: "route on session",
-      sessionKey: "agent:main:main",
-      deliver: true,
-      channel: "telegram",
-      to: "123",
+    expect(dispatchInboundMessageVi).toHaveBeenCalledTimes(1);
+    expect(createReplyDispatcherVi).toHaveBeenCalledTimes(1);
+    const [params] = dispatchInboundMessageVi.mock.calls[0] ?? [];
+    expect(params.ctx).toMatchObject({
+      Body: "route on session",
+      SessionKey: "agent:main:main",
+      OriginatingChannel: "telegram",
+      OriginatingTo: "123",
+      ExplicitDeliverRoute: true,
     });
-    expect(opts.runId).toBe(opts.sessionId);
+    expect(params.replyOptions.runId).toBe(params.ctx.MessageSid);
   });
 
   it("passes supportsInlineImages false for text-only node-session models", async () => {
@@ -1009,9 +1018,9 @@ describe("agent request events", () => {
       }),
     });
 
-    // server-node-events must log-and-return on parse failure — no agent
-    // dispatch, no crash, and the refusal reason bubbles up via logGateway.
-    expect(agentCommandMock).not.toHaveBeenCalled();
+    // server-node-events must log-and-return on parse failure — no dispatch,
+    // no crash, and the refusal reason bubbles up via logGateway.
+    expect(dispatchInboundMessageVi).not.toHaveBeenCalled();
     expect(warn).toHaveBeenCalledWith(expect.stringMatching(/attachment parse failed.*non-image/i));
   });
 
